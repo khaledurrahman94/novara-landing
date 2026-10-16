@@ -1,0 +1,14 @@
+---
+import Base from '../layouts/Base.astro';
+import ScreeningLab from '../components/v3/labs/ScreeningLab.astro';
+import '../components/v2/v2.css';
+---
+<Base title="ScreeningLab (R&D)" description="Test page for the V3 ScreeningLab component." noindex>
+  <div class="v2 bg-white text-text-primary">
+    <div class="grid h-[90vh] place-items-center px-5 text-center text-text-tertiary">Scroll down</div>
+    <main>
+      <ScreeningLab />
+    </main>
+    <div class="h-[90vh]"></div>
+  </div>
+</Base>
