@@ -123,6 +123,8 @@ export function initDecide(root: HTMLElement, reduced: boolean): () => void {
     edgeResistance: 0.8,
     zIndexBoost: true,
     onPress: () => {
+      // Disabling the Draggable (hold-to-drag on touch) untracks velocity; track again on every press.
+      if (!reduced) InertiaPlugin.track(card, 'x,y');
       gsap.killTweensOf(card, 'x,y,scale');
       card.classList.add('is-dragging');
       gsap.killTweensOf(stamp);
@@ -136,8 +138,9 @@ export function initDecide(root: HTMLElement, reduced: boolean): () => void {
     onRelease: function (this: Draggable) {
       card.classList.remove('is-dragging');
       const t = targets();
-      const vx = reduced ? 0 : InertiaPlugin.getVelocity(card, 'x');
-      const vy = reduced ? 0 : InertiaPlugin.getVelocity(card, 'y');
+      const speed = (v: number | undefined): number => (typeof v === 'number' && Number.isFinite(v) ? v : 0);
+      const vx = reduced ? 0 : speed(InertiaPlugin.getVelocity(card, 'x'));
+      const vy = reduced ? 0 : speed(InertiaPlugin.getVelocity(card, 'y'));
       // Where the card would coast to; pick the column nearest that point.
       const px = this.x + vx * 0.18;
       const py = this.y + vy * 0.18;
