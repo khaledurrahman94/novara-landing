@@ -1,7 +1,7 @@
 /**
  * InterviewLab behaviour.
  *
- * Scrubbed intro (pinned from 768px): the page opens zoomed into the interviewer tile, captions type as you
+ * Scrubbed intro (pinned from 1024x680, else a short scrub): the page opens zoomed into the interviewer tile, captions type as you
  * scroll, and the full UI zooms out. Once it is out, the demo is live.
  *
  * Two surfaces. The candidate's screen runs a spoken, transcribed interview: each question is typed as a caption,
@@ -210,16 +210,16 @@ function mount(root: HTMLElement): () => void {
     li.className = 'relative flex gap-2.5 pb-3 last:pb-0';
     if (!last) {
       const line = document.createElement('span');
-      line.className = 'absolute left-[5px] top-4 h-full w-px bg-border-secondary';
+      line.className = 'absolute left-[0.3125rem] top-4 h-full w-px bg-border-secondary';
       line.setAttribute('aria-hidden', 'true');
       li.append(line);
     }
     const dot = document.createElement('span');
     dot.dataset['dot'] = '';
-    dot.className = `relative mt-1 size-[11px] shrink-0 rounded-full border-2 bg-bg-secondary ${flagged ? 'border-warning' : 'border-border-primary'}`;
+    dot.className = `relative mt-1 size-[0.6875rem] shrink-0 rounded-full border-2 bg-bg-secondary ${flagged ? 'border-warning' : 'border-border-primary'}`;
     dot.setAttribute('aria-hidden', 'true');
     const body = document.createElement('span');
-    body.className = 'min-w-0 flex-1 text-[13px]';
+    body.className = 'min-w-0 flex-1 text-[0.8125rem]';
     const t = document.createElement('span');
     t.className = 'mr-2 tabular-nums text-text-tertiary';
     t.textContent = time;
@@ -229,7 +229,7 @@ function mount(root: HTMLElement): () => void {
     body.append(t, l);
     if (tag) {
       const s = document.createElement('span');
-      s.className = 'ml-2 rounded-full bg-gray-100 px-1.5 py-0.5 text-[11px] font-medium text-text-secondary';
+      s.className = 'ml-2 rounded-full bg-gray-100 px-1.5 py-0.5 text-[0.6875rem] font-medium text-text-secondary';
       s.textContent = tag;
       body.append(s);
     }
@@ -259,7 +259,7 @@ function mount(root: HTMLElement): () => void {
       timeline.append(li);
       if (i === 0 && hiddenCount > 0) {
         const more = document.createElement('li');
-        more.className = 'mb-2 pl-[21px] text-xs text-text-tertiary';
+        more.className = 'mb-2 pl-[1.3125rem] text-xs text-text-tertiary';
         more.textContent = lab.earlier(hiddenCount);
         timeline.append(more);
       }
@@ -844,7 +844,12 @@ function mount(root: HTMLElement): () => void {
         scrollTrigger: pinned
           ? {
               trigger: pin,
-              start: () => (pin.offsetHeight <= window.innerHeight - 96 ? 'center center' : 'top 72px'),
+              start: () => {
+                const nav = document.querySelector<HTMLElement>('[data-nav]')?.offsetHeight ?? 64;
+                const room = window.innerHeight - nav;
+                // Centre the scene in the space under the nav; if it is taller, start just under the nav.
+                return pin.offsetHeight <= room - 16 ? `center ${Math.round(nav + room / 2)}px` : `top ${nav + 8}px`;
+              },
               end: () => `+=${Math.round(window.innerHeight * 1.1)}`,
               pin: true,
               scrub: 0.8,
@@ -877,8 +882,9 @@ function mount(root: HTMLElement): () => void {
         gsap.set([zoom, ...fades, cue], { clearProps: 'all' });
       };
     };
-    mm.add('(min-width: 768px) and (min-height: 620px)', () => build(true));
-    mm.add('(max-width: 767px), (max-height: 619px)', () => build(false));
+    // Pin only where both surfaces sit side by side and the scene fits under the nav (the frame height is capped in CSS).
+    mm.add('(min-width: 1024px) and (min-height: 680px)', () => build(true));
+    mm.add('(max-width: 1023px), (max-height: 679px)', () => build(false));
   }
   // A keyboard user tabbing into the zoomed-out UI jumps straight to the finished state.
   const onFocusIn = (): void => {

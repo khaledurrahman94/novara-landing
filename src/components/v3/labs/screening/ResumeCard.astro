@@ -12,7 +12,7 @@ const { applicant: a } = Astro.props;
     <div data-cursor="Drag">
       <div class="flex items-center gap-2.5">
         <Avatar initials={a.initials} />
-        <p class="m-0 min-w-0 flex-1 truncate text-[13px] font-semibold text-text-primary">{a.name}</p>
+        <p class="m-0 min-w-0 flex-1 truncate text-[0.8125rem] font-semibold text-text-primary">{a.name}</p>
         <ScoreRing score={0} size={44} stroke={5} class="sl-card-ring" />
       </div>
       <p class="m-0 mt-2.5 text-xs text-text-tertiary">{a.snippet?.[0]}</p>

@@ -4,7 +4,7 @@
  * and tilt are fine-pointer only (the idle drift covers touch).
  */
 import { gsap } from '../../../scripts/motion';
-import { $, clamp, finePointer, num } from './util';
+import { $, clamp, finePointer, num, remScale } from './util';
 
 const strength = new WeakMap<Element, number>();
 /** Scale a tilt root's parallax and tilt (1 = full, 0 = flat). The hero lowers it as the screen assembles. */
@@ -118,7 +118,7 @@ function initTilt(fine: boolean): () => void {
     const max = num(root.dataset['tiltMax'], 6);
     const viewportMode = root.dataset['tilt'] === 'viewport';
     const idle = root.dataset['idle'] !== undefined;
-    gsap.set(root, { transformPerspective: 1400 });
+    gsap.set(root, { transformPerspective: 1400 * remScale() });
     const rx = gsap.quickTo(root, 'rotationX', { duration: 0.7, ease: 'power3.out' });
     const ry = gsap.quickTo(root, 'rotationY', { duration: 0.7, ease: 'power3.out' });
     const depthEls = $(root, '[data-depth]');
@@ -134,9 +134,10 @@ function initTilt(fine: boolean): () => void {
       const k = strength.get(root) ?? 1;
       rx(-ny * max * k);
       ry(nx * max * k);
+      const u = remScale();
       kids.forEach((o) => {
-        o.x(nx * o.d * 10 * k);
-        o.y(ny * o.d * 10 * k);
+        o.x(nx * o.d * 10 * k * u);
+        o.y(ny * o.d * 10 * k * u);
       });
     };
     updaters.set(root, apply);
@@ -199,8 +200,8 @@ export function initScrollDepth(): void {
     if (!s) return;
     gsap.fromTo(
       el,
-      { y: -s * 90 },
-      { y: s * 90, ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true } },
+      { y: () => -s * 90 * remScale() },
+      { y: () => s * 90 * remScale(), ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true, invalidateOnRefresh: true } },
     );
   });
 }

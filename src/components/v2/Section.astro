@@ -4,7 +4,7 @@ interface Props { id?: string; tone?: 'white' | 'plate'; class?: string; innerCl
 const { id, tone = 'white', class: cls = '', innerClass = '', labelledby } = Astro.props;
 ---
 <section id={id} aria-labelledby={labelledby} class:list={['relative scroll-mt-16 border-t border-border-secondary', tone === 'plate' ? 'bg-bg' : 'bg-white', cls]}>
-  <div class:list={['mx-auto w-full max-w-[1200px] border-x border-border-secondary px-5 py-20 sm:px-8 md:px-12 md:py-32', innerClass]}>
+  <div class:list={['mx-auto w-full max-w-[75rem] border-x border-border-secondary px-5 py-20 sm:px-8 md:px-12 md:py-32', innerClass]}>
     <slot />
   </div>
 </section>

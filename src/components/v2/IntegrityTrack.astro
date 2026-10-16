@@ -31,8 +31,8 @@ const pos = ['items-start text-left', 'items-center text-center', 'items-end tex
 
   <ol class="m-0 mt-5 flex list-none flex-col gap-3 p-0 md:hidden">
     {integrity.events.map((e) => (
-      <li data-anim="event" data-flagged={e.flagged ? 'true' : undefined} class="flex items-start gap-3 text-[13px]">
-        <span class:list={['mt-1 size-[11px] shrink-0 rounded-full border-2 bg-white', e.flagged ? 'border-warning' : 'border-border-primary']} aria-hidden="true"></span>
+      <li data-anim="event" data-flagged={e.flagged ? 'true' : undefined} class="flex items-start gap-3 text-[0.8125rem]">
+        <span class:list={['mt-1 size-[0.6875rem] shrink-0 rounded-full border-2 bg-white', e.flagged ? 'border-warning' : 'border-border-primary']} aria-hidden="true"></span>
         <span>
           <span class="mr-1.5 tabular-nums text-text-tertiary">{e.time}</span>
           <span class:list={[e.flagged ? 'font-semibold' : 'text-text-secondary']}>{e.label}</span>
@@ -43,15 +43,15 @@ const pos = ['items-start text-left', 'items-center text-center', 'items-end tex
   </ol>
 
   <ol class="relative m-0 mt-6 hidden h-[4.5rem] list-none p-0 md:block">
-    <span class="absolute inset-x-0 top-[5px] h-px bg-border-primary" aria-hidden="true"></span>
+    <span class="absolute inset-x-0 top-[0.3125rem] h-px bg-border-primary" aria-hidden="true"></span>
     {integrity.events.map((e, i) => {
       const left = (toSec(e.time) / total) * 100;
       const place = i === 0 ? 'left-0' : i === integrity.events.length - 1 ? 'right-0' : '-translate-x-1/2';
       return (
         <li class:list={['absolute top-0 w-40', place]} style={i > 0 && i < integrity.events.length - 1 ? `left:${left.toFixed(2)}%` : undefined}>
           <span data-anim="event" data-flagged={e.flagged ? 'true' : undefined} class:list={['flex flex-col gap-1.5', pos[i === 0 ? 0 : i === integrity.events.length - 1 ? 2 : 1]]}>
-            <span class:list={['size-[11px] rounded-full border-2 bg-white', e.flagged ? 'border-warning' : 'border-border-primary']} aria-hidden="true"></span>
-            <span class="text-[13px]">
+            <span class:list={['size-[0.6875rem] rounded-full border-2 bg-white', e.flagged ? 'border-warning' : 'border-border-primary']} aria-hidden="true"></span>
+            <span class="text-[0.8125rem]">
               <span class="mr-1.5 tabular-nums text-text-tertiary">{e.time}</span>
               <span class:list={[e.flagged ? 'font-semibold' : 'text-text-secondary']}>{e.label}</span>
               {e.flagged && <span class="block text-xs text-text-tertiary">Flagged for your review</span>}

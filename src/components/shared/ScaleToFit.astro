@@ -5,6 +5,9 @@
  * Width only by default. If the wrapper sets `--fit-constrain: 1` and has a definite height
  * (a pinned scene), the height is respected too. Never scales up: rem already tracks the fluid root.
  * `min` floors the width-driven scale; below it the content reflows narrower so text stays legible.
+ * Scaling happens once: the mockup is authored in rem (it follows the fluid root), and this only ever
+ * shrinks it (factor <= 1) to fit its frame. When the factor changes it fires `novara:fit` so pinned
+ * scenes and Draggables re-measure (scripts/motion.ts refreshes ScrollTrigger on it).
  */
 interface Props { design: number; min?: number; class?: string }
 const { design, min = 0.8, class: cls = '' } = Astro.props;
@@ -20,6 +23,11 @@ const { design, min = 0.8, class: cls = '' } = Astro.props;
 
 <script>
   const sel = '[data-scale-fit]';
+  let notifyTimer = 0;
+  const notify = (): void => {
+    window.clearTimeout(notifyTimer);
+    notifyTimer = window.setTimeout(() => window.dispatchEvent(new Event('novara:fit')), 80);
+  };
   const apply = (box: HTMLElement): void => {
     const inner = box.querySelector<HTMLElement>('[data-scale-inner]');
     if (!inner) return;
@@ -43,6 +51,11 @@ const { design, min = 0.8, class: cls = '' } = Astro.props;
       const h = inner.offsetHeight;
       if (availH && h) s = Math.max(0.5, Math.min(s, availH / h));
       put(s);
+    }
+    const key = s.toFixed(3);
+    if (box.dataset['fitS'] !== key) {
+      box.dataset['fitS'] = key;
+      notify();
     }
   };
 

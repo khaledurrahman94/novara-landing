@@ -4,7 +4,7 @@
  * proportion to scroll and reverses with it. Phones: a vertical list whose vignettes play once on entry.
  */
 import { gsap, ScrollTrigger, getLenis } from '../../../scripts/motion';
-import { $, EASE, num, one } from './util';
+import { $, EASE, navH, num, one } from './util';
 import { createGhost, type Ghost } from './ghost';
 
 /** Loops that run only while their step is active and on screen (the interview waveform). */
@@ -126,7 +126,7 @@ export function initHowPinned(root: HTMLElement): (() => void) | void {
     defaults: { ease: 'none' },
     scrollTrigger: {
       trigger: root,
-      start: 'top 64px',
+      start: () => `top ${navH()}px`,
       // Modest: the track needs only about 2.5 screens of scroll.
       end: () => `+=${Math.round(Math.min(dist() * 0.45 + 200, window.innerHeight * 3))}`,
       pin: true,

@@ -5,7 +5,7 @@
  * the annotated funnel list stays and, with motion, plays once on entry.
  */
 import { gsap, ScrollTrigger } from '../../../scripts/motion';
-import { $, EASE, clamp, cssVar, lerp, num, one, rng, seg, smooth } from './util';
+import { $, EASE, navH, clamp, cssVar, lerp, num, one, rng, seg, smooth } from './util';
 import { v3 } from '../../../content/v3';
 import { byId, recruiter } from '../../../data/demo';
 import { createGhost } from './ghost';
@@ -133,6 +133,8 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
   let cellL2 = 0;
   let cell0 = 1;
   let cell1 = 1;
+  /** Root-size scale (1 at 16px): canvas pixel constants follow the fluid root like rem does. */
+  let u = 1;
 
   // Fixed demo applicants for the auto hint, so the copy matches the spec exactly.
   const demoA = dots.find((d) => d.tier === 0);
@@ -147,11 +149,12 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
     w = wrap.clientWidth;
     h = wrap.clientHeight;
     dpr = Math.min(window.devicePixelRatio || 1, 2);
+    u = (parseFloat(getComputedStyle(document.documentElement).fontSize) || 16) / 16;
     canvas.width = Math.round(w * dpr);
     canvas.height = Math.round(h * dpr);
     const l0 = grid(N, w, h);
-    const l1 = grid(SURVIVORS, w, h, 46);
-    const l2 = grid(SHORTLIST, w, h, 170, 6);
+    const l1 = grid(SURVIVORS, w, h, 46 * u);
+    const l2 = grid(SHORTLIST, w, h, 170 * u, 6);
     cellL2 = l2.cell;
     dots.forEach((d, i) => {
       [d.ax, d.ay] = l0.pos(i);
@@ -188,9 +191,9 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
     if (!hover || tip.hidden) return;
     const tw = tip.offsetWidth;
     const th = tip.offsetHeight;
-    const tx = clamp(hover.x + 14, 0, Math.max(0, w - tw));
-    const above = hover.y - hover.r - th - 8;
-    const ty = above < 0 ? hover.y + hover.r + 10 : above;
+    const tx = clamp(hover.x + 14 * u, 0, Math.max(0, w - tw));
+    const above = hover.y - hover.r - th - 8 * u;
+    const ty = above < 0 ? hover.y + hover.r + 10 * u : above;
     tip.style.transform = `translate(${tx}px, ${ty}px)`;
   };
 
@@ -201,9 +204,9 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
     const a3c = smooth(seg(t, 0.54, 0.62));
     const a3m = seg(t, 0.62, 0.78);
     const a4 = smooth(seg(t, 0.8, 0.94));
-    const r0 = Math.max(2, cell0 * 0.42);
-    const r1 = Math.max(3, Math.min(cell1 * 0.42, 20));
-    const rAv = clamp(cellL2 * 0.3, 14, 40);
+    const r0 = Math.max(2 * u, cell0 * 0.42);
+    const r1 = Math.max(3 * u, Math.min(cell1 * 0.42, 20 * u));
+    const rAv = clamp(cellL2 * 0.3, 14 * u, 40 * u);
 
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, w, h);
@@ -259,11 +262,11 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
           ctx.fillText(d.initials, x, y + 0.5);
           if (d.tier === 3) {
             const label = v3.results.hired;
-            const fs = clamp(Math.round(rAv * 0.38), 10, 13);
+            const fs = clamp(Math.round(rAv * 0.38), 10 * u, 13 * u);
             ctx.font = `600 ${fs}px "Inter Variable", system-ui, sans-serif`;
-            const bw = ctx.measureText(label).width + 18;
-            const bh = fs + 10;
-            const by = y + rAv + 8;
+            const bw = ctx.measureText(label).width + 18 * u;
+            const bh = fs + 10 * u;
+            const by = y + rAv + 8 * u;
             rounded(x - bw / 2, by, bw, bh, bh / 2);
             ctx.fillStyle = col.white;
             ctx.fill();
@@ -279,9 +282,9 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
     ctx.globalAlpha = 1;
     if (hover && hover.a > 0.25) {
       ctx.strokeStyle = col.ink;
-      ctx.lineWidth = 1.5;
+      ctx.lineWidth = 1.5 * u;
       ctx.beginPath();
-      ctx.arc(hover.x, hover.y, hover.r + 3, 0, TAU);
+      ctx.arc(hover.x, hover.y, hover.r + 3 * u, 0, TAU);
       ctx.stroke();
     }
     placeTip();
@@ -477,7 +480,7 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
       defaults: { ease: 'none' },
       scrollTrigger: {
         trigger: root,
-        start: 'top 64px',
+        start: () => `top ${navH()}px`,
         end: '+=100%',
         pin: true,
         scrub: 0.6,

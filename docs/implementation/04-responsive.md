@@ -1,4 +1,4 @@
-# 04 Responsive scaling (V1 now, V2/V3 later)
+# 04 Responsive scaling (V1, V2, V3, labs)
 
 Goal: the page looks the same in proportion on a 1366 laptop and a 1920 or 2560 monitor, and holds at 360, 390, 768 and 1024.
 
@@ -18,5 +18,12 @@ Goal: the page looks the same in proportion on a 1366 laptop and a 1920 or 2560 
 - Structure: `section[data-scene] > .scene-stage > .scene-inner > .scene-head + .scene-body`. JS sets `data-pinned` on the section only at >=1024px wide, >=680px tall, motion allowed (`PIN_MQ`). Else it stacks; reduced motion is static.
 - `pinScene(stage, steps, viewportsPerStep, onStep)` pins under the header, reports step progress and eases to the nearest step centre after scrolling settles. Used by How (0.35/step), Job Fit (0.5/step), Platform (0.4/step).
 
-## Adopting on V2/V3
-Pass `fluid` to `Base`, convert px text and icon sizes to rem, wrap mockups in `ScaleToFit`, swap `max-w-[84rem]` for `var(--v1-max, 84rem)`. Check at 1280x720, 1366x768, 1536x864, 1920x1080, 2560x1440 and 360, 390, 768, 1024.
+## Scaling happens once
+Mockups are authored in rem, so they follow the fluid root. ScaleToFit only ever shrinks (factor <= 1) to fit a frame, so at 1920 (root 22.4px) frame and design width are both rem-linear and the factor equals the 1280 one. Do not add px sizes inside mockups (they drift against rem text), and never zoom a Draggable or Flip scene.
+- When a factor changes ScaleToFit fires `novara:fit`; `scripts/motion.ts` refreshes ScrollTrigger on it and on resize/orientationchange. Keep `refreshPriority` order and the `refreshInit` sort.
+
+## V2, V3 and the labs
+- All pass `fluid` to `Base`; px layout values are rem (columns 75rem, type 0.8125rem etc.). Canvas pixel constants multiply by `u = rootFont / 16` (v3 results), parallax by `remScale()`; pin offsets use `navH()` (rem nav), never 64px.
+- V2/V3 mockups reflow with container queries instead of ScaleToFit, so phones never get shrunk text. Bento is 6 columns from 1280 (2 below), V2 How is 4 columns from 1280 (list below), Decide stacks until 1024.
+- V3 pins need room: Results and How pin from 768x620; the interview lab pins from 1024x680 (frame height capped in rem, `100svh - 28.5rem`), else it does a short scrub.
+- Check at 1280x720, 1366x768, 1536x864, 1920x1080, 2560x1440 and 360, 390, 768, 1024.

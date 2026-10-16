@@ -13,6 +13,14 @@ function start(): void {
   if (started || typeof window === 'undefined') return;
   started = true;
   gsap.registerPlugin(ScrollTrigger);
+  // Resize and rotation re-measure every pin (the fluid root changes rem sizes with the viewport),
+  // and so does a ScaleToFit factor change.
+  ScrollTrigger.config({ autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load,resize,orientationchange' });
+  let fitTimer = 0;
+  window.addEventListener('novara:fit', () => {
+    window.clearTimeout(fitTimer);
+    fitTimer = window.setTimeout(() => ScrollTrigger.refresh(), 60);
+  });
   if (prefersReducedMotion()) return;
   lenis = new Lenis({ lerp: 0.1 });
   lenis.on('scroll', ScrollTrigger.update);

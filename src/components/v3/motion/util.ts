@@ -17,9 +17,15 @@ export const lerp = (a: number, b: number, t: number): number => a + (b - a) * t
 export const seg = (t: number, a: number, b: number): number => clamp((t - a) / (b - a), 0, 1);
 export const smooth = (t: number): number => t * t * (3 - 2 * t);
 
+/** The fluid root size relative to 16px (1 below 1280px wide). Scale pixel constants by it. */
+export const remScale = (): number => (parseFloat(getComputedStyle(document.documentElement).fontSize) || 16) / 16;
+
+/** Height of the sticky nav in px (it is rem-sized, so it follows the fluid root). */
+export const navH = (): number => document.querySelector<HTMLElement>('[data-nav]')?.offsetHeight ?? 64;
+
 export function scrollToEl(el: HTMLElement): void {
   const lenis = getLenis();
-  if (lenis) lenis.scrollTo(el, { offset: -64 });
+  if (lenis) lenis.scrollTo(el, { offset: -navH() });
   else el.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
 }
 

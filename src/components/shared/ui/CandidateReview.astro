@@ -58,8 +58,8 @@ const flagged = integrity.events.find((e) => e.flagged);
         </div>
       </div>
 
-      <div class="mt-5 grid grid-cols-3 divide-x divide-border-secondary rounded-lg border border-border-secondary">
-        <div class="flex flex-col gap-2 p-3 @lg:flex-row @lg:items-center @lg:gap-3 @lg:p-4">
+      <div class="mt-5 grid grid-cols-1 divide-y divide-border-secondary rounded-lg border border-border-secondary @md:grid-cols-3 @md:divide-x @md:divide-y-0">
+        <div class="flex flex-row items-center gap-3 p-3 @md:flex-col @md:items-start @md:gap-2 @lg:flex-row @lg:items-center @lg:gap-3 @lg:p-4">
           <ScoreRing score={fit.score} size={52} stroke={5} class="shrink-0" />
           <div>
             <p class="m-0 text-xs font-medium text-text-tertiary">Job Fit Score</p>
@@ -101,8 +101,8 @@ const flagged = integrity.events.find((e) => e.flagged);
           <ol class="m-0 list-none p-0">
             {integrity.events.map((e, i) => (
               <li data-anim={e.flagged ? 'event' : undefined} class="relative flex gap-3 pb-3 last:pb-0">
-                {i < integrity.events.length - 1 && <span class="absolute left-[5px] top-4 h-full w-px bg-border-secondary" aria-hidden="true"></span>}
-                <span class:list={['relative mt-1 size-[11px] shrink-0 rounded-full border-2 bg-white', e.flagged ? 'border-warning' : 'border-border-primary']} aria-hidden="true"></span>
+                {i < integrity.events.length - 1 && <span class="absolute left-[0.3125rem] top-4 h-full w-px bg-border-secondary" aria-hidden="true"></span>}
+                <span class:list={['relative mt-1 size-[0.6875rem] shrink-0 rounded-full border-2 bg-white', e.flagged ? 'border-warning' : 'border-border-primary']} aria-hidden="true"></span>
                 <span class="min-w-0 flex-1 text-[0.8125rem]">
                   <span class="mr-2 tabular-nums text-text-tertiary">{e.time}</span>
                   <span class:list={[e.flagged ? 'font-semibold' : 'text-text-secondary']}>{e.label}</span>

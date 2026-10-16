@@ -26,9 +26,9 @@ const events = integrity.events;
         <span data-il-rchip-text>{lab.review(sample ? 1 : 0)}</span>
       </span>
     </div>
-    <p data-il-summary class="m-0 mt-1.5 text-[15px] text-text-secondary">{sample ? lab.report.summary(1) : ''}</p>
+    <p data-il-summary class="m-0 mt-1.5 text-[0.9375rem] text-text-secondary">{sample ? lab.report.summary(1) : ''}</p>
 
-    <ul class="m-0 mt-5 grid list-none grid-cols-2 gap-x-6 gap-y-2 p-0 text-[13px] sm:grid-cols-4">
+    <ul class="m-0 mt-5 grid list-none grid-cols-2 gap-x-6 gap-y-2 p-0 text-[0.8125rem] sm:grid-cols-4">
       {kinds.map((k) => (
         <li data-il-rkind={k.key} class:list={['flex items-baseline justify-between gap-2 border-b border-border-secondary pb-1.5 text-text-tertiary', k.key === 'away' && 'il-fine',]}>
           <span class="truncate">{k.label}</span>
@@ -40,9 +40,9 @@ const events = integrity.events;
     <ol data-il-rtimeline class="m-0 mt-5 list-none p-0">
       {sample && events.map((e, i) => (
         <li class="relative flex gap-3 pb-4 last:pb-0">
-          {i < events.length - 1 && <span class="absolute left-[5px] top-4 h-full w-px bg-border-secondary" aria-hidden="true"></span>}
-          <span class:list={['relative mt-1 size-[11px] shrink-0 rounded-full border-2 bg-bg-secondary', e.flagged ? 'border-warning' : 'border-border-primary']} aria-hidden="true"></span>
-          <span class="min-w-0 flex-1 text-[13px]">
+          {i < events.length - 1 && <span class="absolute left-[0.3125rem] top-4 h-full w-px bg-border-secondary" aria-hidden="true"></span>}
+          <span class:list={['relative mt-1 size-[0.6875rem] shrink-0 rounded-full border-2 bg-bg-secondary', e.flagged ? 'border-warning' : 'border-border-primary']} aria-hidden="true"></span>
+          <span class="min-w-0 flex-1 text-[0.8125rem]">
             <span class="mr-2 tabular-nums text-text-tertiary">{e.time}</span>
             <span class:list={[e.flagged ? 'font-semibold text-text-primary' : 'text-text-secondary']}>{e.label}</span>
             {e.flagged && <span class="mt-0.5 block text-xs text-text-tertiary">{lab.flagged}</span>}
@@ -51,7 +51,7 @@ const events = integrity.events;
       ))}
     </ol>
 
-    <p class="m-0 mt-5 border-t border-border-secondary pt-4 text-[15px] font-medium leading-snug text-text-primary">{lab.report.line}</p>
+    <p class="m-0 mt-5 border-t border-border-secondary pt-4 text-[0.9375rem] font-medium leading-snug text-text-primary">{lab.report.line}</p>
     {sample
       ? <p class="m-0 mt-2 text-xs text-text-tertiary">{lab.report.sampleNote}</p>
       : (

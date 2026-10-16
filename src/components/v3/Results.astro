@@ -28,7 +28,7 @@ const max = Math.max(...results.figures.map((f) => f.value));
             <li class="grid items-center gap-x-10 gap-y-3 border-t border-border-secondary py-6 md:grid-cols-[17rem_minmax(0,1fr)]">
               <div>
                 <p class="m-0 flex items-baseline gap-3">
-                  <span class="text-[44px] font-semibold leading-none tracking-[-0.03em] tabular-nums" data-count={f.value} data-suffix={f.suffix}>{f.value.toLocaleString('en-US')}{f.suffix}</span>
+                  <span class="text-[2.75rem] font-semibold leading-none tracking-[-0.03em] tabular-nums" data-count={f.value} data-suffix={f.suffix}>{f.value.toLocaleString('en-US')}{f.suffix}</span>
                   <span class="text-sm font-medium text-text-primary">{f.label}</span>
                 </p>
                 <p class="m-0 mt-2 max-w-[16rem] text-sm leading-snug text-text-tertiary">{f.note}</p>

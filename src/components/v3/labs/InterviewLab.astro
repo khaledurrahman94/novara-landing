@@ -41,30 +41,30 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
             <div data-il-live class="grid items-start lg:grid-cols-[minmax(0,1.5fr)_3.5rem_minmax(0,1fr)]">
               <!-- Surface 1: the candidate's browser. No integrity UI here. -->
               <div class="flex min-w-0 flex-col gap-2">
-                <p data-il-fade class="m-0 flex flex-wrap items-baseline gap-x-2 text-[13px]">
+                <p data-il-fade class="m-0 flex flex-wrap items-baseline gap-x-2 text-[0.8125rem]">
                   <span class="font-semibold text-text-primary">{lab.candidate.label}</span>
                   <span class="text-text-tertiary">{lab.candidate.note}</span>
                 </p>
                 <div class="relative overflow-hidden rounded-xl border border-border-primary bg-white shadow-md">
                   <div data-il-fade class="flex h-8 items-center gap-3 border-b border-border-secondary bg-gray-100 px-3" aria-hidden="true">
                     <span class="flex gap-1.5"><span class="size-2.5 rounded-full bg-gray-300"></span><span class="size-2.5 rounded-full bg-gray-300"></span><span class="size-2.5 rounded-full bg-gray-300"></span></span>
-                    <span class="mr-9 min-w-0 flex-1 truncate rounded-md bg-white px-3 py-0.5 text-center text-[11px] text-text-tertiary">{lab.candidate.tab}</span>
+                    <span class="mr-9 min-w-0 flex-1 truncate rounded-md bg-white px-3 py-0.5 text-center text-[0.6875rem] text-text-tertiary">{lab.candidate.tab}</span>
                   </div>
                   <div class="flex flex-col gap-3 p-3">
                     <div data-il-frame class="relative overflow-hidden rounded-lg">
                       <InterviewFrame markSrc="/brand/novara-mark.svg" timer="00:00" caption={lab.intro} class="max-w-none! shadow-none!" />
                       <div class="pointer-events-none absolute bottom-3 right-3 flex flex-col items-end gap-1.5">
-                        <span data-il-selfchip data-state="listening" class="il-selfchip inline-flex items-center gap-1.5 rounded-full bg-gray-950/80 px-2 py-0.5 text-[11px] font-medium text-white" aria-hidden="true">
+                        <span data-il-selfchip data-state="listening" class="il-selfchip inline-flex items-center gap-1.5 rounded-full bg-gray-950/80 px-2 py-0.5 text-[0.6875rem] font-medium text-white" aria-hidden="true">
                           <span class="il-selfdot size-1.5 rounded-full bg-white/60"></span><span data-il-selfchip-text>{lab.candidate.listening}</span>
                         </span>
                         <div data-il-selftile class="relative grid h-14 w-20 place-items-center overflow-hidden rounded-md border border-white/15 bg-gray-800 text-white/80" aria-hidden="true">
                           <span class="text-xs font-semibold">{lead.initials}</span>
-                          <span class="absolute inset-x-0 bottom-1.5 flex h-4 items-end justify-center gap-[3px]">
-                            {[0, 1, 2, 3, 4, 5, 6].map(() => <span data-il-selfbar class="h-full w-[3px] origin-bottom rounded-full bg-primary-300"></span>)}
+                          <span class="absolute inset-x-0 bottom-1.5 flex h-4 items-end justify-center gap-[0.1875rem]">
+                            {[0, 1, 2, 3, 4, 5, 6].map(() => <span data-il-selfbar class="h-full w-[0.1875rem] origin-bottom rounded-full bg-primary-300"></span>)}
                           </span>
                           <span data-il-self class="il-ov absolute inset-0 grid place-items-center bg-gray-800">
-                            <span data-il-self-cam class="flex flex-col items-center gap-0.5 text-[10px] font-medium" hidden><Ico name="video-off" size={16} />{lab.overlay.cameraSelf}</span>
-                            <span data-il-self-faces class="flex flex-col items-center gap-0.5 text-[10px] font-medium" hidden>
+                            <span data-il-self-cam class="flex flex-col items-center gap-0.5 text-[0.625rem] font-medium" hidden><Ico name="video-off" size={16} />{lab.overlay.cameraSelf}</span>
+                            <span data-il-self-faces class="flex flex-col items-center gap-0.5 text-[0.625rem] font-medium" hidden>
                               <span class="flex items-center"><Ico name="user" size={16} /><Ico name="user" size={16} class="-ml-1 text-primary-300" /></span>2 faces
                             </span>
                           </span>
@@ -74,7 +74,7 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
 
                     <div data-il-fade class="flex flex-col gap-3">
                       <div class="flex items-center justify-between gap-3">
-                        <p data-il-step class="m-0 text-[13px] font-medium text-text-secondary">{lab.step(1, lab.questions.length)}</p>
+                        <p data-il-step class="m-0 text-[0.8125rem] font-medium text-text-secondary">{lab.step(1, lab.questions.length)}</p>
                         <span class="flex gap-1" aria-hidden="true">
                           {lab.questions.map(() => <span data-il-dot class="h-1 w-6 rounded-full bg-gray-200 transition-colors duration-[var(--duration-base)] data-[on=true]:bg-primary"></span>)}
                         </span>
@@ -84,7 +84,7 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
                           <span class="il-tdot size-1.5 rounded-full bg-gray-400" aria-hidden="true"></span>
                           <span data-il-tlabel>{lab.candidate.waiting}</span>
                         </p>
-                        <div class="mt-1.5 grid text-[14px] leading-snug">
+                        <div class="mt-1.5 grid text-[0.875rem] leading-snug">
                           <p data-il-tghost class="invisible col-start-1 row-start-1 m-0" aria-hidden="true">{lab.answers[0]}</p>
                           <p data-il-transcript class="col-start-1 row-start-1 m-0 text-text-primary"></p>
                         </div>
@@ -96,7 +96,7 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
                     </div>
                   </div>
                 </div>
-                <p data-il-fade class="m-0 text-[11px] leading-snug text-text-tertiary">{lab.candidate.illustrative}</p>
+                <p data-il-fade class="m-0 text-[0.6875rem] leading-snug text-text-tertiary">{lab.candidate.illustrative}</p>
               </div>
 
               <!-- The link: an event on the candidate side travels to the team view. -->
@@ -107,15 +107,15 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
 
               <!-- Surface 2: the recruiter app. The candidate never sees this. -->
               <div data-il-fade class="flex min-w-0 flex-col gap-2">
-                <p class="m-0 flex flex-wrap items-baseline gap-x-2 text-[13px]">
+                <p class="m-0 flex flex-wrap items-baseline gap-x-2 text-[0.8125rem]">
                   <span class="font-semibold text-text-primary">{lab.team.label}</span>
                   <span class="text-text-tertiary">{lab.team.note}</span>
                 </p>
                 <div data-card="integrity" class="relative min-w-0 overflow-hidden rounded-lg border border-border-primary bg-bg-secondary shadow-md">
                   <div class="flex items-center gap-2.5 border-b border-border-secondary bg-white px-3 py-2.5">
-                    <img src="/brand/novara-mark.svg" alt="" width="22" height="22" class="size-[22px] shrink-0" />
-                    <span class="text-[13px] font-semibold text-text-primary">{lab.team.app}</span>
-                    <span class="inline-flex items-center gap-1.5 rounded-full bg-success/10 px-2 py-0.5 text-[11px] font-medium text-text-secondary">
+                    <img src="/brand/novara-mark.svg" alt="" width="22" height="22" class="size-[1.375rem] shrink-0" />
+                    <span class="text-[0.8125rem] font-semibold text-text-primary">{lab.team.app}</span>
+                    <span class="inline-flex items-center gap-1.5 rounded-full bg-success/10 px-2 py-0.5 text-[0.6875rem] font-medium text-text-secondary">
                       <span class="il-livedot size-1.5 rounded-full bg-success" aria-hidden="true"></span>{lab.team.live}
                     </span>
                     <span class="ml-auto min-w-0 truncate text-right text-xs text-text-tertiary"><span class="font-medium text-text-secondary">{lead.name}</span><span class="max-sm:hidden"> · {role.short}</span></span>
@@ -123,7 +123,7 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
 
                   <div class="relative p-4">
                     <div class="pointer-events-none absolute inset-x-3 top-2 z-10 flex justify-center" aria-hidden="true">
-                      <p data-il-toast class="m-0 flex max-w-full items-center gap-2 rounded-md bg-white px-3 py-2 text-[13px] font-medium text-text-primary opacity-0 shadow-lg">
+                      <p data-il-toast class="m-0 flex max-w-full items-center gap-2 rounded-md bg-white px-3 py-2 text-[0.8125rem] font-medium text-text-primary opacity-0 shadow-lg">
                         <Ico name="alert" size={15} class="text-warning" /><span data-il-toast-text class="min-w-0"></span>
                       </p>
                     </div>
@@ -144,8 +144,8 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
                             <Ico name={k.icon} size={13} />
                           </span>
                           <span class="min-w-0">
-                            <span data-il-count={k.key} class="block text-[15px] font-semibold leading-none tabular-nums">0</span>
-                            <span class="mt-0.5 block truncate text-[11px] leading-tight text-text-tertiary">{k.label}</span>
+                            <span data-il-count={k.key} class="block text-[0.9375rem] font-semibold leading-none tabular-nums">0</span>
+                            <span class="mt-0.5 block truncate text-[0.6875rem] leading-tight text-text-tertiary">{k.label}</span>
                           </span>
                         </li>
                       ))}
@@ -164,13 +164,13 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
                           <span class="il-switch" aria-hidden="true"></span>{lab.simFullscreen}
                         </button>
                       </div>
-                      <p class="m-0 mt-1 text-[11px] leading-snug text-text-tertiary">{lab.simulateNote}</p>
+                      <p class="m-0 mt-1 text-[0.6875rem] leading-snug text-text-tertiary">{lab.simulateNote}</p>
                     </div>
 
                     <div class="mt-3 border-t border-border-secondary pt-3">
                       <ol data-il-timeline class="m-0 list-none p-0"></ol>
                       <p data-il-empty class="m-0 mt-2 text-xs leading-snug text-text-tertiary">{lab.empty}</p>
-                      <p class="il-fine m-0 mt-2 text-[11px] leading-snug text-text-tertiary">{lab.eyes}</p>
+                      <p class="il-fine m-0 mt-2 text-[0.6875rem] leading-snug text-text-tertiary">{lab.eyes}</p>
                     </div>
                   </div>
                 </div>
@@ -198,6 +198,12 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
   }
   .il[data-js] [data-il-static] {
     display: none;
+  }
+  /* Pinned layout: cap the interviewer frame so the whole scene fits under the nav (rem, so it tracks the fluid root). */
+  @media (min-width: 1024px) and (min-height: 680px) {
+    .il [data-il-frame] [data-card='interview-frame'] {
+      max-height: max(11rem, calc(100svh - 28.5rem));
+    }
   }
   .il[data-intro] [data-il-fade] {
     pointer-events: none;
@@ -265,7 +271,7 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
     background: transparent;
     padding: 0;
     font: inherit;
-    font-size: 13px;
+    font-size: 0.8125rem;
     color: var(--color-text-secondary);
     text-align: left;
     cursor: pointer;
@@ -282,10 +288,10 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
   .il-switch::after {
     content: '';
     position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 14px;
-    height: 14px;
+    top: 0.125rem;
+    left: 0.125rem;
+    width: 0.875rem;
+    height: 0.875rem;
     border-radius: 9999px;
     background: var(--color-white);
     box-shadow: var(--shadow-xs);
@@ -295,7 +301,7 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
     background: var(--color-primary);
   }
   .il-sim[aria-checked='true'] .il-switch::after {
-    transform: translateX(14px);
+    transform: translateX(0.875rem);
   }
 
   /* Self-view overlay (camera off, second face) fades with a plain opacity transition. */
@@ -351,9 +357,9 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
     position: absolute;
     left: 50%;
     top: 0;
-    width: 10px;
-    height: 10px;
-    margin: -5px 0 0 -5px;
+    width: 0.625rem;
+    height: 0.625rem;
+    margin: -0.3125rem 0 0 -0.3125rem;
     border-radius: 9999px;
     background: var(--color-primary);
     box-shadow: var(--shadow-xs);
@@ -379,11 +385,11 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
   /* The ghost pointer: a 20px circle, white ring, soft shadow. Motion is all transform and opacity. */
   .il-ghost {
     position: absolute;
-    left: -10px;
-    top: -10px;
+    left: -0.625rem;
+    top: -0.625rem;
     z-index: 50;
-    width: 20px;
-    height: 20px;
+    width: 1.25rem;
+    height: 1.25rem;
     box-sizing: border-box;
     border: 2px solid var(--color-white);
     border-radius: 9999px;
