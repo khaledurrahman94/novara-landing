@@ -1,6 +1,39 @@
 ---
 import Base from '../../layouts/Base.astro';
+import { v1 } from '../../content/v1';
+import Header from '../../components/v1/Header.astro';
+import Hero from '../../components/v1/Hero.astro';
+import HowItWorks from '../../components/v1/HowItWorks.astro';
+import JobFit from '../../components/v1/JobFit.astro';
+import AiInterview from '../../components/v1/AiInterview.astro';
+import Platform from '../../components/v1/Platform.astro';
+import CtaBand from '../../components/v1/CtaBand.astro';
+import Footer from '../../components/v1/Footer.astro';
 ---
-<Base title="Novara v1 (R&D)" noindex>
-  <main><h1 class="p-10 text-display-md font-semibold">Novara v1 placeholder</h1></main>
+<Base title={v1.meta.title} description={v1.meta.description} noindex>
+  <Header />
+  <main>
+    <Hero />
+    <HowItWorks />
+    <JobFit />
+    <AiInterview />
+    <Platform />
+    <CtaBand />
+  </main>
+  <Footer />
 </Base>
+
+<script>
+  import { initV1 } from '../../components/v1/motion';
+  initV1();
+</script>
+
+<style is:global>
+  ::selection { background: var(--color-primary-200); color: var(--color-primary-950); }
+  input { caret-color: var(--color-primary); }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; border-radius: var(--radius-sm); }
+  [data-cta] a:focus-visible, [data-cta] button:focus-visible { outline-color: #fff; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+</style>

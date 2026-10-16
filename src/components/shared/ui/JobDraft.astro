@@ -1,0 +1,39 @@
+---
+import Chip from './Chip.astro';
+import Icon from './Icon.astro';
+import { jobDraft } from '../../../data/demo';
+/** AI-drafted job description: role, level and key skills in, a draft out. You edit and publish. */
+interface Props { class?: string }
+const { class: cls = '' } = Astro.props;
+---
+<div class:list={['w-full max-w-[28rem] rounded-lg border border-border-secondary bg-bg-secondary p-5 font-ui text-text-primary shadow-md', cls]} data-card="job-draft">
+  <div class="flex items-center justify-between gap-3">
+    <p class="m-0 text-sm font-semibold">New job</p>
+    <Chip tone="primary"><Icon name="sparkles" size={11} />AI draft</Chip>
+  </div>
+
+  <dl class="m-0 mt-4 grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-2.5 text-[13px]">
+    <dt class="text-text-tertiary">Role</dt>
+    <dd class="m-0 font-medium">{jobDraft.title}</dd>
+    <dt class="text-text-tertiary">Level</dt>
+    <dd class="m-0">{jobDraft.level}</dd>
+    <dt class="text-text-tertiary">Location</dt>
+    <dd class="m-0">{jobDraft.location}</dd>
+    <dt class="text-text-tertiary">Key skills</dt>
+    <dd class="m-0 flex flex-wrap gap-1.5">
+      {jobDraft.skills.map((s) => <span class="rounded-sm bg-gray-100 px-2 py-0.5 text-xs font-medium text-text-secondary">{s}</span>)}
+    </dd>
+  </dl>
+
+  <div class="mt-4 rounded-md border border-border-secondary p-3.5">
+    <p class="m-0 mb-2 text-xs font-semibold text-text-tertiary">Description</p>
+    <ul class="m-0 flex list-disc flex-col gap-1.5 pl-4 text-[13px] leading-snug text-text-secondary marker:text-text-placeholder">
+      {jobDraft.lines.map((l) => <li data-anim="draft-line">{l}</li>)}
+    </ul>
+  </div>
+
+  <div class="mt-4 flex justify-end gap-2 text-[13px] font-medium">
+    <span class="rounded-md border border-border-primary px-3 py-1.5 text-text-secondary shadow-xs">Regenerate</span>
+    <span class="rounded-md bg-primary px-3 py-1.5 text-white shadow-xs">Publish</span>
+  </div>
+</div>

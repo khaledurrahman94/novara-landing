@@ -1,0 +1,69 @@
+---
+import { v1 } from '../../content/v1';
+import SectionHead from './SectionHead.astro';
+import Plate from '../shared/ui/Plate.astro';
+import PipelineBoard from '../shared/ui/PipelineBoard.astro';
+import SlotPicker from '../shared/ui/SlotPicker.astro';
+import CareerPage from '../shared/ui/CareerPage.astro';
+import InterviewScore from '../shared/ui/InterviewScore.astro';
+import StageChart from '../shared/ui/StageChart.astro';
+const { platform } = v1;
+---
+<section id="platform" data-platform aria-labelledby="platform-title" class="scroll-mt-16 bg-bg">
+  <div class="mx-auto w-full max-w-[84rem] px-gutter pt-section">
+    <SectionHead id="platform-title" eyebrow={platform.eyebrow} title={platform.title} />
+  </div>
+  <div data-plat-stage class="plat-stage mx-auto w-full max-w-[84rem] px-gutter pb-section pt-10 lg:pt-12">
+    <div role="tablist" aria-label={platform.tabsLabel} data-tablist class="plat-tabs mb-10 flex-wrap gap-1.5">
+      {platform.tabs.map((t, i) => (
+        <button
+          type="button"
+          role="tab"
+          id={`tab-${t.id}`}
+          aria-controls={`panel-${t.id}`}
+          aria-selected={i === 0 ? 'true' : 'false'}
+          tabindex={i === 0 ? 0 : -1}
+          data-tab
+          class="rounded-full border border-border-primary bg-bg-secondary px-4 py-2 text-[15px] font-medium text-text-secondary transition-[background-color,color,border-color] duration-[var(--duration-fast)] hover:bg-bg-tertiary aria-selected:border-primary aria-selected:bg-primary aria-selected:text-white"
+        >{t.label}</button>
+      ))}
+    </div>
+    <div class="plat-panels grid gap-24">
+      {platform.tabs.map((t, i) => (
+        <div role="tabpanel" id={`panel-${t.id}`} aria-labelledby={`tab-${t.id}`} data-panel class="plat-panel grid gap-8 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:items-center lg:gap-14">
+          <div class="min-w-0">
+            <h3 class="m-0 max-w-[16ch] text-balance font-display text-[clamp(1.75rem,1.3rem+1.4vw,2.5rem)] font-semibold leading-[1.1] tracking-[-0.025em] text-text-primary">{t.heading}</h3>
+            <p class="m-0 mt-4 max-w-[26rem] text-lg leading-relaxed text-text-tertiary">{t.body}</p>
+          </div>
+          <Plate caption={t.caption} parallax class="plat-fig min-w-0" innerClass="plat-fig-inner">
+            {i === 0 && <PipelineBoard />}
+            {i === 1 && <SlotPicker />}
+            {i === 2 && <CareerPage />}
+            {i === 3 && <InterviewScore />}
+            {i === 4 && <StageChart />}
+          </Plate>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  .plat-tabs { display: none; }
+  [data-platform][data-tabs] .plat-tabs { display: flex; }
+  [data-platform][data-tabs] .plat-panels { gap: 0; }
+  [data-platform][data-tabs] .plat-panel { grid-area: 1 / 1; }
+
+  [data-platform][data-pinned] .plat-stage {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: calc(100svh - 4rem);
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  [data-platform][data-pinned] .plat-tabs { margin-bottom: 2rem; }
+  [data-platform][data-pinned] .plat-fig { height: min(32rem, calc(100svh - 14rem)); }
+  [data-platform][data-pinned] .plat-fig-inner { height: 100%; align-items: center; }
+  [data-platform] [role='tab']:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+</style>
