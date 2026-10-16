@@ -4,7 +4,7 @@ Goal: the page looks the same in proportion on a 1366 laptop and a 1920 or 2560 
 
 ## 1. Desktop fluid root (opt-in)
 - `Base` prop `fluid` sets `<html data-fluid>`. `src/styles/fluid.css` is inert without it.
-- From 1280px the root font grows `16px + (100vw - 1280px) * 0.01` (22.4px at 1920, capped at 28px near 2560). Below 1280 it stays 16px. A height cap `100svh / 45` (16px at 720 tall, 22.4px at 1080) keeps short and ultrawide screens in proportion. Range media queries (`width < 1024px`) avoid fractional-px gaps.
+- From 1280px the root font grows `16px + (100vw - 1280px) * 0.01` (22.4px at 1920, capped at 28px near 2560). Below 1280 it stays 16px. A height cap `100svh / 45` (16px at 720 tall, 22.4px at 1080) keeps short and ultrawide screens in proportion. Paired media queries use `.98px` complements (`max-width: 1023.98px`) or `not all and (...)` to avoid fractional-px gaps at Windows display scaling; no range syntax (`width < 1024px`), which Safari before 16.4 rejects.
 - Everything authored in rem (type, spacing, gaps, radii via rem classes, mockups) scales with it. Never mix px text with rem text in the same component: use `text-[0.8125rem]`, not `text-[13px]`. `Icon` and `ScoreRing` already size in rem.
 - The same file pins display tokens, `--spacing-section` and `--spacing-gutter` to their 1280px rem value (the root does the growing), and sets `--v1-max` (column width) and `--nav-h`. Use `max-w-[var(--v1-max,84rem)]` for page columns.
 - Media queries stay in px/rem breakpoints (they ignore the root size). `vw` clamps are only for the below-1280 range.

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-16T12:00:00Z",
+  "generatedAt": "2026-10-16T18:00:00Z",
   "title": "Design System: Novara",
   "extensions": {
     "colorMeta": {
@@ -405,6 +405,11 @@
         "name": "shadow-xl",
         "value": "0 24px 48px -12px rgb(16 24 40 / 0.14)",
         "purpose": "Hero candidate-review screen only."
+      },
+      {
+        "name": "shadow-sm",
+        "value": "0 1px 3px rgb(16 24 40 / 0.08), 0 1px 2px rgb(16 24 40 / 0.04)",
+        "purpose": "The auto-demo ghost pointer only."
       }
     ],
     "motion": [
@@ -507,6 +512,41 @@
         "name": "v3-canvas-dpr",
         "value": "min(devicePixelRatio, 2), redraw on demand",
         "purpose": "/v3 canvas performance cap."
+      },
+      {
+        "name": "fluid-root",
+        "value": "clamp(16px, min(16px + (100vw - 1280px) * 0.01, 100svh / 45), 28px) from 1280px under html[data-fluid]; 16px below",
+        "purpose": "Every page passes `fluid`; rem type, spacing and mockups keep proportion on any desktop."
+      },
+      {
+        "name": "scale-to-fit",
+        "value": "zoom: var(--fit), factor <= 1; width floor 0.8, height floor 0.5 with --fit-constrain: 1; fires novara:fit",
+        "purpose": "Shrink-only mockup fit; novara:fit refreshes ScrollTrigger. Never on Draggable or Flip scenes."
+      },
+      {
+        "name": "gap-free-queries",
+        "value": "max query = min - .02px (1023.98px), or not all and (...); no range syntax",
+        "purpose": "Paired breakpoints leave no fractional-px gap."
+      },
+      {
+        "name": "v1-pin-query",
+        "value": "(min-width: 1024px) and (min-height: 680px) and (prefers-reduced-motion: no-preference)",
+        "purpose": "/v1 pinned scenes and the /v3 interview lab pin only here; header stays inside the pin."
+      },
+      {
+        "name": "v1-pin-step",
+        "value": "How 0.35, Platform 0.4, Job Fit 0.5 viewports per step; settle 180ms, ease to nearest step centre over 0.6s",
+        "purpose": "Short pins; snapping exempt in the outer half of the first and last steps."
+      },
+      {
+        "name": "ghost-pointer",
+        "value": "1.25rem circle, text-primary, 2px white ring, shadow-sm, opacity 0.85; glide expo.out ~1.1s; press scale 0.85 for 120ms",
+        "purpose": "Auto demos: play once, cancel on real input and restore, no events in reports or live regions, skipped under reduced motion."
+      },
+      {
+        "name": "ambient-presence",
+        "value": "one step at a time; on pointer or focus finish the step and settle; resume 2000ms after leave; pause off screen (IntersectionObserver)",
+        "purpose": "Interactive tiles loop quietly and yield to the visitor. Off under reduced motion."
       }
     ],
     "breakpoints": [
@@ -525,6 +565,14 @@
       {
         "name": "v3-pin-min-height",
         "value": "620px"
+      },
+      {
+        "name": "fluid-start",
+        "value": "1280px"
+      },
+      {
+        "name": "pin-min-height",
+        "value": "680px"
       }
     ]
   },
@@ -592,6 +640,14 @@
       "description": "/v3 contextual pill naming the one action under a fine pointer (data-cursor).",
       "html": "<span class=\"ds-cursor\">Drag</span>",
       "css": ".ds-cursor { display: inline-block; padding: 4px 10px; border-radius: 9999px; background: var(--color-text-primary, #101828); color: var(--color-white, #fff); font: 500 12px/1.2 'Geist Variable', system-ui, sans-serif; white-space: nowrap; transition: transform 150ms cubic-bezier(0.25, 1, 0.5, 1); } .ds-cursor:hover { transform: scale(1.04); } .ds-cursor:active { transform: scale(0.92); }"
+    },
+    {
+      "name": "Ghost Pointer",
+      "kind": "custom",
+      "refersTo": "ui",
+      "description": "Auto-demo pointer: Ink circle, white ring, shown once per demo and cancelled by real input.",
+      "html": "<span class=\"ds-ghost\" aria-hidden=\"true\"></span>",
+      "css": ".ds-ghost { display: inline-block; box-sizing: border-box; width: 1.25rem; height: 1.25rem; border: 2px solid #FFFFFF; border-radius: 9999px; background: #101828; box-shadow: 0 1px 3px rgb(16 24 40 / 0.08), 0 1px 2px rgb(16 24 40 / 0.04); opacity: 0.85; pointer-events: none; }"
     }
   ],
   "narrative": {
@@ -649,6 +705,36 @@
         "name": "The Interruptible Rule",
         "body": "Every pointer-driven motion is a quickTo or a killable tween, so a new input always overrides the last one mid-flight.",
         "section": "components"
+      },
+      {
+        "name": "The Scale Once Rule",
+        "body": "The fluid root grows everything, and ScaleToFit only shrinks. Nothing scales twice and nothing scales up.",
+        "section": "layout"
+      },
+      {
+        "name": "The Gap-Free Query Rule",
+        "body": "Paired breakpoints are written as .98px complements or not all and (...), never as range syntax.",
+        "section": "layout"
+      },
+      {
+        "name": "The Show Once Rule",
+        "body": "An auto demo plays one time, yields to the first real input, restores the state it changed, and leaves no trace in reports or live regions.",
+        "section": "components"
+      },
+      {
+        "name": "The Yield-to-Presence Rule",
+        "body": "An ambient loop never runs under a visitor's pointer or focus. It finishes its step, settles, and resumes only after they leave.",
+        "section": "components"
+      },
+      {
+        "name": "The Header-in-Pin Rule",
+        "body": "A pinned scene pins its heading with its steps. The visitor never scrubs through a step without the line that names it.",
+        "section": "components"
+      },
+      {
+        "name": "The Two-Surface Rule",
+        "body": "Integrity UI never appears on the candidate's surface. It lives only in the team's view, and a pulse is the only thing that crosses between them.",
+        "section": "components"
       }
     ],
     "dos": [
@@ -660,7 +746,11 @@
       "Do animate once, on entry, with expo-out on /v2, and leave every end state visible without JS or under reduced motion on every page.",
       "Do give each /v3 element one motion kind (scrubbed, triggered or interactive), and make scrubbed motion fully reversible.",
       "Do opt into the /v3 interaction layer with data attributes (`data-cursor`, `data-magnetic`, `data-tilt`, `data-depth`, `data-speed`), and give every drag a button or keyboard equivalent.",
-      "Do set product-UI text on the 10, 11, 12 and 13px Inter steps."
+      "Do set product-UI text on the 10, 11, 12 and 13px Inter steps.",
+      "Do author page and mockup sizes in rem under data-fluid, and let ScaleToFit only shrink.",
+      "Do write paired breakpoints as .98px complements or not all and (...).",
+      "Do keep a pinned scene's heading inside the pin, and leave the first and last steps free of snapping.",
+      "Do cancel an auto demo on the first real input, restore what it changed, and play it only once."
     ],
     "donts": [
       "Don't use the brand gradient anywhere but the single hero horizon, and never behind text.",
@@ -668,7 +758,10 @@
       "Don't fill status chips with full-strength color. Use the 10% tint, a dot and dark text.",
       "Don't pin sections or hijack scroll on /v2. On /v3, pin only at 768px wide and 620px tall or more, and never trap vertical swipes on touch.",
       "Don't add a cursor pill to an element that does nothing, or run pointer effects under reduced motion or on touch (except the idle drift).",
-      "Don't introduce colors outside the token palette. The palette is binding."
+      "Don't introduce colors outside the token palette. The palette is binding.",
+      "Don't use range media syntax (width < 1024px), px text inside a rem mockup, or zoom on a Draggable or Flip scene.",
+      "Don't let demo or ambient events reach a report, a live region or the clipboard, or run them under reduced motion.",
+      "Don't put integrity UI on the candidate's surface, or show a slot confirmation as an overlay."
     ]
   }
 }

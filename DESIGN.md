@@ -243,6 +243,17 @@ The page is one centred column, max 1200px, with 1px border-secondary hairlines 
 
 Section compositions draw from a small set: a 4/8 split of heading and figure (lg 12-column grid), a 7/5 split of heading and lead over a full-width figure, a centred heading (44rem max) over a full-width figure, ruled rows (funnel and FAQ), a 4-column numbered step row, and a hairline bento. The bento runs edge to edge inside the frame on a 6-column grid with 1px gaps that show the hairline color. Below lg, everything stacks to one column. Text measure is held by max-widths (30–46rem), not by the grid.
 
+### Responsive scale
+Every page passes `fluid` to `Base`, which sets `<html data-fluid>` and turns on `src/styles/fluid.css`. Below 1280px the root stays 16px. From 1280px it is `clamp(16px, min(16px + (100vw - 1280px) * 0.01, 100svh / 45), 28px)`: 22.4px at 1920x1080, capped by height so short and ultrawide screens never outgrow the viewport. Display tokens, `--spacing-section` and `--spacing-gutter` hold their 1280px rem values so the root does the growing; `--nav-h` is 4rem and page columns are 75rem (1200px at 16px). Type, spacing and mockups are authored in rem, never px, so they all scale together. Canvas constants multiply by root/16, and pin offsets read the nav height, not 64px.
+
+**ScaleToFit** (`src/components/shared/ScaleToFit.astro`) wraps a mockup authored at a design width in rem and applies `zoom: var(--fit)`. It only ever shrinks (factor at most 1). Width mode floors at 0.8, and below that the content reflows narrower so text stays legible. A wrapper with `--fit-constrain: 1` and a definite height (a pinned scene) also fits the height, down to 0.5. When a factor changes it fires `novara:fit`, and `scripts/motion.ts` refreshes ScrollTrigger on it, as well as on resize and orientationchange. V2 and V3 mockups reflow with container queries instead, so phones never get shrunk text. Draggable and Flip scenes are never zoomed.
+
+Media queries never use range syntax. A max query is the `.98px` complement of its min query (`(max-width: 1023.98px)` against `(min-width: 1024px)`), or `not all and (...)` negates the exact pin query, so no fractional viewport falls between the two.
+
+**The Scale Once Rule.** The fluid root grows everything, and ScaleToFit only shrinks. Nothing scales twice and nothing scales up.
+
+**The Gap-Free Query Rule.** Paired breakpoints are written as `.98px` complements or `not all and (...)`, never as range syntax.
+
 ## Elevation & Depth
 
 The page itself is flat. Depth comes from the hairline frame and from alternating white and plate bands. Shadows belong to product UI only: soft, low-opacity and tinted with Ink (#101828). The hero candidate-review screen is the one lifted object (shadow-xl), and it starts tilted 10° in perspective (5° on phones) at 94% scale before scrolling flat.
@@ -252,6 +263,7 @@ The page itself is flat. Depth comes from the hairline frame and from alternatin
 - **Panel** (`0 4px 8px -2px rgb(16 24 40 / 0.08), 0 2px 4px -2px rgb(16 24 40 / 0.04)`): standalone product panels such as the job-fit card, integrity track and move board.
 - **Overlay** (`0 12px 16px -4px rgb(16 24 40 / 0.08), 0 4px 6px -2px rgb(16 24 40 / 0.04)`): the interview video frame and toasts.
 - **Hero lift** (`0 24px 48px -12px rgb(16 24 40 / 0.14)`): the hero candidate-review screen only.
+- **Ghost** (shadow-sm, `0 1px 3px rgb(16 24 40 / 0.08), 0 1px 2px rgb(16 24 40 / 0.04)`): the auto-demo ghost pointer only.
 
 ### Named Rules
 **The Flat Page Rule.** Marketing surfaces (sections, plates, bento tiles, the FAQ) never cast shadows. Only product UI is lifted.
@@ -299,10 +311,16 @@ Content draws in once on entry, expo-out, when it reaches about 65–70% of the 
 - **Scroll depth:** `data-speed="s"` drifts an element from −s×90px to +s×90px across its pass through the viewport, scrubbed so it reverses exactly. It's used sparingly (0.1), and only from 768px.
 - **Drag:** draggable product objects (the resume cards, the shortlist card) lift to 103–104% on press, use grab and grabbing cursors, and meet edge resistance (0.7–0.8) inside their figure. A miss springs home (elastic.out(1, 0.7), 0.9s). A slow release springs into place (back.out(1.4), 0.55s). A throw (250px/s or faster) carries its own velocity and lands exactly on the target (InertiaPlugin). Every drag has a button or arrow-key equivalent.
 - **Hold-to-drag on touch:** on touch, draggables start only after a 250ms press-and-hold. A swipe that moves more than 8px first scrolls the page (`touch-action: pan-y`). Fine pointers drag at once.
+- **Auto demos (ghost pointer):** where a surface hides its interaction, a ghost pointer shows it once. The ghost is a 20px (1.25rem) circle in Ink with a 2px white ring and shadow-sm, shown at 85% opacity, with pointer events off and aria-hidden. It glides to its target with expo.out (about 1.1s), presses by scaling to 0.85 for 120ms, then fades. Each demo plays one time. Real input (pointer movement, a press, a key, focus) cancels it for good, and the surface goes back to the state it had before the demo. Demo events are tagged and purged, so they never reach a report, a counter the visitor owns or a live region. Under reduced motion demos are skipped and the ghost is never shown. Used by the Results canvas, the screening lab, the interview lab and Decide.
+- **Ambient tiles (presence-aware):** interactive tiles (the /v3 Platform bento) run a small ambient loop, one step at a time. When a pointer or focus arrives, the step in flight finishes and the tile settles, calm and fully interactive. About 2s after the pointer or focus leaves, the loop resumes. An IntersectionObserver pauses the loop off screen. Ambient steps are silent (no toasts, no live-region text, no clipboard writes) and stay out of anything the visitor has edited. They don't run under reduced motion; the interactions do.
 
 **The One Verb Rule.** A cursor pill says one verb for the one thing that element does. Elements without an action have no pill.
 
 **The Interruptible Rule.** Every pointer-driven motion is a quickTo or a killable tween, so a new input always overrides the last one mid-flight.
+
+**The Show Once Rule.** An auto demo plays one time, yields to the first real input, restores the state it changed, and leaves no trace in reports or live regions.
+
+**The Yield-to-Presence Rule.** An ambient loop never runs under a visitor's pointer or focus. It finishes its step, settles, and resumes only after they leave.
 
 ### Motion (/v3)
 /v3 uses three kinds of motion, and each element uses one kind.
@@ -315,6 +333,21 @@ Pins run only at `(min-width: 768px) and (min-height: 620px)`. Below that, and o
 Under reduced motion every interaction still works (toggles, drags, buttons, the interview demo). Parallax, tilt, the cursor pill, magnets, scrubs and pins are off, drags land without springs or throws, every section shows its end state, and Lenis is off.
 
 Performance: canvases cap device pixel ratio at 2 and redraw on demand (resize, hover, scrub), not on a loop. Tilt roots and the interview lab watch visibility with IntersectionObserver and do no work off screen; the touch drift and the lab's live session pause when out of view. Each section's init is isolated, so one failure never takes the page down.
+
+### Pinned scenes (/v1)
+/v1's pinned sections (How It Works, Job Fit, Platform) share `scene.css` and `motion/scene.ts`. The structure is `section[data-scene] > .scene-stage > .scene-inner > .scene-head + .scene-body`. The section header is part of the pinned stage, so the heading stays on screen while the steps play. The stage fills `100svh` minus the nav, and its ScaleToFit is height-constrained. `PIN_MQ` is `(min-width: 1024px) and (min-height: 680px) and (prefers-reduced-motion: no-preference)`. JS sets `data-pinned` only there; everywhere else the section stacks, and under reduced motion it is static. `pinScene` pins under the nav with short per-step distances (How 0.35, Platform 0.4, Job Fit 0.5 viewports per step), reports fractional step progress, and after scrolling settles eases to the centre of the nearest step. Snapping is exempt in the outer half of the first and last steps, so entering and leaving the pin stay free.
+
+The /v3 interview lab pins at the same 1024x680 query (with `not all and (...)` giving a short scrub elsewhere). /v3 Results and How pin from 768x620 (see Motion (/v3)) and scrub without step snapping. Every pin on every page carries `refreshPriority` in DOM order, and `ScrollTrigger.sort()` runs on `refreshInit`.
+
+**The Header-in-Pin Rule.** A pinned scene pins its heading with its steps. The visitor never scrubs through a step without the line that names it.
+
+### Interview lab (/v3, two surfaces)
+The interview lab shows two surfaces side by side. The candidate's screen is a spoken, transcribed AI interview with no integrity UI at all. The hiring team's view carries the integrity monitor (event tiles, counters, the report). A pulse travels between the two whenever a detection lands, linking cause to record. Detections are real browser events (tab, focus, copy and paste), counted only while the lab is live and on screen.
+
+**The Two-Surface Rule.** Integrity UI never appears on the candidate's surface. It lives only in the team's view, and a pulse is the only thing that crosses between them.
+
+### Slot picker
+The candidate-facing slot picker (`shared/ui/SlotPicker.astro`) confirms a booking with an in-flow row at the bottom of the card. It never overlays or covers the slots.
 
 ### Shared layers and /v1
 The tokens (`src/styles/tokens.css`), the product UI components (`src/components/shared/ui/`, Inter), the demo data and the motion bootstrap (GSAP, ScrollTrigger and Lenis in `src/scripts/motion.ts`) are common to both pages. /v1 differs. It sets display type in Urbanist (`--font-display`, with the tokenized `--text-display-*` scale), follows the agency's section structure, pins sections on desktop to scroll through them, and presents product UI on the bg-tertiary `Plate`.
@@ -334,6 +367,10 @@ The tokens (`src/styles/tokens.css`), the product UI components (`src/components
 - **Do** give each /v3 element one motion kind (scrubbed, triggered or interactive), and make scrubbed motion fully reversible.
 - **Do** opt into the /v3 interaction layer with data attributes (`data-cursor`, `data-magnetic`, `data-tilt`, `data-depth`, `data-speed`), and give every drag a button or keyboard equivalent.
 - **Do** set product-UI text on the 10, 11, 12 and 13px Inter steps.
+- **Do** author page and mockup sizes in rem under `data-fluid`, and let ScaleToFit only shrink.
+- **Do** write paired breakpoints as `.98px` complements or `not all and (...)`.
+- **Do** keep a pinned scene's heading inside the pin, and leave the first and last steps free of snapping.
+- **Do** cancel an auto demo on the first real input, restore what it changed, and play it only once.
 
 ### Don't:
 - **Don't** use the brand gradient anywhere but the single hero horizon, and never behind text.
@@ -342,3 +379,6 @@ The tokens (`src/styles/tokens.css`), the product UI components (`src/components
 - **Don't** pin sections or hijack scroll on /v2. On /v3, pin only at 768px wide and 620px tall or more, and never trap vertical swipes on touch.
 - **Don't** add a cursor pill to an element that does nothing, or run pointer effects under reduced motion or on touch (except the idle drift).
 - **Don't** introduce colors outside the token palette. The palette is binding.
+- **Don't** use range media syntax (`width < 1024px`), px text inside a rem mockup, or zoom on a Draggable or Flip scene.
+- **Don't** let demo or ambient events reach a report, a live region or the clipboard, or run them under reduced motion.
+- **Don't** put integrity UI on the candidate's surface, or show a slot confirmation as an overlay.
