@@ -12,11 +12,11 @@ const kenji = byId('kenji');
 <div data-move class="w-full rounded-lg border border-border-secondary bg-white p-4 font-ui text-text-primary shadow-md" data-card="move-board">
   <p class="m-0 mb-3 text-sm font-semibold">{role.title}</p>
   <div class="grid grid-cols-2 gap-3">
-    <section data-col="from" aria-label={d.from} class="rounded-md bg-bg-tertiary p-2">
-      <h4 class="m-0 mb-2 flex items-center gap-1.5 px-1 text-xs font-semibold text-text-secondary">
+    <div data-col="from" class="rounded-md bg-bg-tertiary p-2">
+      <p class="m-0 mb-2 flex items-center gap-1.5 px-1 text-xs font-semibold text-text-secondary">
         <span class:list={['size-1.5 rounded-full', toneDot[stageTone.Completed]]} aria-hidden="true"></span>{d.from}
         <span class="ml-auto font-medium tabular-nums text-text-tertiary">1</span>
-      </h4>
+      </p>
       <ul class="m-0 flex list-none flex-col gap-2 p-0">
         <li aria-hidden="true" class="h-[7.25rem] rounded-md border border-dashed border-border-primary"></li>
         <li class="rounded-md border border-border-secondary bg-white p-2.5 shadow-xs">
@@ -24,12 +24,12 @@ const kenji = byId('kenji');
           <p class="m-0 mt-1.5 text-[11px] text-text-tertiary">Job Fit {ines.fit}</p>
         </li>
       </ul>
-    </section>
-    <section data-col="to" aria-label={d.to} class="rounded-md bg-bg-tertiary p-2">
-      <h4 class="m-0 mb-2 flex items-center gap-1.5 px-1 text-xs font-semibold text-text-secondary">
+    </div>
+    <div data-col="to" class="rounded-md bg-bg-tertiary p-2">
+      <p class="m-0 mb-2 flex items-center gap-1.5 px-1 text-xs font-semibold text-text-secondary">
         <span class:list={['size-1.5 rounded-full', toneDot[stageTone['HR Round']]]} aria-hidden="true"></span>{d.to}
         <span class="ml-auto font-medium tabular-nums text-text-tertiary">2</span>
-      </h4>
+      </p>
       <ul class="m-0 flex list-none flex-col gap-2 p-0">
         <li data-move-card class="relative z-10 rounded-md border border-primary bg-white p-2.5 shadow-md">
           <div class="flex items-center gap-2"><Avatar initials={amara.initials} size="xs" lead /><span class="min-w-0 truncate text-xs font-semibold">{amara.name}</span></div>
@@ -43,6 +43,6 @@ const kenji = byId('kenji');
           <p class="m-0 mt-1.5 text-[11px] text-text-tertiary">Job Fit {kenji.fit}</p>
         </li>
       </ul>
-    </section>
+    </div>
   </div>
 </div>

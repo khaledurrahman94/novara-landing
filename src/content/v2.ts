@@ -24,23 +24,22 @@ export const v2 = {
     sendError: 'Something went wrong. Please try again.',
     success: 'Thanks. We will be in touch to book your demo.',
     sending: 'Sending',
+    fallback: 'The demo form is not connected yet. Please check back soon.',
   },
   hero: {
-    eyebrow: 'AI resume screening and first-round interviews',
     title: 'Hire the person, not the pile.',
     sub: 'Novara scores every resume against the job, runs the first round with an AI interviewer, and shows your team the evidence behind every shortlist.',
     shotCaption:
       'Novara candidate review: ranked applicants on the left, and Amara Okafor with a Job Fit Score of 92, an AI Interview Score of 88 and one integrity event to review.',
   },
   results: {
-    eyebrow: 'Results',
     title: 'From 1,200+ applicants to 4 hires.',
     caption: 'One real hiring round for engineering roles, run on Novara.',
     figures: [
-      { key: 'applied', label: 'Applied', value: 1200, suffix: '+' },
-      { key: 'interviewed', label: 'Took the AI interview', value: 600, suffix: '' },
-      { key: 'shortlisted', label: 'Shortlisted', value: 12, suffix: '' },
-      { key: 'hired', label: 'Hired', value: 4, suffix: '' },
+      { key: 'applied', label: 'Applied', note: 'Resumes received for engineering roles.', callout: '', value: 1200, suffix: '+' },
+      { key: 'interviewed', label: 'AI interviews', note: "Screened against the job's requirements, then took the AI interview.", callout: '', value: 600, suffix: '' },
+      { key: 'shortlisted', label: 'Shortlisted', note: 'Shortlisted after the AI interview.', callout: '12 of the 600 interviewed', value: 12, suffix: '' },
+      { key: 'hired', label: 'Hired', note: 'Hired after in-person interviews.', callout: '4 of the 12 shortlisted', value: 4, suffix: '' },
     ],
   },
   features: {

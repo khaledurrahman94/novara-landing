@@ -4,29 +4,35 @@ import Section from './Section.astro';
 const { results } = v2;
 const max = Math.max(...results.figures.map((f) => f.value));
 ---
-<Section id="results" labelledby="results-title">
-  <p class="m-0 text-sm font-medium text-text-tertiary">{results.eyebrow}</p>
-  <h2 id="results-title" class="m-0 mt-4 max-w-[40rem] text-[clamp(2rem,1.2rem+2.8vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.03em]">{results.title}</h2>
+<Section id="results" labelledby="results-title" tone="plate">
+  <h2 id="results-title" class="m-0 max-w-[40rem] text-[clamp(2rem,1.2rem+2.8vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.03em]">{results.title}</h2>
 
   <figure data-funnel class="m-0 mt-14">
     <ol class="m-0 list-none border-b border-border-secondary p-0">
-      {results.figures.map((f) => (
-        <li class="grid items-center gap-x-10 gap-y-3 border-t border-border-secondary py-6 md:grid-cols-[14rem_minmax(0,1fr)]">
-          <div>
-            <p class="m-0 text-[44px] font-semibold leading-none tracking-[-0.03em] tabular-nums">
-              <span data-count={f.value} data-suffix={f.suffix}>{f.value.toLocaleString('en-US')}{f.suffix}</span>
-            </p>
-            <p class="m-0 mt-2 text-sm text-text-tertiary">{f.label}</p>
-          </div>
-          <div class="h-9 rounded-md bg-bg" aria-hidden="true">
-            <div
-              data-funnel-bar
-              class:list={['h-full origin-left rounded-md', f.key === 'hired' ? 'bg-primary' : 'bg-primary-300']}
-              style={`width:max(3px, ${((f.value / max) * 100).toFixed(3)}%)`}
-            ></div>
-          </div>
-        </li>
-      ))}
+      {results.figures.map((f) => {
+        const pct = (f.value / max) * 100;
+        return (
+          <li class="grid items-center gap-x-10 gap-y-3 border-t border-border-secondary py-6 md:grid-cols-[17rem_minmax(0,1fr)]">
+            <div>
+              <p class="m-0 flex items-baseline gap-3">
+                <span class="text-[44px] font-semibold leading-none tracking-[-0.03em] tabular-nums" data-count={f.value} data-suffix={f.suffix}>{f.value.toLocaleString('en-US')}{f.suffix}</span>
+                <span class="text-sm font-medium text-text-primary">{f.label}</span>
+              </p>
+              <p class="m-0 mt-2 max-w-[16rem] text-sm leading-snug text-text-tertiary">{f.note}</p>
+            </div>
+            <div class="relative h-9 rounded-md bg-white" aria-hidden="true">
+              <div
+                data-funnel-bar
+                class:list={['h-full origin-left rounded-md', f.key === 'hired' ? 'bg-primary' : 'bg-primary-300']}
+                style={`width:max(3px, ${pct.toFixed(3)}%)`}
+              ></div>
+              {f.callout && (
+                <span data-funnel-callout class="absolute top-1/2 -translate-y-1/2 whitespace-nowrap text-sm font-medium text-text-primary" style={`left:calc(max(3px, ${pct.toFixed(3)}%) + 0.75rem)`}>{f.callout}</span>
+              )}
+            </div>
+          </li>
+        );
+      })}
     </ol>
     <figcaption class="mt-5 text-sm text-text-tertiary">{results.caption}</figcaption>
   </figure>

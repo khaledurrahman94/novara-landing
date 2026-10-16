@@ -123,15 +123,14 @@ function flipCounters(root: HTMLElement): void {
 
 /* ---------- hero ---------- */
 
-function initHero(root: HTMLElement, splits: SplitText[]): void {
-  const h1 = one(root, 'h1');
+function initHero(root: HTMLElement): void {
   const rise = $(root, '[data-rise]');
   const stage = one(root, '[data-shot-stage]');
   const shot = one(root, '[data-shot]');
   const review = one(root, '[data-card="candidate-review"]');
   if (!stage || !shot || !review) return;
-  if (h1) gsap.set(h1, { autoAlpha: 0 });
-  gsap.set(rise, { autoAlpha: 0, y: 14 });
+
+  // The H1 is never hidden. Sub-line, form and shot start hidden from CSS (.js), so there is no blink.
   primeScores(review);
   primeCriteria(review);
   gsap.set($(review, '[data-anim="event"]'), { autoAlpha: 0, y: 6 });
@@ -154,40 +153,25 @@ function initHero(root: HTMLElement, splits: SplitText[]): void {
     },
   );
 
-  // Once it settles, the panels come alive.
-  ScrollTrigger.create({
-    trigger: stage,
-    start: 'top 35%',
-    once: true,
-    onEnter: () => {
-      const tl = gsap.timeline({ defaults: { ease: EASE } });
-      playScores(tl, review, 0);
-      playCriteria(tl, review, 0.35);
-      tl.to($(review, '[data-anim="event"]'), { autoAlpha: 1, y: 0, duration: T.slower, stagger: 0.12 }, 1.1);
-    },
-  });
-
-  const reveal = (): void => {
+  // The panels come alive once: score counts, criteria tick, the integrity event appears.
+  const alive = (): void => {
     const tl = gsap.timeline({ defaults: { ease: EASE } });
-    try {
-      if (h1) {
-        const split = new SplitText(h1, { type: 'words', mask: 'words' });
-        splits.push(split);
-        gsap.set(h1, { autoAlpha: 1 });
-        tl.from(split.words, { yPercent: 110, duration: T.slower + 0.2, stagger: 0.04 }, 0);
-      }
-    } catch {
-      if (h1) gsap.set(h1, { autoAlpha: 1 });
-    }
-    tl.to(rise, { autoAlpha: 1, y: 0, duration: T.slower, stagger: 0.09 }, 0.35);
-    tl.from(shot, { autoAlpha: 0, y: 28, duration: 1, ease: EASE }, 0.3);
+    playScores(tl, review, 0);
+    playCriteria(tl, review, 0.35);
+    tl.to($(review, '[data-anim="event"]'), { autoAlpha: 1, y: 0, duration: T.slower, stagger: 0.12 }, 1.1);
   };
-  void Promise.race([document.fonts.ready, new Promise((r) => window.setTimeout(r, 1000))]).then(reveal);
+
+  const introTl = gsap.timeline({ defaults: { ease: EASE } });
+  introTl.fromTo(rise, { y: 14 }, { autoAlpha: 1, y: 0, duration: T.slower, stagger: 0.09 }, 0.05);
+  introTl.fromTo(shot, { y: 28 }, { autoAlpha: 1, y: 0, duration: 1 }, 0.2);
+
+  if (stage.getBoundingClientRect().top < window.innerHeight * 0.9) {
+    introTl.add(alive, 0.9);
+  } else {
+    ScrollTrigger.create({ trigger: stage, start: 'top 35%', once: true, onEnter: alive });
+  }
   // Never leave the page hidden.
-  window.setTimeout(() => {
-    if (h1) gsap.set(h1, { autoAlpha: 1 });
-    gsap.set(rise, { autoAlpha: 1, y: 0 });
-  }, 4000);
+  window.setTimeout(() => gsap.set([...rise, shot], { autoAlpha: 1 }), 4000);
 }
 
 /* ---------- results ---------- */
@@ -197,12 +181,15 @@ function initResults(root: HTMLElement): void {
   if (!funnel) return;
   const bars = $(funnel, '[data-funnel-bar]');
   const counts = $(funnel, '[data-count]');
+  const callouts = $(funnel, '[data-funnel-callout]');
   gsap.set(bars, { scaleX: 0 });
+  gsap.set(callouts, { autoAlpha: 0 });
   counts.forEach((el) => setCount(el, 0));
   onEnter(funnel, () => {
     const tl = gsap.timeline({ defaults: { ease: EASE } });
     bars.forEach((b, i) => tl.to(b, { scaleX: 1, duration: 1.2, ease: 'power3.out' }, i * 0.35));
     counts.forEach((c, i) => tl.add(countTween(c, 1.2), i * 0.35));
+    callouts.forEach((c, i) => tl.to(c, { autoAlpha: 1, duration: T.slower }, 1.4 + i * 0.4));
   }, 'top 70%');
 }
 
@@ -437,7 +424,7 @@ export function initV2(): void {
     const splits: SplitText[] = [];
     const ctx = gsap.context(() => {
       const hero = one(document, '[data-hero]');
-      if (hero) initHero(hero, splits);
+      if (hero) initHero(hero);
       const results = one(document, '#results');
       if (results) initResults(results);
       const screen = one(document, '[data-feature="screen"]');

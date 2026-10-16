@@ -59,10 +59,11 @@ Brand line: "Hire the person, not the pile."
 - anti-cheat monitoring: tab switching, full-screen exit, copy/paste, camera status, multiple faces, looking away, focus;
 - recording and results;
 - interview dashboard;
+- analytics (hiring trends, Job Fit Score and interview analytics; not in the PM list but shown in `design/reference/analytics.png`);
 - pipeline and Kanban;
 - career page with embed code;
 - job sharing;
-- email templates;
+- email templates: editable, with variables, and you can restore the default;
 - admin panel;
 - multi-tenant data and per-company storage.
 

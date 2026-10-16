@@ -3,7 +3,7 @@ import { v2 } from '../../content/v2';
 import Section from './Section.astro';
 const { faq } = v2;
 ---
-<Section id="faq" labelledby="faq-title">
+<Section id="faq" labelledby="faq-title" tone="plate">
   <div class="grid gap-10 lg:grid-cols-12 lg:gap-16">
     <h2 id="faq-title" class="m-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leading-[1.08] tracking-[-0.03em] lg:col-span-4">{faq.title}</h2>
     <div class="v2-faq border-b border-border-secondary lg:col-span-8">

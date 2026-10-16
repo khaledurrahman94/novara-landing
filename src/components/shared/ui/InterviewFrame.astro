@@ -4,8 +4,8 @@ import { interview, lead } from '../../../data/demo';
  * Neutral stand-in for the AI interviewer: no faces, no stock media.
  * Dark video tile, soft violet-tinted field, voice waveform, live captions, REC chip, timer, self-view.
  */
-interface Props { size?: 'md' | 'sm'; fill?: boolean; caption?: string; timer?: string; class?: string }
-const { size = 'md', fill = false, caption = interview.captions[0], timer = interview.liveTimer, class: cls = '' } = Astro.props;
+interface Props { size?: 'md' | 'sm'; fill?: boolean; caption?: string; timer?: string; markSrc?: string; class?: string }
+const { size = 'md', fill = false, caption = interview.captions[0], timer = interview.liveTimer, markSrc, class: cls = '' } = Astro.props;
 const bars = Array.from({ length: 26 }, (_, i) => Math.round(24 + Math.abs(Math.sin(i * 1.27)) * 56 + (i % 3) * 6));
 const sm = size === 'sm';
 ---
@@ -17,7 +17,7 @@ const sm = size === 'sm';
 
   <div class="flex items-center justify-between px-3 pt-3">
     <span class="flex items-center gap-1.5 text-[11px] font-medium text-white/80">
-      <span class="grid size-5 place-items-center rounded-full bg-primary-600 text-[9px] font-semibold">N</span>
+      {markSrc ? <img src={markSrc} alt="" width="20" height="20" class="size-5 rounded-full bg-white p-0.5" /> : <span class="grid size-5 place-items-center rounded-full bg-primary-600 text-[9px] font-semibold">N</span>}
       Novara interviewer
     </span>
     <span class="flex items-center gap-2 text-[11px] tabular-nums text-white/80">

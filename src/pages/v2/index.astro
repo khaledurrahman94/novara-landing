@@ -23,6 +23,10 @@ const faqLd = {
 };
 ---
 <Base title={v2.seo.title} description={v2.seo.description} noindex>
+  <script is:inline>
+    document.documentElement.classList.add('js');
+    setTimeout(function () { document.documentElement.classList.add('js-fail'); }, 4000);
+  </script>
   <div class="v2 bg-white text-text-primary">
     <Nav />
     <main>

@@ -14,6 +14,7 @@ interface Props {
   sendError?: string;
   success?: string;
   sending?: string;
+  fallback?: string;
   class?: string;
 }
 const {
@@ -26,6 +27,7 @@ const {
   sendError = 'Something went wrong. Please try again.',
   success = 'Thanks. We will be in touch to book your demo.',
   sending = 'Sending',
+  fallback = 'The demo form is not connected yet. Please check back soon.',
   class: cls = '',
 } = Astro.props;
 ---
@@ -35,6 +37,7 @@ const {
   data-error={error}
   data-send-error={sendError}
   data-sending={sending}
+  data-fallback={fallback}
   action={action}
   method="post"
   class:list={['w-full max-w-[30rem]', cls]}
@@ -92,6 +95,12 @@ const {
       }
       setError('');
       const action = form.getAttribute('action');
+      if (!action && !import.meta.env.DEV) {
+        // TODO: remove once the demo-request endpoint is set as `action`.
+        console.warn('DemoForm: no action configured, the request was not sent.');
+        msg.textContent = form.dataset['fallback'] ?? '';
+        return;
+      }
       if (action) {
         const label = btn.textContent;
         btn.disabled = true;
