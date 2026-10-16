@@ -123,6 +123,7 @@ function mount(root: HTMLElement): () => void {
   let speaking = false;
   const sim: Record<SimKey, boolean> = { camera: false, faces: false, fullscreen: false };
   let candSpeaking = false;
+  let userPaused = false;
   let seq: gsap.core.Timeline | null = null;
   let inflight: { tl: gsap.core.Timeline; arrive: () => void } | null = null;
   let scState: 'wait' | 'run' | 'done' = rm ? 'done' : 'wait';
@@ -391,6 +392,9 @@ function mount(root: HTMLElement): () => void {
     });
     renderChip();
     renderTimeline(false);
+    clearTimeout(toastTimer);
+    gsap.killTweensOf(toast);
+    gsap.to(toast, { opacity: 0, duration: rm ? 0 : 0.2, ease: 'power2.in' });
   };
 
   /* ---------- clock and liveness ---------- */
@@ -419,7 +423,7 @@ function mount(root: HTMLElement): () => void {
       setTimer();
       resetTrackers();
     }
-    seq?.paused(!live);
+    seq?.paused(!live || userPaused);
     if (live && scState === 'wait' && scTimer === undefined) scTimer = setTimeout(startShowcase, IDLE_BEFORE_SHOWCASE_MS);
     if (!live) {
       if (scState === 'run') cancelShowcase();
@@ -442,7 +446,6 @@ function mount(root: HTMLElement): () => void {
     transcript.textContent = '';
     tghost.textContent = ans;
     setCand('asking');
-    if (i > 0 || phase !== 'idle') status.textContent = `${lab.step(i + 1, TOTAL)}. ${text}`;
 
     seq?.kill();
     typeTween = null;
@@ -501,14 +504,14 @@ function mount(root: HTMLElement): () => void {
       () => {
         transcript.textContent = ans;
         setCand('received');
-        status.textContent = lab.candidate.receivedAnnounce(i + 1);
       },
       undefined,
       doneAt,
     );
     const last = i === TOTAL - 1;
-    tl.call(() => (last ? finish() : showQuestion(i + 1)), undefined, doneAt + (rm ? 4 : 1.8));
-    tl.paused(!isLive());
+    // Reduced motion: no auto-advance, the visitor uses Next question.
+    if (!rm) tl.call(() => (last ? finish() : showQuestion(i + 1)), undefined, doneAt + 1.8);
+    tl.paused(!isLive() || userPaused);
   };
 
   function begin(): void {
@@ -520,7 +523,7 @@ function mount(root: HTMLElement): () => void {
     showQuestion(0);
   }
 
-  const finish = (): void => {
+  const finish = (byUser = false): void => {
     if (phase !== 'running') return;
     // Close out anything still open, then stop the clock.
     const end = now();
@@ -563,7 +566,7 @@ function mount(root: HTMLElement): () => void {
     reportView.hidden = false;
     renderSim();
     status.textContent = `${lab.report.title}. ${n > 0 ? lab.report.summary(n) : lab.report.clean}`;
-    rTitle.focus({ preventScroll: true });
+    if (byUser) rTitle.focus({ preventScroll: true });
 
     // The sample scoring panel plays in; the visitor's report rows rise.
     const score = q('[data-card="interview-score"]', reportView);
@@ -593,7 +596,15 @@ function mount(root: HTMLElement): () => void {
   on(nextBtn, 'click', () => {
     if (phase === 'running' && qi < TOTAL - 1) showQuestion(qi + 1);
   });
-  on(finishBtn, 'click', finish);
+  on(finishBtn, 'click', () => finish(true));
+  const pauseBtn = q<HTMLButtonElement>('[data-il-pause]');
+  if (rm) pauseBtn.hidden = true;
+  on(pauseBtn, 'click', () => {
+    userPaused = !userPaused;
+    pauseBtn.textContent = userPaused ? lab.resume : lab.pause;
+    pauseBtn.setAttribute('aria-pressed', String(userPaused));
+    seq?.paused(!isLive() || userPaused);
+  });
   on(again, 'click', restart);
 
   /* ---------- detections ---------- */
@@ -884,7 +895,7 @@ function mount(root: HTMLElement): () => void {
     };
     // Pin only where both surfaces sit side by side and the scene fits under the nav (the frame height is capped in CSS).
     mm.add('(min-width: 1024px) and (min-height: 680px)', () => build(true));
-    mm.add('(max-width: 1023px), (max-height: 679px)', () => build(false));
+    mm.add('not all and (min-width: 1024px) and (min-height: 680px)', () => build(false));
   }
   // A keyboard user tabbing into the zoomed-out UI jumps straight to the finished state.
   const onFocusIn = (): void => {

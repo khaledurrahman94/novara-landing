@@ -36,6 +36,8 @@ export const lab = {
   step: (n: number, total: number): string => `Question ${n} of ${total}`,
   next: 'Next question',
   finish: 'Finish interview',
+  pause: 'Pause',
+  resume: 'Resume',
   candidate: {
     label: "Candidate's screen",
     note: 'What the candidate sees',

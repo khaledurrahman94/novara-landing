@@ -502,7 +502,11 @@ function mount(root: HTMLElement): () => void {
   const firstRow = (): RowRefs | null => rows.get(rank(visibleIds(), active)[0] ?? '') ?? null;
 
   /** Ends the demo and puts the UI back to how it loads. Also used when the demo finishes. */
-  const endShowcase = (): void => {
+  const inViewport = (): boolean => {
+    const r = root.getBoundingClientRect();
+    return r.bottom > 0 && r.top < window.innerHeight;
+  };
+  const endShowcase = (target?: EventTarget | null): void => {
     if (showState === 'done') return;
     const wasRunning = showState === 'run';
     showState = 'done';
@@ -513,9 +517,12 @@ function mount(root: HTMLElement): () => void {
     gsap.killTweensOf(pointer);
     gsap.set(pointer, { opacity: 0 });
     if (!wasRunning) return;
-    if (demoChip && demoChip.getAttribute('aria-pressed') === 'true') demoChip.click();
+    const pressed = demoChip && demoChip.getAttribute('aria-pressed') === 'true' ? demoChip : null;
     demoChip = null;
-    openOnly(firstRow());
+    // The visitor's own press on that chip toggles it; don't toggle twice.
+    if (pressed && !(target instanceof Node && pressed.contains(target))) pressed.click();
+    // Never change row heights while the lab is off screen.
+    if (inViewport()) openOnly(firstRow());
   };
 
   const ctx = gsap.context(() => {
@@ -574,7 +581,10 @@ function mount(root: HTMLElement): () => void {
         tl.call(
           () => {
             if (!onScreen(kb)) {
-              endShowcase();
+              // Chip out of view: leave the opened row as it is.
+              showState = 'done';
+              showTl?.kill();
+              showTl = null;
               return;
             }
             const t = point(kb);
@@ -597,7 +607,7 @@ function mount(root: HTMLElement): () => void {
               .to(pointer, { scale: 1, duration: 0.25, ease: 'expo.out' })
               .to(pointer, { opacity: 0, duration: 0.35, ease: 'power2.in' }, '>+0.3')
               .call(() => {
-                openOnly(firstRow());
+                if (inViewport()) openOnly(firstRow());
                 showState = 'done';
               }, undefined, '>+1.2');
           },
@@ -612,14 +622,14 @@ function mount(root: HTMLElement): () => void {
   }, root);
 
   // Any input from the visitor stops the demo for good, and puts everything back.
-  const stop = (): void => {
+  const stop = (e?: Event): void => {
     touched = true;
-    endShowcase();
+    endShowcase(e?.target);
   };
   root.addEventListener('pointerdown', stop, { signal });
   root.addEventListener('touchstart', stop, { passive: true, signal });
   root.addEventListener('keydown', stop, { signal });
-  root.addEventListener('pointermove', (e) => void ((Math.abs(e.movementX) + Math.abs(e.movementY) > 0) && stop()), { signal });
+  root.addEventListener('pointermove', (e) => void ((Math.abs(e.movementX) + Math.abs(e.movementY) > 0) && stop(e)), { signal });
 
   /* ---------- cleanup ---------- */
   return () => {
