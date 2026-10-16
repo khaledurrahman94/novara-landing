@@ -1,6 +1,45 @@
 ---
 import Base from '../../layouts/Base.astro';
+import { v2 } from '../../content/v2';
+import Nav from '../../components/v2/Nav.astro';
+import Hero from '../../components/v2/Hero.astro';
+import Results from '../../components/v2/Results.astro';
+import Product from '../../components/v2/Product.astro';
+import How from '../../components/v2/How.astro';
+import Platform from '../../components/v2/Platform.astro';
+import Faq from '../../components/v2/Faq.astro';
+import Close from '../../components/v2/Close.astro';
+import Footer from '../../components/v2/Footer.astro';
+import '../../components/v2/v2.css';
+
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: v2.faq.items.map((i) => ({
+    '@type': 'Question',
+    name: i.q,
+    acceptedAnswer: { '@type': 'Answer', text: i.a },
+  })),
+};
 ---
-<Base title="Novara v2 (R&D)" noindex>
-  <main><h1 class="p-10 text-display-md font-semibold">Novara v2 placeholder</h1></main>
+<Base title={v2.seo.title} description={v2.seo.description} noindex>
+  <div class="v2 bg-white text-text-primary">
+    <Nav />
+    <main>
+      <Hero />
+      <Results />
+      <Product />
+      <How />
+      <Platform />
+      <Faq />
+      <Close />
+    </main>
+    <Footer />
+  </div>
+  <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
 </Base>
+
+<script>
+  import { initV2 } from '../../components/v2/motion';
+  initV2();
+</script>

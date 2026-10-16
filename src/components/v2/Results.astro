@@ -1,0 +1,33 @@
+---
+import { v2 } from '../../content/v2';
+import Section from './Section.astro';
+const { results } = v2;
+const max = Math.max(...results.figures.map((f) => f.value));
+---
+<Section id="results" labelledby="results-title">
+  <p class="m-0 text-sm font-medium text-text-tertiary">{results.eyebrow}</p>
+  <h2 id="results-title" class="m-0 mt-4 max-w-[40rem] text-[clamp(2rem,1.2rem+2.8vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.03em]">{results.title}</h2>
+
+  <figure data-funnel class="m-0 mt-14">
+    <ol class="m-0 list-none border-b border-border-secondary p-0">
+      {results.figures.map((f) => (
+        <li class="grid items-center gap-x-10 gap-y-3 border-t border-border-secondary py-6 md:grid-cols-[14rem_minmax(0,1fr)]">
+          <div>
+            <p class="m-0 text-[44px] font-semibold leading-none tracking-[-0.03em] tabular-nums">
+              <span data-count={f.value} data-suffix={f.suffix}>{f.value.toLocaleString('en-US')}{f.suffix}</span>
+            </p>
+            <p class="m-0 mt-2 text-sm text-text-tertiary">{f.label}</p>
+          </div>
+          <div class="h-9 rounded-md bg-bg" aria-hidden="true">
+            <div
+              data-funnel-bar
+              class:list={['h-full origin-left rounded-md', f.key === 'hired' ? 'bg-primary' : 'bg-primary-300']}
+              style={`width:max(3px, ${((f.value / max) * 100).toFixed(3)}%)`}
+            ></div>
+          </div>
+        </li>
+      ))}
+    </ol>
+    <figcaption class="mt-5 text-sm text-text-tertiary">{results.caption}</figcaption>
+  </figure>
+</Section>

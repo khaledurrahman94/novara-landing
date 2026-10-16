@@ -144,3 +144,13 @@ export const boardColumns: { stage: StageName; ids: string[] }[] = [
 ];
 
 export const pipelineStatus = 'Moved to HR Round by Priya';
+
+/** Illustrative candidates-by-stage counts for the analytics view (product UI only). */
+export const stageCounts: { stage: StageName; count: number }[] = [
+  { stage: 'Applied', count: 48 },
+  { stage: 'AI Request', count: 31 },
+  { stage: 'Prescheduled', count: 22 },
+  { stage: 'Scheduled', count: 17 },
+  { stage: 'Completed', count: 12 },
+  { stage: 'HR Round', count: 5 },
+];

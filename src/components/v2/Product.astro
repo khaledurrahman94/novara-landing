@@ -1,0 +1,57 @@
+---
+import { v2 } from '../../content/v2';
+import { candidates } from '../../data/demo';
+import Section from './Section.astro';
+import Figure from './Figure.astro';
+import MoveBoard from './MoveBoard.astro';
+import ApplicantList from '../shared/ui/ApplicantList.astro';
+import JobFitCard from '../shared/ui/JobFitCard.astro';
+import InterviewFrame from '../shared/ui/InterviewFrame.astro';
+import IntegrityPanel from '../shared/ui/IntegrityPanel.astro';
+import InterviewScore from '../shared/ui/InterviewScore.astro';
+const { screen, interview, decide } = v2.features;
+const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leading-[1.08] tracking-[-0.03em]';
+const lead = 'm-0 mt-5 max-w-[30rem] text-lg leading-relaxed text-text-secondary';
+---
+<Section id="product" labelledby="screen-title">
+  <div class="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
+    <div class="lg:col-span-4">
+      <h2 id="screen-title" class={h2}>{screen.title}</h2>
+      <p class={lead}>{screen.line}</p>
+    </div>
+    <Figure caption={screen.caption} class="lg:col-span-8" >
+      <div data-feature="screen" class="grid items-start gap-4 md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
+        <ApplicantList rows={candidates} showStage={false} class="max-w-none!" />
+        <JobFitCard variant="full" class="max-w-none!" />
+      </div>
+    </Figure>
+  </div>
+</Section>
+
+<Section labelledby="interview-title">
+  <div class="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
+    <div class="lg:order-2 lg:col-span-4">
+      <h2 id="interview-title" class={h2}>{interview.title}</h2>
+      <p class={lead}>{interview.line}</p>
+    </div>
+    <Figure caption={interview.caption} class="lg:order-1 lg:col-span-8">
+      <div data-feature="interview" class="grid gap-4 md:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+        <InterviewFrame fill class="min-h-[18rem]" />
+        <IntegrityPanel class="max-w-none!" />
+      </div>
+    </Figure>
+  </div>
+</Section>
+
+<Section tone="plate" labelledby="decide-title">
+  <div class="mx-auto max-w-[44rem] text-center">
+    <h2 id="decide-title" class={h2}>{decide.title}</h2>
+    <p class="m-0 mx-auto mt-5 max-w-[34rem] text-lg leading-relaxed text-text-secondary">{decide.line}</p>
+  </div>
+  <Figure caption={decide.caption} tone="white" class="mt-14">
+    <div data-feature="decide" class="grid items-start gap-4 md:grid-cols-[minmax(0,22rem)_minmax(0,1fr)]">
+      <InterviewScore class="max-w-none!" />
+      <MoveBoard />
+    </div>
+  </Figure>
+</Section>

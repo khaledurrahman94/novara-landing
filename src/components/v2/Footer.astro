@@ -1,0 +1,26 @@
+---
+import { v2 } from '../../content/v2';
+const { footer, nav } = v2;
+---
+<footer class="border-t border-border-secondary bg-white">
+  <div class="mx-auto w-full max-w-[1200px] border-x border-border-secondary px-5 py-14 sm:px-8 md:px-12">
+    <div class="grid gap-10 md:grid-cols-12">
+      <div class="md:col-span-6">
+        <img src="/brand/novara-full.svg" width="143" height="41" alt="Novara" class="block h-7 w-auto" />
+        <p class="m-0 mt-4 max-w-[22rem] text-[15px] leading-relaxed text-text-secondary">{footer.line}</p>
+      </div>
+      <nav aria-label={footer.nav} class="md:col-span-3">
+        <ul class="m-0 flex list-none flex-col gap-3 p-0">
+          {nav.anchors.map((a) => <li><a href={a.href} class="text-sm text-text-secondary no-underline hover:text-text-primary hover:underline">{a.label}</a></li>)}
+        </ul>
+      </nav>
+      <div class="md:col-span-3">
+        <a href={footer.makerHref} class="text-sm text-text-secondary no-underline hover:text-text-primary hover:underline" rel="noopener">{footer.maker}</a>
+      </div>
+    </div>
+    <div class="mt-12 flex flex-col gap-2 border-t border-border-secondary pt-6 text-xs text-text-tertiary sm:flex-row sm:justify-between sm:gap-8">
+      <p class="m-0">{footer.copyright}</p>
+      <p class="m-0 max-w-[36rem] sm:text-right">{footer.footnote}</p>
+    </div>
+  </div>
+</footer>
