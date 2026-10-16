@@ -96,7 +96,7 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
 
                 <ul class="m-0 mt-3 grid list-none grid-cols-2 gap-1.5 p-0">
                   {kinds.map((k) => (
-                    <li data-il-tile={k.key} data-hit="false" class:list={['group flex items-center gap-2 rounded-md border border-border-secondary px-2 py-1.5', k.key === 'away' && 'il-fine']}>
+                    <li data-il-tile={k.key} data-hit="false" class:list={['group flex items-center gap-2 rounded-md border border-border-secondary px-2 py-1.5', k.key === 'away' && 'il-fine', k.key === 'fullscreen' && 'il-nofs']}>
                       <span class="grid size-6 shrink-0 place-items-center rounded-md bg-gray-100 text-text-tertiary group-data-[hit=true]:bg-warning/10 group-data-[hit=true]:text-warning">
                         <Ico name={k.icon} size={13} />
                       </span>
@@ -275,6 +275,11 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
   }
   .il-ov[data-on='true'] {
     opacity: 1;
+  }
+
+  /* No Fullscreen API (iPhone): hide its counter. */
+  .il[data-fs='off'] .il-nofs {
+    display: none;
   }
 
   /* Looking away is a mouse idea. */

@@ -26,9 +26,11 @@ interface Mark { t: number; p: number }
 
 const EASE = 'expo.out';
 const AWAY_MS = 2000;
+const SCROLL_LEAVE_MS = 250;
 const MIN_BLUR_MS = 250;
 const TOTAL = lab.questions.length;
 const meta = (k: Kind) => kinds.find((m) => m.key === k);
+const tagOf = (e: Ev): string => (e.simulated ? lab.simTag : e.kind === 'away' ? lab.cursorTag : '');
 const titleOf = (e: Ev): string => `${meta(e.kind)?.title ?? e.kind}${e.detail ? `, ${e.detail}` : ''}`;
 
 function mount(root: HTMLElement): () => void {
@@ -114,6 +116,7 @@ function mount(root: HTMLElement): () => void {
   let awayTimer: ReturnType<typeof setTimeout> | undefined;
   let inFs = false;
   let quietFs = false;
+  let lastScroll = -1e9;
   let typeTween: gsap.core.Tween | null = null;
   let skipIntro: (() => void) | null = null;
 
@@ -175,7 +178,7 @@ function mount(root: HTMLElement): () => void {
       .fromTo(el, { yPercent: 60 }, { yPercent: 0, opacity: 1, duration: 0.25, ease: EASE });
   };
 
-  const rowEl = (time: string, label: string, flagged: boolean, simulated: boolean, last: boolean): HTMLLIElement => {
+  const rowEl = (time: string, label: string, flagged: boolean, tag: string, last: boolean): HTMLLIElement => {
     const li = document.createElement('li');
     li.className = 'relative flex gap-2.5 pb-3 last:pb-0';
     if (!last) {
@@ -197,10 +200,10 @@ function mount(root: HTMLElement): () => void {
     l.className = flagged ? 'font-semibold text-text-primary' : 'text-text-secondary';
     l.textContent = label;
     body.append(t, l);
-    if (simulated) {
+    if (tag) {
       const s = document.createElement('span');
       s.className = 'ml-2 rounded-full bg-gray-100 px-1.5 py-0.5 text-[11px] font-medium text-text-secondary';
-      s.textContent = lab.simTag;
+      s.textContent = tag;
       body.append(s);
     }
     if (flagged) {
@@ -221,10 +224,10 @@ function mount(root: HTMLElement): () => void {
     const hiddenCount = list.length - shown.length;
     timeline.replaceChildren();
     const items: HTMLLIElement[] = [];
-    const rows: { time: string; label: string; flagged: boolean; simulated: boolean }[] = [{ time: clock(0), label: lab.started, flagged: false, simulated: false }];
-    shown.forEach((e) => rows.push({ time: clock(e.at), label: titleOf(e), flagged: true, simulated: e.simulated }));
+    const rows: { time: string; label: string; flagged: boolean; tag: string }[] = [{ time: clock(0), label: lab.started, flagged: false, tag: '' }];
+    shown.forEach((e) => rows.push({ time: clock(e.at), label: titleOf(e), flagged: true, tag: tagOf(e) }));
     rows.forEach((r, i) => {
-      const li = rowEl(r.time, r.label, r.flagged, r.simulated, i === rows.length - 1 && hiddenCount === 0);
+      const li = rowEl(r.time, r.label, r.flagged, r.tag, i === rows.length - 1 && hiddenCount === 0);
       items.push(li);
       timeline.append(li);
       if (i === 0 && hiddenCount > 0) {
@@ -405,11 +408,11 @@ function mount(root: HTMLElement): () => void {
     dot.className = `size-1.5 rounded-full ${n > 0 ? 'bg-warning' : 'bg-gray-400'}`;
     rTimeline.replaceChildren();
     const rows = [
-      { time: clock(0), label: lab.started, flagged: false, simulated: false },
-      ...list.map((e) => ({ time: clock(e.at), label: titleOf(e), flagged: true, simulated: e.simulated })),
-      { time: clock(end), label: lab.ended, flagged: false, simulated: false },
+      { time: clock(0), label: lab.started, flagged: false, tag: '' },
+      ...list.map((e) => ({ time: clock(e.at), label: titleOf(e), flagged: true, tag: tagOf(e) })),
+      { time: clock(end), label: lab.ended, flagged: false, tag: '' },
     ];
-    rows.forEach((r, i) => rTimeline.append(rowEl(r.time, r.label, r.flagged, r.simulated, i === rows.length - 1)));
+    rows.forEach((r, i) => rTimeline.append(rowEl(r.time, r.label, r.flagged, r.tag, i === rows.length - 1)));
 
     reportView.style.minHeight = `${liveView.offsetHeight}px`;
     liveView.hidden = true;
@@ -507,8 +510,14 @@ function mount(root: HTMLElement): () => void {
     inFs = nowIn;
     ScrollTrigger.refresh();
   };
+  const onScroll = (): void => {
+    lastScroll = performance.now();
+    // A leave that the scroll itself caused is not the visitor looking away.
+    if (awayMark && awayTimer !== undefined && lastScroll - awayMark.p < SCROLL_LEAVE_MS) onEnter();
+  };
   const onLeave = (e: PointerEvent): void => {
     if (!fine || e.pointerType === 'touch' || !isLive() || awayMark) return;
+    if (performance.now() - lastScroll < SCROLL_LEAVE_MS) return;
     awayMark = mark();
     awayTimer = setTimeout(() => {
       awayTimer = undefined;
@@ -526,6 +535,7 @@ function mount(root: HTMLElement): () => void {
   window.addEventListener('focus', onFocus);
   document.addEventListener('copy', onCopy);
   document.addEventListener('fullscreenchange', onFsChange);
+  window.addEventListener('scroll', onScroll, { passive: true });
   win.addEventListener('pointerleave', onLeave);
   win.addEventListener('pointerenter', onEnter);
   answer.addEventListener('paste', onPaste);
@@ -535,6 +545,7 @@ function mount(root: HTMLElement): () => void {
     window.removeEventListener('focus', onFocus);
     document.removeEventListener('copy', onCopy);
     document.removeEventListener('fullscreenchange', onFsChange);
+    window.removeEventListener('scroll', onScroll);
     win.removeEventListener('pointerleave', onLeave);
     win.removeEventListener('pointerenter', onEnter);
     answer.removeEventListener('paste', onPaste);
@@ -542,11 +553,12 @@ function mount(root: HTMLElement): () => void {
 
   if (fsOk) {
     on(fsBtn, 'click', () => {
-      if (document.fullscreenElement === win) void document.exitFullscreen().catch(() => undefined);
+      if (document.fullscreenElement === win) exitFs();
       else void win.requestFullscreen().catch(() => undefined);
     });
   } else {
     fsBtn.hidden = true;
+    root.dataset['fs'] = 'off';
   }
 
   // Simulated checks: switches only. The camera is never accessed.
@@ -568,7 +580,8 @@ function mount(root: HTMLElement): () => void {
       inView = entries.some((e) => e.isIntersecting);
       sync();
     },
-    { threshold: 0.35 },
+    // Viewport-relative: still reachable when the stacked window is taller than the screen.
+    { threshold: 0, rootMargin: '-25% 0px -25% 0px' },
   );
   io.observe(win);
   cleanups.push(() => io.disconnect());
@@ -609,6 +622,12 @@ function mount(root: HTMLElement): () => void {
         onUpdate: () => {
           const p = tl.progress();
           setIntro(p >= 0.985);
+          // Scrolling back below the hand-over point: the scrub alone owns the caption again.
+          if (p < 0.5 && typeTween) {
+            typeTween.kill();
+            typeTween = null;
+            speaking = false;
+          }
           // Before the interview starts, the intro caption types with the scroll.
           if (phase === 'idle' || p < 0.5) {
             caption.textContent = lab.intro.slice(0, Math.round(typed.n));
@@ -624,6 +643,7 @@ function mount(root: HTMLElement): () => void {
               pin: true,
               scrub: 0.8,
               anticipatePin: 1,
+              refreshPriority: 2,
               invalidateOnRefresh: true,
             }
           : { trigger: win, start: 'top 82%', end: 'top 30%', scrub: 0.6, invalidateOnRefresh: true },
@@ -651,8 +671,8 @@ function mount(root: HTMLElement): () => void {
         gsap.set([zoom, ...fades, cue], { clearProps: 'all' });
       };
     };
-    mm.add('(min-width: 768px)', () => build(true));
-    mm.add('(max-width: 767px)', () => build(false));
+    mm.add('(min-width: 768px) and (min-height: 620px)', () => build(true));
+    mm.add('(max-width: 767px), (max-height: 619px)', () => build(false));
   }
   // A keyboard user tabbing into the zoomed-out UI jumps straight to the finished state.
   const onFocusIn = (): void => {
