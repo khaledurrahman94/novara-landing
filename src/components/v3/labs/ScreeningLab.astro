@@ -1,0 +1,10 @@
+---
+import Section from '../../v2/Section.astro';
+/** Stub. Agent C replaces this with the screening lab. */
+interface Props { tone?: 'white' | 'plate' }
+const { tone = 'white' } = Astro.props;
+---
+<Section id="screen" labelledby="screen-title" {tone}>
+  <h2 id="screen-title" class="m-0 max-w-[40rem] text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leading-[1.08] tracking-[-0.03em]">Every resume, read against the job.</h2>
+  <p class="m-0 mt-5 max-w-[34rem] text-lg leading-relaxed text-text-secondary">Toggle what the job needs and watch the ranking change.</p>
+</Section>

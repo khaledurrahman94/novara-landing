@@ -1,0 +1,10 @@
+---
+import Section from '../../v2/Section.astro';
+/** Stub. Agent B replaces this with the interview lab. */
+interface Props { tone?: 'white' | 'plate' }
+const { tone = 'plate' } = Astro.props;
+---
+<Section id="interview-lab" labelledby="interview-lab-title" {tone}>
+  <h2 id="interview-lab-title" class="m-0 max-w-[40rem] text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leading-[1.08] tracking-[-0.03em]">Try to cheat. Novara will notice.</h2>
+  <p class="m-0 mt-5 max-w-[34rem] text-lg leading-relaxed text-text-secondary">A live demo of the checks Novara runs during a real interview. Switch tabs, click away, copy the question or look away, and watch your report fill in. Nothing you do here is recorded or sent anywhere.</p>
+</Section>

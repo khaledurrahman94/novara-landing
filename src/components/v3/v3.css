@@ -1,0 +1,116 @@
+/* V3 layer on top of v2.css: cursor pill, pinned layouts and the small hover states the scripts rely on. */
+
+.v3-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 60;
+  pointer-events: none;
+  border-radius: 9999px;
+  background: var(--color-text-primary);
+  color: var(--color-white);
+  padding: 4px 10px;
+  font-family: var(--font-geist);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  opacity: 0;
+  will-change: transform;
+}
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .v3-cursor {
+    display: none;
+  }
+}
+
+.v3 button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* Decide: one evidence panel at a time once scripts run. Without them, all three stay readable. */
+.js .v3-decide [data-evidence][data-active='false'] {
+  display: none;
+}
+.v3-decide [data-evidence-for] {
+  transition: scale var(--duration-base) var(--ease-out-quart);
+}
+.v3-decide [data-evidence-for]:hover,
+.v3-decide [data-evidence-for]:focus-visible {
+  scale: 1.03;
+}
+.v3-decide [data-card='amara'] {
+  cursor: grab;
+}
+.v3-decide [data-card='amara'].is-dragging {
+  cursor: grabbing;
+  scale: 1.04;
+}
+
+/* Results: the pinned canvas replaces the funnel list only when the page can pin and animate. */
+.v3-results.is-pinned {
+  padding-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  height: calc(100svh - 4rem);
+}
+.v3-results.is-pinned [data-funnel] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.v3-results.is-pinned [data-results-stage] {
+  margin-top: 1.5rem;
+}
+
+/* How it works: a horizontal track when pinned, a plain list otherwise. */
+.v3-how.is-h .v3-how-pin {
+  padding-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  height: calc(100svh - 4rem);
+}
+.v3-how.is-h .v3-how-viewport {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.v3-how.is-h .v3-how-track {
+  display: flex;
+  gap: 0;
+  height: 100%;
+  width: 100%;
+}
+.v3-how.is-h [data-step] {
+  flex: 0 0 100%;
+  min-width: 0;
+  padding-right: 1rem;
+}
+
+/* Platform: pipeline cards lift. Transform only. */
+.v3-platform [data-card='pipeline'] [data-anim='board-card'],
+.v3-platform [data-card='pipeline'] [data-anim='moved-card'] {
+  position: relative;
+  transition:
+    transform var(--duration-base) var(--ease-out-quart),
+    border-color var(--duration-fast) var(--ease-out-quart);
+}
+.v3-platform [data-card='pipeline'] [data-anim='board-card']:hover,
+.v3-platform [data-card='pipeline'] [data-anim='moved-card']:hover,
+.v3-platform [data-card='pipeline'] [data-anim='board-card']:focus-visible,
+.v3-platform [data-card='pipeline'] [data-anim='moved-card']:focus-visible {
+  transform: translateY(-4px) scale(1.03);
+  border-color: var(--color-primary-300);
+  z-index: 2;
+}
+@media (prefers-reduced-motion: reduce) {
+  .v3-decide [data-evidence-for],
+  .v3-platform [data-card='pipeline'] [data-anim] {
+    transition: none;
+  }
+}
