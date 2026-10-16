@@ -9,3 +9,6 @@ src/assets/fonts/sf-pro/
 .claude/settings.local.json
 .impeccable/config.local.json
 .impeccable/*.cache.json
+
+# Agent worktrees
+.claude/worktrees/
