@@ -1,0 +1,29 @@
+---
+interface Props { title: string; description: string; noindex?: boolean; image?: string }
+const { title, description, noindex = false, image = '/brand/novara-full.svg' } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL(image, Astro.site).href;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    { '@type': 'Organization', '@id': 'https://vivasoftltd.com/#org', name: 'Vivasoft', url: 'https://vivasoftltd.com', logo: new URL('/brand/viva-logo.png', Astro.site).href },
+    { '@type': 'SoftwareApplication', name: 'Novara', url: 'https://novara.my', applicationCategory: 'BusinessApplication', operatingSystem: 'Web', description, publisher: { '@id': 'https://vivasoftltd.com/#org' }, creator: { '@id': 'https://vivasoftltd.com/#org' } },
+  ],
+};
+---
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<meta name="theme-color" content="#F9FAFB" />
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Novara" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogImage} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />

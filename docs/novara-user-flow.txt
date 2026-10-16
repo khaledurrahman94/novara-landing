@@ -1,0 +1,106 @@
+flowchart TD
+
+  subgraph S1["1 · Set up the company (one time)"]
+    A1["Employer signs up and<br/>creates the company profile"]:::team
+    A2["Invites the team<br/>Admin · HR Manager · Recruiter<br/>invites last 7 days, can be resent"]:::team
+    A3["Sets up the branded career page<br/>can be embedded on their own website"]:::team
+    A1 --> A2 --> A3
+  end
+
+  subgraph S2["2 · Create the job"]
+    B1["Recruiter enters the role<br/>title, level, key skills"]:::team
+    B2["Novara drafts the job description,<br/>requirements and experience needed"]:::ai
+    B3["Recruiter edits, assigns recruiters<br/>and publishes"]:::team
+    B4["Job is live on the career page<br/>and as a shareable link"]:::ai
+    B5["If the job is set to inactive:<br/>no new applicants, but anyone<br/>mid-interview can still finish"]:::team
+    B1 --> B2 --> B3 --> B4
+    B4 -.-> B5
+  end
+
+  subgraph S3["3 · Candidate applies"]
+    C1["Candidate finds the job<br/>career page · shared link · recommended jobs"]:::cand
+    C2["Signs up or logs in<br/>and uploads a resume"]:::cand
+    C3(["Stage: Applied"]):::stage
+    C1 --> C2 --> C3
+  end
+
+  subgraph S4["4 · Resume screening"]
+    D1["Novara reads the resume and gives a<br/>Job Fit Score: what matches,<br/>what is missing, and why"]:::ai
+    D2{"Invite to the<br/>AI interview?"}:::team
+    DQ["CONFIRM: the landing page says Novara moves<br/>80%+ candidates forward on its own.<br/>The PM list shows no automatic move or threshold."]:::confirm
+    D1 --> D2
+    D2 -.- DQ
+  end
+
+  subgraph S5["5 · Invite and schedule"]
+    E1(["Stage: AI Request<br/>invite sent by email and<br/>shown on the candidate dashboard"]):::stage
+    E2["Recruiter sets the<br/>available time slots"]:::team
+    E3(["Stage: Prescheduled"]):::stage
+    E4["Candidate picks a slot"]:::cand
+    E5(["Stage: Scheduled"]):::stage
+    E6["Candidate reschedules<br/>old booking stays on record"]:::cand
+    EQ["CONFIRM: what exactly moves a candidate<br/>from AI Request to Prescheduled to Scheduled?"]:::confirm
+    E1 --> E2 --> E3 --> E4 --> E5
+    E5 -.-> E6 -.-> E4
+    E3 -.- EQ
+  end
+
+  subgraph S6["6 · AI interview"]
+    F1["Candidate takes the AI interview with the<br/>AI avatar: AI-written and recruiter-added<br/>questions, plus multiple choice"]:::cand
+    F2["Novara records it and watches for cheating:<br/>tab switching · leaving full screen · copy/paste<br/>camera off · more than one face · looking away"]:::ai
+    F3(["Stage: Completed"]):::stage
+    F1 -.->|at the same time| F2
+    F1 --> F3
+  end
+
+  subgraph S7["7 · Evaluation"]
+    G1["Novara scores every answer and the whole<br/>interview: AI Interview Score and report,<br/>with the recording and cheating flags"]:::ai
+    G2["HR Manager or Recruiter reviews it all:<br/>resume · Job Fit Score · interview report"]:::team
+    G1 --> G2
+  end
+
+  subgraph S8["8 · Final decision"]
+    H1(["Stage: HR Round"]):::stage
+    H2{"Make an offer?"}:::team
+    H3(["Stage: Offered"]):::stage
+    R(["Stage: Rejected"]):::stage
+    HQ["CONFIRM: Offered is the last step in Novara.<br/>No offer letters or e-signing, though the<br/>landing page footer says 'signed offer'."]:::confirm
+    H1 --> H2
+    H2 -->|Yes| H3
+    H2 -->|No| R
+    H3 -.- HQ
+  end
+
+  A3 --> B1
+  B4 --> C1
+  C3 --> D1
+  D2 -->|Yes| E1
+  D2 -->|No| R
+  E5 --> F1
+  F3 --> G1
+  G2 --> H1
+
+  subgraph LATER["Not in the product yet: leave off the page or mark 'coming soon'"]
+    L1["Posting to other job sites"]:::later
+    L2["Bulk resume and CSV import"]:::later
+    L3["Advanced candidate search and tags"]:::later
+    L4["Recruiter-written multiple choice,<br/>case and image questions (in progress)"]:::later
+    L5["Checking claims made in resumes"]:::later
+    L6["Workday, Wix and WordPress integrations"]:::later
+    L7["Subscriptions and billing"]:::later
+  end
+
+  subgraph KEY["Key"]
+    K1["Hiring team does this"]:::team
+    K2["Candidate does this"]:::cand
+    K3["Novara does this automatically"]:::ai
+    K4(["Pipeline stage in the product"]):::stage
+    K5["Needs PM confirmation"]:::confirm
+  end
+
+  classDef team fill:#EEE9FF,stroke:#6B4EFF,color:#1B1B1F
+  classDef cand fill:#E7F6EC,stroke:#2E9E5B,color:#1B1B1F
+  classDef ai fill:#E8F0FF,stroke:#2F6FEB,color:#1B1B1F
+  classDef stage fill:#FFFFFF,stroke:#1B1B1F,stroke-width:2px,color:#1B1B1F
+  classDef confirm fill:#FFF4E0,stroke:#E08A00,stroke-dasharray:5 5,color:#1B1B1F
+  classDef later fill:#F3F3F3,stroke:#9A9A9A,stroke-dasharray:3 3,color:#555555
