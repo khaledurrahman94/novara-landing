@@ -84,6 +84,8 @@ Brand line: "Hire the person, not the pile."
 - multi-turn case simulation;
 - Workday, Wix and WordPress integrations.
 
+**Stated by the user (2026-10-16), PM to confirm:** the AI interview is spoken, and candidate answers are transcribed. The V3 demo shows the transcription.
+
 **Unconfirmed by the PM, don't claim:**
 - that Novara moves candidates between stages automatically, or applies score thresholds;
 - offer letters or e-signing. "Offered" is the last stage.
