@@ -1,0 +1,155 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-16T00:00:00Z",
+  "title": "Design System: Novara",
+  "extensions": {
+    "colorMeta": {
+      "primary": { "role": "primary", "displayName": "Novara Violet", "canonical": "#7237FB", "tonalRamp": ["#220B57", "#371483", "#4316A3", "#5017CB", "#7237FB", "#9F73FD", "#DACBFF", "#F5F1FF"] },
+      "primary-600": { "role": "primary", "displayName": "Pressed Violet", "canonical": "#5F1FEF", "tonalRamp": ["#220B57", "#371483", "#4316A3", "#5017CB", "#5F1FEF", "#9F73FD", "#DACBFF", "#F5F1FF"] },
+      "primary-300": { "role": "primary", "displayName": "Soft Violet", "canonical": "#C0A6FE", "tonalRamp": ["#220B57", "#371483", "#4316A3", "#5017CB", "#7237FB", "#C0A6FE", "#DACBFF", "#F5F1FF"] },
+      "primary-200": { "role": "primary", "displayName": "Selection Lilac", "canonical": "#DACBFF", "tonalRamp": ["#220B57", "#371483", "#4316A3", "#5017CB", "#7237FB", "#C0A6FE", "#DACBFF", "#F5F1FF"] },
+      "primary-50": { "role": "primary", "displayName": "Violet Wash", "canonical": "#F5F1FF", "tonalRamp": ["#220B57", "#371483", "#4316A3", "#5017CB", "#7237FB", "#C0A6FE", "#ECE3FF", "#F5F1FF"] },
+      "brand-from": { "role": "secondary", "displayName": "Gradient Start", "canonical": "#8C75FB", "tonalRamp": ["#21115E", "#33208C", "#4A35B8", "#6650DE", "#8C75FB", "#AC9CFC", "#CEC5FD", "#EEEBFF"] },
+      "brand-to": { "role": "secondary", "displayName": "Gradient End", "canonical": "#421DF8", "tonalRamp": ["#120552", "#1D0A85", "#2A10B8", "#3615E0", "#421DF8", "#7A62FA", "#B5A8FC", "#ECE8FF"] },
+      "success": { "role": "tertiary", "displayName": "Status Green", "canonical": "#17B26A", "tonalRamp": ["#053321", "#074D31", "#067647", "#079455", "#17B26A", "#47CD89", "#ABEFC6", "#ECFDF3"] },
+      "warning": { "role": "tertiary", "displayName": "Status Amber", "canonical": "#F79009", "tonalRamp": ["#4E1D09", "#93370D", "#B54708", "#DC6803", "#F79009", "#FDB022", "#FEDF89", "#FFFAEB"] },
+      "blue-light": { "role": "tertiary", "displayName": "Status Sky", "canonical": "#0BA5EC", "tonalRamp": ["#062C41", "#065986", "#026AA2", "#0086C9", "#0BA5EC", "#36BFFA", "#B9E6FE", "#F0F9FF"] },
+      "white": { "role": "neutral", "displayName": "White", "canonical": "#FFFFFF", "tonalRamp": ["#0C111D", "#1D2939", "#344054", "#667085", "#98A2B3", "#D0D5DD", "#F2F4F7", "#FFFFFF"] },
+      "bg": { "role": "neutral", "displayName": "Plate Gray", "canonical": "#F9FAFB", "tonalRamp": ["#0C111D", "#1D2939", "#344054", "#667085", "#98A2B3", "#D0D5DD", "#F2F4F7", "#F9FAFB"] },
+      "bg-tertiary": { "role": "neutral", "displayName": "Inset Gray", "canonical": "#F2F4F7", "tonalRamp": ["#0C111D", "#1D2939", "#344054", "#667085", "#98A2B3", "#D0D5DD", "#F2F4F7", "#F9FAFB"] },
+      "border-primary": { "role": "neutral", "displayName": "Field Line", "canonical": "#D0D5DD", "tonalRamp": ["#0C111D", "#1D2939", "#344054", "#667085", "#98A2B3", "#D0D5DD", "#EAECF0", "#F9FAFB"] },
+      "border-secondary": { "role": "neutral", "displayName": "Hairline", "canonical": "#E4E7EC", "tonalRamp": ["#0C111D", "#1D2939", "#344054", "#667085", "#98A2B3", "#D0D5DD", "#E4E7EC", "#F9FAFB"] },
+      "gray-200": { "role": "neutral", "displayName": "Switch Off", "canonical": "#EAECF0", "tonalRamp": ["#0C111D", "#1D2939", "#344054", "#667085", "#98A2B3", "#D0D5DD", "#EAECF0", "#F9FAFB"] },
+      "gray-400": { "role": "neutral", "displayName": "Gray Dot", "canonical": "#98A2B3", "tonalRamp": ["#0C111D", "#1D2939", "#344054", "#667085", "#98A2B3", "#D0D5DD", "#EAECF0", "#F9FAFB"] },
+      "text-primary": { "role": "neutral", "displayName": "Ink", "canonical": "#101828", "tonalRamp": ["#0C111D", "#101828", "#344054", "#475467", "#667085", "#98A2B3", "#D0D5DD", "#F9FAFB"] },
+      "text-secondary": { "role": "neutral", "displayName": "Slate", "canonical": "#344054", "tonalRamp": ["#0C111D", "#101828", "#344054", "#475467", "#667085", "#98A2B3", "#D0D5DD", "#F9FAFB"] },
+      "text-tertiary": { "role": "neutral", "displayName": "Muted Slate", "canonical": "#475467", "tonalRamp": ["#0C111D", "#101828", "#344054", "#475467", "#667085", "#98A2B3", "#D0D5DD", "#F9FAFB"] },
+      "text-placeholder": { "role": "neutral", "displayName": "Placeholder", "canonical": "#667085", "tonalRamp": ["#0C111D", "#101828", "#344054", "#475467", "#667085", "#98A2B3", "#D0D5DD", "#F9FAFB"] },
+      "gray-950": { "role": "neutral", "displayName": "Night", "canonical": "#0C111D", "tonalRamp": ["#0C111D", "#1D2939", "#344054", "#475467", "#667085", "#98A2B3", "#D0D5DD", "#F9FAFB"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero H1 only." },
+      "headline": { "displayName": "Headline", "purpose": "Big section statements: Results, Platform, Close." },
+      "headline-sm": { "displayName": "Headline Small", "purpose": "Feature sections, How, FAQ." },
+      "title": { "displayName": "Title", "purpose": "Bento tile and step titles; FAQ questions at 500." },
+      "lead": { "displayName": "Lead", "purpose": "The line under each heading, Slate, 30-34rem measure." },
+      "body": { "displayName": "Body", "purpose": "Tile lines, step text, FAQ answers, footer line." },
+      "label": { "displayName": "Label", "purpose": "Buttons, nav links, funnel labels." },
+      "figure": { "displayName": "Figure", "purpose": "Funnel counts, tabular." },
+      "ui": { "displayName": "Product UI", "purpose": "Inter inside rebuilt product screens only." }
+    },
+    "shadows": [
+      { "name": "shadow-xs", "value": "0 1px 2px rgb(16 24 40 / 0.05)", "purpose": "Buttons, inputs, small product cards." },
+      { "name": "shadow-md", "value": "0 4px 8px -2px rgb(16 24 40 / 0.08), 0 2px 4px -2px rgb(16 24 40 / 0.04)", "purpose": "Standalone product panels." },
+      { "name": "shadow-lg", "value": "0 12px 16px -4px rgb(16 24 40 / 0.08), 0 4px 6px -2px rgb(16 24 40 / 0.04)", "purpose": "Interview video frame, toasts." },
+      { "name": "shadow-xl", "value": "0 24px 48px -12px rgb(16 24 40 / 0.14)", "purpose": "Hero candidate-review screen only." }
+    ],
+    "motion": [
+      { "name": "duration-fast", "value": "150ms", "purpose": "Hover color shifts, word reveals." },
+      { "name": "duration-base", "value": "250ms", "purpose": "FAQ icon rotation, counter flips." },
+      { "name": "duration-slow", "value": "400ms", "purpose": "Nav state, FAQ expand, switches." },
+      { "name": "duration-slower", "value": "700ms", "purpose": "Entry rises and event reveals." },
+      { "name": "ease-out-expo", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Default entry easing (GSAP expo.out)." },
+      { "name": "ease-out-quart", "value": "cubic-bezier(0.25, 1, 0.5, 1)", "purpose": "CSS state transitions." },
+      { "name": "entry-trigger", "value": "top 65%", "purpose": "Scroll point where a section plays once; 70% for funnel and steps." },
+      { "name": "hero-tilt", "value": "rotateX(10deg) scale(0.94) -> flat, scrubbed", "purpose": "Hero shot flattens with scroll; 5deg below 640px." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one action style: violet ground, white label.",
+      "html": "<a class=\"ds-btn-primary\" href=\"#\">Request a demo</a>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 0 16px; border-radius: 10px; background: var(--color-primary, #7237FB); color: #fff; font: 500 14px/1 'Geist Variable', system-ui, sans-serif; text-decoration: none; box-shadow: 0 1px 2px rgb(16 24 40 / 0.05); transition: background-color 150ms cubic-bezier(0.25, 1, 0.5, 1); } .ds-btn-primary:hover { background: var(--color-primary-600, #5F1FEF); } .ds-btn-primary:focus-visible { outline: 2px solid var(--color-primary, #7237FB); outline-offset: 2px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "White ground with Field Line border, for the lesser action.",
+      "html": "<a class=\"ds-btn-secondary\" href=\"#\">View recording</a>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; height: 40px; padding: 0 16px; border-radius: 10px; border: 1px solid var(--color-border-primary, #D0D5DD); background: #fff; color: var(--color-text-secondary, #344054); font: 500 14px/1 'Geist Variable', system-ui, sans-serif; text-decoration: none; box-shadow: 0 1px 2px rgb(16 24 40 / 0.05); transition: background-color 150ms cubic-bezier(0.25, 1, 0.5, 1); } .ds-btn-secondary:hover { background: var(--color-bg, #F9FAFB); } .ds-btn-secondary:focus-visible { outline: 2px solid var(--color-primary, #7237FB); outline-offset: 2px; }"
+    },
+    {
+      "name": "Demo Form",
+      "kind": "input",
+      "refersTo": "input-email",
+      "description": "Work email plus submit on one row; hero and close.",
+      "html": "<form class=\"ds-form\"><input class=\"ds-input\" type=\"email\" placeholder=\"Work email\"><button class=\"ds-submit\" type=\"button\">Request a demo</button></form>",
+      "css": ".ds-form { display: flex; gap: 8px; max-width: 30rem; } .ds-input { flex: 1; min-width: 0; height: 44px; padding: 0 14px; border-radius: 10px; border: 1px solid var(--color-border-primary, #D0D5DD); background: #fff; color: var(--color-text-primary, #101828); font: 400 15px 'Geist Variable', system-ui, sans-serif; box-shadow: 0 1px 2px rgb(16 24 40 / 0.05); transition: border-color 150ms; } .ds-input::placeholder { color: var(--color-text-placeholder, #667085); } .ds-input:focus { border-color: var(--color-primary, #7237FB); outline: 2px solid var(--color-primary-200, #DACBFF); outline-offset: 0; } .ds-submit { height: 44px; padding: 0 20px; border: 0; border-radius: 10px; background: var(--color-primary, #7237FB); color: #fff; font: 500 15px 'Geist Variable', system-ui, sans-serif; white-space: nowrap; box-shadow: 0 1px 2px rgb(16 24 40 / 0.05); cursor: pointer; transition: background-color 150ms; } .ds-submit:hover { background: var(--color-primary-600, #5F1FEF); } .ds-submit:focus-visible { outline: 2px solid var(--color-primary, #7237FB); outline-offset: 2px; }"
+    },
+    {
+      "name": "Status Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Tinted pill, colored dot, dark Inter text.",
+      "html": "<span class=\"ds-chip\"><span class=\"ds-chip-dot\"></span>Completed</span>",
+      "css": ".ds-chip { display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px; border-radius: 9999px; background: rgb(23 178 106 / 0.1); color: var(--color-text-secondary, #344054); font: 500 12px/1.5 'Inter Variable', system-ui, sans-serif; white-space: nowrap; } .ds-chip-dot { width: 6px; height: 6px; border-radius: 9999px; background: var(--color-success, #17B26A); }"
+    },
+    {
+      "name": "Sticky Nav",
+      "kind": "nav",
+      "refersTo": "nav",
+      "description": "64px bar inside the column frame; white with hairline once scrolled.",
+      "html": "<header class=\"ds-nav\"><div class=\"ds-nav-in\"><strong class=\"ds-nav-logo\">Novara</strong><nav class=\"ds-nav-links\"><a href=\"#\">Product</a><a href=\"#\">How it works</a><a href=\"#\">FAQ</a></nav><a class=\"ds-nav-cta\" href=\"#\">Request a demo</a></div></header>",
+      "css": ".ds-nav { background: #fff; border-bottom: 1px solid var(--color-border-secondary, #E4E7EC); } .ds-nav-in { max-width: 1200px; margin: 0 auto; height: 64px; padding: 0 48px; display: flex; align-items: center; justify-content: space-between; gap: 24px; border-left: 1px solid var(--color-border-secondary, #E4E7EC); border-right: 1px solid var(--color-border-secondary, #E4E7EC); font-family: 'Geist Variable', system-ui, sans-serif; } .ds-nav-logo { font-size: 18px; color: var(--color-text-primary, #101828); } .ds-nav-links { display: flex; gap: 32px; } .ds-nav-links a { font-size: 14px; font-weight: 500; color: var(--color-text-tertiary, #475467); text-decoration: none; transition: color 150ms; } .ds-nav-links a:hover { color: var(--color-text-primary, #101828); } .ds-nav-links a:focus-visible, .ds-nav-cta:focus-visible { outline: 2px solid var(--color-primary, #7237FB); outline-offset: 2px; } .ds-nav-cta { display: inline-flex; align-items: center; height: 40px; padding: 0 16px; border-radius: 10px; background: var(--color-primary, #7237FB); color: #fff; font-size: 14px; font-weight: 500; text-decoration: none; transition: background-color 150ms; } .ds-nav-cta:hover { background: var(--color-primary-600, #5F1FEF); }"
+    },
+    {
+      "name": "Figure Plate",
+      "kind": "card",
+      "refersTo": "figure-plate",
+      "description": "Pale plate holding one product view; flat, hairline-bordered.",
+      "html": "<figure class=\"ds-plate\"><div class=\"ds-panel\"><p class=\"ds-panel-t\">Job Fit Score</p><p class=\"ds-panel-n\">86</p></div></figure>",
+      "css": ".ds-plate { margin: 0; padding: 24px; border-radius: 24px; border: 1px solid var(--color-border-secondary, #E4E7EC); background: var(--color-bg, #F9FAFB); } .ds-panel { padding: 20px; border-radius: 16px; border: 1px solid var(--color-border-secondary, #E4E7EC); background: #fff; font-family: 'Inter Variable', system-ui, sans-serif; color: var(--color-text-primary, #101828); box-shadow: 0 4px 8px -2px rgb(16 24 40 / 0.08), 0 2px 4px -2px rgb(16 24 40 / 0.04); } .ds-panel-t { margin: 0; font-size: 14px; font-weight: 600; } .ds-panel-n { margin: 8px 0 0; font-size: 32px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--color-primary, #7237FB); }"
+    },
+    {
+      "name": "Funnel Row",
+      "kind": "custom",
+      "refersTo": "figure",
+      "description": "Ruled row: tabular figure, label, proportional violet bar.",
+      "html": "<ol class=\"ds-funnel\"><li><span class=\"ds-fig\">1,200+</span><span class=\"ds-lab\">applied</span><span class=\"ds-track\"><span class=\"ds-bar\" style=\"width:100%\"></span></span></li><li><span class=\"ds-fig\">4</span><span class=\"ds-lab\">hired</span><span class=\"ds-track\"><span class=\"ds-bar ds-bar-final\" style=\"width:3px\"></span></span></li></ol>",
+      "css": ".ds-funnel { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--color-border-secondary, #E4E7EC); background: var(--color-bg, #F9FAFB); font-family: 'Geist Variable', system-ui, sans-serif; } .ds-funnel li { display: grid; grid-template-columns: 7rem 5rem 1fr; align-items: center; gap: 16px; padding: 24px 0; border-top: 1px solid var(--color-border-secondary, #E4E7EC); } .ds-fig { font-size: 44px; font-weight: 600; line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; color: var(--color-text-primary, #101828); } .ds-lab { font-size: 14px; font-weight: 500; } .ds-track { height: 36px; border-radius: 10px; background: #fff; } .ds-bar { display: block; height: 100%; border-radius: 10px; background: var(--color-primary-300, #C0A6FE); } .ds-bar-final { background: var(--color-primary, #7237FB); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Ruled Column",
+    "overview": "A white page with one centred 1200px column, framed full-height by two 1px hairlines and cut into sections by full-width hairlines. Inside that frame the page is quiet: Geist in near-black, semibold headings with tight negative tracking, and plenty of air. The product carries the visual weight. Every section's image is the rebuilt Novara app in Inter, set on a pale plate, and it animates once to show the feature working.\n\nThe density is low and the rhythm even. Sections alternate between white and the pale gray plate (#F9FAFB), so the page reads as a stack of ruled bands, not floating cards. Violet is rare. It marks actions (buttons, focus, caret, selection) and data (funnel bars, the hired bar, chart bars, active states inside the product UI). The brand gradient appears exactly once, as a masked horizon glow behind the hero product shot.\n\nThis system documents the /v2 page. Tokens, the product UI components and the motion bootstrap are shared with /v1 (see the closing note in Components).",
+    "keyCharacteristics": [
+      "One 1200px column framed by border-secondary hairlines, with a hairline at the top of every section.",
+      "White and #F9FAFB bands alternate, and there are no section backgrounds beyond those two.",
+      "Geist for the page and Inter for the product UI. The two never swap roles.",
+      "Violet only on actions and data, and the gradient only once.",
+      "Product UI as the imagery: real text, live counters, no illustrations or stock imagery."
+    ],
+    "rules": [
+      { "name": "The Actions-and-Data Rule", "body": "Violet appears on things you can press and on numbers that matter. It never fills a section, a heading or decorative shape.", "section": "colors" },
+      { "name": "The One Horizon Rule", "body": "The brand gradient is used once per page, masked, behind product UI. Never behind text and never on a button.", "section": "colors" },
+      { "name": "The Tint-Not-Fill Rule", "body": "Status color is a 10% tint with a dot and dark text, so contrast stays above 4.5:1.", "section": "colors" },
+      { "name": "The Two Faces Rule", "body": "Geist speaks for the page and Inter speaks for the product. Don't set marketing copy in Inter or product UI in Geist.", "section": "typography" },
+      { "name": "The Single Weight Rule", "body": "Headings are always 600 with negative tracking. Hierarchy comes from size and color, never from adding bold or light weights.", "section": "typography" },
+      { "name": "The Flat Page Rule", "body": "Marketing surfaces (sections, plates, bento tiles, the FAQ) never cast shadows. Only product UI is lifted.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep every section inside the 1200px hairline-framed column, with a full-width top hairline.",
+      "Do alternate white and Plate Gray (#F9FAFB) bands, and only those two.",
+      "Do show features as rebuilt product UI in Inter on a plate, with real text and a screen-reader caption.",
+      "Do keep violet to actions and data, and make the final or most important bar the only full-strength one.",
+      "Do set headings in Geist 600 with -0.03em tracking and balanced wrapping.",
+      "Do animate once, on entry, with expo-out, and leave every end state visible without JS or under reduced motion."
+    ],
+    "donts": [
+      "Don't use the brand gradient anywhere but the single hero horizon, and never behind text.",
+      "Don't put shadows on marketing surfaces. Shadows are for product UI.",
+      "Don't fill status chips with full-strength color. Use the 10% tint, a dot and dark text.",
+      "Don't pin sections or hijack scroll on this page.",
+      "Don't introduce colors outside the token palette. The palette is binding."
+    ]
+  }
+}
