@@ -1,6 +1,7 @@
 ---
 import { v2 } from '../../content/v2';
 import CandidateReview from '../shared/ui/CandidateReview.astro';
+import Icon from '../shared/ui/Icon.astro';
 const { hero } = v2;
 ---
 <section data-hero id="top" aria-labelledby="hero-title" class="relative bg-white">
@@ -11,7 +12,7 @@ const { hero } = v2;
       <p data-rise class="m-0 mt-7">
         <a href="#how" class="group inline-flex items-center gap-1.5 rounded-md text-base font-medium text-primary no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary">
           {hero.secondary}
-          <span aria-hidden="true" class="transition-transform duration-200 ease-out group-hover:translate-y-0.5">↓</span>
+          <Icon name="arrow-right" size={16} class="rotate-90 transition-transform duration-200 ease-out group-hover:translate-y-0.5" />
         </a>
       </p>
     </div>
