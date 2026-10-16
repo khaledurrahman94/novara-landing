@@ -1,8 +1,8 @@
 ---
 /**
  * Inline demo-request form: work email plus one button.
- * TODO: pass `action` (the demo-request endpoint) once it exists. Until then a valid submit
- * shows the success state without sending anything.
+ * TODO: pass `action` (the demo-request endpoint) once it exists. Without one, a valid submit shows
+ * the success state in dev only; a production build logs a warning and shows a neutral fallback line.
  */
 interface Props {
   id: string;

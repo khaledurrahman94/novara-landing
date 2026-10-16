@@ -29,7 +29,20 @@ const pos = ['items-start text-left', 'items-center text-center', 'items-end tex
     </ul>
   </div>
 
-  <ol class="relative m-0 mt-6 h-[4.5rem] list-none p-0">
+  <ol class="m-0 mt-5 flex list-none flex-col gap-3 p-0 md:hidden">
+    {integrity.events.map((e) => (
+      <li data-anim="event" data-flagged={e.flagged ? 'true' : undefined} class="flex items-start gap-3 text-[13px]">
+        <span class:list={['mt-1 size-[11px] shrink-0 rounded-full border-2 bg-white', e.flagged ? 'border-warning' : 'border-border-primary']} aria-hidden="true"></span>
+        <span>
+          <span class="mr-1.5 tabular-nums text-text-tertiary">{e.time}</span>
+          <span class:list={[e.flagged ? 'font-semibold' : 'text-text-secondary']}>{e.label}</span>
+          {e.flagged && <span class="block text-xs text-text-tertiary">Flagged for your review</span>}
+        </span>
+      </li>
+    ))}
+  </ol>
+
+  <ol class="relative m-0 mt-6 hidden h-[4.5rem] list-none p-0 md:block">
     <span class="absolute inset-x-0 top-[5px] h-px bg-border-primary" aria-hidden="true"></span>
     {integrity.events.map((e, i) => {
       const left = (toSec(e.time) / total) * 100;

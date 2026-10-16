@@ -374,7 +374,7 @@ function buildTile(key: string, tile: HTMLElement): Tile | null {
     }
     case 'analytics': {
       const bars = $(tile, '[data-bar]');
-      return { enter: () => void gsap.fromTo(bars, { scaleX: 0 }, { scaleX: 1, duration: 0.9, stagger: 0.08, ease: EASE, overwrite: true }) };
+      return { enter: () => void gsap.fromTo(bars, { scaleY: 0 }, { scaleY: 1, duration: 0.9, stagger: 0.08, ease: EASE, overwrite: true }) };
     }
     default:
       return null;

@@ -79,7 +79,7 @@ export const v2 = {
       scheduling: { title: 'Interview scheduling', line: 'Recruiters set the slots. A reschedule keeps the old booking on record.' },
       roles: { title: 'Roles and permissions', line: 'Admin, HR Manager and Recruiter, with role-based access.' },
       email: { title: 'Email templates', line: 'Fill in variables, or restore the default.' },
-      analytics: { title: 'Analytics', line: 'See how many candidates sit in each stage.' },
+      analytics: { title: 'Analytics', line: 'Track how candidate numbers change across each stage over time.' },
     },
   },
   faq: {

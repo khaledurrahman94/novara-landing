@@ -154,3 +154,19 @@ export const stageCounts: { stage: StageName; count: number }[] = [
   { stage: 'Completed', count: 12 },
   { stage: 'HR Round', count: 5 },
 ];
+
+/** Illustrative hiring trend (weekly applications) and headline stats for the analytics view. */
+export const hiringTrend = {
+  weeks: [
+    { label: 'Sep 14', value: 4 },
+    { label: 'Sep 21', value: 9 },
+    { label: 'Sep 28', value: 16 },
+    { label: 'Oct 5', value: 31 },
+    { label: 'Oct 12', value: 38 },
+  ],
+  stats: [
+    { label: 'Total candidates', value: '98' },
+    { label: 'Qualified candidates', value: '61' },
+  ],
+  tabs: ['Applications', 'Qualified', 'AI Interviews', 'Selected'],
+} as const;

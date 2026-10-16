@@ -1,15 +1,14 @@
 ---
 import { v2 } from '../../content/v2';
-import { slots, stageCounts, byId } from '../../data/demo';
+import { slots, hiringTrend, byId } from '../../data/demo';
 import Section from './Section.astro';
 import PipelineBoard from '../shared/ui/PipelineBoard.astro';
 import CareerPage from '../shared/ui/CareerPage.astro';
 import Chip from '../shared/ui/Chip.astro';
 import Icon from '../shared/ui/Icon.astro';
-import { stageTone, toneDot } from '../shared/ui/tone';
 const { platform } = v2;
 const t = platform.tiles;
-const maxCount = Math.max(...stageCounts.map((s) => s.count));
+const maxWeek = Math.max(...hiringTrend.weeks.map((w) => w.value));
 const tile = 'group relative flex flex-col bg-white p-6 sm:p-8 focus-visible:outline-offset-[-3px]';
 const tileTitle = 'm-0 text-[17px] font-semibold tracking-[-0.01em]';
 const tileLine = 'm-0 mt-1.5 max-w-[26rem] text-[15px] leading-snug text-text-secondary';
@@ -131,18 +130,33 @@ const varCls = 'rounded-sm bg-primary-50 px-1.5 py-0.5 text-xs font-medium text-
       <p class={tileLine}>{t.analytics.line}</p>
       <figure class={plate}>
         <div class="w-full max-w-[26rem] rounded-lg border border-border-secondary bg-white p-4 font-ui text-text-primary shadow-xs">
-          <p class="m-0 text-[13px] font-semibold">Candidates by stage</p>
-          <ul class="m-0 mt-3 flex list-none flex-col gap-2.5 p-0">
-            {stageCounts.map((s) => (
-              <li class="grid grid-cols-[6rem_minmax(0,1fr)_1.75rem] items-center gap-3 text-xs">
-                <span class="flex items-center gap-1.5 text-text-secondary"><span class:list={['size-1.5 shrink-0 rounded-full', toneDot[stageTone[s.stage]]]} aria-hidden="true"></span>{s.stage}</span>
-                <span class="h-2 rounded-full bg-gray-200"><span data-bar class="block h-full origin-left rounded-full bg-primary" style={`width:${((s.count / maxCount) * 100).toFixed(1)}%`}></span></span>
-                <span class="text-right font-semibold tabular-nums">{s.count}</span>
+          <ul class="m-0 grid list-none grid-cols-2 gap-2 p-0">
+            {hiringTrend.stats.map((s) => (
+              <li class="rounded-md border border-border-secondary px-3 py-2">
+                <span class="block text-[11px] text-text-tertiary">{s.label}</span>
+                <span class="block text-xl font-semibold tabular-nums">{s.value}</span>
               </li>
             ))}
           </ul>
+          <div class="mt-4 flex items-center justify-between gap-2">
+            <p class="m-0 text-[13px] font-semibold">Hiring trend</p>
+            <span class="flex gap-0.5 rounded-md bg-bg-tertiary p-0.5 text-[11px] font-medium">
+              {hiringTrend.tabs.slice(0, 2).map((tab, i) => <span class:list={['rounded-sm px-2 py-0.5', i === 0 ? 'bg-white text-text-primary shadow-xs' : 'text-text-tertiary']}>{tab}</span>)}
+            </span>
+          </div>
+          <ol class="m-0 mt-3 grid h-28 list-none grid-cols-5 items-end gap-3 border-b border-border-primary p-0">
+            {hiringTrend.weeks.map((w) => (
+              <li class="flex h-full flex-col justify-end">
+                <span class="mb-1 text-center text-[11px] font-semibold tabular-nums">{w.value}</span>
+                <span data-bar class="block origin-bottom rounded-t-sm bg-primary" style={`height:${((w.value / maxWeek) * 80).toFixed(1)}%`}></span>
+              </li>
+            ))}
+          </ol>
+          <ol class="m-0 mt-1.5 grid list-none grid-cols-5 gap-3 p-0">
+            {hiringTrend.weeks.map((w) => <li class="text-center text-[10px] text-text-tertiary">{w.label}</li>)}
+          </ol>
         </div>
-        <figcaption class="sr-only">Bar chart of candidates in each pipeline stage</figcaption>
+        <figcaption class="sr-only">Weekly hiring trend with candidate totals</figcaption>
       </figure>
     </article>
   </div>
