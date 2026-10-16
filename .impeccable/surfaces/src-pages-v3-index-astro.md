@@ -35,6 +35,6 @@ STORY: The visitor:
 
 FIRST VIEWPORT: In the upper 40%, a left-aligned H1 "Hire the person, not the pile.", the sub-line, and a "Try the AI interview" link. Below, the candidate-review screen in exploded depth on the gradient horizon: its layers and evidence chips float at different depths, follow the cursor, and reassemble as you scroll.
 
-FORM: a user-pinned extension of the established V2 world, with no concept roll; seed: none (unavailable)
+FORM: a user-pinned extension of the established V2 world. No concept roll was run, because the user pinned the direction ("I love what you have done with the design language and consistency… slightly more wilder").
 
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
