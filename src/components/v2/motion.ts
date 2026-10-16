@@ -244,7 +244,11 @@ function initInterview(root: HTMLElement, splits: SplitText[]): void {
   onEnter(root, () => {
     const tl = gsap.timeline({ defaults: { ease: EASE } });
     if (words.length) tl.to(words, { autoAlpha: 1, duration: T.fast, stagger: 0.05, ease: 'none' }, 0.2);
-    events.forEach((ev, i) => {
+    // The events exist twice (stacked list below md, track from md): time only
+    // the copy on screen, and settle the hidden one so a resize shows it whole.
+    const shown = events.filter((ev) => ev.offsetParent !== null);
+    gsap.set(events.filter((ev) => !shown.includes(ev)), { autoAlpha: 1, y: 0 });
+    shown.forEach((ev, i) => {
       const at = 0.5 + i * 0.8;
       tl.to(ev, { autoAlpha: 1, y: 0, duration: T.slower }, at);
       if (ev.dataset['flagged'] === 'true') tl.add(() => flipCounters(panel), at + 0.1);
