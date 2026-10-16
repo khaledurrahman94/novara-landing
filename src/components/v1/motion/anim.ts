@@ -166,13 +166,3 @@ export function plateDepth(scope: ParentNode): void {
 export function playOnEnter(root: HTMLElement, trigger: HTMLElement = root, start = 'top 78%'): void {
   ScrollTrigger.create({ trigger, start, once: true, onEnter: () => void playMockup(root) });
 }
-
-/** Scale a mockup down (never up) so it fits its plate. */
-export function fitInto(box: HTMLElement, content: HTMLElement): void {
-  gsap.set(content, { scale: 1, transformOrigin: '50% 50%' });
-  const cs = getComputedStyle(box);
-  const w = box.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
-  const h = box.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
-  const s = Math.min(1, w / content.offsetWidth, h / content.offsetHeight);
-  gsap.set(content, { scale: s });
-}

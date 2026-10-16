@@ -1,16 +1,18 @@
 ---
 import Seo from '../components/seo/Seo.astro';
 import '../styles/tokens.css';
-interface Props { title?: string; description?: string; noindex?: boolean; image?: string }
+import '../styles/fluid.css';
+interface Props { title?: string; description?: string; noindex?: boolean; image?: string; fluid?: boolean }
 const {
   title = 'Novara | AI hiring platform',
   description = 'Novara is an AI hiring platform by Vivasoft that helps teams hire smarter and faster.',
   noindex = false,
   image,
+  fluid = false,
 } = Astro.props;
 ---
 <!doctype html>
-<html lang="en">
+<html lang="en" data-fluid={fluid ? "" : undefined}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

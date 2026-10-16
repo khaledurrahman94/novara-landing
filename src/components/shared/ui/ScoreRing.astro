@@ -6,8 +6,8 @@ const r = (size - stroke) / 2;
 const c = 2 * Math.PI * r;
 const off = c * (1 - score / 100);
 ---
-<div class:list={['relative grid shrink-0 place-items-center', cls]} style={`width:${size}px;height:${size}px`} role="img" aria-label={`${label} ${score} out of 100`}>
-  <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} class="-rotate-90" aria-hidden="true">
+<div class:list={['relative grid shrink-0 place-items-center', cls]} style={`width:${size / 16}rem;height:${size / 16}rem`} role="img" aria-label={`${label} ${score} out of 100`}>
+  <svg width={size} height={size} style="width:100%;height:100%" viewBox={`0 0 ${size} ${size}`} class="-rotate-90" aria-hidden="true">
     <circle cx={size / 2} cy={size / 2} r={r} fill="none" class="stroke-gray-200" stroke-width={stroke} />
     <circle
       data-anim="ring-arc"
@@ -24,5 +24,5 @@ const off = c * (1 - score / 100);
       stroke-dashoffset={off}
     />
   </svg>
-  <span class="absolute font-ui font-semibold tabular-nums text-text-primary" style={`font-size:${Math.round(size * 0.3)}px`} data-anim="count" data-count={score}>{score}</span>
+  <span class="absolute font-ui font-semibold tabular-nums text-text-primary" style={`font-size:${(size * 0.3 / 16).toFixed(3)}rem`} data-anim="count" data-count={score}>{score}</span>
 </div>

@@ -1,8 +1,9 @@
 import { onReady, ScrollTrigger } from '../../../scripts/motion';
 import { initHero } from './hero';
+import { initFit } from './fit';
 import { initHow } from './how';
 import { initPlatform } from './platform';
-import { initCta, initFit, initFooter, initHeader, initInterview } from './sections';
+import { initCta, initFooter, initHeader, initInterview } from './sections';
 
 /** One orchestrator, sections in DOM order so pin spacing resolves top to bottom. */
 export function initV1(): void {

@@ -8,7 +8,7 @@ import InterviewScore from '../shared/ui/InterviewScore.astro';
 const { interview: copy } = v1;
 ---
 <section id="interview" data-interview aria-labelledby="interview-title" class="scroll-mt-16 bg-bg-secondary py-section">
-  <div class="mx-auto w-full max-w-[84rem] px-gutter">
+  <div class="mx-auto w-full max-w-[var(--v1-max,84rem)] px-gutter">
     <SectionHead id="interview-title" title={copy.title} line={copy.line} />
 
     <Plate caption={copy.figure} parallax class="mt-14 lg:mt-16" innerClass="block">

@@ -12,7 +12,7 @@ const { class: cls = '' } = Astro.props;
     <Chip tone="primary"><Icon name="sparkles" size={11} />AI draft</Chip>
   </div>
 
-  <dl class="m-0 mt-4 grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-2.5 text-[13px]">
+  <dl class="m-0 mt-4 grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-2.5 text-[0.8125rem]">
     <dt class="text-text-tertiary">Role</dt>
     <dd class="m-0 font-medium">{jobDraft.title}</dd>
     <dt class="text-text-tertiary">Level</dt>
@@ -27,12 +27,12 @@ const { class: cls = '' } = Astro.props;
 
   <div class="mt-4 rounded-md border border-border-secondary p-3.5">
     <p class="m-0 mb-2 text-xs font-semibold text-text-tertiary">Description</p>
-    <ul class="m-0 flex list-disc flex-col gap-1.5 pl-4 text-[13px] leading-snug text-text-secondary marker:text-text-placeholder">
+    <ul class="m-0 flex list-disc flex-col gap-1.5 pl-4 text-[0.8125rem] leading-snug text-text-secondary marker:text-text-placeholder">
       {jobDraft.lines.map((l) => <li data-anim="draft-line">{l}</li>)}
     </ul>
   </div>
 
-  <div class="mt-4 flex justify-end gap-2 text-[13px] font-medium">
+  <div class="mt-4 flex justify-end gap-2 text-[0.8125rem] font-medium">
     <span class="rounded-md border border-border-primary px-3 py-1.5 text-text-secondary shadow-xs">Regenerate</span>
     <span class="rounded-md bg-primary px-3 py-1.5 text-white shadow-xs">Publish</span>
   </div>

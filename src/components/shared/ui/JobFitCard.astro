@@ -54,7 +54,7 @@ const first = name.split(' ')[0];
         <p class="m-0 mb-2 text-xs font-semibold text-text-tertiary">Matched ({matched.length})</p>
         <ul class="m-0 flex list-none flex-col gap-1.5 p-0">
           {matched.map((m) => (
-            <li data-anim="criteria-row" class="flex items-center gap-2.5 text-[13px] text-text-secondary">
+            <li data-anim="criteria-row" class="flex items-center gap-2.5 text-[0.8125rem] text-text-secondary">
               <span class="grid size-5 shrink-0 place-items-center rounded-full bg-success/10 text-success"><Icon name="check" size={12} /></span>
               {m}
             </li>
@@ -63,7 +63,7 @@ const first = name.split(' ')[0];
         <p class="m-0 mb-2 mt-4 text-xs font-semibold text-text-tertiary">Missing ({missing.length})</p>
         <ul class="m-0 flex list-none flex-col gap-1.5 p-0">
           {missing.map((m) => (
-            <li data-anim="criteria-row" class="flex items-center gap-2.5 text-[13px] text-text-secondary">
+            <li data-anim="criteria-row" class="flex items-center gap-2.5 text-[0.8125rem] text-text-secondary">
               <span class="grid size-5 shrink-0 place-items-center rounded-full bg-warning/10 text-warning"><Icon name="alert" size={12} /></span>
               <span>{m.label} <span class="text-text-tertiary">({m.note})</span></span>
             </li>
@@ -75,7 +75,7 @@ const first = name.split(' ')[0];
         <p class="m-0 mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-text-primary">
           <Icon name="sparkles" size={13} class="text-primary" />Why Novara ranks {first} here
         </p>
-        <p data-anim="reasoning" class="m-0 text-[13px] leading-[1.55] text-text-secondary">{reasoning}</p>
+        <p data-anim="reasoning" class="m-0 text-[0.8125rem] leading-[1.55] text-text-secondary">{reasoning}</p>
       </div>
     </>
   )}

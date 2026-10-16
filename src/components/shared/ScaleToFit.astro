@@ -1,0 +1,65 @@
+---
+/**
+ * Scales a product mockup as one unit to fit its frame. Content is authored at `design` rem wide.
+ * A ResizeObserver writes --fit (zoom) and --fit-w (px width) on the wrapper; CSS consumes them.
+ * Width only by default. If the wrapper sets `--fit-constrain: 1` and has a definite height
+ * (a pinned scene), the height is respected too. Never scales up: rem already tracks the fluid root.
+ * `min` floors the width-driven scale; below it the content reflows narrower so text stays legible.
+ */
+interface Props { design: number; min?: number; class?: string }
+const { design, min = 0.8, class: cls = '' } = Astro.props;
+---
+<div data-scale-fit data-design={design} data-min={min} class:list={['scale-fit', cls]}>
+  <div data-scale-inner class="scale-fit-inner" style={`--fit-design:${design}rem`}><slot /></div>
+</div>
+
+<style is:global>
+  .scale-fit { display: grid; place-items: center; width: 100%; min-width: 0; }
+  .scale-fit-inner { display: flex; justify-content: center; width: var(--fit-w, var(--fit-design)); max-width: none; zoom: var(--fit, 1); }
+</style>
+
+<script>
+  const sel = '[data-scale-fit]';
+  const apply = (box: HTMLElement): void => {
+    const inner = box.querySelector<HTMLElement>('[data-scale-inner]');
+    if (!inner) return;
+    const root = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    const nat = Number(box.dataset['design']) * root;
+    const min = Number(box.dataset['min'] ?? 0.8);
+    const availW = box.clientWidth;
+    if (!availW || !nat) return;
+    const constrain = getComputedStyle(box).getPropertyValue('--fit-constrain').trim() === '1';
+
+    let s = Math.min(1, availW / nat);
+    if (!constrain && s < min) s = min;
+    const put = (scale: number): void => {
+      box.style.setProperty('--fit', String(scale));
+      box.style.setProperty('--fit-w', `${Math.min(nat, availW / scale)}px`);
+    };
+    put(s);
+    if (constrain) {
+      const availH = box.clientHeight;
+      box.style.setProperty('--fit', '1');
+      const h = inner.offsetHeight;
+      if (availH && h) s = Math.max(0.5, Math.min(s, availH / h));
+      put(s);
+    }
+  };
+
+  const ro = new ResizeObserver((entries) => {
+    for (const e of entries) {
+      const box = e.target as HTMLElement;
+      requestAnimationFrame(() => apply(box));
+    }
+  });
+  const init = (): void => {
+    document.querySelectorAll<HTMLElement>(sel).forEach((box) => {
+      if (box.dataset['fitBound']) return;
+      box.dataset['fitBound'] = '1';
+      ro.observe(box);
+      apply(box);
+    });
+  };
+  init();
+  void document.fonts?.ready.then(init).then(() => document.querySelectorAll<HTMLElement>(sel).forEach(apply));
+</script>

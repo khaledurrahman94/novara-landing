@@ -8,7 +8,7 @@ const { action = '#demo' } = Astro.props;
 const { cta } = v1;
 ---
 <section id="demo" data-cta aria-labelledby="cta-title" class="scroll-mt-16 bg-brand-gradient py-section text-white">
-  <div class="mx-auto grid w-full max-w-[84rem] gap-10 px-gutter lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:items-end lg:gap-16">
+  <div class="mx-auto grid w-full max-w-[min(var(--v1-max,84rem),68rem)] gap-10 px-gutter lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:items-center lg:gap-16">
     <div class="min-w-0">
       <h2 id="cta-title" class="m-0 max-w-[16ch] text-balance font-display text-display-lg font-semibold leading-[1.04] tracking-[-0.03em]">{cta.title}</h2>
       <p class="m-0 mt-6 max-w-[30rem] text-xl font-bold leading-snug">{cta.line}</p>

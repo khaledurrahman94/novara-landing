@@ -1,42 +1,7 @@
-import { gsap, ScrollTrigger, getLenis, prefersReducedMotion } from '../../../scripts/motion';
-import { $$, EASE, T, countTween, plateDepth, playOnEnter, primeMockup, setCount, waveWhileVisible } from './anim';
+import { gsap, getLenis, prefersReducedMotion } from '../../../scripts/motion';
+import { $$, EASE, T, plateDepth, playOnEnter, primeMockup, setCount, waveWhileVisible } from './anim';
 
 const noop = (): void => {};
-
-/** Job Fit: score counts up, criteria stagger in, reasoning fades in line by line. */
-export function initFit(root: HTMLElement): () => void {
-  if (prefersReducedMotion()) return noop;
-  const ctx = gsap.context(() => {
-    const score = root.querySelector<HTMLElement>('[data-fit-score]');
-    const big = score?.querySelector<HTMLElement>('[data-anim="count"]');
-    const plates = $$(root, '[data-plate]');
-    const [cardPlate, listPlate] = plates;
-
-    if (big && score) {
-      setCount(big, 0);
-      gsap.set(score.children, { autoAlpha: 0, y: 18 });
-      ScrollTrigger.create({
-        trigger: score,
-        start: 'top 78%',
-        once: true,
-        onEnter: () => {
-          gsap.to(score.children, { autoAlpha: 1, y: 0, duration: T.slower, ease: EASE, stagger: 0.08 });
-          countTween(big, 1.4);
-        },
-      });
-    }
-    if (cardPlate) {
-      primeMockup(cardPlate);
-      playOnEnter(cardPlate, cardPlate, 'top 72%');
-    }
-    if (listPlate) {
-      primeMockup(listPlate);
-      playOnEnter(listPlate, listPlate, 'top 82%');
-    }
-    plateDepth(root);
-  }, root);
-  return () => ctx.revert();
-}
 
 /** Interview: captions type in, timeline events appear in order with scroll, the focus counter flips 0 to 1, waveform runs only on screen. */
 export function initInterview(root: HTMLElement): () => void {

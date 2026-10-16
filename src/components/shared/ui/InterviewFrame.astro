@@ -16,11 +16,11 @@ const sm = size === 'sm';
   <div class="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_50%_38%,var(--color-primary-900),transparent_68%)] opacity-70" aria-hidden="true"></div>
 
   <div class="flex items-center justify-between px-3 pt-3">
-    <span class="flex items-center gap-1.5 text-[11px] font-medium text-white/80">
-      {markSrc ? <img src={markSrc} alt="" width="20" height="20" class="size-5 rounded-full bg-white p-0.5" /> : <span class="grid size-5 place-items-center rounded-full bg-primary-600 text-[9px] font-semibold">N</span>}
+    <span class="flex items-center gap-1.5 text-[0.6875rem] font-medium text-white/80">
+      {markSrc ? <img src={markSrc} alt="" width="20" height="20" class="size-5 rounded-full bg-white p-0.5" /> : <span class="grid size-5 place-items-center rounded-full bg-primary-600 text-[0.5625rem] font-semibold">N</span>}
       Novara interviewer
     </span>
-    <span class="flex items-center gap-2 text-[11px] tabular-nums text-white/80">
+    <span class="flex items-center gap-2 text-[0.6875rem] tabular-nums text-white/80">
       <span class="flex items-center gap-1 rounded-full bg-white/10 px-2 py-0.5 font-semibold tracking-wide text-white">
         <span class="size-1.5 rounded-full bg-warning" aria-hidden="true"></span>REC
       </span>
@@ -35,13 +35,13 @@ const sm = size === 'sm';
   </div>
 
   <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-gray-950 via-gray-950/80 to-transparent px-3 pb-3 pt-8">
-    <p class:list={['m-0 pr-16 leading-snug text-white/90', sm ? 'text-[10px]' : 'text-[13px]']}>
+    <p class:list={['m-0 pr-16 leading-snug text-white/90', sm ? 'text-[0.625rem]' : 'text-[0.8125rem]']}>
       <span class="font-semibold text-primary-300">Novara interviewer</span>
       <span data-anim="caption" class="mt-0.5 block">{caption}</span>
     </p>
   </div>
 
-  <div class:list={['absolute bottom-3 right-3 grid place-items-center rounded-md border border-white/15 bg-gray-800 text-white/80', sm ? 'h-8 w-11 text-[10px]' : 'h-14 w-20 text-xs']}>
+  <div class:list={['absolute bottom-3 right-3 grid place-items-center rounded-md border border-white/15 bg-gray-800 text-white/80', sm ? 'h-8 w-11 text-[0.625rem]' : 'h-14 w-20 text-xs']}>
     <span class="font-semibold">{lead.initials}</span>
   </div>
 </div>
