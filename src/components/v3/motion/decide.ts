@@ -8,7 +8,7 @@ import { gsap } from '../../../scripts/motion';
 import { Draggable } from 'gsap/Draggable';
 import { InertiaPlugin } from 'gsap/InertiaPlugin';
 import { v3 } from '../../../content/v3';
-import { $, EASE, num, one } from './util';
+import { $, EASE, holdToDrag, num, one } from './util';
 
 gsap.registerPlugin(Draggable, InertiaPlugin);
 
@@ -161,6 +161,7 @@ export function initDecide(root: HTMLElement, reduced: boolean): () => void {
     },
   })[0];
 
+  const unhold = drag ? holdToDrag(card, drag) : () => undefined;
   const onBtn = (): void => moveTo(at === 'home' ? 'away' : 'home');
   const onKey = (e: KeyboardEvent): void => {
     if (e.key === 'ArrowRight') {
@@ -186,6 +187,7 @@ export function initDecide(root: HTMLElement, reduced: boolean): () => void {
     btn.removeEventListener('click', onBtn);
     card.removeEventListener('keydown', onKey);
     evCleanups.forEach((c) => c());
+    unhold();
     drag?.kill();
     gsap.set(card, { clearProps: 'x,y,scale' });
   };

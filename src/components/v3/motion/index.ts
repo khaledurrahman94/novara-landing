@@ -8,7 +8,7 @@ import { gsap, ScrollTrigger, onReady, prefersReducedMotion, getLenis } from '..
 import { initInteraction, initScrollDepth } from './interaction';
 import { initHero } from './hero';
 import { initResultsPinned, initResultsSimple } from './results';
-import { initHowPinned, initHowSimple } from './how';
+import { initHowPinned, initHowSimple, initHowSteps, replayStep } from './how';
 import { initDecide } from './decide';
 import { initBentoReveal, initPlatform } from './platform';
 import { EASE, $, one, safe, scrollToEl } from './util';
@@ -89,6 +89,9 @@ export function initV3(): void {
     if (decide) add(safe('decide', () => initDecide(decide, reduced)));
     const platform = one(document, '[data-platform]');
     if (platform) add(safe('platform', () => initPlatform(platform, reduced)));
+
+    const howRoot = one(document, '[data-how]');
+    if (howRoot) add(safe('how-steps', () => initHowSteps(howRoot, reduced ? undefined : (i) => { if (!howRoot.classList.contains('is-h')) replayStep(i); })));
 
     if (reduced) return () => cleanups.forEach((c) => c());
 

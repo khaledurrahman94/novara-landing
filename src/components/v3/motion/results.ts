@@ -96,6 +96,7 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
   const tip = one(root, '[data-results-tip]');
   const phaseEl = one(root, '[data-results-phase]');
   const hint = one(root, '[data-results-hint]');
+  const live = one(root, '[data-results-live]');
   const legend = $(root, '[data-leg]');
   const legCounts = $(root, '[data-leg-count]');
   const ctx = canvas?.getContext('2d');
@@ -278,21 +279,7 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
     if (d.tier >= 1 && t >= 0.3) return `Took the AI interview · Job Fit ${d.fit}`;
     return d.tier === 0 ? `Applicant · Job Fit ${d.fit} · Missing: ${d.skill}` : `Applicant · Job Fit ${d.fit} · Matched: ${d.skill}`;
   };
-  const onMove = (e: PointerEvent): void => {
-    const rect = canvas.getBoundingClientRect();
-    const px = e.clientX - rect.left;
-    const py = e.clientY - rect.top;
-    let best: Dot | null = null;
-    let bestD = Infinity;
-    for (const d of order) {
-      if (d.a < 0.25) continue;
-      const dist = Math.hypot(d.x - px, d.y - py);
-      const reach = Math.max(d.r + 3, 6);
-      if (dist <= reach && dist <= bestD) {
-        best = d;
-        bestD = dist;
-      }
-    }
+  const showTip = (best: Dot | null): void => {
     if (best !== hover) {
       hover = best;
       draw();
@@ -308,11 +295,61 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
     const ty = best.y - best.r - 38 < 0 ? best.y + best.r + 10 : best.y - best.r - 38;
     tip.style.transform = `translate(${tx}px, ${ty}px)`;
   };
-  const onLeave = (): void => {
-    hover = null;
-    tip.hidden = true;
-    draw();
+  const nearest = (e: PointerEvent, extra: number): Dot | null => {
+    const rect = canvas.getBoundingClientRect();
+    const px = e.clientX - rect.left;
+    const py = e.clientY - rect.top;
+    let best: Dot | null = null;
+    let bestD = Infinity;
+    for (const d of order) {
+      if (d.a < 0.25) continue;
+      const dist = Math.hypot(d.x - px, d.y - py);
+      if (dist <= Math.max(d.r + 3, 6) + extra && dist <= bestD) {
+        best = d;
+        bestD = dist;
+      }
+    }
+    return best;
   };
+  const onMove = (e: PointerEvent): void => {
+    if (e.pointerType === 'touch') return;
+    showTip(nearest(e, 0));
+  };
+  const onLeave = (e: PointerEvent): void => {
+    if (e.pointerType === 'touch') return;
+    showTip(null);
+  };
+  // Touch: tap a dot to read it, tap elsewhere to clear.
+  const onTap = (e: PointerEvent): void => {
+    if (e.pointerType !== 'touch') return;
+    const d = nearest(e, 10);
+    showTip(d);
+    if (live) live.textContent = d ? tipText(d) : '';
+  };
+  // Keyboard: arrow keys step through a few sample applicants; the tooltip is announced.
+  let step = -1;
+  const samples = (): Dot[] => {
+    const vis = order.filter((d) => d.a >= 0.25);
+    const top = vis.filter((d) => d.tier >= 2);
+    const pool = top.length >= 4 ? top : vis;
+    const n = Math.min(8, pool.length);
+    return Array.from({ length: n }, (_, i) => pool[Math.floor((i * pool.length) / Math.max(1, n))]).filter((d): d is Dot => !!d);
+  };
+  const onKey = (e: KeyboardEvent): void => {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft' && e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+    const list = samples();
+    if (!list.length) return;
+    e.preventDefault();
+    const dir = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : -1;
+    step = (step + dir + list.length * 2) % list.length;
+    const d = list[step];
+    showTip(d ?? null);
+    if (live && d) live.textContent = tipText(d);
+  };
+  const onBlur = (): void => showTip(null);
+  canvas.addEventListener('pointerdown', onTap);
+  canvas.addEventListener('keydown', onKey);
+  canvas.addEventListener('blur', onBlur);
   canvas.addEventListener('pointermove', onMove);
   canvas.addEventListener('pointerleave', onLeave);
 
@@ -320,7 +357,7 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
 
   root.classList.add('is-pinned');
   stage.hidden = false;
-  if (hint) hint.hidden = false;
+  if (hint && window.matchMedia('(pointer: fine)').matches) hint.hidden = false;
   layout();
   draw();
   void document.fonts.load('600 12px "Inter Variable"').then(draw);
@@ -342,6 +379,7 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
       pin: true,
       scrub: 0.7,
       anticipatePin: 1,
+      refreshPriority: 3,
       invalidateOnRefresh: true,
     },
   });
@@ -352,6 +390,9 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
     ro.disconnect();
     canvas.removeEventListener('pointermove', onMove);
     canvas.removeEventListener('pointerleave', onLeave);
+    canvas.removeEventListener('pointerdown', onTap);
+    canvas.removeEventListener('keydown', onKey);
+    canvas.removeEventListener('blur', onBlur);
     root.classList.remove('is-pinned');
     stage.hidden = true;
     tip.hidden = true;

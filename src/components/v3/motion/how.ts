@@ -3,7 +3,7 @@
  * scrubbed to scroll; each step's vignette is a slice of that same timeline, so it plays in
  * proportion to scroll and reverses with it. Phones: a vertical list whose vignettes play once on entry.
  */
-import { gsap, ScrollTrigger } from '../../../scripts/motion';
+import { gsap, ScrollTrigger, getLenis } from '../../../scripts/motion';
 import { $, EASE, num, one } from './util';
 
 /** One vignette's animation, 0..1 long. Elements are looked up by data-v. */
@@ -43,6 +43,32 @@ function vignette(i: number, el: HTMLElement, paused: boolean): gsap.core.Timeli
   return tl;
 }
 
+/** Mark one step as the active one. */
+function setActive(root: HTMLElement, i: number): void {
+  $(root, '[data-step]').forEach((s, k) => {
+    s.dataset['active'] = k === i ? 'true' : 'false';
+    const b = one(s, '[data-step-btn]');
+    if (k === i) b?.setAttribute('aria-current', 'step');
+    else b?.removeAttribute('aria-current');
+  });
+}
+
+/** Every step is a button. Clicking one makes it active, and the mode-specific handler does the rest. */
+export function initHowSteps(root: HTMLElement, onPick?: (i: number) => void): () => void {
+  setActive(root, 0);
+  const cleanups = $(root, '[data-step]').map((step, i) => {
+    const b = one(step, '[data-step-btn]');
+    if (!b) return () => undefined;
+    const on = (): void => {
+      setActive(root, i);
+      onPick?.(i);
+    };
+    b.addEventListener('click', on);
+    return () => b.removeEventListener('click', on);
+  });
+  return () => cleanups.forEach((c) => c());
+}
+
 export function initHowPinned(root: HTMLElement): (() => void) | void {
   const viewport = one(root, '[data-how-viewport]');
   const track = one(root, '[data-how-track]');
@@ -65,8 +91,10 @@ export function initHowPinned(root: HTMLElement): (() => void) | void {
       pin: true,
       scrub: 0.7,
       anticipatePin: 1,
+      refreshPriority: 1,
       invalidateOnRefresh: true,
     },
+    onUpdate: () => setActive(root, Math.min(n - 1, Math.max(0, Math.round(master.time() - 0.5)))),
   });
   // Slide i is centred at time HOLD + i. A short hold at each end lets the first and last steps rest.
   const HOLD = 0.5;
@@ -83,7 +111,34 @@ export function initHowPinned(root: HTMLElement): (() => void) | void {
   });
   master.to({}, { duration: HOLD }, HOLD + n - 1);
 
+  // Click or focus a step: scroll the pinned track to it.
+  const goTo = (i: number): void => {
+    const st = master.scrollTrigger;
+    if (!st) return;
+    const y = st.start + ((HOLD + i) / n) * (st.end - st.start);
+    const lenis = getLenis();
+    if (lenis) lenis.scrollTo(y);
+    else window.scrollTo({ top: y, behavior: 'smooth' });
+  };
+  const btnCleanups = steps.map((step, i) => {
+    const b = one(step, '[data-step-btn]');
+    if (!b) return () => undefined;
+    const click = (): void => goTo(i);
+    // Focus must not slide the clipped track out of step.
+    const focus = (): void => {
+      viewport.scrollLeft = 0;
+      goTo(i);
+    };
+    b.addEventListener('click', click);
+    b.addEventListener('focus', focus);
+    return () => {
+      b.removeEventListener('click', click);
+      b.removeEventListener('focus', focus);
+    };
+  });
+
   return () => {
+    btnCleanups.forEach((c) => c());
     root.classList.remove('is-h');
     progress.hidden = true;
     master.scrollTrigger?.kill();
@@ -92,11 +147,16 @@ export function initHowPinned(root: HTMLElement): (() => void) | void {
   };
 }
 
+const replays: Record<number, () => void> = {};
+/** Vertical list: picking a step replays its vignette. */
+export const replayStep = (i: number): void => replays[i]?.();
+
 export function initHowSimple(root: HTMLElement): void {
   $(root, '[data-step]').forEach((step, i) => {
     const v = one(step, '[data-vignette]');
     if (!v) return;
     const vt = vignette(i, v, true);
+    replays[i] = () => void vt.duration(1.4).restart();
     ScrollTrigger.create({ trigger: step, start: 'top 75%', once: true, onEnter: () => void vt.duration(1.4).play() });
   });
 }

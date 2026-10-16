@@ -4,6 +4,7 @@
  */
 import { gsap, ScrollTrigger, onReady, prefersReducedMotion } from '../../../../scripts/motion';
 import { Draggable } from 'gsap/Draggable';
+import { holdToDrag } from '../../motion/util';
 import { InertiaPlugin } from 'gsap/InertiaPlugin';
 import { Flip } from 'gsap/Flip';
 import { copy } from './copy';
@@ -481,6 +482,7 @@ function mount(root: HTMLElement): () => void {
     if (d) {
       c.drag = d;
       draggables.push(d);
+      holdToDrag(c.card, d);
     }
   });
 

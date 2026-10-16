@@ -1,3 +1,4 @@
+import type { Draggable } from 'gsap/Draggable';
 import { getLenis, prefersReducedMotion } from '../../../scripts/motion';
 
 export const EASE = 'expo.out';
@@ -42,4 +43,58 @@ export function safe<T>(label: string, fn: () => T): T | undefined {
     console.error(`V3 ${label} failed`, err);
     return undefined;
   }
+}
+
+/**
+ * On touch, a Draggable would set touch-action: none and trap vertical swipes. Instead the drag
+ * starts only after a ~250ms press-and-hold; a swipe that moves first scrolls the page.
+ * Fine pointers are unchanged.
+ */
+export function holdToDrag(el: HTMLElement, d: Draggable): () => void {
+  if (window.matchMedia('(pointer: fine)').matches) return () => undefined;
+  d.disable();
+  el.style.touchAction = 'pan-y';
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  let armed = false;
+  let sx = 0;
+  let sy = 0;
+  let last: PointerEvent | null = null;
+  const stop = (): void => {
+    clearTimeout(timer);
+    if (!armed) return;
+    armed = false;
+    if (!d.isThrowing) d.disable();
+    else d.addEventListener('throwcomplete', () => void (!armed && d.disable()));
+  };
+  const onDown = (e: PointerEvent): void => {
+    if (e.pointerType === 'mouse') return;
+    sx = e.clientX;
+    sy = e.clientY;
+    last = e;
+    timer = setTimeout(() => {
+      armed = true;
+      d.enable();
+      d.startDrag(last ?? e);
+    }, 250);
+  };
+  const onMove = (e: PointerEvent): void => {
+    last = e;
+    if (!armed && Math.hypot(e.clientX - sx, e.clientY - sy) > 8) clearTimeout(timer);
+  };
+  const onTouchMove = (e: TouchEvent): void => {
+    if (armed && e.cancelable) e.preventDefault();
+  };
+  el.addEventListener('pointerdown', onDown);
+  el.addEventListener('pointermove', onMove);
+  el.addEventListener('pointerup', stop);
+  el.addEventListener('pointercancel', stop);
+  el.addEventListener('touchmove', onTouchMove, { passive: false });
+  return () => {
+    clearTimeout(timer);
+    el.removeEventListener('pointerdown', onDown);
+    el.removeEventListener('pointermove', onMove);
+    el.removeEventListener('pointerup', stop);
+    el.removeEventListener('pointercancel', stop);
+    el.removeEventListener('touchmove', onTouchMove);
+  };
 }

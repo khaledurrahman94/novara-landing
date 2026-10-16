@@ -50,7 +50,8 @@ const max = Math.max(...results.figures.map((f) => f.value));
       </ol>
       <div class="flex min-h-0 min-w-0 flex-col">
         <div data-results-canvas-wrap class="relative min-h-0 flex-1">
-          <canvas data-results-canvas class="absolute inset-0 size-full" aria-hidden="true"></canvas>
+          <canvas data-results-canvas tabindex="0" role="img" aria-label="1,200 applicant dots narrowing to 4 hires. Use the arrow keys to step through sample applicants." class="absolute inset-0 size-full"></canvas>
+          <p data-results-live role="status" class="sr-only"></p>
           <div data-results-tip hidden class="pointer-events-none absolute left-0 top-0 z-10 whitespace-nowrap rounded-md border border-border-secondary bg-white px-2.5 py-1.5 font-ui text-xs font-medium text-text-primary shadow-md"></div>
         </div>
         <p data-results-phase class="m-0 mt-4 h-7 text-lg font-medium text-text-primary" aria-hidden="true">{results.phases[0]}</p>

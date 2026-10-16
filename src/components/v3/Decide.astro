@@ -31,7 +31,7 @@ const slotH = 'h-[8rem]';
             </button>
           </div>
           <div class="grid grid-cols-2 gap-3">
-            <section data-col="from" aria-label={decide.from} class="rounded-md bg-bg-tertiary p-2">
+            <div data-col="from" class="rounded-md bg-bg-tertiary p-2">
               <h3 class="m-0 mb-2 flex items-center gap-1.5 px-1 text-xs font-semibold text-text-secondary">
                 <span class:list={['size-1.5 rounded-full', toneDot[stageTone.Completed]]} aria-hidden="true"></span>{decide.from}
                 <span data-count="from" class="ml-auto font-medium tabular-nums text-text-tertiary">2</span>
@@ -45,7 +45,7 @@ const slotH = 'h-[8rem]';
                     data-cursor="Drag"
                     tabindex="0"
                     aria-label={`${amara.name}, Job Fit ${amara.fit}. Press the right arrow to move to ${decide.to}.`}
-                    class="absolute inset-0 flex touch-none select-none flex-col rounded-md border border-border-secondary bg-white p-2.5 shadow-md outline-offset-2 transition-[border-color] duration-[var(--duration-fast)] hover:border-primary-300 data-[landed=true]:border-primary"
+                    class="absolute inset-0 flex select-none flex-col rounded-md border border-border-secondary bg-white p-2.5 shadow-md outline-offset-2 transition-[border-color] duration-[var(--duration-fast)] hover:border-primary-300 data-[landed=true]:border-primary"
                   >
                     <div class="flex items-center gap-2"><Avatar initials={amara.initials} size="xs" lead /><span class="min-w-0 truncate text-xs font-semibold">{amara.name}</span></div>
                     <p class="m-0 mt-1.5 text-[11px] text-text-tertiary">Job Fit {amara.fit}</p>
@@ -61,8 +61,8 @@ const slotH = 'h-[8rem]';
                   </article>
                 </li>
               </ul>
-            </section>
-            <section data-col="to" aria-label={decide.to} class="rounded-md bg-bg-tertiary p-2">
+            </div>
+            <div data-col="to" class="rounded-md bg-bg-tertiary p-2">
               <h3 class="m-0 mb-2 flex items-center gap-1.5 px-1 text-xs font-semibold text-text-secondary">
                 <span class:list={['size-1.5 rounded-full', toneDot[stageTone['HR Round']]]} aria-hidden="true"></span>{decide.to}
                 <span data-count="to" class="ml-auto font-medium tabular-nums text-text-tertiary">1</span>
@@ -78,7 +78,7 @@ const slotH = 'h-[8rem]';
                   </article>
                 </li>
               </ul>
-            </section>
+            </div>
           </div>
           <p data-decide-status role="status" class="sr-only"></p>
         </div>

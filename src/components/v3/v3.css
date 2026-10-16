@@ -114,3 +114,16 @@
     transition: none;
   }
 }
+
+/* How it works: the active step. */
+.v3-how [data-step][data-active='true'] [data-num] {
+  background: var(--color-text-primary);
+  border-color: var(--color-text-primary);
+  color: var(--color-white);
+}
+.v3-how [data-vignette] {
+  transition: border-color var(--duration-base) var(--ease-out-quart);
+}
+.v3-how [data-step][data-active='true'] [data-vignette] {
+  border-color: var(--color-primary-300);
+}
