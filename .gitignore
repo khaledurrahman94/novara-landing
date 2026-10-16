@@ -8,3 +8,4 @@ src/assets/fonts/sf-pro/
 # Local tool settings (per machine)
 .claude/settings.local.json
 .impeccable/config.local.json
+.impeccable/*.cache.json
