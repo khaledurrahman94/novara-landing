@@ -159,7 +159,8 @@ export function initDecide(root: HTMLElement, reduced: boolean): () => void {
         gsap.to(card, { x: end.x, y: end.y, duration: 0.55, ease: 'back.out(1.4)', onComplete: done });
       } else {
         // A throw: carry the card's own velocity and land it exactly on the column.
-        gsap.to(card, { inertia: { x: { velocity: 'auto', end: end.x }, y: { velocity: 'auto', end: end.y } }, onComplete: done });
+        // Velocities are passed in, not 'auto': on touch, hold-to-drag stops tracking before the tween starts.
+        gsap.to(card, { inertia: { x: { velocity: vx, end: end.x }, y: { velocity: vy, end: end.y } }, onComplete: done });
       }
     },
   })[0];
