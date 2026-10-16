@@ -119,7 +119,10 @@ export function initV3(): void {
       });
       mm.add('(max-width: 767px), (max-height: 619px)', () => {
         if (results) safe('results-simple', () => initResultsSimple(results));
-        if (how) safe('how-simple', () => initHowSimple(how));
+        const c = how ? safe('how-simple', () => initHowSimple(how)) : undefined;
+        return () => {
+          if (typeof c === 'function') c();
+        };
       });
     });
 

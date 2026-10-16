@@ -12,11 +12,11 @@ const tile = 'group relative flex flex-col bg-white p-6 sm:p-8';
 const tileTitle = 'm-0 text-[17px] font-semibold tracking-[-0.01em]';
 const tileLine = 'm-0 mt-1.5 max-w-[26rem] text-[15px] leading-snug text-text-secondary';
 const plate = 'relative m-0 mt-6 flex flex-1 items-center justify-center rounded-lg bg-bg p-3 sm:p-5';
-const modules = ['Jobs', 'Candidates', 'Interviews'];
+const modules = ['Candidates', 'Interviews'];
 const roleRows = [
-  { name: 'Admin', on: [true, true, true] },
-  { name: 'HR Manager', on: [true, true, true] },
-  { name: 'Recruiter', on: [false, true, true] },
+  { name: 'Admin', on: [true, true] },
+  { name: 'HR Manager', on: [true, true] },
+  { name: 'Recruiter', on: [false, true] },
 ];
 const field = 'h-9 w-full rounded-md border border-border-primary bg-white px-3 font-[inherit] text-[13px] text-text-primary shadow-xs transition-[border-color] duration-[var(--duration-fast)] focus:border-primary focus:outline-2 focus:outline-offset-0 focus:outline-primary-200';
 const varCls = 'rounded-sm bg-primary-50 px-1.5 py-0.5 text-xs font-medium text-primary-700';
@@ -38,8 +38,8 @@ const trendJson = JSON.stringify({ tabs: trendTabs, data: platform.trend, weeks:
       <article data-tile="pipeline" aria-labelledby="t-pipeline" class:list={[tile, 'md:col-span-2 lg:col-span-4']}>
         <h3 id="t-pipeline" class={tileTitle}>{t.pipeline.title}</h3>
         <p class={tileLine}>{t.pipeline.line}</p>
-        <figure data-tilt data-tilt-max="4" class={plate}>
-          <div data-depth="0.5" class="w-full"><PipelineBoard class="max-w-none!" /></div>
+        <figure class={plate}>
+          <div class="w-full"><PipelineBoard class="max-w-none!" /></div>
           <figcaption class="sr-only">Pipeline board with stage columns. Cards lift when you hover or focus them.</figcaption>
         </figure>
       </article>
@@ -47,9 +47,9 @@ const trendJson = JSON.stringify({ tabs: trendTabs, data: platform.trend, weeks:
       <article data-tile="career" aria-labelledby="t-career" class:list={[tile, 'lg:col-span-2 lg:row-span-2']}>
         <h3 id="t-career" class={tileTitle}>{t.career.title}</h3>
         <p class={tileLine}>{t.career.line}</p>
-        <figure data-tilt data-tilt-max="4" class:list={[plate, 'flex-col gap-3!']}>
-          <div data-depth="0.5" class="w-full"><CareerPage class="max-w-none!" /></div>
-          <div data-depth="0.9" class="self-start">
+        <figure class:list={[plate, 'flex-col gap-3!']}>
+          <div class="w-full"><CareerPage class="max-w-none!" /></div>
+          <div class="self-start">
             <button type="button" data-copy data-embed={JSON.stringify(embed)} data-cursor="Copy" class={btn}>
               <Icon name="copy" size={14} /><span data-copy-label>{platform.copyEmbed}</span>
             </button>
@@ -62,8 +62,8 @@ const trendJson = JSON.stringify({ tabs: trendTabs, data: platform.trend, weeks:
       <article data-tile="scheduling" aria-labelledby="t-sched" class:list={[tile, 'lg:col-span-2']}>
         <h3 id="t-sched" class={tileTitle}>{t.scheduling.title}</h3>
         <p class={tileLine}>{t.scheduling.line}</p>
-        <figure data-tilt data-tilt-max="4" class={plate}>
-          <div data-sched data-day="Wed 21 Oct" data-toast-text={slots.toast} data-depth="0.5" class="relative w-full max-w-[20rem] rounded-lg border border-border-secondary bg-white p-3.5 font-ui text-text-primary shadow-xs">
+        <figure class={plate}>
+          <div data-sched data-day="Wed 21 Oct" data-toast-text={slots.toast} class="relative w-full max-w-[20rem] rounded-lg border border-border-secondary bg-white p-3.5 font-ui text-text-primary shadow-xs">
             <p class="m-0 text-xs font-semibold">Wed 21 Oct</p>
             <div data-slot-grid role="radiogroup" aria-label="Interview slots" data-cursor="Try it" class="relative mt-2.5 grid grid-cols-2 gap-2">
               <span
@@ -95,13 +95,13 @@ const trendJson = JSON.stringify({ tabs: trendTabs, data: platform.trend, weeks:
       <article data-tile="roles" aria-labelledby="t-roles" class:list={[tile, 'lg:col-span-2']}>
         <h3 id="t-roles" class={tileTitle}>{t.roles.title}</h3>
         <p class={tileLine}>{t.roles.line}</p>
-        <figure data-tilt data-tilt-max="4" class={plate}>
-          <div data-depth="0.5" class="w-full max-w-[20rem] overflow-hidden rounded-lg border border-border-secondary bg-white font-ui text-text-primary shadow-xs">
-            <div class="grid grid-cols-[minmax(0,1fr)_repeat(3,3.25rem)] items-center border-b border-border-secondary bg-bg px-3 py-2 text-[11px] font-medium text-text-tertiary">
-              <span>Role</span>{modules.map((m) => <span class="text-center">{m}</span>)}
+        <figure class={plate}>
+          <div class="w-full max-w-[20rem] overflow-hidden rounded-lg border border-border-secondary bg-white font-ui text-text-primary shadow-xs">
+            <div class="grid grid-cols-[minmax(0,1fr)_repeat(2,5.25rem)] items-center border-b border-border-secondary bg-bg px-3 py-2 text-[11px] font-medium text-text-tertiary">
+              <span>Role</span>{modules.map((m) => <span class="truncate text-center">{m}</span>)}
             </div>
             {roleRows.map((r) => (
-              <div class="grid grid-cols-[minmax(0,1fr)_repeat(3,3.25rem)] items-center border-b border-border-secondary px-3 py-3 last:border-b-0">
+              <div class="grid grid-cols-[minmax(0,1fr)_repeat(2,5.25rem)] items-center border-b border-border-secondary px-3 py-3 last:border-b-0">
                 <span class="text-[13px] font-semibold">{r.name}</span>
                 {r.on.map((on, i) => (
                   <span class="grid place-items-center">
@@ -127,8 +127,8 @@ const trendJson = JSON.stringify({ tabs: trendTabs, data: platform.trend, weeks:
       <article data-tile="email" aria-labelledby="t-email" class:list={[tile, 'md:col-span-1 lg:col-span-3']}>
         <h3 id="t-email" class={tileTitle}>{t.email.title}</h3>
         <p class={tileLine}>{t.email.line}</p>
-        <figure data-tilt data-tilt-max="4" class={plate}>
-          <div data-email data-depth="0.5" class="w-full max-w-[26rem] rounded-lg border border-border-secondary bg-white p-4 font-ui text-text-primary shadow-xs">
+        <figure class={plate}>
+          <div data-email class="w-full max-w-[26rem] rounded-lg border border-border-secondary bg-white p-4 font-ui text-text-primary shadow-xs">
             <label for="v3-candidate-name" class="block text-xs font-medium text-text-tertiary">{platform.candidateName}</label>
             <input id="v3-candidate-name" data-name-input type="text" autocomplete="off" maxlength="40" placeholder={platform.candidateNamePlaceholder} data-cursor="Try it" class={`${field} mt-1.5`} />
             <p class="m-0 mt-4 text-[13px] font-semibold">Interview booked</p>
@@ -150,8 +150,8 @@ const trendJson = JSON.stringify({ tabs: trendTabs, data: platform.trend, weeks:
       <article data-tile="analytics" aria-labelledby="t-analytics" class:list={[tile, 'md:col-span-2 lg:col-span-3']}>
         <h3 id="t-analytics" class={tileTitle}>{t.analytics.title}</h3>
         <p class={tileLine}>{t.analytics.line}</p>
-        <figure data-tilt data-tilt-max="4" class={plate}>
-          <div data-analytics data-trend={trendJson} data-depth="0.5" class="w-full max-w-[26rem] rounded-lg border border-border-secondary bg-white p-4 font-ui text-text-primary shadow-xs">
+        <figure class={plate}>
+          <div data-analytics data-trend={trendJson} class="w-full max-w-[26rem] rounded-lg border border-border-secondary bg-white p-4 font-ui text-text-primary shadow-xs">
             <ul class="m-0 grid list-none grid-cols-2 gap-2 p-0">
               {hiringTrend.stats.map((s) => (
                 <li class="rounded-md border border-border-secondary px-3 py-2">

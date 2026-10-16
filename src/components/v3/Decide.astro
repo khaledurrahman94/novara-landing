@@ -26,9 +26,6 @@ const slotH = 'h-[8rem]';
         <div data-board class="relative w-full rounded-lg border border-border-secondary bg-white p-4 font-ui text-text-primary shadow-md">
           <div class="mb-3 flex flex-wrap items-center justify-between gap-3">
             <p class="m-0 text-sm font-semibold">{role.title}</p>
-            <button type="button" data-move-btn hidden class="inline-flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-[13px] font-medium text-white shadow-xs transition-[background-color] duration-[var(--duration-fast)] hover:bg-primary-600">
-              <span data-move-label>{decide.move}</span><Icon name="arrow-right" size={14} />
-            </button>
           </div>
           <div class="grid grid-cols-2 gap-3">
             <div data-col="from" class="rounded-md bg-bg-tertiary p-2">
@@ -44,7 +41,8 @@ const slotH = 'h-[8rem]';
                     data-evidence-for="amara"
                     data-cursor="Drag"
                     tabindex="0"
-                    aria-label={`${amara.name}, Job Fit ${amara.fit}. Press the right arrow to move to ${decide.to}.`}
+                    aria-label={`${amara.name}, Job Fit ${amara.fit}`}
+                    aria-describedby="decide-help"
                     class="absolute inset-0 flex select-none flex-col rounded-md border border-border-secondary bg-white p-2.5 shadow-md outline-offset-2 transition-[border-color] duration-[var(--duration-fast)] hover:border-primary-300 data-[landed=true]:border-primary"
                   >
                     <div class="flex items-center gap-2"><Avatar initials={amara.initials} size="xs" lead /><span class="min-w-0 truncate text-xs font-semibold">{amara.name}</span></div>
@@ -80,6 +78,7 @@ const slotH = 'h-[8rem]';
               </ul>
             </div>
           </div>
+          <p id="decide-help" class="sr-only">{decide.dragHelp}</p>
           <p data-decide-status role="status" class="sr-only"></p>
         </div>
 

@@ -7,9 +7,10 @@ import Chip from '../shared/ui/Chip.astro';
 import Icon from '../shared/ui/Icon.astro';
 const { how } = v3;
 const amara = byId('amara');
-const rank = [...candidates].sort((a, b) => b.fit - a.fit).slice(0, 4);
+const rank = [...candidates].sort((a, b) => b.fit - a.fit).slice(0, 3);
+const wave = [0.4, 0.75, 0.55, 1, 0.65, 0.9, 0.5, 0.8, 0.45];
 const applied = [byId('leo'), byId('marcus'), byId('nadia')];
-const box = 'h-[21rem] overflow-hidden rounded-lg border border-border-secondary bg-white p-4 font-ui text-text-primary shadow-md sm:p-5';
+const box = 'relative h-[clamp(19rem,46svh,22rem)] overflow-hidden rounded-lg border border-border-secondary bg-white p-4 font-ui text-text-primary shadow-md sm:p-5';
 const row = 'flex items-center gap-2 rounded-md border border-border-secondary bg-white p-2.5';
 ---
 <Section id="how" labelledby="how-title" tone="plate">
@@ -55,7 +56,7 @@ const row = 'flex items-center gap-2 rounded-md border border-border-secondary b
                       {careerJobs.slice(0, 2).map((j) => (
                         <li class={row}>
                           <span class="min-w-0 flex-1 truncate text-[13px] font-semibold">{j.title}</span>
-                          <span class="shrink-0 rounded-sm bg-primary px-2 py-1 text-[11px] font-medium text-white">Apply</span>
+                          <span data-v="apply" class="shrink-0 rounded-sm bg-primary px-2 py-1 text-[11px] font-medium text-white">Apply</span>
                         </li>
                       ))}
                     </ul>
@@ -83,9 +84,13 @@ const row = 'flex items-center gap-2 rounded-md border border-border-secondary b
                         </li>
                       ))}
                     </ul>
-                    <div class="mt-4 flex items-center justify-between gap-2">
-                      <Chip tone="success">Qualified</Chip>
-                      <span data-v="interview" class="inline-flex items-center gap-1 rounded-sm border border-border-primary bg-white px-2 py-1 text-[11px] font-medium text-text-secondary"><Icon name="mic" size={11} />AI interview</span>
+                    <div class="mt-4 flex items-center gap-3 rounded-md bg-bg-tertiary px-3 py-2.5">
+                      <span data-v="interview" class="inline-flex shrink-0 items-center gap-1 text-[11px] font-medium text-text-secondary"><Icon name="mic" size={12} />AI interview</span>
+                      <span class="flex h-5 shrink-0 items-center gap-[3px]" data-v="wave-box">
+                        {wave.map((v) => <i data-v="wave" class="block w-[3px] rounded-full bg-primary" style={`height:${Math.round(v * 20)}px`}></i>)}
+                      </span>
+                      <span class="min-w-0 flex-1 truncate text-[12px] text-text-secondary">{"Hi, I'm Novara's AI interviewer.".split(' ').map((w) => <><span data-v="cap">{w}</span>{' '}</>)}</span>
+                      <span data-v="qualified"><Chip tone="success">Qualified</Chip></span>
                     </div>
                   </>
                 )}
@@ -106,9 +111,6 @@ const row = 'flex items-center gap-2 rounded-md border border-border-secondary b
                           </div>
                         </div>
                       </div>
-                    </div>
-                    <div class="mt-auto flex items-center justify-end gap-2 pt-4">
-                      <span data-v="btn" class="inline-flex h-8 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-medium text-white">{v3.decide.move}<Icon name="arrow-right" size={12} /></span>
                     </div>
                   </div>
                 )}
