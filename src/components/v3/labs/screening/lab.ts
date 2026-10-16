@@ -629,7 +629,7 @@ function mount(root: HTMLElement): () => void {
   root.addEventListener('pointerdown', stop, { signal });
   root.addEventListener('touchstart', stop, { passive: true, signal });
   root.addEventListener('keydown', stop, { signal });
-  root.addEventListener('pointermove', (e) => void ((Math.abs(e.movementX) + Math.abs(e.movementY) > 0) && stop(e)), { signal });
+  root.addEventListener('pointermove', (e) => void ((Math.abs(e.movementX) + Math.abs(e.movementY) > 0) && stop()), { signal });
 
   /* ---------- cleanup ---------- */
   return () => {

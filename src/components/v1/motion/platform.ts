@@ -77,7 +77,7 @@ export function initPlatform(root: HTMLElement): () => void {
   mm.add(
     {
       pin: PIN_MQ,
-      flow: '(width < 1024px), (height < 680px), (prefers-reduced-motion: reduce)',
+      flow: '(max-width: 1023.98px), (max-height: 679.98px), (prefers-reduced-motion: reduce)',
     },
     (ctx) => {
       const { pin } = ctx.conditions as { pin: boolean; flow: boolean };

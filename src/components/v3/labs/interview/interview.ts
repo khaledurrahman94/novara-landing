@@ -439,7 +439,9 @@ function mount(root: HTMLElement): () => void {
     qi = i;
     step.textContent = lab.step(i + 1, TOTAL);
     dots.forEach((d, n) => (d.dataset['on'] = String(n <= i)));
+    const nextHadFocus = document.activeElement === nextBtn;
     nextBtn.hidden = i === TOTAL - 1;
+    if (nextHadFocus && nextBtn.hidden) finishBtn.focus({ preventScroll: true });
     const text = lab.questions[i] ?? '';
     const ans = lab.answers[i] ?? '';
     const words = ans.split(' ');
@@ -602,7 +604,6 @@ function mount(root: HTMLElement): () => void {
   on(pauseBtn, 'click', () => {
     userPaused = !userPaused;
     pauseBtn.textContent = userPaused ? lab.resume : lab.pause;
-    pauseBtn.setAttribute('aria-pressed', String(userPaused));
     seq?.paused(!isLive() || userPaused);
   });
   on(again, 'click', restart);

@@ -3,7 +3,7 @@ import { ScrollTrigger, getLenis } from '../../../scripts/motion';
 /** Pin only on roomy desktop viewports with motion allowed. Everything else stacks normally. */
 export const PIN_MQ = '(min-width: 1024px) and (min-height: 680px) and (prefers-reduced-motion: no-preference)';
 export const FLOW_MQ =
-  '(width < 1024px) and (prefers-reduced-motion: no-preference), (height < 680px) and (prefers-reduced-motion: no-preference)';
+  '(max-width: 1023.98px) and (prefers-reduced-motion: no-preference), (max-height: 679.98px) and (prefers-reduced-motion: no-preference)';
 
 const navH = (): number => document.querySelector<HTMLElement>('[data-header]')?.offsetHeight ?? 64;
 
