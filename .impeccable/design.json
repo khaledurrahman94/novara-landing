@@ -1,63 +1,531 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-16T00:00:00Z",
+  "generatedAt": "2026-10-16T12:00:00Z",
   "title": "Design System: Novara",
   "extensions": {
     "colorMeta": {
-      "primary": { "role": "primary", "displayName": "Novara Violet", "canonical": "#7237FB", "tonalRamp": ["#220B57", "#371483", "#4316A3", "#5017CB", "#7237FB", "#9F73FD", "#DACBFF", "#F5F1FF"] },
-      "primary-600": { "role": "primary", "displayName": "Pressed Violet", "canonical": "#5F1FEF", "tonalRamp": ["#220B57", "#371483", "#4316A3", "#5017CB", "#5F1FEF", "#9F73FD", "#DACBFF", "#F5F1FF"] },
-      "primary-300": { "role": "primary", "displayName": "Soft Violet", "canonical": "#C0A6FE", "tonalRamp": ["#220B57", "#371483", "#4316A3", "#5017CB", "#7237FB", "#C0A6FE", "#DACBFF", "#F5F1FF"] },
-      "primary-200": { "role": "primary", "displayName": "Selection Lilac", "canonical": "#DACBFF", "tonalRamp": ["#220B57", "#371483", "#4316A3", "#5017CB", "#7237FB", "#C0A6FE", "#DACBFF", "#F5F1FF"] },
-      "primary-50": { "role": "primary", "displayName": "Violet Wash", "canonical": "#F5F1FF", "tonalRamp": ["#220B57", "#371483", "#4316A3", "#5017CB", "#7237FB", "#C0A6FE", "#ECE3FF", "#F5F1FF"] },
-      "brand-from": { "role": "secondary", "displayName": "Gradient Start", "canonical": "#8C75FB", "tonalRamp": ["#21115E", "#33208C", "#4A35B8", "#6650DE", "#8C75FB", "#AC9CFC", "#CEC5FD", "#EEEBFF"] },
-      "brand-to": { "role": "secondary", "displayName": "Gradient End", "canonical": "#421DF8", "tonalRamp": ["#120552", "#1D0A85", "#2A10B8", "#3615E0", "#421DF8", "#7A62FA", "#B5A8FC", "#ECE8FF"] },
-      "success": { "role": "tertiary", "displayName": "Status Green", "canonical": "#17B26A", "tonalRamp": ["#053321", "#074D31", "#067647", "#079455", "#17B26A", "#47CD89", "#ABEFC6", "#ECFDF3"] },
-      "warning": { "role": "tertiary", "displayName": "Status Amber", "canonical": "#F79009", "tonalRamp": ["#4E1D09", "#93370D", "#B54708", "#DC6803", "#F79009", "#FDB022", "#FEDF89", "#FFFAEB"] },
-      "blue-light": { "role": "tertiary", "displayName": "Status Sky", "canonical": "#0BA5EC", "tonalRamp": ["#062C41", "#065986", "#026AA2", "#0086C9", "#0BA5EC", "#36BFFA", "#B9E6FE", "#F0F9FF"] },
-      "white": { "role": "neutral", "displayName": "White", "canonical": "#FFFFFF", "tonalRamp": ["#0C111D", "#1D2939", "#344054", "#667085", "#98A2B3", "#D0D5DD", "#F2F4F7", "#FFFFFF"] },
-      "bg": { "role": "neutral", "displayName": "Plate Gray", "canonical": "#F9FAFB", "tonalRamp": ["#0C111D", "#1D2939", "#344054", "#667085", "#98A2B3", "#D0D5DD", "#F2F4F7", "#F9FAFB"] },
-      "bg-tertiary": { "role": "neutral", "displayName": "Inset Gray", "canonical": "#F2F4F7", "tonalRamp": ["#0C111D", "#1D2939", "#344054", "#667085", "#98A2B3", "#D0D5DD", "#F2F4F7", "#F9FAFB"] },
-      "border-primary": { "role": "neutral", "displayName": "Field Line", "canonical": "#D0D5DD", "tonalRamp": ["#0C111D", "#1D2939", "#344054", "#667085", "#98A2B3", "#D0D5DD", "#EAECF0", "#F9FAFB"] },
-      "border-secondary": { "role": "neutral", "displayName": "Hairline", "canonical": "#E4E7EC", "tonalRamp": ["#0C111D", "#1D2939", "#344054", "#667085", "#98A2B3", "#D0D5DD", "#E4E7EC", "#F9FAFB"] },
-      "gray-200": { "role": "neutral", "displayName": "Switch Off", "canonical": "#EAECF0", "tonalRamp": ["#0C111D", "#1D2939", "#344054", "#667085", "#98A2B3", "#D0D5DD", "#EAECF0", "#F9FAFB"] },
-      "gray-400": { "role": "neutral", "displayName": "Gray Dot", "canonical": "#98A2B3", "tonalRamp": ["#0C111D", "#1D2939", "#344054", "#667085", "#98A2B3", "#D0D5DD", "#EAECF0", "#F9FAFB"] },
-      "text-primary": { "role": "neutral", "displayName": "Ink", "canonical": "#101828", "tonalRamp": ["#0C111D", "#101828", "#344054", "#475467", "#667085", "#98A2B3", "#D0D5DD", "#F9FAFB"] },
-      "text-secondary": { "role": "neutral", "displayName": "Slate", "canonical": "#344054", "tonalRamp": ["#0C111D", "#101828", "#344054", "#475467", "#667085", "#98A2B3", "#D0D5DD", "#F9FAFB"] },
-      "text-tertiary": { "role": "neutral", "displayName": "Muted Slate", "canonical": "#475467", "tonalRamp": ["#0C111D", "#101828", "#344054", "#475467", "#667085", "#98A2B3", "#D0D5DD", "#F9FAFB"] },
-      "text-placeholder": { "role": "neutral", "displayName": "Placeholder", "canonical": "#667085", "tonalRamp": ["#0C111D", "#101828", "#344054", "#475467", "#667085", "#98A2B3", "#D0D5DD", "#F9FAFB"] },
-      "gray-950": { "role": "neutral", "displayName": "Night", "canonical": "#0C111D", "tonalRamp": ["#0C111D", "#1D2939", "#344054", "#475467", "#667085", "#98A2B3", "#D0D5DD", "#F9FAFB"] }
+      "primary": {
+        "role": "primary",
+        "displayName": "Novara Violet",
+        "canonical": "#7237FB",
+        "tonalRamp": [
+          "#220B57",
+          "#371483",
+          "#4316A3",
+          "#5017CB",
+          "#7237FB",
+          "#9F73FD",
+          "#DACBFF",
+          "#F5F1FF"
+        ]
+      },
+      "primary-600": {
+        "role": "primary",
+        "displayName": "Pressed Violet",
+        "canonical": "#5F1FEF",
+        "tonalRamp": [
+          "#220B57",
+          "#371483",
+          "#4316A3",
+          "#5017CB",
+          "#5F1FEF",
+          "#9F73FD",
+          "#DACBFF",
+          "#F5F1FF"
+        ]
+      },
+      "primary-300": {
+        "role": "primary",
+        "displayName": "Soft Violet",
+        "canonical": "#C0A6FE",
+        "tonalRamp": [
+          "#220B57",
+          "#371483",
+          "#4316A3",
+          "#5017CB",
+          "#7237FB",
+          "#C0A6FE",
+          "#DACBFF",
+          "#F5F1FF"
+        ]
+      },
+      "primary-200": {
+        "role": "primary",
+        "displayName": "Selection Lilac",
+        "canonical": "#DACBFF",
+        "tonalRamp": [
+          "#220B57",
+          "#371483",
+          "#4316A3",
+          "#5017CB",
+          "#7237FB",
+          "#C0A6FE",
+          "#DACBFF",
+          "#F5F1FF"
+        ]
+      },
+      "primary-50": {
+        "role": "primary",
+        "displayName": "Violet Wash",
+        "canonical": "#F5F1FF",
+        "tonalRamp": [
+          "#220B57",
+          "#371483",
+          "#4316A3",
+          "#5017CB",
+          "#7237FB",
+          "#C0A6FE",
+          "#ECE3FF",
+          "#F5F1FF"
+        ]
+      },
+      "brand-from": {
+        "role": "secondary",
+        "displayName": "Gradient Start",
+        "canonical": "#8C75FB",
+        "tonalRamp": [
+          "#21115E",
+          "#33208C",
+          "#4A35B8",
+          "#6650DE",
+          "#8C75FB",
+          "#AC9CFC",
+          "#CEC5FD",
+          "#EEEBFF"
+        ]
+      },
+      "brand-to": {
+        "role": "secondary",
+        "displayName": "Gradient End",
+        "canonical": "#421DF8",
+        "tonalRamp": [
+          "#120552",
+          "#1D0A85",
+          "#2A10B8",
+          "#3615E0",
+          "#421DF8",
+          "#7A62FA",
+          "#B5A8FC",
+          "#ECE8FF"
+        ]
+      },
+      "success": {
+        "role": "tertiary",
+        "displayName": "Status Green",
+        "canonical": "#17B26A",
+        "tonalRamp": [
+          "#053321",
+          "#074D31",
+          "#067647",
+          "#079455",
+          "#17B26A",
+          "#47CD89",
+          "#ABEFC6",
+          "#ECFDF3"
+        ]
+      },
+      "warning": {
+        "role": "tertiary",
+        "displayName": "Status Amber",
+        "canonical": "#F79009",
+        "tonalRamp": [
+          "#4E1D09",
+          "#93370D",
+          "#B54708",
+          "#DC6803",
+          "#F79009",
+          "#FDB022",
+          "#FEDF89",
+          "#FFFAEB"
+        ]
+      },
+      "blue-light": {
+        "role": "tertiary",
+        "displayName": "Status Sky",
+        "canonical": "#0BA5EC",
+        "tonalRamp": [
+          "#062C41",
+          "#065986",
+          "#026AA2",
+          "#0086C9",
+          "#0BA5EC",
+          "#36BFFA",
+          "#B9E6FE",
+          "#F0F9FF"
+        ]
+      },
+      "white": {
+        "role": "neutral",
+        "displayName": "White",
+        "canonical": "#FFFFFF",
+        "tonalRamp": [
+          "#0C111D",
+          "#1D2939",
+          "#344054",
+          "#667085",
+          "#98A2B3",
+          "#D0D5DD",
+          "#F2F4F7",
+          "#FFFFFF"
+        ]
+      },
+      "bg": {
+        "role": "neutral",
+        "displayName": "Plate Gray",
+        "canonical": "#F9FAFB",
+        "tonalRamp": [
+          "#0C111D",
+          "#1D2939",
+          "#344054",
+          "#667085",
+          "#98A2B3",
+          "#D0D5DD",
+          "#F2F4F7",
+          "#F9FAFB"
+        ]
+      },
+      "bg-tertiary": {
+        "role": "neutral",
+        "displayName": "Inset Gray",
+        "canonical": "#F2F4F7",
+        "tonalRamp": [
+          "#0C111D",
+          "#1D2939",
+          "#344054",
+          "#667085",
+          "#98A2B3",
+          "#D0D5DD",
+          "#F2F4F7",
+          "#F9FAFB"
+        ]
+      },
+      "border-primary": {
+        "role": "neutral",
+        "displayName": "Field Line",
+        "canonical": "#D0D5DD",
+        "tonalRamp": [
+          "#0C111D",
+          "#1D2939",
+          "#344054",
+          "#667085",
+          "#98A2B3",
+          "#D0D5DD",
+          "#EAECF0",
+          "#F9FAFB"
+        ]
+      },
+      "border-secondary": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#E4E7EC",
+        "tonalRamp": [
+          "#0C111D",
+          "#1D2939",
+          "#344054",
+          "#667085",
+          "#98A2B3",
+          "#D0D5DD",
+          "#E4E7EC",
+          "#F9FAFB"
+        ]
+      },
+      "gray-200": {
+        "role": "neutral",
+        "displayName": "Switch Off",
+        "canonical": "#EAECF0",
+        "tonalRamp": [
+          "#0C111D",
+          "#1D2939",
+          "#344054",
+          "#667085",
+          "#98A2B3",
+          "#D0D5DD",
+          "#EAECF0",
+          "#F9FAFB"
+        ]
+      },
+      "gray-400": {
+        "role": "neutral",
+        "displayName": "Gray Dot",
+        "canonical": "#98A2B3",
+        "tonalRamp": [
+          "#0C111D",
+          "#1D2939",
+          "#344054",
+          "#667085",
+          "#98A2B3",
+          "#D0D5DD",
+          "#EAECF0",
+          "#F9FAFB"
+        ]
+      },
+      "text-primary": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#101828",
+        "tonalRamp": [
+          "#0C111D",
+          "#101828",
+          "#344054",
+          "#475467",
+          "#667085",
+          "#98A2B3",
+          "#D0D5DD",
+          "#F9FAFB"
+        ]
+      },
+      "text-secondary": {
+        "role": "neutral",
+        "displayName": "Slate",
+        "canonical": "#344054",
+        "tonalRamp": [
+          "#0C111D",
+          "#101828",
+          "#344054",
+          "#475467",
+          "#667085",
+          "#98A2B3",
+          "#D0D5DD",
+          "#F9FAFB"
+        ]
+      },
+      "text-tertiary": {
+        "role": "neutral",
+        "displayName": "Muted Slate",
+        "canonical": "#475467",
+        "tonalRamp": [
+          "#0C111D",
+          "#101828",
+          "#344054",
+          "#475467",
+          "#667085",
+          "#98A2B3",
+          "#D0D5DD",
+          "#F9FAFB"
+        ]
+      },
+      "text-placeholder": {
+        "role": "neutral",
+        "displayName": "Placeholder",
+        "canonical": "#667085",
+        "tonalRamp": [
+          "#0C111D",
+          "#101828",
+          "#344054",
+          "#475467",
+          "#667085",
+          "#98A2B3",
+          "#D0D5DD",
+          "#F9FAFB"
+        ]
+      },
+      "gray-950": {
+        "role": "neutral",
+        "displayName": "Night",
+        "canonical": "#0C111D",
+        "tonalRamp": [
+          "#0C111D",
+          "#1D2939",
+          "#344054",
+          "#475467",
+          "#667085",
+          "#98A2B3",
+          "#D0D5DD",
+          "#F9FAFB"
+        ]
+      }
     },
     "typographyMeta": {
-      "display": { "displayName": "Display", "purpose": "Hero H1 only." },
-      "headline": { "displayName": "Headline", "purpose": "Big section statements: Results, Platform, Close." },
-      "headline-sm": { "displayName": "Headline Small", "purpose": "Feature sections, How, FAQ." },
-      "title": { "displayName": "Title", "purpose": "Bento tile and step titles; FAQ questions at 500." },
-      "lead": { "displayName": "Lead", "purpose": "The line under each heading, Slate, 30-34rem measure." },
-      "body": { "displayName": "Body", "purpose": "Tile lines, step text, FAQ answers, footer line." },
-      "label": { "displayName": "Label", "purpose": "Buttons, nav links, funnel labels." },
-      "figure": { "displayName": "Figure", "purpose": "Funnel counts, tabular." },
-      "ui": { "displayName": "Product UI", "purpose": "Inter inside rebuilt product screens only." }
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero H1 only."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Big section statements: Results, Platform, Close."
+      },
+      "headline-sm": {
+        "displayName": "Headline Small",
+        "purpose": "Feature sections, How, FAQ."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Bento tile and step titles; FAQ questions at 500."
+      },
+      "lead": {
+        "displayName": "Lead",
+        "purpose": "The line under each heading, Slate, 30-34rem measure."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Tile lines, step text, FAQ answers, footer line."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Buttons, nav links, funnel labels."
+      },
+      "figure": {
+        "displayName": "Figure",
+        "purpose": "Funnel counts, tabular."
+      },
+      "ui": {
+        "displayName": "Product UI",
+        "purpose": "Inter inside rebuilt product screens only; 12px chips, segmented controls, tabs."
+      },
+      "ui-body": {
+        "displayName": "UI Body",
+        "purpose": "Product UI row text, panel copy, list items and in-product buttons (13px)."
+      },
+      "ui-caption": {
+        "displayName": "UI Caption",
+        "purpose": "Product UI metadata, timestamps and secondary lines (11px)."
+      },
+      "ui-micro": {
+        "displayName": "UI Micro",
+        "purpose": "Smallest product UI counts and labels in dense panels (10px)."
+      }
     },
     "shadows": [
-      { "name": "shadow-xs", "value": "0 1px 2px rgb(16 24 40 / 0.05)", "purpose": "Buttons, inputs, small product cards." },
-      { "name": "shadow-md", "value": "0 4px 8px -2px rgb(16 24 40 / 0.08), 0 2px 4px -2px rgb(16 24 40 / 0.04)", "purpose": "Standalone product panels." },
-      { "name": "shadow-lg", "value": "0 12px 16px -4px rgb(16 24 40 / 0.08), 0 4px 6px -2px rgb(16 24 40 / 0.04)", "purpose": "Interview video frame, toasts." },
-      { "name": "shadow-xl", "value": "0 24px 48px -12px rgb(16 24 40 / 0.14)", "purpose": "Hero candidate-review screen only." }
+      {
+        "name": "shadow-xs",
+        "value": "0 1px 2px rgb(16 24 40 / 0.05)",
+        "purpose": "Buttons, inputs, small product cards."
+      },
+      {
+        "name": "shadow-md",
+        "value": "0 4px 8px -2px rgb(16 24 40 / 0.08), 0 2px 4px -2px rgb(16 24 40 / 0.04)",
+        "purpose": "Standalone product panels."
+      },
+      {
+        "name": "shadow-lg",
+        "value": "0 12px 16px -4px rgb(16 24 40 / 0.08), 0 4px 6px -2px rgb(16 24 40 / 0.04)",
+        "purpose": "Interview video frame, toasts."
+      },
+      {
+        "name": "shadow-xl",
+        "value": "0 24px 48px -12px rgb(16 24 40 / 0.14)",
+        "purpose": "Hero candidate-review screen only."
+      }
     ],
     "motion": [
-      { "name": "duration-fast", "value": "150ms", "purpose": "Hover color shifts, word reveals." },
-      { "name": "duration-base", "value": "250ms", "purpose": "FAQ icon rotation, counter flips." },
-      { "name": "duration-slow", "value": "400ms", "purpose": "Nav state, FAQ expand, switches." },
-      { "name": "duration-slower", "value": "700ms", "purpose": "Entry rises and event reveals." },
-      { "name": "ease-out-expo", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Default entry easing (GSAP expo.out)." },
-      { "name": "ease-out-quart", "value": "cubic-bezier(0.25, 1, 0.5, 1)", "purpose": "CSS state transitions." },
-      { "name": "entry-trigger", "value": "top 65%", "purpose": "Scroll point where a section plays once; 70% for funnel and steps." },
-      { "name": "hero-tilt", "value": "rotateX(10deg) scale(0.94) -> flat, scrubbed", "purpose": "Hero shot flattens with scroll; 5deg below 640px." }
+      {
+        "name": "duration-fast",
+        "value": "150ms",
+        "purpose": "Hover color shifts, word reveals."
+      },
+      {
+        "name": "duration-base",
+        "value": "250ms",
+        "purpose": "FAQ icon rotation, counter flips."
+      },
+      {
+        "name": "duration-slow",
+        "value": "400ms",
+        "purpose": "Nav state, FAQ expand, switches."
+      },
+      {
+        "name": "duration-slower",
+        "value": "700ms",
+        "purpose": "Entry rises and event reveals."
+      },
+      {
+        "name": "ease-out-expo",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Default entry easing (GSAP expo.out)."
+      },
+      {
+        "name": "ease-out-quart",
+        "value": "cubic-bezier(0.25, 1, 0.5, 1)",
+        "purpose": "CSS state transitions."
+      },
+      {
+        "name": "entry-trigger",
+        "value": "top 65%",
+        "purpose": "Scroll point where a section plays once; 70% for funnel and steps."
+      },
+      {
+        "name": "hero-tilt",
+        "value": "rotateX(10deg) scale(0.94) -> flat, scrubbed",
+        "purpose": "Hero shot flattens with scroll; 5deg below 640px."
+      },
+      {
+        "name": "v3-cursor-follow",
+        "value": "quickTo 0.28s power3.out, offset +14px/+16px",
+        "purpose": "/v3 contextual cursor pill trail; fine pointers only."
+      },
+      {
+        "name": "v3-magnetic",
+        "value": "0.3 x offset, clamp 6px, quickTo 0.4s power3.out",
+        "purpose": "/v3 nav CTA and demo-form submit."
+      },
+      {
+        "name": "v3-tilt",
+        "value": "perspective 1400px, max 6deg (4 on hero/bento), quickTo 0.7s; depth n x 10px, 0.8s",
+        "purpose": "/v3 data-tilt / data-depth cursor tilt and layer parallax."
+      },
+      {
+        "name": "v3-scroll-depth",
+        "value": "y -s*90px -> +s*90px, scrub true, top bottom -> bottom top",
+        "purpose": "/v3 data-speed drift, 768px and up."
+      },
+      {
+        "name": "v3-scrub",
+        "value": "scrub 0.6-0.8",
+        "purpose": "/v3 reversible scroll-tied motion: hero reassembly, results, interview zoom, how track."
+      },
+      {
+        "name": "v3-reveal",
+        "value": "y 20 -> 0, 0.8s expo.out at top 85%, once",
+        "purpose": "/v3 triggered heading and intro entries; 4s failsafe."
+      },
+      {
+        "name": "v3-spring-home",
+        "value": "elastic.out(1, 0.7), 0.9s",
+        "purpose": "/v3 missed drag returns home."
+      },
+      {
+        "name": "v3-spring-land",
+        "value": "back.out(1.4), 0.55s",
+        "purpose": "/v3 slow drag release into its target."
+      },
+      {
+        "name": "v3-throw",
+        "value": "InertiaPlugin, own velocity, exact end; threshold 250px/s",
+        "purpose": "/v3 thrown drag lands on target."
+      },
+      {
+        "name": "v3-hold-to-drag",
+        "value": "250ms hold, 8px move cancels, touch-action pan-y",
+        "purpose": "/v3 touch drags never trap vertical swipes."
+      },
+      {
+        "name": "v3-pin-query",
+        "value": "(min-width: 768px) and (min-height: 620px)",
+        "purpose": "/v3 pins only here; refreshPriority in DOM order (results 3, interview 2, how 1); ScrollTrigger.sort on refreshInit."
+      },
+      {
+        "name": "v3-canvas-dpr",
+        "value": "min(devicePixelRatio, 2), redraw on demand",
+        "purpose": "/v3 canvas performance cap."
+      }
     ],
     "breakpoints": [
-      { "name": "sm", "value": "640px" },
-      { "name": "md", "value": "768px" },
-      { "name": "lg", "value": "1024px" }
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "v3-pin-min-height",
+        "value": "620px"
+      }
     ]
   },
   "components": [
@@ -116,11 +584,19 @@
       "description": "Ruled row: tabular figure, label, proportional violet bar.",
       "html": "<ol class=\"ds-funnel\"><li><span class=\"ds-fig\">1,200+</span><span class=\"ds-lab\">applied</span><span class=\"ds-track\"><span class=\"ds-bar\" style=\"width:100%\"></span></span></li><li><span class=\"ds-fig\">4</span><span class=\"ds-lab\">hired</span><span class=\"ds-track\"><span class=\"ds-bar ds-bar-final\" style=\"width:3px\"></span></span></li></ol>",
       "css": ".ds-funnel { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--color-border-secondary, #E4E7EC); background: var(--color-bg, #F9FAFB); font-family: 'Geist Variable', system-ui, sans-serif; } .ds-funnel li { display: grid; grid-template-columns: 7rem 5rem 1fr; align-items: center; gap: 16px; padding: 24px 0; border-top: 1px solid var(--color-border-secondary, #E4E7EC); } .ds-fig { font-size: 44px; font-weight: 600; line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; color: var(--color-text-primary, #101828); } .ds-lab { font-size: 14px; font-weight: 500; } .ds-track { height: 36px; border-radius: 10px; background: #fff; } .ds-bar { display: block; height: 100%; border-radius: 10px; background: var(--color-primary-300, #C0A6FE); } .ds-bar-final { background: var(--color-primary, #7237FB); }"
+    },
+    {
+      "name": "Cursor Pill",
+      "kind": "custom",
+      "refersTo": "ui",
+      "description": "/v3 contextual pill naming the one action under a fine pointer (data-cursor).",
+      "html": "<span class=\"ds-cursor\">Drag</span>",
+      "css": ".ds-cursor { display: inline-block; padding: 4px 10px; border-radius: 9999px; background: var(--color-text-primary, #101828); color: var(--color-white, #fff); font: 500 12px/1.2 'Geist Variable', system-ui, sans-serif; white-space: nowrap; transition: transform 150ms cubic-bezier(0.25, 1, 0.5, 1); } .ds-cursor:hover { transform: scale(1.04); } .ds-cursor:active { transform: scale(0.92); }"
     }
   ],
   "narrative": {
     "northStar": "The Ruled Column",
-    "overview": "A white page with one centred 1200px column, framed full-height by two 1px hairlines and cut into sections by full-width hairlines. Inside that frame the page is quiet: Geist in near-black, semibold headings with tight negative tracking, and plenty of air. The product carries the visual weight. Every section's image is the rebuilt Novara app in Inter, set on a pale plate, and it animates once to show the feature working.\n\nThe density is low and the rhythm even. Sections alternate between white and the pale gray plate (#F9FAFB), so the page reads as a stack of ruled bands, not floating cards. Violet is rare. It marks actions (buttons, focus, caret, selection) and data (funnel bars, the hired bar, chart bars, active states inside the product UI). The brand gradient appears exactly once, as a masked horizon glow behind the hero product shot.\n\nThis system documents the /v2 page. Tokens, the product UI components and the motion bootstrap are shared with /v1 (see the closing note in Components).",
+    "overview": "A white page with one centred 1200px column, framed full-height by two 1px hairlines and cut into sections by full-width hairlines. Inside that frame the page is quiet: Geist in near-black, semibold headings with tight negative tracking, and plenty of air. The product carries the visual weight. Every section's image is the rebuilt Novara app in Inter, set on a pale plate, and it animates once to show the feature working.\n\nThe density is low and the rhythm even. Sections alternate between white and the pale gray plate (#F9FAFB), so the page reads as a stack of ruled bands, not floating cards. Violet is rare. It marks actions (buttons, focus, caret, selection) and data (funnel bars, the hired bar, chart bars, active states inside the product UI). The brand gradient appears exactly once, as a masked horizon glow behind the hero product shot.\n\nThis system documents the /v2 page. Tokens, the product UI components and the motion bootstrap are shared with /v1 and /v3 (see the closing notes in Components). /v3 keeps this world and adds a hands-on interaction layer on top of it.",
     "keyCharacteristics": [
       "One 1200px column framed by border-secondary hairlines, with a hairline at the top of every section.",
       "White and #F9FAFB bands alternate, and there are no section backgrounds beyond those two.",
@@ -129,12 +605,51 @@
       "Product UI as the imagery: real text, live counters, no illustrations or stock imagery."
     ],
     "rules": [
-      { "name": "The Actions-and-Data Rule", "body": "Violet appears on things you can press and on numbers that matter. It never fills a section, a heading or decorative shape.", "section": "colors" },
-      { "name": "The One Horizon Rule", "body": "The brand gradient is used once per page, masked, behind product UI. Never behind text and never on a button.", "section": "colors" },
-      { "name": "The Tint-Not-Fill Rule", "body": "Status color is a 10% tint with a dot and dark text, so contrast stays above 4.5:1.", "section": "colors" },
-      { "name": "The Two Faces Rule", "body": "Geist speaks for the page and Inter speaks for the product. Don't set marketing copy in Inter or product UI in Geist.", "section": "typography" },
-      { "name": "The Single Weight Rule", "body": "Headings are always 600 with negative tracking. Hierarchy comes from size and color, never from adding bold or light weights.", "section": "typography" },
-      { "name": "The Flat Page Rule", "body": "Marketing surfaces (sections, plates, bento tiles, the FAQ) never cast shadows. Only product UI is lifted.", "section": "elevation" }
+      {
+        "name": "The Actions-and-Data Rule",
+        "body": "Violet appears on things you can press and on numbers that matter. It never fills a section, a heading or decorative shape.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Horizon Rule",
+        "body": "The brand gradient is used once per page, masked, behind product UI. Never behind text and never on a button.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tint-Not-Fill Rule",
+        "body": "Status color is a 10% tint with a dot and dark text, so contrast stays above 4.5:1.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two Faces Rule",
+        "body": "Geist speaks for the page and Inter speaks for the product. Don't set marketing copy in Inter or product UI in Geist.",
+        "section": "typography"
+      },
+      {
+        "name": "The Product Scale Rule",
+        "body": "Inside product UI, text sits on the 10, 11, 12 and 13px Inter steps. These sizes belong to the product; they are not exceptions to the page ramp.",
+        "section": "typography"
+      },
+      {
+        "name": "The Single Weight Rule",
+        "body": "Headings are always 600 with negative tracking. Hierarchy comes from size and color, never from adding bold or light weights.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Page Rule",
+        "body": "Marketing surfaces (sections, plates, bento tiles, the FAQ) never cast shadows. Only product UI is lifted.",
+        "section": "elevation"
+      },
+      {
+        "name": "The One Verb Rule",
+        "body": "A cursor pill says one verb for the one thing that element does. Elements without an action have no pill.",
+        "section": "components"
+      },
+      {
+        "name": "The Interruptible Rule",
+        "body": "Every pointer-driven motion is a quickTo or a killable tween, so a new input always overrides the last one mid-flight.",
+        "section": "components"
+      }
     ],
     "dos": [
       "Do keep every section inside the 1200px hairline-framed column, with a full-width top hairline.",
@@ -142,13 +657,17 @@
       "Do show features as rebuilt product UI in Inter on a plate, with real text and a screen-reader caption.",
       "Do keep violet to actions and data, and make the final or most important bar the only full-strength one.",
       "Do set headings in Geist 600 with -0.03em tracking and balanced wrapping.",
-      "Do animate once, on entry, with expo-out, and leave every end state visible without JS or under reduced motion."
+      "Do animate once, on entry, with expo-out on /v2, and leave every end state visible without JS or under reduced motion on every page.",
+      "Do give each /v3 element one motion kind (scrubbed, triggered or interactive), and make scrubbed motion fully reversible.",
+      "Do opt into the /v3 interaction layer with data attributes (`data-cursor`, `data-magnetic`, `data-tilt`, `data-depth`, `data-speed`), and give every drag a button or keyboard equivalent.",
+      "Do set product-UI text on the 10, 11, 12 and 13px Inter steps."
     ],
     "donts": [
       "Don't use the brand gradient anywhere but the single hero horizon, and never behind text.",
       "Don't put shadows on marketing surfaces. Shadows are for product UI.",
       "Don't fill status chips with full-strength color. Use the 10% tint, a dot and dark text.",
-      "Don't pin sections or hijack scroll on this page.",
+      "Don't pin sections or hijack scroll on /v2. On /v3, pin only at 768px wide and 620px tall or more, and never trap vertical swipes on touch.",
+      "Don't add a cursor pill to an element that does nothing, or run pointer effects under reduced motion or on touch (except the idle drift).",
       "Don't introduce colors outside the token palette. The palette is binding."
     ]
   }

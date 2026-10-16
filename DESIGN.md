@@ -73,6 +73,20 @@ typography:
     fontFamily: "Inter Variable, system-ui, sans-serif"
     fontSize: "0.75rem"
     fontWeight: 500
+  ui-body:
+    fontFamily: "Inter Variable, system-ui, sans-serif"
+    fontSize: "13px"
+    fontWeight: 500
+    lineHeight: 1.375
+  ui-caption:
+    fontFamily: "Inter Variable, system-ui, sans-serif"
+    fontSize: "11px"
+    fontWeight: 500
+    lineHeight: 1.375
+  ui-micro:
+    fontFamily: "Inter Variable, system-ui, sans-serif"
+    fontSize: "10px"
+    fontWeight: 500
 rounded:
   sm: "6px"
   md: "10px"
@@ -143,7 +157,7 @@ A white page with one centred 1200px column, framed full-height by two 1px hairl
 
 The density is low and the rhythm even. Sections alternate between white and the pale gray plate (#F9FAFB), so the page reads as a stack of ruled bands, not floating cards. Violet is rare. It marks actions (buttons, focus, caret, selection) and data (funnel bars, the hired bar, chart bars, active states inside the product UI). The brand gradient appears exactly once, as a masked horizon glow behind the hero product shot.
 
-This system documents the /v2 page. Tokens, the product UI components and the motion bootstrap are shared with /v1 (see the closing note in Components).
+This system documents the /v2 page. Tokens, the product UI components and the motion bootstrap are shared with /v1 and /v3 (see the closing notes in Components). /v3 keeps this world and adds a hands-on interaction layer on top of it.
 
 **Key Characteristics:**
 - One 1200px column framed by border-secondary hairlines, with a hairline at the top of every section.
@@ -205,10 +219,21 @@ The palette comes from the product's Untitled UI–based design system and is bi
 - **Body** (400, 15px, ~1.4): tile lines, step text, FAQ answers (40rem max) and the footer line.
 - **Label** (500, 14px): buttons, nav links and funnel labels.
 - **Figure** (600, 44px, 1, tabular): funnel counts.
-- **UI** (Inter, 10–17px, mostly 500–600): everything inside product screens.
+- **UI** (Inter, mostly 500–600): everything inside product screens, on its own small scale (below).
+
+### Product-UI Scale
+The rebuilt product screens on all three pages use a fixed Inter scale, so a shot reads at the real app's density, not the page's.
+- **UI Body** (13px, ~1.4): row text, panel copy, list items and buttons inside product UI.
+- **UI** (12px): chips, segmented controls, tab labels and lab tags.
+- **UI Caption** (11px, ~1.4): metadata, timestamps and secondary lines under a row.
+- **UI Micro** (10px): the smallest counts and labels in dense panels.
+
+Larger numbers inside a panel (a 28px score, a 32px figure) are figures, not text steps. Page copy never uses these sizes.
 
 ### Named Rules
 **The Two Faces Rule.** Geist speaks for the page and Inter speaks for the product. Don't set marketing copy in Inter or product UI in Geist.
+
+**The Product Scale Rule.** Inside product UI, text sits on the 10, 11, 12 and 13px Inter steps. These sizes belong to the product; they are not exceptions to the page ramp.
 
 **The Single Weight Rule.** Headings are always 600 with negative tracking. Hierarchy comes from size and color, never from adding bold or light weights.
 
@@ -263,11 +288,39 @@ The page structure is square, made of straight hairlines and square section edge
 ### Ruled Rows (signature)
 Results and the FAQ are lists ruled by hairlines, top and bottom. Funnel rows pair a 44px tabular figure, a label and a note with a 36px bar on white. The bar's width is proportional to the figure, Soft Violet for each stage and Novara Violet for the last. FAQ rows are native `details` elements with a 17px question and a plus icon that rotates 45° when open. They expand smoothly where supported.
 
-### Motion
+### Motion (/v2)
 Content draws in once on entry, expo-out, when it reaches about 65–70% of the viewport. Durations follow the tokens (150, 250, 400, 700ms). Nothing pins. Counters roll up from zero, bars scale from their origin, and product panels play their own state change (scores count, criteria tick, the card moves, events appear). Hidden start states are set only under JS with motion allowed, and a 4s failsafe reveals everything. Lenis smooth scroll runs except under reduced motion.
+
+### Interaction layer (/v3)
+/v3 makes the product shots touchable. Everything below is driven by data attributes on the markup, so a new surface opts in without new script.
+- **Contextual cursor pill:** any element with `data-cursor="Verb"` shows a small Ink pill (Geist 12px/500, white, 4px 10px padding, full radius) that trails the pointer 14px right and 16px below. It names the one action on that element: Drag, Toggle, Open, Show, Next, Reset, Copy. It fades in with expo-out, dips to 92% on press and springs back. Fine pointers only; hidden on touch and under reduced motion. The native cursor stays.
+- **Magnetic primary buttons:** `data-magnetic` (the nav CTA) and the demo-form submit lean toward the pointer at 0.3 of the offset, clamped to 6px, and settle back on leave.
+- **Cursor tilt:** `data-tilt` rotates a root in 1400px perspective by up to `data-tilt-max` degrees (6 by default; 4 on the hero and the bento insets). `data-tilt="viewport"` follows the pointer across the whole window, not just the element. Children with `data-depth="n"` shift by n × 10px with the tilt, so layers separate. `data-idle` replaces the pointer with a slow sine drift on touch. The hero lowers the tilt strength as its screen assembles.
+- **Scroll depth:** `data-speed="s"` drifts an element from −s×90px to +s×90px across its pass through the viewport, scrubbed so it reverses exactly. It's used sparingly (0.1), and only from 768px.
+- **Drag:** draggable product objects (the resume cards, the shortlist card) lift to 103–104% on press, use grab and grabbing cursors, and meet edge resistance (0.7–0.8) inside their figure. A miss springs home (elastic.out(1, 0.7), 0.9s). A slow release springs into place (back.out(1.4), 0.55s). A throw (250px/s or faster) carries its own velocity and lands exactly on the target (InertiaPlugin). Every drag has a button or arrow-key equivalent.
+- **Hold-to-drag on touch:** on touch, draggables start only after a 250ms press-and-hold. A swipe that moves more than 8px first scrolls the page (`touch-action: pan-y`). Fine pointers drag at once.
+
+**The One Verb Rule.** A cursor pill says one verb for the one thing that element does. Elements without an action have no pill.
+
+**The Interruptible Rule.** Every pointer-driven motion is a quickTo or a killable tween, so a new input always overrides the last one mid-flight.
+
+### Motion (/v3)
+/v3 uses three kinds of motion, and each element uses one kind.
+- **Scrubbed (reversible):** tied to scroll position, so it plays backwards on the way up. The hero screen reassembles from its exploded layers, the Results dots become 4, the interview lab zooms out of its window, How It Works runs as a horizontal track, and `data-speed` elements drift. Scrub smoothing is 0.6–0.8.
+- **Triggered:** plays once on entry and stays. Headings and intro blocks (`data-reveal`) rise 20px at 85% of the viewport over 0.8s, expo-out. Bento tiles enter in a staggered batch, and How steps play their vignette at 75%. A 4s failsafe reveals anything a trigger missed.
+- **Interactive:** the pointer layer, drags, toggles and the bento micro-interactions above.
+
+Pins run only at `(min-width: 768px) and (min-height: 620px)`. Below that, and on short screens, the same sections render as plain stacked content with simple entries. Pins carry `refreshPriority` in DOM order (Results 3, Interview 2, How 1) with `anticipatePin`. `ScrollTrigger.sort()` runs on every `refreshInit`, because pins from the page and both labs are created in no fixed order and re-created on breakpoint changes. A refresh follows window load and font loading.
+
+Under reduced motion every interaction still works (toggles, drags, buttons, the interview demo). Parallax, tilt, the cursor pill, magnets, scrubs and pins are off, drags land without springs or throws, every section shows its end state, and Lenis is off.
+
+Performance: canvases cap device pixel ratio at 2 and redraw on demand (resize, hover, scrub), not on a loop. Tilt roots and the interview lab watch visibility with IntersectionObserver and do no work off screen; the touch drift and the lab's live session pause when out of view. Each section's init is isolated, so one failure never takes the page down.
 
 ### Shared layers and /v1
 The tokens (`src/styles/tokens.css`), the product UI components (`src/components/shared/ui/`, Inter), the demo data and the motion bootstrap (GSAP, ScrollTrigger and Lenis in `src/scripts/motion.ts`) are common to both pages. /v1 differs. It sets display type in Urbanist (`--font-display`, with the tokenized `--text-display-*` scale), follows the agency's section structure, pins sections on desktop to scroll through them, and presents product UI on the bg-tertiary `Plate`.
+
+### /v3
+/v3 extends /v2 rather than replacing it. It keeps the hairline-framed column, the white and plate bands, Geist and Inter, the palette and its rules, the single gradient horizon behind the hero and the flat marketing surfaces. It reuses /v2's FAQ, close form and stylesheet. It adds the interaction layer and the three motion kinds above, pins Results, the interview lab and How It Works on large screens, and turns features into hands-on labs (screening, interview integrity, the shortlist drag). There is no hero form; demo CTAs scroll to the close form.
 
 ## Do's and Don'ts
 
@@ -277,11 +330,15 @@ The tokens (`src/styles/tokens.css`), the product UI components (`src/components
 - **Do** show features as rebuilt product UI in Inter on a plate, with real text and a screen-reader caption.
 - **Do** keep violet to actions and data, and make the final or most important bar the only full-strength one.
 - **Do** set headings in Geist 600 with -0.03em tracking and balanced wrapping.
-- **Do** animate once, on entry, with expo-out, and leave every end state visible without JS or under reduced motion.
+- **Do** animate once, on entry, with expo-out on /v2, and leave every end state visible without JS or under reduced motion on every page.
+- **Do** give each /v3 element one motion kind (scrubbed, triggered or interactive), and make scrubbed motion fully reversible.
+- **Do** opt into the /v3 interaction layer with data attributes (`data-cursor`, `data-magnetic`, `data-tilt`, `data-depth`, `data-speed`), and give every drag a button or keyboard equivalent.
+- **Do** set product-UI text on the 10, 11, 12 and 13px Inter steps.
 
 ### Don't:
 - **Don't** use the brand gradient anywhere but the single hero horizon, and never behind text.
 - **Don't** put shadows on marketing surfaces. Shadows are for product UI.
 - **Don't** fill status chips with full-strength color. Use the 10% tint, a dot and dark text.
-- **Don't** pin sections or hijack scroll on this page.
+- **Don't** pin sections or hijack scroll on /v2. On /v3, pin only at 768px wide and 620px tall or more, and never trap vertical swipes on touch.
+- **Don't** add a cursor pill to an element that does nothing, or run pointer effects under reduced motion or on touch (except the idle drift).
 - **Don't** introduce colors outside the token palette. The palette is binding.
