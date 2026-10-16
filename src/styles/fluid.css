@@ -1,7 +1,7 @@
 /*
  * Opt-in desktop fluid scale. Active only when <html data-fluid> (Base prop `fluid`).
  * Below 1280px the root stays 16px and layouts respond normally. From 1280px the root font
- * grows with the viewport (22.4px at 1920px) and stops at 28px (about 2560px), so every rem
+ * grows with the viewport (22.4px at 1920px) and stops at 28px (about 2560px), and is also capped at 100svh/45 so short or ultrawide screens never outgrow the viewport height, so every rem
  * value (type, spacing, gaps, mockups) keeps its proportion on any desktop screen.
  */
 html[data-fluid] {
@@ -16,5 +16,5 @@ html[data-fluid] {
   --spacing-gutter: clamp(1.25rem, 0.8rem + 2vw, 2.4rem);
 }
 @media (min-width: 1280px) {
-  html[data-fluid] { font-size: clamp(16px, calc(16px + (100vw - 1280px) * 0.01), 28px); }
+  html[data-fluid] { font-size: clamp(16px, min(calc(16px + (100vw - 1280px) * 0.01), calc(100svh / 45)), 28px); }
 }

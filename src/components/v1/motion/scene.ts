@@ -3,7 +3,7 @@ import { ScrollTrigger, getLenis } from '../../../scripts/motion';
 /** Pin only on roomy desktop viewports with motion allowed. Everything else stacks normally. */
 export const PIN_MQ = '(min-width: 1024px) and (min-height: 680px) and (prefers-reduced-motion: no-preference)';
 export const FLOW_MQ =
-  '(max-width: 1023.98px) and (prefers-reduced-motion: no-preference), (max-height: 679.98px) and (prefers-reduced-motion: no-preference)';
+  '(width < 1024px) and (prefers-reduced-motion: no-preference), (height < 680px) and (prefers-reduced-motion: no-preference)';
 
 const navH = (): number => document.querySelector<HTMLElement>('[data-header]')?.offsetHeight ?? 64;
 
@@ -16,7 +16,7 @@ export interface PinnedScene {
 /**
  * Pins `stage` under the sticky header for `perStep` viewports per step and reports fractional
  * progress in steps (0..total). After scrolling settles it eases to the centre of the nearest
- * step (gentle snap), except at the very ends so the reader can always leave.
+ * step (gentle snap), except in the outer half of the first and last step so entering and leaving stay free.
  */
 export function pinScene(stage: HTMLElement, total: number, perStep: number, onStep: (p: number) => void): PinnedScene {
   let timer = 0;
@@ -36,7 +36,7 @@ export function pinScene(stage: HTMLElement, total: number, perStep: number, onS
     onUpdate: (self) => {
       onStep(self.progress * total);
       window.clearTimeout(timer);
-      if (self.progress < 0.03 || self.progress > 0.97) return;
+      if (self.progress * total < 0.5 || self.progress * total > total - 0.5) return;
       timer = window.setTimeout(() => {
         const p = self.progress * total;
         const i = Math.min(total - 1, Math.floor(p));

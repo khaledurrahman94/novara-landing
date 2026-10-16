@@ -4,7 +4,7 @@
  * and motion is allowed. Otherwise the section is a normal stacked block.
  */
 [data-scene] .scene-body { margin-top: 3.5rem; }
-@media (max-width: 1023.98px) { [data-scene] .scene-body { margin-top: 2.5rem; } }
+@media (width < 1024px) { [data-scene] .scene-body { margin-top: 2.5rem; } }
 
 [data-scene][data-pinned] .scene-stage {
   display: flex;
