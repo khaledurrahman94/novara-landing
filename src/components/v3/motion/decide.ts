@@ -183,6 +183,16 @@ export function initDecide(root: HTMLElement, reduced: boolean): () => void {
     pointer?.vanish();
     card.classList.remove('is-dragging');
     card.style.zIndex = '';
+    // Leave a consistent state wherever the carry was cut off.
+    gsap.killTweensOf([card, stamp, ghost, drop]);
+    const t = targets()[at];
+    gsap.set(card, { x: t.x, y: t.y, scale: 1 });
+    drop.dataset['hot'] = 'false';
+    const away = at === 'away';
+    gsap.set(stamp, { opacity: away ? 1 : 0, scale: 1, rotation: 0 });
+    gsap.set(ghost, { opacity: away ? 1 : 0 });
+    gsap.set(drop, { opacity: away ? 0 : 1 });
+    drag?.update();
   };
   const playDemo = (): void => {
     if (!pointer || acted || demo || at !== 'home' || drag?.isDragging) return;
@@ -255,6 +265,7 @@ export function initDecide(root: HTMLElement, reduced: boolean): () => void {
     evCleanups.forEach((c) => c());
     unhold();
     drag?.kill();
+    InertiaPlugin.untrack(card);
     gsap.set(card, { clearProps: 'x,y,scale' });
   };
 }

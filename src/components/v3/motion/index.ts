@@ -117,7 +117,7 @@ export function initV3(): void {
           if (typeof c2 === 'function') c2();
         };
       });
-      mm.add('(max-width: 767px), (max-height: 619px)', () => {
+      mm.add('(max-width: 767.98px), (max-height: 619.98px)', () => {
         if (results) safe('results-simple', () => initResultsSimple(results));
         const c = how ? safe('how-simple', () => initHowSimple(how)) : undefined;
         return () => {

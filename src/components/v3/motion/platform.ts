@@ -21,7 +21,12 @@ const live = new Set<gsap.core.Animation>();
 /** Run one ambient step as a timeline and resolve when it finishes. */
 const step = (build: (tl: gsap.core.Timeline) => void): Promise<void> =>
   new Promise((resolve) => {
-    const tl = gsap.timeline({ onComplete: resolve });
+    const tl = gsap.timeline({
+      onComplete: () => {
+        live.delete(tl);
+        resolve();
+      },
+    });
     live.add(tl);
     build(tl);
   });
@@ -127,7 +132,11 @@ function pipeline(root: HTMLElement): Tile {
         const state = Flip.getState(cards);
         target.prepend(mover);
         recount();
-        const f = Flip.from(state, { duration: 0.75, ease: 'power3.inOut', onComplete: resolve });
+        const f = Flip.from(state, { duration: 0.75, ease: 'power3.inOut', onComplete: () => {
+            live.delete(f);
+            resolve();
+          },
+        });
         live.add(f);
       }),
   };

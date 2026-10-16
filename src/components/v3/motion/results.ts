@@ -411,8 +411,9 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
 
   const onMove = (e: PointerEvent): void => {
     if (e.pointerType === 'touch') return;
-    retire();
-    showTip(nearest(e, 0));
+    // A cursor resting on the canvas must not cancel the demos; only real movement does.
+    if (Math.hypot(e.movementX, e.movementY) > 2) retire();
+    if (!retired || !demo) showTip(nearest(e, 0));
   };
   const onLeave = (e: PointerEvent): void => {
     if (e.pointerType === 'touch') return;
