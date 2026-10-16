@@ -29,6 +29,7 @@ export const v2 = {
   hero: {
     title: 'Hire the person, not the pile.',
     sub: 'Novara scores every resume against the job, runs the first round with an AI interviewer, and shows your team the evidence behind every shortlist.',
+    secondary: 'See how it works',
     shotCaption:
       'Novara candidate review: ranked applicants on the left, and Amara Okafor with a Job Fit Score of 92, an AI Interview Score of 88 and one integrity event to review.',
   },
