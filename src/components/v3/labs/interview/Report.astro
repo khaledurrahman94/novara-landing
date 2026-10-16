@@ -30,7 +30,7 @@ const events = integrity.events;
 
     <ul class="m-0 mt-5 grid list-none grid-cols-2 gap-x-6 gap-y-2 p-0 text-[13px] sm:grid-cols-4">
       {kinds.map((k) => (
-        <li data-il-rkind={k.key} class:list={['flex items-baseline justify-between gap-2 border-b border-border-secondary pb-1.5 text-text-tertiary', k.key === 'away' && 'il-fine', k.key === 'fullscreen' && 'il-nofs']}>
+        <li data-il-rkind={k.key} class:list={['flex items-baseline justify-between gap-2 border-b border-border-secondary pb-1.5 text-text-tertiary', k.key === 'away' && 'il-fine',]}>
           <span class="truncate">{k.label}</span>
           <span data-il-rcount class:list={['font-semibold tabular-nums', (sampleCount[k.key] ?? 0) > 0 ? 'text-text-primary' : 'text-text-tertiary']}>{sampleCount[k.key] ?? 0}</span>
         </li>

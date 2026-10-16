@@ -1,7 +1,25 @@
 /* ScreeningLab. Palette tokens only. Prefixed sl- so it can't leak. */
 
 .sl {
+  position: relative;
   font-family: var(--font-ui);
+}
+
+/* The ghost pointer of the auto demo: 20px, white ring, soft shadow. Moves by transform and opacity only. */
+.sl-pointer {
+  position: absolute;
+  left: -10px;
+  top: -10px;
+  z-index: 50;
+  width: 20px;
+  height: 20px;
+  box-sizing: border-box;
+  border: 2px solid var(--color-white);
+  border-radius: 9999px;
+  background: var(--color-text-primary);
+  box-shadow: var(--shadow-sm);
+  opacity: 0;
+  pointer-events: none;
 }
 .sl :focus-visible {
   outline: 2px solid var(--color-primary);
@@ -273,6 +291,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .sl-pointer {
+    display: none;
+  }
   .sl *,
   .sl *::before,
   .sl *::after {

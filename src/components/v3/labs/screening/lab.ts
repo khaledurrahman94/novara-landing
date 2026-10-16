@@ -487,29 +487,139 @@ function mount(root: HTMLElement): () => void {
     }
   });
 
-  /* ---------- scrubbed intro: the cards fan out of a stack ---------- */
+  /* ---------- intro: the cards fan out of a stack, once, and always end side by side ---------- */
+  const pointer = must<HTMLElement>(root, '[data-pointer]');
+  let touched = false;
+  let showTl: gsap.core.Timeline | null = null;
+  let ghostTl: gsap.core.Timeline | null = null;
+  let showState: 'wait' | 'run' | 'done' = 'wait';
+  let demoChip: HTMLButtonElement | null = null;
+
+  const openOnly = (r: RowRefs | null): void => {
+    rows.forEach((o) => setOpen(o, o === r));
+    settleScroll();
+  };
+  const firstRow = (): RowRefs | null => rows.get(rank(visibleIds(), active)[0] ?? '') ?? null;
+
+  /** Ends the demo and puts the UI back to how it loads. Also used when the demo finishes. */
+  const endShowcase = (): void => {
+    if (showState === 'done') return;
+    const wasRunning = showState === 'run';
+    showState = 'done';
+    showTl?.kill();
+    showTl = null;
+    ghostTl?.kill();
+    ghostTl = null;
+    gsap.killTweensOf(pointer);
+    gsap.set(pointer, { opacity: 0 });
+    if (!wasRunning) return;
+    if (demoChip && demoChip.getAttribute('aria-pressed') === 'true') demoChip.click();
+    demoChip = null;
+    openOnly(firstRow());
+  };
+
   const ctx = gsap.context(() => {
-    if (reduced()) return;
+    if (reduced()) {
+      showState = 'done';
+      return;
+    }
     const slots = [...cards.values()].map((c) => c.slot);
     const first = slots[0];
-    if (!first) return;
-    const stack = (s: HTMLElement): { x: number; y: number } => ({
-      x: trayCards.clientWidth / 2 - (s.offsetLeft + s.offsetWidth / 2),
-      y: first.offsetTop - s.offsetTop,
-    });
-    const tl = gsap.timeline({
-      defaults: { ease: 'none' },
-      scrollTrigger: { trigger: tray, start: 'top 92%', end: 'top 42%', scrub: 0.8, invalidateOnRefresh: true },
-    });
-    slots.forEach((s, i) => {
-      tl.fromTo(
-        s,
-        { x: () => stack(s).x + (i - 0.5) * 6, y: () => stack(s).y + i * 8, rotation: i === 0 ? -5 : 4, scale: 0.96, transformOrigin: '50% 90%' },
-        { x: 0, y: 0, rotation: 0, scale: 1 },
-        0,
-      );
-    });
+    if (first) {
+      const stack = (s: HTMLElement): { x: number; y: number } => ({
+        x: trayCards.clientWidth / 2 - (s.offsetLeft + s.offsetWidth / 2),
+        y: first.offsetTop - s.offsetTop,
+      });
+      const fan = gsap.timeline({ paused: true, defaults: { ease: 'expo.out', duration: 1.1 }, onComplete: () => void gsap.set(slots, { clearProps: 'transform' }) });
+      slots.forEach((s, i) => {
+        fan.fromTo(
+          s,
+          { x: () => stack(s).x + (i - 0.5) * 6, y: () => stack(s).y + i * 8, rotation: i === 0 ? -5 : 4, scale: 0.96, transformOrigin: '50% 90%' },
+          { x: 0, y: 0, rotation: 0, scale: 1 },
+          i * 0.08,
+        );
+      });
+      ScrollTrigger.create({
+        trigger: tray,
+        start: 'top 90%',
+        once: true,
+        onEnter: () => {
+          fan.invalidate();
+          fan.play(0);
+        },
+      });
+    }
+
+    /* ---------- auto showcase, once: open the 4th row, then a ghost toggles Kubernetes on and off ---------- */
+    const k8s = chips.find((c) => c.dataset['req'] === 'k8s');
+    const target = rows.get(rank(visibleIds(), active)[3] ?? '');
+    const point = (el: HTMLElement): { x: number; y: number } => {
+      const w = root.getBoundingClientRect();
+      const r = el.getBoundingClientRect();
+      return { x: r.left - w.left + 18, y: r.top - w.top + r.height / 2 };
+    };
+    const onScreen = (el: HTMLElement): boolean => {
+      const r = el.getBoundingClientRect();
+      return r.top > 0 && r.bottom < window.innerHeight;
+    };
+    const run = (): void => {
+      if (touched || showState !== 'wait' || !target) return;
+      showState = 'run';
+      const tl = gsap.timeline({ onComplete: () => void (showTl = null) });
+      showTl = tl;
+      tl.call(() => openOnly(target), undefined, 0.4);
+      if (k8s && !k8s.disabled) {
+        const kb = k8s;
+        const at = 3.8;
+        tl.call(
+          () => {
+            if (!onScreen(kb)) {
+              endShowcase();
+              return;
+            }
+            const t = point(kb);
+            gsap.set(pointer, { x: t.x + 90, y: t.y + 60, scale: 1, opacity: 0 });
+            ghostTl = gsap
+              .timeline()
+              .to(pointer, { opacity: 0.85, duration: 0.25, ease: 'power2.out' }, 0)
+              .to(pointer, { x: t.x, y: t.y, duration: 1.1, ease: 'expo.out' }, 0)
+              .to(pointer, { scale: 0.85, duration: 0.12, ease: 'power2.out' }, 1.2)
+              .call(() => {
+                demoChip = kb;
+                kb.click();
+              })
+              .to(pointer, { scale: 1, duration: 0.25, ease: 'expo.out' })
+              .to(pointer, { scale: 0.85, duration: 0.12, ease: 'power2.out' }, 4.2)
+              .call(() => {
+                kb.click();
+                demoChip = null;
+              })
+              .to(pointer, { scale: 1, duration: 0.25, ease: 'expo.out' })
+              .to(pointer, { opacity: 0, duration: 0.35, ease: 'power2.in' }, '>+0.3')
+              .call(() => {
+                openOnly(firstRow());
+                showState = 'done';
+              }, undefined, '>+1.2');
+          },
+          undefined,
+          at,
+        );
+      } else {
+        tl.call(() => void (showState = 'done'), undefined, 4);
+      }
+    };
+    ScrollTrigger.create({ trigger: ranking, start: 'top 68%', once: true, onEnter: () => later(run, 500) });
   }, root);
+
+  // Any input from the visitor stops the demo for good, and puts everything back.
+  const stop = (): void => {
+    touched = true;
+    endShowcase();
+  };
+  root.addEventListener('pointerdown', stop, { signal });
+  root.addEventListener('touchstart', stop, { passive: true, signal });
+  root.addEventListener('keydown', stop, { signal });
+  root.addEventListener('pointermove', (e) => void ((Math.abs(e.movementX) + Math.abs(e.movementY) > 0) && stop()), { signal });
 
   /* ---------- cleanup ---------- */
   return () => {
@@ -520,6 +630,9 @@ function mount(root: HTMLElement): () => void {
     window.clearTimeout(refreshTimer);
     unholds.forEach((fn) => fn());
     draggables.forEach((d) => d.kill());
+    showTl?.kill();
+    ghostTl?.kill();
+    gsap.killTweensOf(pointer);
     ctx.revert();
     const targets: Element[] = [...rows.values()].flatMap((r) => [r.li, r.bar, r.btn]);
     cards.forEach((c) => targets.push(c.card, c.slot));

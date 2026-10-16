@@ -2,13 +2,18 @@
  * InterviewLab behaviour.
  *
  * Scrubbed intro (pinned from 768px): the page opens zoomed into the interviewer tile, captions type as you
- * scroll, and the full interview UI zooms out. Once it is out, the demo is live.
+ * scroll, and the full UI zooms out. Once it is out, the demo is live.
+ *
+ * Two surfaces. The candidate's screen runs a spoken, transcribed interview: each question is typed as a caption,
+ * the self-view shows "Speaking", the answer streams in word by word, then the interview moves on. The team view is
+ * the integrity monitor; each event travels there as a pulse before its counter flips.
  *
  * Detections are real browser events and run only while the demo is live and on screen:
- *  - tab switch (visibilitychange), focus lost (window blur/focus), question copied (copy),
- *    pasted answer (paste), left full screen (fullscreenchange), looking away (pointer outside the window for 2s,
- *    fine pointers only), plus simulated camera off and second face (switches, no camera access).
- * No network, no storage. Every listener is removed on cleanup.
+ *  - tab switch (visibilitychange), focus lost (window blur/focus), copy of the question and paste (copy / paste),
+ *    looking away (pointer outside the window for 2s, fine pointers only).
+ *  - simulated switches: camera off, second face, left full screen (no camera access).
+ * Once, after ~3s without interaction, a ghost pointer flips "Second face" to show the loop. Any input cancels it.
+ * No network, no storage. Every listener, tween and timer is cleaned up.
  */
 import { gsap, ScrollTrigger, onReady, prefersReducedMotion, getLenis } from '../../../../scripts/motion';
 import { kinds, lab, clock, span, type Kind } from './copy';
@@ -17,6 +22,10 @@ gsap.registerPlugin(ScrollTrigger);
 
 interface Ev {
   kind: Kind;
+  /** Overrides the kind's title (paste vs copy). */
+  title?: string;
+  /** Added by the auto-showcase: removed again, never in the report. */
+  demo?: boolean;
   /** Demo clock (ms) when it happened. */
   at: number;
   detail: string;
@@ -31,7 +40,10 @@ const MIN_BLUR_MS = 250;
 const TOTAL = lab.questions.length;
 const meta = (k: Kind) => kinds.find((m) => m.key === k);
 const tagOf = (e: Ev): string => (e.simulated ? lab.simTag : e.kind === 'away' ? lab.cursorTag : '');
-const titleOf = (e: Ev): string => `${meta(e.kind)?.title ?? e.kind}${e.detail ? `, ${e.detail}` : ''}`;
+const titleOf = (e: Ev): string => `${e.title ?? meta(e.kind)?.title ?? e.kind}${e.detail ? `, ${e.detail}` : ''}`;
+type SimKey = 'camera' | 'faces' | 'fullscreen';
+const WORD_S = 0.17;
+const IDLE_BEFORE_SHOWCASE_MS = 3000;
 
 function mount(root: HTMLElement): () => void {
   const rm = prefersReducedMotion();
@@ -50,25 +62,28 @@ function mount(root: HTMLElement): () => void {
   const frameWrap = q('[data-il-frame]');
   const frame = q('[data-card="interview-frame"]', frameWrap);
   const caption = q('[data-anim="caption"]', frame);
-  const waveEl = q('[data-anim="wave"]', frame);
   const bars = qa('[data-anim="wave-bar"]', frame);
   const timerHost = frame.querySelector('.tabular-nums');
   const timerNode = timerHost?.lastChild ?? null;
-  const warn = q('[data-il-warn]');
   const toast = q('[data-il-toast]');
   const toastText = q('[data-il-toast-text]');
-  const flag = q('[data-il-flag]');
-  const flagText = q('[data-il-flag-text]');
   const selfOv = q('[data-il-self]');
   const selfCam = q('[data-il-self-cam]');
   const selfFaces = q('[data-il-self-faces]');
   const step = q('[data-il-step]');
   const dots = qa('[data-il-dot]');
-  const answer = q<HTMLTextAreaElement>('[data-il-answer]');
+  const selfChip = q('[data-il-selfchip]');
+  const selfChipText = q('[data-il-selfchip-text]');
+  const selfBars = qa('[data-il-selfbar]');
+  const tbox = q('[data-il-tbox]');
+  const tlabel = q('[data-il-tlabel]');
+  const transcript = q('[data-il-transcript]');
+  const tghost = q('[data-il-tghost]');
+  const link = q('[data-il-link]');
+  const pulse = q('[data-il-pulse]');
+  const ghost = q('[data-il-ghost]');
   const nextBtn = q<HTMLButtonElement>('[data-il-next]');
   const finishBtn = q<HTMLButtonElement>('[data-il-finish]');
-  const fsBtn = q<HTMLButtonElement>('[data-il-fs]');
-  const fsText = q('[data-il-fs-text]');
   const chip = q('[data-il-chip]');
   const chipText = q('[data-il-chip-text]');
   const timeline = q('[data-il-timeline]');
@@ -87,7 +102,7 @@ function mount(root: HTMLElement): () => void {
   const again = q('[data-il-again]', reportView);
 
   const fine = window.matchMedia('(pointer: fine)').matches;
-  const fsOk = typeof document.fullscreenEnabled === 'boolean' && document.fullscreenEnabled && typeof win.requestFullscreen === 'function';
+  const wide = window.matchMedia('(min-width: 1024px)');
   const cleanups: (() => void)[] = [];
   const on = <K extends keyof HTMLElementEventMap>(el: HTMLElement, type: K, fn: (e: HTMLElementEventMap[K]) => void): void => {
     el.addEventListener(type, fn);
@@ -106,16 +121,20 @@ function mount(root: HTMLElement): () => void {
   let tick: ReturnType<typeof setInterval> | undefined;
   let toastTimer: ReturnType<typeof setTimeout> | undefined;
   let speaking = false;
-  let simCamera = false;
-  let simFaces = false;
+  const sim: Record<SimKey, boolean> = { camera: false, faces: false, fullscreen: false };
+  let candSpeaking = false;
+  let seq: gsap.core.Timeline | null = null;
+  let inflight: { tl: gsap.core.Timeline; arrive: () => void } | null = null;
+  let scState: 'wait' | 'run' | 'done' = rm ? 'done' : 'wait';
+  let scTimer: ReturnType<typeof setTimeout> | undefined;
+  let scTl: gsap.core.Timeline | null = null;
+  let scFaces = false;
   // detection trackers
   let hidden: Mark | null = null;
   let blurred: Mark | null = null;
   let blurIsTab = false;
   let awayMark: Mark | null = null;
   let awayTimer: ReturnType<typeof setTimeout> | undefined;
-  let inFs = false;
-  let quietFs = false;
   let lastScroll = -1e9;
   let typeTween: gsap.core.Tween | null = null;
   let skipIntro: (() => void) | null = null;
@@ -142,26 +161,34 @@ function mount(root: HTMLElement): () => void {
         }),
       );
 
-  /* ---------- caption ---------- */
-  const typeCaption = (text: string): void => {
-    typeTween?.kill();
-    typeTween = null;
-    if (rm) {
-      caption.textContent = text;
-      return;
-    }
-    const o = { n: 0 };
-    speaking = true;
-    typeTween = gsap.to(o, {
-      n: text.length,
-      duration: Math.min(2.8, Math.max(0.9, text.length * 0.03)),
-      ease: 'none',
-      onUpdate: () => void (caption.textContent = text.slice(0, Math.round(o.n))),
-      onComplete: () => {
-        speaking = false;
-        typeTween = null;
-      },
-    });
+  /* ---------- the candidate's own waveform (self-view) ---------- */
+  const selfWaves = rm
+    ? []
+    : selfBars.map((b) =>
+        gsap.to(b, {
+          scaleY: () => (candSpeaking ? gsap.utils.random(0.3, 1) : gsap.utils.random(0.08, 0.2)),
+          duration: () => gsap.utils.random(0.2, 0.42),
+          ease: 'sine.inOut',
+          repeat: -1,
+          yoyo: true,
+          repeatRefresh: true,
+          paused: true,
+        }),
+      );
+  const setSelfStatic = (): void => {
+    if (rm) selfBars.forEach((b, i) => gsap.set(b, { scaleY: candSpeaking ? 0.35 + ((i * 37) % 60) / 100 : 0.12 }));
+    else selfBars.forEach((b) => gsap.set(b, { scaleY: 0.12 }));
+  };
+  setSelfStatic();
+
+  /* ---------- the candidate's answer: asking, speaking (transcribing), received ---------- */
+  const setCand = (st: 'asking' | 'speaking' | 'received'): void => {
+    candSpeaking = st === 'speaking';
+    tbox.dataset['state'] = st;
+    tlabel.textContent = st === 'asking' ? lab.candidate.waiting : st === 'speaking' ? lab.candidate.transcribing : lab.candidate.received;
+    selfChip.dataset['state'] = candSpeaking ? 'speaking' : 'listening';
+    selfChipText.textContent = candSpeaking ? lab.candidate.speaking : lab.candidate.listening;
+    if (rm) setSelfStatic();
   };
 
   /* ---------- panel: counters, chip, timeline ---------- */
@@ -252,24 +279,24 @@ function mount(root: HTMLElement): () => void {
   };
 
   const renderSim = (): void => {
-    const camOn = simCamera;
-    const facesOn = simFaces;
+    const camOn = sim.camera;
+    const facesOn = sim.faces;
     selfCam.hidden = !camOn;
     selfFaces.hidden = camOn || !facesOn;
     selfOv.dataset['on'] = camOn || facesOn ? 'true' : 'false';
-    const parts: string[] = [];
-    if (camOn) parts.push(lab.overlay.cameraFrame);
-    if (facesOn) parts.push(lab.overlay.facesFrame);
-    if (parts.length) flagText.textContent = parts.join(', ');
-    flag.dataset['on'] = parts.length ? 'true' : 'false';
-    sims.forEach((s) => s.setAttribute('aria-checked', String(s.dataset['ilSim'] === 'camera' ? camOn : facesOn)));
+    sims.forEach((s) => s.setAttribute('aria-checked', String(sim[s.dataset['ilSim'] as SimKey] === true)));
   };
 
   const resetPanel = (): void => {
     counts = new Map();
     events = [];
-    simCamera = false;
-    simFaces = false;
+    sim.camera = false;
+    sim.faces = false;
+    sim.fullscreen = false;
+    inflight?.tl.kill();
+    inflight = null;
+    gsap.killTweensOf(pulse);
+    gsap.set(pulse, { opacity: 0 });
     kinds.forEach((k) => {
       const c = counters.get(k.key);
       const t = tiles.get(k.key);
@@ -283,48 +310,87 @@ function mount(root: HTMLElement): () => void {
     renderChip();
     renderTimeline(false);
     renderSim();
-    warn.style.opacity = '0';
-    gsap.killTweensOf([toast, warn]);
+    clearTimeout(toastTimer);
+    gsap.killTweensOf(toast);
     gsap.set(toast, { opacity: 0 });
-    gsap.set(warn, { opacity: 0 });
+  };
+
+  /* ---------- the link: a pulse travels from the candidate's screen to the team view ---------- */
+  const sendPulse = (arrive: () => void): void => {
+    if (inflight) {
+      // A second event while one is travelling: land the first at once.
+      const prev = inflight;
+      inflight = null;
+      prev.tl.kill();
+      prev.arrive();
+    }
+    if (rm) return arrive();
+    const horizontal = wide.matches;
+    const dist = horizontal ? link.offsetWidth : link.offsetHeight;
+    const axis = horizontal ? 'x' : 'y';
+    gsap.killTweensOf(pulse);
+    gsap.set(pulse, { x: 0, y: 0, scale: 0.6, opacity: 0 });
+    const tl = gsap.timeline({
+      onComplete: () => {
+        inflight = null;
+        arrive();
+      },
+    });
+    tl.to(pulse, { opacity: 1, scale: 1, duration: 0.15, ease: 'power2.out' })
+      .to(pulse, { [axis]: dist, duration: 0.6, ease: 'power2.inOut' }, 0)
+      .to(pulse, { scale: 1.8, opacity: 0, duration: 0.3, ease: 'power2.out' }, '>-0.05');
+    inflight = { tl, arrive };
   };
 
   /* ---------- the one event pipeline ---------- */
-  const emit = (kind: Kind, detail = '', simulated = false, at?: number): void => {
+  const emit = (kind: Kind, detail = '', simulated = false, at?: number, opts: { title?: string; demo?: boolean } = {}): void => {
     if (!isLive()) return;
     const ev: Ev = { kind, at: at ?? now(), detail, simulated };
+    if (opts.title) ev.title = opts.title;
+    if (opts.demo) ev.demo = true;
     events.push(ev);
     const n = (counts.get(kind) ?? 0) + 1;
     counts.set(kind, n);
-
-    const c = counters.get(kind);
-    const tile = tiles.get(kind);
-    if (c) flip(c, n);
-    if (tile) {
-      tile.dataset['hit'] = 'true';
-      if (!rm) gsap.fromTo(tile, { scale: 1.05 }, { scale: 1, duration: 0.55, ease: EASE });
-    }
-    renderChip();
-    renderTimeline(true);
-
     const text = titleOf(ev);
-    toastText.textContent = `${lab.toast}: ${text}`;
-    clearTimeout(toastTimer);
-    gsap.killTweensOf(toast);
-    if (rm) gsap.set(toast, { opacity: 1, y: 0 });
-    else gsap.fromTo(toast, { opacity: 0, y: -12 }, { opacity: 1, y: 0, duration: 0.5, ease: 'back.out(1.5)' });
-    toastTimer = setTimeout(() => gsap.to(toast, { opacity: 0, y: -6, duration: rm ? 0 : 0.3, ease: 'power2.in' }), 3200);
 
-    // The frame takes a warning border; the interviewer's voice stutters.
-    gsap.killTweensOf(warn);
-    if (rm) {
-      gsap.set(warn, { opacity: 1 });
-      gsap.to(warn, { opacity: 0, duration: 0, delay: 1.2 });
-    } else {
-      gsap.fromTo(warn, { opacity: 1 }, { opacity: 0, duration: 1.4, ease: 'power2.out' });
-      gsap.fromTo(waveEl, { scaleY: 0.12 }, { scaleY: 1, duration: 0.7, ease: EASE, overwrite: true });
-    }
-    status.textContent = lab.announce(text, total());
+    // The event happens on the candidate's side; the team view shows it once the pulse lands.
+    sendPulse(() => {
+      if (phase !== 'running' || !events.includes(ev)) return;
+      const c = counters.get(kind);
+      const tile = tiles.get(kind);
+      if (c) flip(c, counts.get(kind) ?? n);
+      if (tile) {
+        tile.dataset['hit'] = 'true';
+        if (!rm) gsap.fromTo(tile, { scale: 1.05 }, { scale: 1, duration: 0.55, ease: EASE });
+      }
+      renderChip();
+      renderTimeline(true);
+
+      toastText.textContent = `${lab.toast}: ${text}`;
+      clearTimeout(toastTimer);
+      gsap.killTweensOf(toast);
+      if (rm) gsap.set(toast, { opacity: 1, y: 0 });
+      else gsap.fromTo(toast, { opacity: 0, y: -12 }, { opacity: 1, y: 0, duration: 0.5, ease: 'back.out(1.5)' });
+      toastTimer = setTimeout(() => gsap.to(toast, { opacity: 0, y: -6, duration: rm ? 0 : 0.3, ease: 'power2.in' }), 3200);
+      if (!ev.demo) status.textContent = lab.announce(text, total());
+    });
+  };
+
+  /** Drops the showcase's event again, so the visitor starts from zero. */
+  const purgeDemo = (): void => {
+    if (!events.some((e) => e.demo)) return;
+    events = events.filter((e) => !e.demo);
+    counts = new Map();
+    events.forEach((e) => counts.set(e.kind, (counts.get(e.kind) ?? 0) + 1));
+    kinds.forEach((k) => {
+      const c = counters.get(k.key);
+      const t = tiles.get(k.key);
+      const n = counts.get(k.key) ?? 0;
+      if (c && c.textContent !== String(n)) flip(c, n);
+      if (t) t.dataset['hit'] = n > 0 ? 'true' : 'false';
+    });
+    renderChip();
+    renderTimeline(false);
   };
 
   /* ---------- clock and liveness ---------- */
@@ -343,13 +409,24 @@ function mount(root: HTMLElement): () => void {
       clockStart = performance.now();
       tick = setInterval(setTimer, 500);
       waves.forEach((w) => w.play());
+      selfWaves.forEach((w) => w.play());
     } else if (!live && clockStart !== null) {
       clockBase += performance.now() - clockStart;
       clockStart = null;
       clearInterval(tick);
       waves.forEach((w) => w.pause());
+      selfWaves.forEach((w) => w.pause());
       setTimer();
       resetTrackers();
+    }
+    seq?.paused(!live);
+    if (live && scState === 'wait' && scTimer === undefined) scTimer = setTimeout(startShowcase, IDLE_BEFORE_SHOWCASE_MS);
+    if (!live) {
+      if (scState === 'run') cancelShowcase();
+      else if (scTimer !== undefined) {
+        clearTimeout(scTimer);
+        scTimer = undefined;
+      }
     }
   };
 
@@ -358,13 +435,80 @@ function mount(root: HTMLElement): () => void {
     qi = i;
     step.textContent = lab.step(i + 1, TOTAL);
     dots.forEach((d, n) => (d.dataset['on'] = String(n <= i)));
-    answer.value = '';
-    const lastQ = i === TOTAL - 1;
-    nextBtn.hidden = lastQ;
-    finishBtn.className = `il-btn ${lastQ ? 'il-btn-primary' : 'il-btn-secondary'}`;
+    nextBtn.hidden = i === TOTAL - 1;
     const text = lab.questions[i] ?? '';
-    typeCaption(text);
+    const ans = lab.answers[i] ?? '';
+    const words = ans.split(' ');
+    transcript.textContent = '';
+    tghost.textContent = ans;
+    setCand('asking');
     if (i > 0 || phase !== 'idle') status.textContent = `${lab.step(i + 1, TOTAL)}. ${text}`;
+
+    seq?.kill();
+    typeTween = null;
+    speaking = false;
+    const tl = gsap.timeline({ paused: true });
+    seq = tl;
+    const capDur = rm ? 0 : Math.min(2.8, Math.max(0.9, text.length * 0.03));
+    if (rm) {
+      caption.textContent = text;
+    } else {
+      const o = { n: 0 };
+      tl.to(
+        o,
+        {
+          n: text.length,
+          duration: capDur,
+          ease: 'none',
+          onStart: () => void (speaking = true),
+          onUpdate: () => void (caption.textContent = text.slice(0, Math.round(o.n))),
+          onComplete: () => {
+            speaking = false;
+            typeTween = null;
+          },
+        },
+        0,
+      );
+      typeTween = tl.getTweensOf(o)[0] ?? null;
+    }
+    // The candidate answers aloud; the transcript follows word by word.
+    const startAt = capDur + (rm ? 1 : 0.6);
+    const talk = rm ? 0 : words.length * WORD_S;
+    tl.call(() => setCand('speaking'), undefined, startAt);
+    if (rm) {
+      tl.call(
+        () => {
+          transcript.textContent = ans;
+        },
+        undefined,
+        startAt,
+      );
+    } else {
+      const w = { n: 0 };
+      tl.to(
+        w,
+        {
+          n: words.length,
+          duration: talk,
+          ease: 'none',
+          onUpdate: () => void (transcript.textContent = words.slice(0, Math.round(w.n)).join(' ')),
+        },
+        startAt,
+      );
+    }
+    const doneAt = startAt + talk + (rm ? 1 : 0.25);
+    tl.call(
+      () => {
+        transcript.textContent = ans;
+        setCand('received');
+        status.textContent = lab.candidate.receivedAnnounce(i + 1);
+      },
+      undefined,
+      doneAt,
+    );
+    const last = i === TOTAL - 1;
+    tl.call(() => (last ? finish() : showQuestion(i + 1)), undefined, doneAt + (rm ? 4 : 1.8));
+    tl.paused(!isLive());
   };
 
   function begin(): void {
@@ -376,19 +520,19 @@ function mount(root: HTMLElement): () => void {
     showQuestion(0);
   }
 
-  const exitFs = (): void => {
-    if (document.fullscreenElement === win) {
-      quietFs = true;
-      void document.exitFullscreen().catch(() => undefined);
-    }
-  };
-
   const finish = (): void => {
     if (phase !== 'running') return;
     // Close out anything still open, then stop the clock.
     const end = now();
-    exitFs();
+    cancelShowcase();
+    seq?.kill();
+    seq = null;
     typeTween?.kill();
+    typeTween = null;
+    speaking = false;
+    candSpeaking = false;
+    inflight?.tl.kill();
+    inflight = null;
     phase = 'report';
     sync();
 
@@ -497,18 +641,12 @@ function mount(root: HTMLElement): () => void {
     if (el && frameWrap.contains(el)) emit('copy');
   };
   const onPaste = (e: ClipboardEvent): void => {
+    if (!isLive()) return;
+    // Anywhere inside the lab, or nowhere in particular (nothing focused).
+    const t = e.target instanceof Node ? e.target : null;
+    if (t && !root.contains(t) && t !== document.body && t !== document.documentElement) return;
     const len = e.clipboardData?.getData('text')?.length ?? 0;
-    emit('paste', len > 0 ? `${len} characters` : '');
-  };
-  const onFsChange = (): void => {
-    const nowIn = document.fullscreenElement === win;
-    fsText.textContent = nowIn ? lab.exitFullscreen : lab.fullscreen;
-    if (inFs && !nowIn) {
-      if (quietFs) quietFs = false;
-      else emit('fullscreen');
-    }
-    inFs = nowIn;
-    ScrollTrigger.refresh();
+    emit('copy', len > 0 ? `${len} characters` : '', false, undefined, { title: lab.pasted });
   };
   const onScroll = (): void => {
     lastScroll = performance.now();
@@ -534,45 +672,109 @@ function mount(root: HTMLElement): () => void {
   window.addEventListener('blur', onBlur);
   window.addEventListener('focus', onFocus);
   document.addEventListener('copy', onCopy);
-  document.addEventListener('fullscreenchange', onFsChange);
   window.addEventListener('scroll', onScroll, { passive: true });
   win.addEventListener('pointerleave', onLeave);
   win.addEventListener('pointerenter', onEnter);
-  answer.addEventListener('paste', onPaste);
+  document.addEventListener('paste', onPaste);
   cleanups.push(() => {
     document.removeEventListener('visibilitychange', onVisibility);
     window.removeEventListener('blur', onBlur);
     window.removeEventListener('focus', onFocus);
     document.removeEventListener('copy', onCopy);
-    document.removeEventListener('fullscreenchange', onFsChange);
     window.removeEventListener('scroll', onScroll);
     win.removeEventListener('pointerleave', onLeave);
     win.removeEventListener('pointerenter', onEnter);
-    answer.removeEventListener('paste', onPaste);
+    document.removeEventListener('paste', onPaste);
   });
 
-  if (fsOk) {
-    on(fsBtn, 'click', () => {
-      if (document.fullscreenElement === win) exitFs();
-      else void win.requestFullscreen().catch(() => undefined);
-    });
-  } else {
-    fsBtn.hidden = true;
-    root.dataset['fs'] = 'off';
-  }
-
   // Simulated checks: switches only. The camera is never accessed.
-  sims.forEach((s) =>
-    on(s, 'click', () => {
+  const toggleSim = (key: SimKey, demo = false): void => {
+    if (!isLive()) return;
+    const next = !sim[key];
+    sim[key] = next;
+    renderSim();
+    if (next) emit(key, '', true, undefined, demo ? { demo: true } : {});
+  };
+  sims.forEach((s) => on(s, 'click', () => toggleSim(s.dataset['ilSim'] as SimKey)));
+
+  /* ---------- auto-showcase: a ghost pointer flips "Second face" once ---------- */
+  const center = (el: HTMLElement): { x: number; y: number } => {
+    const w = win.getBoundingClientRect();
+    const r = el.getBoundingClientRect();
+    return { x: r.left - w.left - win.clientLeft + r.width / 2, y: r.top - w.top - win.clientTop + r.height / 2 };
+  };
+  function cancelShowcase(): void {
+    clearTimeout(scTimer);
+    scTimer = undefined;
+    if (scState === 'done') return;
+    const wasRunning = scState === 'run';
+    scState = 'done';
+    scTl?.kill();
+    scTl = null;
+    gsap.killTweensOf(ghost);
+    gsap.set(ghost, { opacity: 0 });
+    if (wasRunning) {
+      if (scFaces) {
+        sim.faces = false;
+        scFaces = false;
+        renderSim();
+      }
+      purgeDemo();
+    }
+  }
+  function startShowcase(): void {
+    scTimer = undefined;
+    if (scState !== 'wait' || !isLive() || events.length > 0) return;
+    const btn = sims.find((s) => s.dataset['ilSim'] === 'faces');
+    const knob = btn?.querySelector<HTMLElement>('.il-switch');
+    if (!btn || !knob) return;
+    scState = 'run';
+    const t = center(knob);
+    gsap.set(ghost, { x: t.x + 90, y: t.y + 56, scale: 1, opacity: 0 });
+    const flipFaces = (): void => {
       if (!isLive()) return;
-      const camera = s.dataset['ilSim'] === 'camera';
-      const next = camera ? !simCamera : !simFaces;
-      if (camera) simCamera = next;
-      else simFaces = next;
+      scFaces = !scFaces;
+      sim.faces = scFaces;
       renderSim();
-      if (next) emit(camera ? 'camera' : 'faces', '', true);
-    }),
-  );
+      if (scFaces) emit('faces', '', true, undefined, { demo: true });
+    };
+    const tl = gsap.timeline({ onComplete: () => void (scTl = null) });
+    scTl = tl;
+    tl.to(ghost, { opacity: 0.85, duration: 0.25, ease: 'power2.out' }, 0)
+      .to(ghost, { x: t.x, y: t.y, duration: 1.1, ease: EASE }, 0)
+      .to(ghost, { scale: 0.85, duration: 0.12, ease: 'power2.out' }, 1.2)
+      .call(flipFaces)
+      .to(ghost, { scale: 1, duration: 0.25, ease: EASE })
+      .to(ghost, { scale: 0.85, duration: 0.12, ease: 'power2.out' }, 3.9)
+      .call(flipFaces)
+      .to(ghost, { scale: 1, duration: 0.25, ease: EASE })
+      .to(ghost, { opacity: 0, duration: 0.35, ease: 'power2.in' }, '>+0.3')
+      .call(
+        () => {
+          scState = 'done';
+          purgeDemo();
+        },
+        undefined,
+        '>+0.8',
+      );
+  }
+  if (!rm) {
+    // Any input from the visitor ends the showcase for good.
+    const stop = (): void => cancelShowcase();
+    const move = (e: PointerEvent): void => {
+      if (Math.abs(e.movementX) + Math.abs(e.movementY) > 0) cancelShowcase();
+    };
+    win.addEventListener('pointerdown', stop);
+    win.addEventListener('pointermove', move);
+    win.addEventListener('touchstart', stop, { passive: true });
+    root.addEventListener('keydown', stop);
+    cleanups.push(() => {
+      win.removeEventListener('pointerdown', stop);
+      win.removeEventListener('pointermove', move);
+      win.removeEventListener('touchstart', stop);
+      root.removeEventListener('keydown', stop);
+    });
+  }
 
   /* ---------- visibility of the lab ---------- */
   const io = new IntersectionObserver(
@@ -605,9 +807,13 @@ function mount(root: HTMLElement): () => void {
     const frameBox = () => {
       const fw = frameWrap.offsetWidth;
       const fh = frameWrap.offsetHeight;
-      const cx = frameWrap.offsetLeft + fw / 2;
-      const cy = frameWrap.offsetTop + fh / 2;
-      return { fw, fh, cx, cy };
+      let x = 0;
+      let y = 0;
+      for (let n: HTMLElement | null = frameWrap; n && n !== zoom; n = n.offsetParent as HTMLElement | null) {
+        x += n.offsetLeft;
+        y += n.offsetTop;
+      }
+      return { fw, fh, cx: x + fw / 2, cy: y + fh / 2 };
     };
     const build = (pinned: boolean): (() => void) => {
       const m = () => {
@@ -691,10 +897,14 @@ function mount(root: HTMLElement): () => void {
     clearTimeout(toastTimer);
     clearTimeout(awayTimer);
     clearInterval(tick);
+    clearTimeout(scTimer);
+    scTl?.kill();
+    seq?.kill();
+    inflight?.tl.kill();
     typeTween?.kill();
     waves.forEach((w) => w.kill());
-    gsap.killTweensOf([toast, warn, waveEl, liveView, ...counters.values(), ...tiles.values()]);
-    exitFs();
+    selfWaves.forEach((w) => w.kill());
+    gsap.killTweensOf([toast, pulse, ghost, selfBars, liveView, ...counters.values(), ...tiles.values()]);
     delete root.dataset['intro'];
   };
 }
