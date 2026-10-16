@@ -434,6 +434,7 @@ function mount(root: HTMLElement): () => void {
 
   /* ---------- drag a resume onto the ranking ---------- */
   const draggables: Draggable[] = [];
+  const unholds: (() => void)[] = [];
   cards.forEach((c) => {
     let settled = true;
     const settle = (): void => {
@@ -482,7 +483,7 @@ function mount(root: HTMLElement): () => void {
     if (d) {
       c.drag = d;
       draggables.push(d);
-      holdToDrag(c.card, d);
+      unholds.push(holdToDrag(c.card, d));
     }
   });
 
@@ -517,6 +518,7 @@ function mount(root: HTMLElement): () => void {
     window.clearTimeout(liveTimer);
     window.clearTimeout(hintTimer);
     window.clearTimeout(refreshTimer);
+    unholds.forEach((fn) => fn());
     draggables.forEach((d) => d.kill());
     ctx.revert();
     const targets: Element[] = [...rows.values()].flatMap((r) => [r.li, r.bar, r.btn]);

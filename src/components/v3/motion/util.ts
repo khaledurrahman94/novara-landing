@@ -59,12 +59,22 @@ export function holdToDrag(el: HTMLElement, d: Draggable): () => void {
   let sx = 0;
   let sy = 0;
   let last: PointerEvent | null = null;
+  let off: ReturnType<typeof setTimeout> | undefined;
+  const offAfterThrow = (): void => {
+    d.removeEventListener('throwcomplete', offAfterThrow);
+    if (!armed) d.disable();
+  };
   const stop = (): void => {
     clearTimeout(timer);
     if (!armed) return;
     armed = false;
-    if (!d.isThrowing) d.disable();
-    else d.addEventListener('throwcomplete', () => void (!armed && d.disable()));
+    // Draggable's own release listeners run after this one, and disable() would remove them,
+    // so switch the drag off only once it has released (and finished any throw).
+    off = setTimeout(() => {
+      if (armed) return;
+      if (d.isThrowing) d.addEventListener('throwcomplete', offAfterThrow);
+      else d.disable();
+    }, 0);
   };
   const onDown = (e: PointerEvent): void => {
     if (e.pointerType === 'mouse') return;
@@ -91,6 +101,8 @@ export function holdToDrag(el: HTMLElement, d: Draggable): () => void {
   el.addEventListener('touchmove', onTouchMove, { passive: false });
   return () => {
     clearTimeout(timer);
+    clearTimeout(off);
+    d.removeEventListener('throwcomplete', offAfterThrow);
     el.removeEventListener('pointerdown', onDown);
     el.removeEventListener('pointermove', onMove);
     el.removeEventListener('pointerup', stop);
