@@ -98,6 +98,7 @@ Brand line: "Hire the person, not the pile."
 - **Palette:** the product design system's palette is binding: Untitled UI grays, primary #7237FB and the brand gradient #8C75FB→#421DF8.
 - **Voice:** concrete, plain and short, in sentence case.
 - **Lines the user chose:** "Hire the person, not the pile." and "You decide who moves on. Novara shows you why."
+- **Standing preference: a standard landing page.** It should plainly convey the product, with no narrative, metaphor or "out of this world" concepts (2026-10-16). The craft bar sits between Linear and Stripe, with Attio's look: light, every section visually distinct, and product UI that comes alive on scroll. Not Ashby.
 
 ## Evidence on Hand
 
