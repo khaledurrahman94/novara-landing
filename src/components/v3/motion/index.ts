@@ -120,10 +120,17 @@ export function initV3(): void {
       });
     });
 
+    // Pins come from this page and both labs in no fixed order, and breakpoint
+    // changes re-create them, so refresh every trigger top to bottom each time.
+    const sortTriggers = (): void => {
+      ScrollTrigger.sort();
+    };
+    ScrollTrigger.addEventListener('refreshInit', sortTriggers);
     const refresh = (): void => ScrollTrigger.refresh();
     window.addEventListener('load', refresh, { once: true });
     void document.fonts.ready.then(refresh);
     return () => {
+      ScrollTrigger.removeEventListener('refreshInit', sortTriggers);
       cleanups.forEach((c) => c());
       mm.revert();
       ctx.revert();
