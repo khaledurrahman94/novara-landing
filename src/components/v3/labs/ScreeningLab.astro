@@ -1,10 +1,114 @@
 ---
 import Section from '../../v2/Section.astro';
-/** Stub. Agent C replaces this with the screening lab. */
-interface Props { tone?: 'white' | 'plate' }
-const { tone = 'white' } = Astro.props;
+import Figure from '../../v2/Figure.astro';
+import Icon from '../../shared/ui/Icon.astro';
+import { role } from '../../../data/demo';
+import Row from './screening/Row.astro';
+import ResumeCard from './screening/ResumeCard.astro';
+import { copy } from './screening/copy';
+import { APPLICANTS, REQS, defaultActive, rank, score } from './screening/model';
+import './screening/screening.css';
+/** Screen: every resume read against the job. Self-contained, boots itself, cleans up. */
+interface Props { tone?: 'white' | 'plate'; id?: string; class?: string }
+const { tone = 'plate', id = copy.id, class: cls = '' } = Astro.props;
+const active = defaultActive();
+const ranked = rank(APPLICANTS.filter((a) => !a.fresh).map((a) => a.id), active);
+const fresh = APPLICANTS.filter((a) => a.fresh);
+const byId = new Map(APPLICANTS.map((a) => [a.id, a]));
+const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leading-[1.08] tracking-[-0.03em]';
+const panel = 'rounded-lg border border-border-secondary bg-white shadow-md';
 ---
-<Section id="screen" labelledby="screen-title" {tone}>
-  <h2 id="screen-title" class="m-0 max-w-[40rem] text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leading-[1.08] tracking-[-0.03em]">Every resume, read against the job.</h2>
-  <p class="m-0 mt-5 max-w-[34rem] text-lg leading-relaxed text-text-secondary">Toggle what the job needs and watch the ranking change.</p>
+<Section id={id} tone={tone} labelledby={`${id}-title`} class={cls}>
+  <div class="grid items-end gap-6 lg:grid-cols-12 lg:gap-16">
+    <h2 id={`${id}-title`} class:list={[h2, 'lg:col-span-7']}>{copy.title}</h2>
+    <p class="m-0 max-w-[30rem] text-lg leading-relaxed text-text-secondary lg:col-span-5">{copy.sub}</p>
+  </div>
+
+  <Figure caption={copy.caption} tone={tone === 'plate' ? 'white' : 'plate'} class="mt-12">
+    <div class="sl" data-screening-lab data-active={[...active].join(',')}>
+      <div class="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:grid-rows-[auto_1fr]">
+        <!-- The job and its requirements -->
+        <div class:list={[panel, 'p-4 sm:p-5 lg:col-start-1 lg:row-start-1']}>
+          <p class="m-0 text-xs font-medium text-text-tertiary">Job</p>
+          <p class="m-0 mt-0.5 text-base font-semibold text-text-primary">{role.title}</p>
+          <p class="m-0 text-xs text-text-tertiary">{copy.jobMeta}</p>
+
+          <p class="m-0 mt-5 text-xs font-semibold text-text-tertiary" id={`${id}-req-label`}>{copy.requirementsLabel}</p>
+          <ul class="m-0 mt-2 flex list-none flex-wrap gap-2 p-0" data-static-reqs>
+            {REQS.filter((r) => r.on).map((r) => (
+              <li class="rounded-full bg-primary-50 px-2.5 py-1 text-xs font-medium text-text-secondary">{r.label}</li>
+            ))}
+          </ul>
+          <p class="sr-only" data-static-reqs>{copy.staticScored}: {REQS.filter((r) => r.on).map((r) => r.label).join(', ')}.</p>
+          <div class="mt-2 flex flex-wrap gap-2" role="group" aria-labelledby={`${id}-req-label`} data-chips hidden>
+            {REQS.map((r) => (
+              <button type="button" class="sl-chip" data-req={r.id} aria-pressed={r.on ? 'true' : 'false'} data-cursor="Toggle">
+                <span class="sl-chip-dot" aria-hidden="true">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+                </span>
+                {r.label}
+              </button>
+            ))}
+          </div>
+          <p class="m-0 mt-4 text-[13px] leading-snug text-text-tertiary" data-hint>{copy.requirementsHint}</p>
+        </div>
+
+        <!-- New applications: JS only, the static list above already shows every applicant -->
+        <div class:list={[panel, 'p-4 sm:p-5 lg:col-start-1 lg:row-start-2']} data-tray hidden>
+          <div class="flex items-baseline justify-between gap-3">
+            <p class="m-0 text-sm font-semibold text-text-primary">{copy.trayTitle}</p>
+            <p class="m-0 text-xs tabular-nums text-text-tertiary" data-tray-count>{fresh.length}</p>
+          </div>
+          <p class="m-0 mt-0.5 text-xs text-text-tertiary" data-tray-hint>{copy.trayHint}</p>
+          <div class="relative mt-4 grid gap-3 sm:grid-cols-2" data-tray-cards>
+            {fresh.map((a) => <ResumeCard applicant={a} />)}
+          </div>
+          <div class="mt-4 flex items-center justify-between gap-3" data-tray-done hidden>
+            <p class="m-0 text-[13px] text-text-secondary">{copy.trayDone}</p>
+            <button type="button" class="sl-link" data-reset>{copy.reset}</button>
+          </div>
+        </div>
+
+        <!-- The ranking, also the drop target -->
+        <div class:list={['@container relative lg:col-start-2 lg:row-span-2 lg:row-start-1', panel]} data-ranking>
+          <div class="flex items-center justify-between gap-3 border-b border-border-secondary px-4 py-3">
+            <div class="min-w-0">
+              <p class="m-0 truncate text-sm font-semibold text-text-primary">{role.title}</p>
+              <p class="m-0 text-xs text-text-tertiary">{copy.rankingLabel}</p>
+            </div>
+          </div>
+          <ol class="m-0 list-none p-0" data-list>
+            {ranked.map((rid, i) => {
+              const a = byId.get(rid);
+              return a ? <Row applicant={a} rank={i + 1} score={score(a, active)} active={active} open={i === 0} /> : null;
+            })}
+            {fresh.map((a) => <Row applicant={a} rank={ranked.length + 1} score={score(a, active)} active={active} hidden />)}
+          </ol>
+          <div class="sl-drop" aria-hidden="true"><span>{copy.dropLabel}</span></div>
+        </div>
+      </div>
+
+      <p class="m-0 mt-4 flex items-center gap-1.5 text-xs text-text-tertiary">
+        <Icon name="sparkles" size={13} class="text-primary" />{copy.evidence} {copy.note}
+      </p>
+      <p class="sr-only" role="status" aria-live="polite" data-live></p>
+      <template data-tpl="matched">
+        <li class="flex items-start gap-2.5 text-[13px] text-text-secondary">
+          <span class="mt-px grid size-5 shrink-0 place-items-center rounded-full bg-success/10 text-success"><Icon name="check" size={12} /></span>
+          <span><span class="font-medium text-text-primary" data-l></span> <span class="text-text-tertiary" data-n></span></span>
+        </li>
+      </template>
+      <template data-tpl="missing">
+        <li class="flex items-start gap-2.5 text-[13px] text-text-secondary">
+          <span class="mt-px grid size-5 shrink-0 place-items-center rounded-full bg-warning/10 text-warning"><Icon name="alert" size={12} /></span>
+          <span><span class="font-medium text-text-primary" data-l></span> <span class="text-text-tertiary" data-n></span></span>
+        </li>
+      </template>
+    </div>
+  </Figure>
 </Section>
+
+<script>
+  import { initScreeningLab } from './screening/lab';
+  initScreeningLab();
+</script>

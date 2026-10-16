@@ -1,0 +1,281 @@
+/* ScreeningLab. Palette tokens only. Prefixed sl- so it can't leak. */
+
+.sl {
+  font-family: var(--font-ui);
+}
+.sl :focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Requirement chips: pill toggles with a check dot. */
+.sl-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2.5rem;
+  padding: 0 0.875rem 0 0.625rem;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 9999px;
+  background: var(--color-white);
+  color: var(--color-text-secondary);
+  font: 500 13px/1 var(--font-ui);
+  cursor: pointer;
+  box-shadow: var(--shadow-xs);
+  transition:
+    background-color var(--duration-fast) var(--ease-out-quart),
+    border-color var(--duration-fast) var(--ease-out-quart),
+    color var(--duration-fast) var(--ease-out-quart),
+    transform var(--duration-fast) var(--ease-out-quart);
+  -webkit-tap-highlight-color: transparent;
+}
+.sl-chip:hover {
+  background: var(--color-bg);
+}
+.sl-chip:active {
+  transform: scale(0.97);
+}
+.sl-chip[aria-pressed='true'] {
+  background: var(--color-primary-50);
+  border-color: var(--color-primary-300);
+  color: var(--color-primary-800);
+}
+.sl-chip-dot {
+  display: grid;
+  place-items: center;
+  width: 1.125rem;
+  height: 1.125rem;
+  border: 1.5px solid var(--color-border-primary);
+  border-radius: 9999px;
+  color: var(--color-white);
+  transition:
+    background-color var(--duration-fast) var(--ease-out-quart),
+    border-color var(--duration-fast) var(--ease-out-quart);
+}
+.sl-chip-dot svg {
+  opacity: 0;
+  transform: scale(0.5);
+  transition:
+    opacity var(--duration-fast) var(--ease-out-quart),
+    transform var(--duration-base) var(--ease-out-expo);
+}
+.sl-chip[aria-pressed='true'] .sl-chip-dot {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+.sl-chip[aria-pressed='true'] .sl-chip-dot svg {
+  opacity: 1;
+  transform: scale(1);
+}
+.sl-chip[aria-disabled='true'] {
+  cursor: not-allowed;
+}
+
+/* Ranking rows. */
+.sl-row + .sl-row {
+  border-top: 1px solid var(--color-border-secondary);
+}
+.sl-row-btn {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  font: inherit;
+  cursor: default;
+  transition: background-color var(--duration-fast) var(--ease-out-quart);
+}
+[data-ready] .sl-row-btn {
+  cursor: pointer;
+}
+[data-ready] .sl-row-btn:hover {
+  background: var(--color-bg);
+}
+.sl-row-btn:focus-visible {
+  outline-offset: -2px;
+}
+.sl-rank {
+  width: 1rem;
+  flex-shrink: 0;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-placeholder);
+}
+.sl-bar {
+  display: block;
+  width: 100%;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 9999px;
+  background: var(--color-gray-200);
+}
+.sl-bar-fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  background: var(--color-primary);
+  transform-origin: left center;
+}
+.sl-chevron {
+  flex-shrink: 0;
+  transition: transform var(--duration-slow) var(--ease-out-expo);
+}
+.sl-row[data-open='true'] .sl-chevron {
+  transform: rotate(180deg);
+}
+
+/* Panel: static and open without JS, animated rows once the script is ready. */
+.sl-panel-in {
+  min-height: 0;
+}
+[data-ready] .sl-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--duration-slow) var(--ease-out-expo);
+}
+[data-ready] .sl-row[data-open='true'] .sl-panel {
+  grid-template-rows: 1fr;
+}
+[data-ready] .sl-panel-in {
+  overflow: hidden;
+}
+
+/* Drop target overlay on the ranking. */
+.sl-drop {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: start center;
+  padding-top: 4.25rem;
+  pointer-events: none;
+  border: 2px dashed var(--color-primary-300);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--color-primary-50) 72%, transparent);
+  opacity: 0;
+  transition:
+    opacity var(--duration-base) var(--ease-out-quart),
+    border-color var(--duration-fast) var(--ease-out-quart);
+}
+.sl-drop span {
+  padding: 0.375rem 0.75rem;
+  border: 1px solid var(--color-primary-200);
+  border-radius: 9999px;
+  background: var(--color-white);
+  color: var(--color-primary-800);
+  font-size: 12px;
+  font-weight: 500;
+  transform: translateY(6px);
+  transition: transform var(--duration-slow) var(--ease-out-expo);
+}
+[data-dragging='true'] .sl-drop {
+  opacity: 1;
+}
+[data-dragging='true'] .sl-drop span {
+  transform: none;
+}
+[data-over='true'] .sl-drop {
+  border-color: var(--color-primary);
+}
+
+/* Resume cards. */
+.sl-slot {
+  position: relative;
+  min-width: 0;
+}
+.sl-slot[data-lifted='true'] {
+  z-index: 40;
+}
+.sl-ghost {
+  position: absolute;
+  inset: 0;
+  display: none;
+  place-items: center;
+  border: 1px dashed var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  color: var(--color-text-tertiary);
+  font-size: 12px;
+}
+.sl-slot[data-done='true'] .sl-ghost {
+  display: grid;
+}
+.sl-slot[data-done='true'] .sl-card {
+  visibility: hidden;
+}
+.sl-card {
+  position: relative;
+  padding: 0.875rem;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-lg);
+  background: var(--color-white);
+  box-shadow: var(--shadow-sm);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: box-shadow var(--duration-base) var(--ease-out-quart);
+}
+[data-ready] .sl-card {
+  cursor: grab;
+}
+.sl-card[data-grabbed='true'] {
+  cursor: grabbing;
+  box-shadow: var(--shadow-xl);
+  z-index: 30;
+}
+.sl-card[data-state='screening'],
+.sl-card[data-state='done'] {
+  cursor: default;
+}
+.sl-btn {
+  height: 2rem;
+  padding: 0 0.75rem;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--color-primary);
+  color: var(--color-white);
+  font: 500 13px/1 var(--font-ui);
+  box-shadow: var(--shadow-xs);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-out-quart);
+}
+.sl-btn:hover {
+  background: var(--color-primary-600);
+}
+.sl-btn:disabled {
+  background: var(--color-gray-100);
+  color: var(--color-text-tertiary);
+  box-shadow: none;
+  cursor: default;
+}
+.sl-link {
+  padding: 0.25rem 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-primary-700);
+  font: 500 13px/1.2 var(--font-ui);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.sl-link:hover {
+  color: var(--color-primary-900);
+}
+
+.sl ::selection {
+  background: var(--color-primary-200);
+  color: var(--color-text-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sl *,
+  .sl *::before,
+  .sl *::after {
+    transition-duration: 0.01ms !important;
+  }
+}
