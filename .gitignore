@@ -12,3 +12,9 @@ src/assets/fonts/sf-pro/
 
 # Agent worktrees
 .claude/worktrees/
+
+# Local env and Cloudflare dev state
+.env
+.env.local
+.dev.vars
+.wrangler/
