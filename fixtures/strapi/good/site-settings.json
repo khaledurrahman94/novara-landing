@@ -1,0 +1,14 @@
+{
+  "data": {
+    "id": 1,
+    "documentId": "fxsettings0000000000001",
+    "siteName": "Novara",
+    "titleTemplate": "%s | Novara",
+    "defaultOgImage": null,
+    "robotsTxt": "User-agent: *\nAllow: /\n\nSitemap: https://novara.my/sitemap-index.xml\n",
+    "createdAt": "2026-10-01T09:00:00.000Z",
+    "updatedAt": "2026-10-01T09:00:00.000Z",
+    "publishedAt": "2026-10-01T09:00:00.000Z"
+  },
+  "meta": {}
+}
