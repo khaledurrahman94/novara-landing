@@ -1,0 +1,62 @@
+---
+/**
+ * The V3 home page, shared by `/` and the preview route so there is one copy of the page body.
+ * Copy still comes from src/content/v3.ts; a later step wires it to Strapi's `home` entry.
+ */
+import Base from '../../layouts/Base.astro';
+import { v3 } from '../../content/v3';
+import type { SeoMeta } from '../../lib/schemas';
+import Nav from './Nav.astro';
+import Hero from './Hero.astro';
+import Results from './Results.astro';
+import ScreeningLab from './labs/ScreeningLab.astro';
+import InterviewLab from './labs/InterviewLab.astro';
+import Decide from './Decide.astro';
+import How from './How.astro';
+import Platform from './Platform.astro';
+import Faq from '../v2/Faq.astro';
+import Close from '../v2/Close.astro';
+import Footer from './Footer.astro';
+import '../v2/v2.css';
+import './v3.css';
+
+interface Props { seo: SeoMeta; forceNoindex?: boolean }
+const { seo, forceNoindex = false } = Astro.props;
+
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: v3.faq.items.map((i) => ({
+    '@type': 'Question',
+    name: i.q,
+    acceptedAnswer: { '@type': 'Answer', text: i.a },
+  })),
+};
+---
+<Base {seo} {forceNoindex} fluid>
+  <script is:inline>
+    document.documentElement.classList.add('js');
+    setTimeout(function () { document.documentElement.classList.add('js-fail'); }, 4000);
+  </script>
+  <div class="v2 v3 bg-white text-text-primary">
+    <Nav />
+    <main>
+      <Hero />
+      <Results />
+      <ScreeningLab tone="white" />
+      <InterviewLab tone="plate" />
+      <Decide />
+      <How />
+      <Platform />
+      <Faq />
+      <Close />
+    </main>
+    <Footer />
+  </div>
+  <script type="application/ld+json" set:html={JSON.stringify(faqLd).replace(/</g, '\\u003c')} />
+</Base>
+
+<script>
+  import { initV3 } from './motion';
+  initV3();
+</script>

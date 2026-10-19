@@ -1,13 +1,7 @@
 ---
-import Base from '../layouts/Base.astro';
+import HomePage from '../components/v3/HomePage.astro';
+import { homeSeoMeta } from '../lib/pages';
+
+// V3 is the winner and lives at `/`. SEO is mapped from code until the home content type is wired to Strapi.
 ---
-<Base title="Novara landing R&D" noindex>
-  <main class="mx-auto max-w-xl p-10">
-    <h1 class="text-display-md font-semibold">Novara landing R&amp;D</h1>
-    <ul class="mt-6 space-y-2 text-lg">
-      <li><a class="text-primary underline" href="/v1">Variant 1</a></li>
-      <li><a class="text-primary underline" href="/v2">Variant 2</a></li>
-    <li><a class="text-primary underline" href="/v3">Variant 3</a></li>
-    </ul>
-  </main>
-</Base>
+<HomePage seo={homeSeoMeta()} />

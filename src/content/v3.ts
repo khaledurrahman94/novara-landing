@@ -95,4 +95,9 @@ export const v3 = {
   faq: v2.faq,
   close: v2.close,
   footer: v2.footer,
+  notFound: {
+    title: "We can't find that page",
+    line: 'The link may be old or mistyped. The home page has the live demos and the demo request form.',
+    cta: 'Go to the home page',
+  },
 } as const;
