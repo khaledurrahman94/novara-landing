@@ -1,0 +1,69 @@
+# 05a Home fields: `v3` object path to Strapi field
+
+Wiring table for the Astro side. Strapi type `api::home.home` (single type, Draft & publish on). Read it at build time with `GET /api/home` (published) and, for preview, `GET /api/home?status=draft`. The seed (`cms/scripts/seed.ts`) fills it from `src/content/v3.ts`, so the table below is also the seed's mapping.
+
+## How to fetch
+- `GET /api/home` returns every section populated, with no `populate` query (route middleware). A `populate` you send wins.
+- Strapi 5 shape: `{ data: { documentId, publishedAt, seo, nav, hero, results, decide, how, platform, faq, close, footer } }`. No `attributes` wrapper. Components carry an `id`; ignore it.
+- Same token rules as everything else: `Authorization: Bearer <STRAPI_TOKEN>`. Only `find` exists over REST (no write routes).
+- Mirror the caps below in zod (`.max(cap)`, `.min(1)`), and `how.steps` as exactly 4, `faq.items` as 3 to 10. A mismatch fails the build.
+- Merge, do not replace: build the page copy as `{ ...codeCopy, hero: { ...codeCopy.hero, title, sub, secondary }, ... }`, so the keys marked "code" below keep coming from `v3.ts`.
+
+## In the CMS
+Every field is required and non-empty. Strapi checks min and required rules on publish, not on draft save, so a draft can be incomplete but cannot go live that way. Caps are 1.3x the longest current string, rounded up, with a floor of 10 (3-char `FAQ` would otherwise cap at 4). Lists take the longest of their current items.
+
+| `v3` path | Strapi field | Type | Cap | Count |
+|---|---|---|---|---|
+| `seo.title` | `seo.metaTitle` | string | 70 (contract) | 1 |
+| `seo.description` | `seo.metaDescription` | text | 50 to 170 (contract) | 1 |
+| `nav.cta` | `nav.cta` | string | 19 | 1 |
+| `nav.anchors` (`#results`) `.label` | `nav.resultsLabel` | string | 10 | 1 |
+| `nav.anchors` (`#screen`) `.label` | `nav.screeningLabel` | string | 12 | 1 |
+| `nav.anchors` (`#interview-lab`) `.label` | `nav.interviewLabel` | string | 12 | 1 |
+| `nav.anchors` (`#how`) `.label` | `nav.howLabel` | string | 16 | 1 |
+| `nav.anchors` (`#faq`) `.label` | `nav.faqLabel` | string | 10 | 1 |
+| `hero.title` | `hero.title` | string | 39 | 1 |
+| `hero.sub` | `hero.sub` | text | 189 | 1 |
+| `hero.secondary` | `hero.secondary` | string | 26 | 1 |
+| `results.title` | `results.title` | string | 45 | 1 |
+| `results.caption` | `results.caption` | string | 77 | 1 |
+| `decide.title` | `decide.title` | string | 60 | 1 |
+| `decide.sub` | `decide.sub` | text | 63 | 1 |
+| `how.title` | `how.title` | string | 16 | 1 |
+| `how.steps[i].title` | `how.steps[i].title` | string | 26 | exactly 4 |
+| `how.steps[i].text` | `how.steps[i].text` | text | 110 | exactly 4 |
+| `platform.title` | `platform.title` | string | 46 | 1 |
+| `platform.tiles.<k>.title` | `platform.<k>.title` | string | 28 | 6 named tiles |
+| `platform.tiles.<k>.line` | `platform.<k>.line` | text | 93 | 6 named tiles |
+| `faq.title` | `faq.title` | string | 34 | 1 |
+| `faq.items[i].q` | `faq.items[i].question` | string | 62 | 3 to 10 (8 now) |
+| `faq.items[i].a` | `faq.items[i].answer` | text | 285 | 3 to 10 (8 now) |
+| `close.title` | `close.title` | string | 46 | 1 |
+| `close.line` | `close.line` | text | 77 | 1 |
+| `form.submit` | `close.cta` | string | 19 | 1 |
+| `footer.line` | `footer.line` | text | 95 | 1 |
+| `footer.maker` | `footer.maker` | string | 28 | 1 |
+| `footer.makerHref` | `footer.makerHref` | string, `^https?://\S+$` | 200 (URL, not copy) | 1 |
+| `footer.copyright` | `footer.copyright` | string | 17 | 1 |
+| `footer.footnote` | `footer.footnote` | text | 160 | 1 |
+
+Notes:
+- `<k>` is one of `pipeline`, `career`, `scheduling`, `roles`, `email`, `analytics`. Tiles are named fields, not a list, so a tile's text cannot be paired with the wrong demo. Each is `{ title, line }`.
+- `how.steps` and `faq.items` keep the order the editor sets. The `how` section is pinned and animated, so its count is fixed at 4. Adding a step is a code change.
+- `seo` is the shared `seo.meta` component (see 05-cms). The seed sets only `metaTitle`, `metaDescription`, `index: true`, `follow: true`; everything else is empty. `metaTitle` is the complete home title. Apply `titleTemplate` only when `metaTitle` is empty (the template would double the brand here).
+- `nav.label`, `nav.home`, hrefs and the footer link list come from code. The footer link labels reuse the five nav labels.
+
+## Stays in code (never in the CMS)
+Rule 4 of 05-cms: if changing it can break an animation or the product truth, it stays in code.
+
+| `v3` path | Why |
+|---|---|
+| `nav.label`, `nav.home`, `nav.anchors[].href`, `footer.nav` | aria strings and link targets |
+| `form.label`, `placeholder`, `error`, `sendError`, `success`, `sending`, `fallback` | validation, live-region and status strings |
+| `hero.shotCaption`, `hero.chips.*` | screen-reader description of the mock, and demo chips |
+| `results.figures[]` (key, label, note, callout, value, suffix) | numbers drive the funnel and are product truth |
+| `results.phases`, `legend`, `hired`, `hintFine`, `hintTouch` | drive the dot animation |
+| `decide.caption`, `from`, `to`, `stamp`, `dragHelp`, `drop`, `movedStatus`, `backStatus`, `evidenceTitle`, `evidence.*`, `note` | demo internals, aria and status strings, product truth |
+| `platform.copyEmbed`, `copied`, `copyFail`, `candidateName`, `candidateNamePlaceholder`, `restore`, `save`, `saved`, `hoverBar`, `trend`, `note` | demo internals and status strings |
+| The two labs: `components/v3/labs/screening/copy.ts`, `components/v3/labs/interview/copy.ts` (titles and subs included) | rule 4 names the labs' `copy.ts` explicitly |
+| Inline `figcaption` strings in `Platform.astro` | aria |
