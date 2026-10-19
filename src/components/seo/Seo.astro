@@ -1,29 +1,75 @@
 ---
-interface Props { title: string; description: string; noindex?: boolean; image?: string }
-const { title, description, noindex = false, image = '/brand/novara-full.svg' } = Astro.props;
-const canonical = new URL(Astro.url.pathname, Astro.site).href;
-const ogImage = new URL(image, Astro.site).href;
+import { parseSiteEnv } from '../../lib/paths';
+import type { SeoMeta, SiteSettings } from '../../lib/schemas';
+import { resolveSeo } from '../../lib/seo';
+
+interface Crumb { name: string; path: string }
+interface Props {
+  /** The `seo.meta` component of the page (contract in docs/implementation/05-cms.md). */
+  meta: SeoMeta;
+  settings: Pick<SiteSettings, 'siteName' | 'titleTemplate' | 'defaultOgImage'>;
+  /** The page's own title, used with `titleTemplate` when `meta.metaTitle` is empty. */
+  pageTitle?: string;
+  /** Always noindex (preview, R&D), whatever `meta.index` says. */
+  forceNoindex?: boolean;
+  /** Per-type JSON-LD (Article, DefinedTerm...), added to the graph after Organization and SoftwareApplication. */
+  schemas?: Record<string, unknown>[];
+  /** Parents between Home and this page. The page itself is added from `meta.breadcrumbLabel`. */
+  breadcrumbs?: Crumb[];
+  /** No canonical or og:url (the 404 page, which has no address of its own). */
+  noCanonical?: boolean;
+}
+const { meta, settings, pageTitle, forceNoindex = false, schemas = [], breadcrumbs = [], noCanonical = false } = Astro.props;
+
+const seo = resolveSeo({
+  meta,
+  settings,
+  siteEnv: parseSiteEnv(import.meta.env.PUBLIC_SITE_ENV),
+  pathname: Astro.url.pathname,
+  forceNoindex,
+  ...(pageTitle ? { pageTitle } : {}),
+});
+const abs = (p: string) => new URL(p, Astro.site).href;
+const isHome = Astro.url.pathname === '/';
+
+const trail: Crumb[] = [
+  { name: 'Home', path: '/' },
+  ...breadcrumbs,
+  ...(isHome || noCanonical ? [] : [{ name: meta.breadcrumbLabel ?? pageTitle ?? seo.title, path: Astro.url.pathname }]),
+];
+const { '@context': _ctx, ...structured } = (meta.structuredData ?? {}) as Record<string, unknown>;
+
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
-    { '@type': 'Organization', '@id': 'https://vivasoftltd.com/#org', name: 'Vivasoft', url: 'https://vivasoftltd.com', logo: new URL('/brand/viva-logo.png', Astro.site).href },
-    { '@type': 'SoftwareApplication', name: 'Novara', url: 'https://novara.my', applicationCategory: 'BusinessApplication', operatingSystem: 'Web', description, publisher: { '@id': 'https://vivasoftltd.com/#org' }, creator: { '@id': 'https://vivasoftltd.com/#org' } },
+    { '@type': 'Organization', '@id': 'https://vivasoftltd.com/#org', name: 'Vivasoft', url: 'https://vivasoftltd.com', logo: abs('/brand/viva-logo.png') },
+    { '@type': 'SoftwareApplication', name: 'Novara', url: 'https://novara.my', applicationCategory: 'BusinessApplication', operatingSystem: 'Web', description: seo.description, publisher: { '@id': 'https://vivasoftltd.com/#org' }, creator: { '@id': 'https://vivasoftltd.com/#org' } },
+    ...schemas,
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: trail.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, item: abs(c.path) })),
+    },
+    ...(meta.structuredData ? [structured] : []),
   ],
 };
+// Strapi text ends up in this script tag: keep "<" from ever closing it.
+const jsonLdText = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
 ---
-<title>{title}</title>
-<meta name="description" content={description} />
-<link rel="canonical" href={canonical} />
+<title>{seo.title}</title>
+<meta name="description" content={seo.description} />
+{!noCanonical && <link rel="canonical" href={seo.canonical} />}
 <meta name="theme-color" content="#F9FAFB" />
-{noindex && <meta name="robots" content="noindex, nofollow" />}
+{seo.robots && <meta name="robots" content={seo.robots} />}
 <meta property="og:type" content="website" />
-<meta property="og:site_name" content="Novara" />
-<meta property="og:title" content={title} />
-<meta property="og:description" content={description} />
-<meta property="og:url" content={canonical} />
-<meta property="og:image" content={ogImage} />
+<meta property="og:site_name" content={settings.siteName} />
+<meta property="og:title" content={seo.og.title} />
+<meta property="og:description" content={seo.og.description} />
+{!noCanonical && <meta property="og:url" content={seo.canonical} />}
+<meta property="og:image" content={seo.og.image} />
+{seo.og.imageAlt && <meta property="og:image:alt" content={seo.og.imageAlt} />}
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content={title} />
-<meta name="twitter:description" content={description} />
-<meta name="twitter:image" content={ogImage} />
-<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+<meta name="twitter:title" content={seo.og.title} />
+<meta name="twitter:description" content={seo.og.description} />
+<meta name="twitter:image" content={seo.og.image} />
+{seo.og.imageAlt && <meta name="twitter:image:alt" content={seo.og.imageAlt} />}
+<script type="application/ld+json" set:html={jsonLdText} />

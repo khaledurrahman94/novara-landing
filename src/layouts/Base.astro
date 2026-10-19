@@ -1,15 +1,44 @@
 ---
+import { getEntry } from 'astro:content';
 import Seo from '../components/seo/Seo.astro';
+import { DEFAULT_SETTINGS } from '../lib/seo';
+import type { SeoMeta } from '../lib/schemas';
 import '../styles/tokens.css';
 import '../styles/fluid.css';
-interface Props { title?: string; description?: string; noindex?: boolean; image?: string; fluid?: boolean }
+
+interface Crumb { name: string; path: string }
+interface Props {
+  /** CMS-driven pages: the page's `seo.meta`. Wins over `title`, `description` and `noindex`. */
+  seo?: SeoMeta;
+  /** The page's own title for the `titleTemplate` fallback (only with `seo`). */
+  pageTitle?: string;
+  schemas?: Record<string, unknown>[];
+  breadcrumbs?: Crumb[];
+  /** Always noindex, whatever `seo` says. Preview sets it. */
+  forceNoindex?: boolean;
+  /** No canonical link (the 404 page). */
+  noCanonical?: boolean;
+  /** Code-owned pages (R&D routes, labs): plain title and description, no CMS. */
+  title?: string;
+  description?: string;
+  noindex?: boolean;
+  fluid?: boolean;
+}
 const {
+  seo,
+  pageTitle,
+  schemas,
+  breadcrumbs,
+  forceNoindex = false,
+  noCanonical = false,
   title = 'Novara | AI hiring platform',
   description = 'Novara is an AI hiring platform by Vivasoft that helps teams hire smarter and faster.',
   noindex = false,
-  image,
   fluid = false,
 } = Astro.props;
+
+const settings = (await getEntry('site-settings', 'site-settings'))?.data ?? DEFAULT_SETTINGS;
+const meta: SeoMeta = seo ?? { metaTitle: title, metaDescription: description, index: !noindex, follow: !noindex };
 ---
 <!doctype html>
 <html lang="en" data-fluid={fluid ? "" : undefined}>
@@ -17,7 +46,7 @@ const {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/brand/novara-mark.svg" />
-    <Seo {title} {description} {noindex} {...(image ? { image } : {})} />
+    <Seo {meta} {settings} forceNoindex={forceNoindex || (!seo && noindex)} noCanonical={noCanonical || forceNoindex} {...(pageTitle ? { pageTitle } : {})} {...(schemas ? { schemas } : {})} {...(breadcrumbs ? { breadcrumbs } : {})} />
   </head>
   <body class="bg-bg text-text-primary font-sans">
     <slot />
