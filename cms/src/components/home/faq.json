@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_home_faqs",
+  "info": {
+    "displayName": "FAQ",
+    "description": "FAQ heading and items (3 to 10)."
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 34
+    },
+    "items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "home.faq-item",
+      "min": 3,
+      "max": 10,
+      "required": true
+    }
+  }
+}

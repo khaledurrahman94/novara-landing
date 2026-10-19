@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_home_hows",
+  "info": {
+    "displayName": "How",
+    "description": "How it works heading and its four steps."
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 16
+    },
+    "steps": {
+      "type": "component",
+      "repeatable": true,
+      "component": "home.step",
+      "min": 4,
+      "max": 4,
+      "required": true
+    }
+  }
+}

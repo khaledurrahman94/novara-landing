@@ -1,0 +1,44 @@
+{
+  "kind": "singleType",
+  "collectionName": "site_settings",
+  "info": {
+    "singularName": "site-settings",
+    "pluralName": "site-settings-entries",
+    "displayName": "Site settings",
+    "description": "Site-wide defaults: name, title template, default share image and robots.txt."
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "siteName": {
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "default": "Novara",
+      "maxLength": 40
+    },
+    "titleTemplate": {
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "default": "%s | Novara",
+      "maxLength": 70,
+      "regex": "%s"
+    },
+    "defaultOgImage": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "robotsTxt": {
+      "type": "text",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 5000
+    }
+  }
+}

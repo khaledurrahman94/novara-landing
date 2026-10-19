@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_home_tiles",
+  "info": {
+    "displayName": "Platform tile",
+    "description": "Title and line of one platform tile."
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 28
+    },
+    "line": {
+      "type": "text",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 93
+    }
+  }
+}

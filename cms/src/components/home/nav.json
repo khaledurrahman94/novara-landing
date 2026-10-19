@@ -1,0 +1,46 @@
+{
+  "collectionName": "components_home_navs",
+  "info": {
+    "displayName": "Nav",
+    "description": "Header and footer link labels. The targets (#results etc.) stay in code."
+  },
+  "options": {},
+  "attributes": {
+    "cta": {
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 19
+    },
+    "resultsLabel": {
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 10
+    },
+    "screeningLabel": {
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 12
+    },
+    "interviewLabel": {
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 12
+    },
+    "howLabel": {
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 16
+    },
+    "faqLabel": {
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 10
+    }
+  }
+}
