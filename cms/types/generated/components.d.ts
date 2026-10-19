@@ -1,0 +1,399 @@
+import type { Schema, Struct } from '@strapi/strapi';
+
+export interface HomeClose extends Struct.ComponentSchema {
+  collectionName: 'components_home_closes';
+  info: {
+    description: 'Closing band heading, line and form button label.';
+    displayName: 'Close band';
+  };
+  attributes: {
+    cta: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 19;
+        minLength: 1;
+      }>;
+    line: Schema.Attribute.Text &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 77;
+        minLength: 1;
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 46;
+        minLength: 1;
+      }>;
+  };
+}
+
+export interface HomeDecide extends Struct.ComponentSchema {
+  collectionName: 'components_home_decides';
+  info: {
+    description: 'Decide heading and sub. The board, evidence and status strings stay in code.';
+    displayName: 'Decide';
+  };
+  attributes: {
+    sub: Schema.Attribute.Text &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 63;
+        minLength: 1;
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+        minLength: 1;
+      }>;
+  };
+}
+
+export interface HomeFaq extends Struct.ComponentSchema {
+  collectionName: 'components_home_faqs';
+  info: {
+    description: 'FAQ heading and items (3 to 10).';
+    displayName: 'FAQ';
+  };
+  attributes: {
+    items: Schema.Attribute.Component<'home.faq-item', true> &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 10;
+          min: 3;
+        },
+        number
+      >;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 34;
+        minLength: 1;
+      }>;
+  };
+}
+
+export interface HomeFaqItem extends Struct.ComponentSchema {
+  collectionName: 'components_home_faq_items';
+  info: {
+    description: 'One FAQ question and answer. Also feeds the FAQPage JSON-LD.';
+    displayName: 'FAQ item';
+  };
+  attributes: {
+    answer: Schema.Attribute.Text &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 285;
+        minLength: 1;
+      }>;
+    question: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 62;
+        minLength: 1;
+      }>;
+  };
+}
+
+export interface HomeFooter extends Struct.ComponentSchema {
+  collectionName: 'components_home_footers';
+  info: {
+    description: 'Footer text and the maker link.';
+    displayName: 'Footer';
+  };
+  attributes: {
+    copyright: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 17;
+        minLength: 1;
+      }>;
+    footnote: Schema.Attribute.Text &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 160;
+        minLength: 1;
+      }>;
+    line: Schema.Attribute.Text &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 95;
+        minLength: 1;
+      }>;
+    maker: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 28;
+        minLength: 1;
+      }>;
+    makerHref: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+        minLength: 1;
+      }>;
+  };
+}
+
+export interface HomeHero extends Struct.ComponentSchema {
+  collectionName: 'components_home_heros';
+  info: {
+    description: 'Hero headline, sub and secondary link label.';
+    displayName: 'Hero';
+  };
+  attributes: {
+    secondary: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 26;
+        minLength: 1;
+      }>;
+    sub: Schema.Attribute.Text &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 189;
+        minLength: 1;
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 39;
+        minLength: 1;
+      }>;
+  };
+}
+
+export interface HomeHow extends Struct.ComponentSchema {
+  collectionName: 'components_home_hows';
+  info: {
+    description: 'How it works heading and its four steps.';
+    displayName: 'How';
+  };
+  attributes: {
+    steps: Schema.Attribute.Component<'home.step', true> &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 4;
+          min: 4;
+        },
+        number
+      >;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 16;
+        minLength: 1;
+      }>;
+  };
+}
+
+export interface HomeNav extends Struct.ComponentSchema {
+  collectionName: 'components_home_navs';
+  info: {
+    description: 'Header and footer link labels. The targets (#results etc.) stay in code.';
+    displayName: 'Nav';
+  };
+  attributes: {
+    cta: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 19;
+        minLength: 1;
+      }>;
+    faqLabel: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 10;
+        minLength: 1;
+      }>;
+    howLabel: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 16;
+        minLength: 1;
+      }>;
+    interviewLabel: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 12;
+        minLength: 1;
+      }>;
+    resultsLabel: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 10;
+        minLength: 1;
+      }>;
+    screeningLabel: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 12;
+        minLength: 1;
+      }>;
+  };
+}
+
+export interface HomePlatform extends Struct.ComponentSchema {
+  collectionName: 'components_home_platforms';
+  info: {
+    description: 'Platform heading and its six fixed tiles. Each tile is a named field so text cannot be paired with the wrong demo.';
+    displayName: 'Platform';
+  };
+  attributes: {
+    analytics: Schema.Attribute.Component<'home.tile', false> &
+      Schema.Attribute.Required;
+    career: Schema.Attribute.Component<'home.tile', false> &
+      Schema.Attribute.Required;
+    email: Schema.Attribute.Component<'home.tile', false> &
+      Schema.Attribute.Required;
+    pipeline: Schema.Attribute.Component<'home.tile', false> &
+      Schema.Attribute.Required;
+    roles: Schema.Attribute.Component<'home.tile', false> &
+      Schema.Attribute.Required;
+    scheduling: Schema.Attribute.Component<'home.tile', false> &
+      Schema.Attribute.Required;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 46;
+        minLength: 1;
+      }>;
+  };
+}
+
+export interface HomeResults extends Struct.ComponentSchema {
+  collectionName: 'components_home_resultss';
+  info: {
+    description: 'Results heading and caption. The figures and funnel stay in code.';
+    displayName: 'Results';
+  };
+  attributes: {
+    caption: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 77;
+        minLength: 1;
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 45;
+        minLength: 1;
+      }>;
+  };
+}
+
+export interface HomeStep extends Struct.ComponentSchema {
+  collectionName: 'components_home_steps';
+  info: {
+    description: 'One step of How it works.';
+    displayName: 'How step';
+  };
+  attributes: {
+    text: Schema.Attribute.Text &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 110;
+        minLength: 1;
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 26;
+        minLength: 1;
+      }>;
+  };
+}
+
+export interface HomeTile extends Struct.ComponentSchema {
+  collectionName: 'components_home_tiles';
+  info: {
+    description: 'Title and line of one platform tile.';
+    displayName: 'Platform tile';
+  };
+  attributes: {
+    line: Schema.Attribute.Text &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 93;
+        minLength: 1;
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 28;
+        minLength: 1;
+      }>;
+  };
+}
+
+export interface SeoMeta extends Struct.ComponentSchema {
+  collectionName: 'components_seo_metas';
+  info: {
+    description: 'Per-page SEO fields. focusKeyword and keywords feed the editor SEO panel only and are never rendered as meta tags.';
+    displayName: 'SEO meta';
+  };
+  attributes: {
+    breadcrumbLabel: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 40;
+      }>;
+    canonicalUrl: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 300;
+      }>;
+    focusKeyword: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
+    follow: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    index: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    keywords: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    metaDescription: Schema.Attribute.Text &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 170;
+        minLength: 50;
+      }>;
+    metaTitle: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 70;
+      }>;
+    ogDescription: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    ogImage: Schema.Attribute.Media<'images'>;
+    ogTitle: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 90;
+      }>;
+    structuredData: Schema.Attribute.JSON;
+  };
+}
+
+declare module '@strapi/strapi' {
+  export namespace Public {
+    export interface ComponentSchemas {
+      'home.close': HomeClose;
+      'home.decide': HomeDecide;
+      'home.faq': HomeFaq;
+      'home.faq-item': HomeFaqItem;
+      'home.footer': HomeFooter;
+      'home.hero': HomeHero;
+      'home.how': HomeHow;
+      'home.nav': HomeNav;
+      'home.platform': HomePlatform;
+      'home.results': HomeResults;
+      'home.step': HomeStep;
+      'home.tile': HomeTile;
+      'seo.meta': SeoMeta;
+    }
+  }
+}

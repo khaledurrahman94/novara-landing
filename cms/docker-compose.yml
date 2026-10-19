@@ -1,0 +1,53 @@
+# Novara CMS: Strapi + Postgres 16. Run from cms/ after `cp .env.example .env` and filling it in.
+#   docker compose up -d --build
+#   docker compose exec strapi npm run seed     # once, on the first deploy
+# Settings in `environment:` below beat the same names in .env.
+name: novara-cms
+
+services:
+  strapi:
+    build:
+      context: ..
+      dockerfile: cms/Dockerfile
+    image: novara-cms:latest
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: "1337"
+      DATABASE_CLIENT: postgres
+      DATABASE_HOST: db
+      DATABASE_PORT: "5432"
+      DATABASE_NAME: ${POSTGRES_DB:-strapi}
+      DATABASE_USERNAME: ${POSTGRES_USER:-strapi}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    depends_on:
+      db:
+        condition: service_healthy
+    # Bound to localhost: put a reverse proxy (TLS) in front. Change the left side only if nothing proxies for you.
+    ports:
+      - "127.0.0.1:1337:1337"
+    volumes:
+      # Only used when S3_BUCKET is unset. Harmless once media lives in the bucket.
+      - uploads:/app/public/uploads
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-strapi}
+      POSTGRES_USER: ${POSTGRES_USER:-strapi}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    # No published ports: only the strapi service reaches the database.
+
+volumes:
+  pgdata:
+  uploads:

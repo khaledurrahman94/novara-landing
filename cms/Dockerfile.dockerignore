@@ -1,0 +1,17 @@
+# Used by `docker build -f cms/Dockerfile .` from the repo root (BuildKit). Allow-list: send only what the image needs.
+*
+!cms
+!src/content/v2.ts
+!src/content/v3.ts
+!public/robots.txt
+
+cms/node_modules
+cms/dist
+cms/build
+cms/.tmp
+cms/.strapi
+cms/.env
+cms/.env.*
+!cms/.env.example
+cms/public/uploads/*
+cms/*.log
