@@ -1,0 +1,12 @@
+{
+  "data": [
+    { "id": 1, "documentId": "fxredirect00000000001", "from": "/loop-a", "to": "/loop-b", "kind": "permanent" },
+    { "id": 2, "documentId": "fxredirect00000000002", "from": "/loop-b", "to": "/loop-a", "kind": "permanent" },
+    { "id": 3, "documentId": "fxredirect00000000003", "from": "/v1", "to": "/", "kind": "permanent", "note": "Redirect from a live page." },
+    { "id": 4, "documentId": "fxredirect00000000004", "from": "/old", "to": "/no-such-page", "kind": "permanent", "note": "Internal target that doesn't exist." },
+    { "id": 5, "documentId": "fxredirect00000000005", "from": "/old", "to": "/", "kind": "permanent", "note": "Same from twice." },
+    { "id": 6, "documentId": "fxredirect00000000006", "from": "/Bad_Path", "to": "/", "kind": "maybe", "note": "Fails the from pattern and the kind enum." },
+    { "id": 7, "documentId": "fxredirect00000000007", "from": "/v3", "to": "/", "kind": "permanent", "note": "Duplicates the code redirect." }
+  ],
+  "meta": { "pagination": { "page": 1, "pageSize": 100, "pageCount": 1, "total": 7 } }
+}

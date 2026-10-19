@@ -1,0 +1,23 @@
+{
+  "data": {
+    "id": 1,
+    "documentId": "fxsettings0000000000001",
+    "siteName": "Novara",
+    "titleTemplate": "%s | Novara",
+    "defaultOgImage": {
+      "id": 7,
+      "documentId": "fxmedia000000000000007",
+      "name": "share.png",
+      "alternativeText": null,
+      "url": "https://cms.example.com/uploads/share.png",
+      "width": 1200,
+      "height": 630,
+      "mime": "image/png"
+    },
+    "robotsTxt": "User-agent: *\nDisallow: /\n",
+    "createdAt": "2026-10-01T09:00:00.000Z",
+    "updatedAt": "2026-10-01T09:00:00.000Z",
+    "publishedAt": "2026-10-01T09:00:00.000Z"
+  },
+  "meta": {}
+}
