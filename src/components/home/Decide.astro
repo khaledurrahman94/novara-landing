@@ -34,16 +34,13 @@ const slotH = 'h-[8rem]';
                 <span data-count="from" class="ml-auto font-medium tabular-nums text-text-tertiary">2</span>
               </h3>
               <ul class="m-0 flex list-none flex-col gap-2 p-0">
-                <li data-slot="home" class:list={['relative', slotH]}>
+                <li class:list={['relative', slotH]}>
                   <span data-ghost aria-hidden="true" class="absolute inset-0 rounded-md border border-dashed border-border-primary opacity-0"></span>
                   <article
                     data-card="amara"
                     data-evidence-for="amara"
-                    data-cursor="Drag"
-                    tabindex="0"
                     aria-label={`${amara.name}, Job Fit ${amara.fit}%`}
-                    aria-describedby="decide-help"
-                    class="absolute inset-0 flex select-none flex-col rounded-md border border-border-secondary bg-white p-2.5 shadow-md outline-offset-2 transition-[border-color] duration-[var(--duration-fast)] hover:border-primary-300 data-[landed=true]:border-primary"
+                    class="absolute inset-0 flex flex-col rounded-md border border-border-secondary bg-white p-2.5 shadow-md transition-[border-color] duration-[var(--duration-base)] data-[spot=true]:border-primary-300 data-[landed=true]:border-primary"
                   >
                     <div class="flex items-center gap-2"><Avatar initials={amara.initials} size="xs" lead /><span class="min-w-0 truncate text-xs font-semibold">{amara.name}</span></div>
                     <p class="m-0 mt-1.5 text-[0.6875rem] text-text-tertiary">Job Fit {amara.fit}%</p>
@@ -53,7 +50,7 @@ const slotH = 'h-[8rem]';
                   </article>
                 </li>
                 <li class:list={[slotH]}>
-                  <article data-evidence-for="ines" tabindex="0" aria-label={`${ines.name}, Job Fit ${ines.fit}%`} class="flex h-full flex-col rounded-md border border-border-secondary bg-white p-2.5 shadow-xs transition-[border-color,transform] duration-[var(--duration-base)] ease-[var(--ease-out-quart)] hover:border-primary-300">
+                  <article data-evidence-for="ines" aria-label={`${ines.name}, Job Fit ${ines.fit}%`} class="flex h-full flex-col rounded-md border border-border-secondary bg-white p-2.5 shadow-xs transition-[border-color] duration-[var(--duration-base)] data-[spot=true]:border-primary-300">
                     <div class="flex items-center gap-2"><Avatar initials={ines.initials} size="xs" /><span class="min-w-0 truncate text-xs font-semibold">{ines.name}</span></div>
                     <p class="m-0 mt-1.5 text-[0.6875rem] text-text-tertiary">Job Fit {ines.fit}%</p>
                   </article>
@@ -67,10 +64,10 @@ const slotH = 'h-[8rem]';
               </h3>
               <ul class="m-0 flex list-none flex-col gap-2 p-0">
                 <li data-slot="away" class:list={['relative', slotH]}>
-                  <span data-drop class="absolute inset-0 grid place-items-center rounded-md border border-dashed border-border-primary text-[0.6875rem] text-text-tertiary transition-[background-color] duration-[var(--duration-fast)] data-[hot=true]:bg-primary-50" aria-hidden="true">{decide.drop}</span>
+                  <span data-drop class="absolute inset-0 rounded-md border border-dashed border-border-primary transition-[background-color] duration-[var(--duration-base)] data-[hot=true]:bg-primary-50" aria-hidden="true"></span>
                 </li>
                 <li class:list={[slotH]}>
-                  <article data-evidence-for="kenji" tabindex="0" aria-label={`${kenji.name}, Job Fit ${kenji.fit}%`} class="flex h-full flex-col rounded-md border border-border-secondary bg-white p-2.5 shadow-xs transition-[border-color] duration-[var(--duration-base)] hover:border-primary-300">
+                  <article data-evidence-for="kenji" aria-label={`${kenji.name}, Job Fit ${kenji.fit}%`} class="flex h-full flex-col rounded-md border border-border-secondary bg-white p-2.5 shadow-xs transition-[border-color] duration-[var(--duration-base)] data-[spot=true]:border-primary-300">
                     <div class="flex items-center gap-2"><Avatar initials={kenji.initials} size="xs" /><span class="min-w-0 truncate text-xs font-semibold">{kenji.name}</span></div>
                     <p class="m-0 mt-1.5 text-[0.6875rem] text-text-tertiary">Job Fit {kenji.fit}%</p>
                   </article>
@@ -78,8 +75,6 @@ const slotH = 'h-[8rem]';
               </ul>
             </div>
           </div>
-          <p id="decide-help" class="sr-only">{decide.dragHelp}</p>
-          <p data-decide-status role="status" class="sr-only"></p>
         </div>
 
         <div data-evidence-wrap class="relative">
