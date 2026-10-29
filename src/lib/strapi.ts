@@ -16,6 +16,8 @@ export interface StrapiConfig {
   token?: string;
   previewToken?: string;
   fixturesDir?: string;
+  /** True when no content source was configured on a non-production build and the local fixtures were chosen. */
+  fixturesFallback?: boolean;
 }
 
 /** Thrown for every Strapi problem. The message is written for a person reading a build log. */
@@ -27,7 +29,7 @@ export const NO_SOURCE_MESSAGE = [
   'No content source for the build.',
   'Set STRAPI_URL and STRAPI_TOKEN to build from Strapi (see .env.example),',
   'or set STRAPI_FIXTURES=fixtures/strapi/good to build from local fixtures (staging only).',
-  'There is no silent fallback to local copy.',
+  'Production never falls back to fixtures: it needs Strapi.',
 ].join('\n  ');
 
 export function readStrapiConfig(env: Env): StrapiConfig {

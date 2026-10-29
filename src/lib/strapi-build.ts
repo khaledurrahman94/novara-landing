@@ -9,6 +9,9 @@ import { NO_SOURCE_MESSAGE, StrapiError, liveSource, readStrapiConfig, type Stra
 
 let envLoaded = false;
 
+/** Used when no content source is configured on a non-production build. */
+export const FALLBACK_FIXTURES = 'fixtures/strapi/good';
+
 /** Load .env.local then .env into process.env. Real environment variables win, so CI settings override files. */
 export function loadEnvFiles(root: string = process.cwd()): void {
   if (envLoaded) return;
@@ -24,7 +27,14 @@ export function loadEnvFiles(root: string = process.cwd()): void {
 
 export function buildConfig(root?: string): StrapiConfig {
   loadEnvFiles(root);
-  return readStrapiConfig(process.env);
+  const config = readStrapiConfig(process.env);
+  // Nothing configured at all, and not production: build from the local fixtures so a fresh deploy works
+  // before Strapi is connected. A partial config (URL or token alone) is not "nothing": it still fails.
+  if (!config.fixturesDir && !config.url && !config.token && config.siteEnv !== 'production') {
+    config.fixturesDir = path.join(root ?? process.cwd(), FALLBACK_FIXTURES);
+    config.fixturesFallback = true;
+  }
+  return config;
 }
 
 async function readJson(dir: string, file: string): Promise<unknown | undefined> {
@@ -72,6 +82,7 @@ export function fixtureSource(dir: string): BuildSource {
 /** Pick the source for this build. Fails with a clear message when there is none. */
 export function getSource(config: StrapiConfig = buildConfig()): BuildSource {
   if (config.fixturesDir) return fixtureSource(config.fixturesDir);
+  if (config.token && !config.url) throw new StrapiError('STRAPI_TOKEN is set but STRAPI_URL is missing. Set STRAPI_URL to the Strapi base URL.');
   if (config.url && !config.token) throw new StrapiError('STRAPI_URL is set but STRAPI_TOKEN is missing. Create a read-only API token in Strapi and set STRAPI_TOKEN.');
   if (config.url) return { ...liveSource(config), extra: async () => undefined };
   throw new StrapiError(NO_SOURCE_MESSAGE);

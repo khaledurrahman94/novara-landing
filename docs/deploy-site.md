@@ -15,12 +15,12 @@ The Strapi half (Vivasoft cloud, tokens, backups) is in `docs/deploy.md`. This f
 | `STRAPI_TOKEN` | build | Read-only API token: `find` on `site-settings`, `redirect` and each page type. |
 | `PREVIEW_SECRET` | runtime | Long random string. Strapi's Preview button sends it as `?secret=`. |
 | `STRAPI_PREVIEW_TOKEN` | runtime | A second token that can read drafts. Never reuse `STRAPI_TOKEN`. |
-| `STRAPI_FIXTURES` | local only | `fixtures/strapi/good` builds with no Strapi. Production refuses it. |
+| `STRAPI_FIXTURES` | optional, staging | `fixtures/strapi/good`. Optional: a staging build with no Strapi variables uses it by default. Production refuses it. |
 | `VALIDATE_AS` | optional | `production` runs the production-only checks on a staging build (preflight). |
 
 "Build" variables go in the build environment (Workers Builds: Settings, Build, Variables and secrets, or the GitHub Actions secrets). "Runtime" ones go on the Worker: Settings, Variables and secrets, or `npx wrangler secret put <NAME>`. `wrangler.jsonc` sets `keep_vars`, so a deploy won't wipe them. `STRAPI_URL` is needed in both places.
 
-There is no silent fallback: with neither `STRAPI_URL` plus `STRAPI_TOKEN` nor `STRAPI_FIXTURES`, the build fails with a message saying so. A failed build deploys nothing, so the last good site stays live.
+With none of `STRAPI_URL`, `STRAPI_TOKEN` and `STRAPI_FIXTURES` set, a staging build (`PUBLIC_SITE_ENV` unset or not `production`) builds from `fixtures/strapi/good` and logs one prominent warning; every page is `noindex`. `PUBLIC_SITE_ENV=production` with no Strapi fails the build on purpose, and so does `STRAPI_URL` without `STRAPI_TOKEN` (or the reverse). A failed build deploys nothing, so the last good site stays live.
 
 ### Build and deploy
 

@@ -50,6 +50,9 @@ export default function novaraSite(): AstroIntegration {
           throw e instanceof StrapiError ? fail('Content source problem', e.message) : e;
         });
         setSite(site);
+        if (site.fixturesFallback) {
+          logger.warn('BUILDING FROM LOCAL FIXTURES: no STRAPI_URL/STRAPI_TOKEN set. Staging only, every page is noindex. Not for production.');
+        }
         logger.info(`Content from ${site.describe} (${site.siteEnv})`);
         const errors = site.issues.filter((i) => i.level === 'error');
         if (site.issues.length) {

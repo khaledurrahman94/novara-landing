@@ -14,6 +14,8 @@ import { validate } from './validate';
 export interface SiteBuild {
   siteEnv: SiteEnv;
   mode: 'live' | 'fixtures';
+  /** True when no source was configured and the local fixtures were used (non-production only). */
+  fixturesFallback: boolean;
   describe: string;
   data: SiteData | undefined;
   pages: PageRecord[];
@@ -27,7 +29,7 @@ export async function prepareSite(root: string): Promise<SiteBuild> {
   const source = getSource(config);
   const loaded = await loadSiteData(source);
   const siteEnv = parseSiteEnv(config.siteEnv);
-  const base = { siteEnv, mode: source.mode, describe: source.describe(), data: loaded.data };
+  const base = { siteEnv, mode: source.mode, describe: source.describe(), fixturesFallback: config.fixturesFallback === true, data: loaded.data };
   if (!loaded.data) return { ...base, pages: [], redirects: [], issues: loaded.issues };
 
   const pages = pageProviders.flatMap((p) => p.pages(loaded.data!));

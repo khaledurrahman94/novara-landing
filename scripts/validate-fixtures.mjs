@@ -1,5 +1,5 @@
 // Proves the build guard works: good fixtures build, bad fixtures fail with the expected checks,
-// production refuses fixtures, and a build with no content source fails clearly.
+// production refuses fixtures, production with no content source fails clearly, and staging with none falls back to the good fixtures.
 // Run with `pnpm validate:fixtures`. It runs real `astro build`s, so it overwrites dist/.
 import { spawnSync } from 'node:child_process';
 
@@ -42,10 +42,22 @@ const runs = [
     contains: ['Production builds never use fixtures'],
   },
   {
-    name: 'no Strapi and no fixtures fails clearly',
-    env: { ...blank, PUBLIC_SITE_ENV: 'staging' },
+    name: 'production with no Strapi and no fixtures fails clearly',
+    env: { ...blank, PUBLIC_SITE_ENV: 'production' },
     exit: 'fail',
     contains: ['No content source for the build'],
+  },
+  {
+    name: 'staging with no content source falls back to the fixtures',
+    env: { ...blank, PUBLIC_SITE_ENV: 'staging' },
+    exit: 0,
+    contains: ['BUILDING FROM LOCAL FIXTURES', 'Wrote _redirects'],
+  },
+  {
+    name: 'STRAPI_URL without a token still fails',
+    env: { ...blank, STRAPI_URL: 'https://example.invalid', PUBLIC_SITE_ENV: 'staging' },
+    exit: 'fail',
+    contains: ['STRAPI_TOKEN is missing'],
   },
 ];
 
