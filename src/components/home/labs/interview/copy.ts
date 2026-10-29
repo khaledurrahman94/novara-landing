@@ -21,11 +21,42 @@ export const kinds: readonly KindMeta[] = [
   { key: 'faces', label: 'Multiple faces', title: 'Multiple faces detected', icon: 'users' },
 ] as const;
 
+/** One scripted event on the walkthrough's clock. `at` is seconds from the start of the interview. */
+export interface ScriptEvent {
+  at: number;
+  kind: Kind;
+  /** Short detail shown after the title, like "4s away". */
+  detail?: string;
+}
+
+/**
+ * The walkthrough is a scripted replay: nothing in it is detected from the visitor. Each question runs
+ * `questionSeconds`, the events tick up on this timeline, and the report appears at `end`.
+ */
+export const script = {
+  questionSeconds: 11,
+  end: 34,
+  events: [
+    { at: 3.5, kind: 'tab', detail: '4s away' },
+    { at: 7.5, kind: 'focus', detail: '3s' },
+    { at: 12.5, kind: 'copy' },
+    { at: 16, kind: 'camera' },
+    { at: 19.5, kind: 'faces' },
+    { at: 24, kind: 'fullscreen' },
+    { at: 28, kind: 'away', detail: 'over 2s' },
+  ] as readonly ScriptEvent[],
+  /** The self-view tile shows these while the matching event is live. */
+  overlays: [
+    { kind: 'camera', from: 16, to: 19 },
+    { kind: 'faces', from: 19.5, to: 22.5 },
+  ] as readonly { kind: 'camera' | 'faces'; from: number; to: number }[],
+} as const;
+
 export const lab = {
   id: 'interview-lab',
-  title: 'Try to cheat. Novara will notice.',
-  sub: "A live demo of what Novara's integrity monitor sees during a real interview. Switch tabs, click away, copy the question or move your cursor out of the window. Nothing you do here is recorded or sent anywhere.",
-  frameLabel: 'Interactive AI interview demo',
+  title: 'Cheating in an interview gets noticed.',
+  sub: "A scripted walkthrough of what Novara's integrity monitor flags during a real interview: tab switches, lost focus, a copied question, the camera going off, a second face and leaving full screen. Nothing here is recorded or sent anywhere.",
+  frameLabel: 'Animated AI interview demo',
   intro: "Hi, I'm Novara's AI interviewer. Let's begin.",
   cue: 'Scroll to start the interview',
   questions: [
@@ -34,10 +65,6 @@ export const lab = {
     'A report query gets slow after a launch. What do you check first?',
   ],
   step: (n: number, total: number): string => `Question ${n} of ${total}`,
-  next: 'Next question',
-  finish: 'Finish interview',
-  pause: 'Pause',
-  resume: 'Resume',
   candidate: {
     label: "Candidate's screen",
     note: 'What the candidate sees',
@@ -48,15 +75,14 @@ export const lab = {
     received: 'Answer received',
     waiting: 'Listening to the question',
     illustrative: 'Candidate answers in this demo are illustrative.',
-    receivedAnnounce: (n: number): string => `Answer ${n} received and transcribed.`,
   },
   team: {
     label: "Your team's view",
     note: 'Only your hiring team sees this',
     app: 'Novara',
     live: 'Live',
-    hint: 'Try it: switch tabs or copy the question.',
-    real: 'Detected in your browser here: tab switches, focus lost, copy and paste. Novara also checks these in a real interview.',
+    hint: 'A scripted replay. Each event ticks up as it happens.',
+    real: 'In a real interview Novara checks tab switches, focus, copy and paste, camera status, faces in view, looking away and full screen.',
   },
   answers: [
     "I'd start with the seams: parts that change independently, like billing or notifications. Pull one out behind an API, keep the database shared at first, and move its data last.",
@@ -65,35 +91,23 @@ export const lab = {
   ],
   panelTitle: 'Integrity monitor',
   review: (n: number): string => (n === 1 ? '1 event to review' : `${n} events to review`),
-  simulateTitle: 'Simulate',
-  simulateNote: 'Switches, not detection: this demo never opens your camera. In a real interview Novara checks camera status, faces in view and full screen.',
-  simCamera: 'Camera off',
-  simFaces: 'Multiple faces',
-  simFullscreen: 'Left full screen',
-  simTag: 'Simulated',
-  cursorTag: 'Cursor stand-in',
   empty: 'Nothing flagged yet.',
-  eyes: 'Looking away is a camera check in a real interview. Here your cursor stands in for your eyes: keep it inside the window.',
-  earlier: (n: number): string => (n === 1 ? '1 earlier event, in your report' : `${n} earlier events, in your report`),
+  earlier: (n: number): string => (n === 1 ? '1 earlier event, in the report' : `${n} earlier events, in the report`),
   started: 'Interview started',
   ended: 'Interview ended',
   flagged: 'Flagged for your review',
-  pasted: 'Pasted text',
   toast: 'Flagged for review',
-  announce: (text: string, n: number): string => `Flagged for review: ${text}. ${n === 1 ? '1 event' : `${n} events`} so far.`,
   overlay: { cameraSelf: 'Camera off' },
   report: {
-    title: 'Your integrity report',
+    title: 'Integrity report',
     sampleTitle: 'A sample integrity report',
     summary: (n: number): string => (n === 1 ? '1 event flagged for review.' : `${n} events flagged for review.`),
-    clean: 'No events this time. Try again and misbehave.',
     line: "Events are flagged for your team to review. Novara doesn't reject anyone for them.",
-    again: 'Try again',
-    sampleNote: 'This is a sample. The interactive demo needs JavaScript.',
+    sampleNote: 'This is a sample. The animated walkthrough needs JavaScript.',
   },
   score: {
     chip: 'Sample evaluation',
-    note: "Illustrative. Novara scores a real candidate's answers out of 100 and writes the evaluation. Nothing from this demo is scored.",
+    note: "Illustrative. Novara scores a real candidate's answers out of 100 and writes the evaluation. Nothing in this demo is scored.",
   },
 } as const;
 
@@ -103,8 +117,8 @@ export const clock = (ms: number): string => {
   return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
 };
 
-/** Short duration for event details: 4s, 1m 05s. */
-export const span = (ms: number): string => {
-  const s = Math.max(1, Math.round(ms / 1000));
-  return s < 60 ? `${s}s` : `${Math.floor(s / 60)}m ${String(s % 60).padStart(2, '0')}s`;
+/** The title a flagged event shows in the timeline, the toast and the report. */
+export const eventTitle = (e: ScriptEvent): string => {
+  const base = kinds.find((k) => k.key === e.kind)?.title ?? e.kind;
+  return e.detail ? `${base}, ${e.detail}` : base;
 };
