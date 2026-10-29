@@ -2,7 +2,7 @@
 
 ## Stack (pnpm 10, Node 24)
 astro 7.4.0 (static + one on-demand route, `site: https://novara.my`) | @astrojs/cloudflare 14.4.0 (Workers) + wrangler 4 | tailwindcss + @tailwindcss/vite 4.3.3 | gsap 3.15.0 (ScrollTrigger/SplitText in main pkg) | lenis 1.3.27 | @astrojs/sitemap 3.7.4 | typescript 6.0.3 (pinned: `astro check` rejects TS 7) | @astrojs/check | @fontsource-variable/inter + urbanist 5.3.0. `cookie@^2` is a direct dep on purpose: a stray old CJS `cookie` in `C:\Users\thrasys\node_modules` otherwise breaks the build. No UI framework. TS = astro `strictest`.
-Scripts: `pnpm dev | build | preview | check | validate:fixtures`. Builds need content: set `STRAPI_URL` + `STRAPI_TOKEN`, or `STRAPI_FIXTURES=fixtures/strapi/good` (staging only); see `.env.example`. `check` and `validate:fixtures` use fixtures themselves. Never run a dev server unattended. SF Pro (`src/assets/fonts/sf-pro/`) is gitignored: never import or ship it.
+Scripts: `pnpm dev | build | preview | check | validate:fixtures`. Production builds need content: set `STRAPI_URL` + `STRAPI_TOKEN`. Staging builds fall back to `fixtures/strapi/good` when nothing is set (or set `STRAPI_FIXTURES` explicitly); see `.env.example`. `check` and `validate:fixtures` use fixtures themselves. Never run a dev server unattended. SF Pro (`src/assets/fonts/sf-pro/`) is gitignored: never import or ship it.
 
 ## File map
 - `astro.config.mjs` (Cloudflare adapter, sitemap, code redirects), `wrangler.jsonc`, `tsconfig.json`, `.env.example`, `public/brand/` (logos). `robots.txt`, `_redirects`, `_headers` and `404.html` are generated.
