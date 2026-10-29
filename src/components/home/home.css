@@ -38,6 +38,7 @@ html {
 /* Hero intro start states: only when JS is running and motion is allowed. */
 @media (prefers-reduced-motion: no-preference) {
   .js:not(.js-fail) [data-rise],
+  .js:not(.js-fail) [data-hero-card],
   .js:not(.js-fail) [data-shot] {
     opacity: 0;
   }
