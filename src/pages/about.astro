@@ -1,0 +1,53 @@
+---
+import Page from '../layouts/Page.astro';
+import PageHead from '../components/company/PageHead.astro';
+import Button from '../components/home/Button.astro';
+import { company, contact } from '../content/company';
+const { about } = company;
+const h2 = 'm-0 text-[clamp(1.5rem,1.2rem+1.2vw,2.125rem)] font-semibold leading-tight tracking-[-0.02em]';
+const link = 'text-primary-700 underline underline-offset-2';
+---
+<Page title={about.seo.title} description={about.seo.description}>
+  <PageHead eyebrow={about.eyebrow} title={about.title} />
+  <div class="mx-auto w-full max-w-[75rem] border-x border-border-secondary px-5 py-12 sm:px-8 md:px-12 md:py-16">
+    <div class="max-w-[42rem] text-lg leading-relaxed text-text-secondary">
+      {about.intro.map((t, i) => <p class:list={['m-0', i > 0 && 'mt-4']}>{t}</p>)}
+    </div>
+
+    <section aria-labelledby="what-we-do" class="mt-16 border-t border-border-secondary pt-12">
+      <h2 id="what-we-do" class={h2}>{about.whatWeDo.title}</h2>
+      <p class="m-0 mt-3 max-w-[40rem] text-base leading-relaxed text-text-secondary">{about.whatWeDo.lead}</p>
+      <ul class="m-0 mt-8 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-3">
+        {about.whatWeDo.items.map((it) => (
+          <li class="rounded-xl border border-border-secondary bg-white p-6 shadow-xs">
+            <h3 class="m-0 text-base font-semibold text-text-primary">{it.title}</h3>
+            <p class="m-0 mt-2 text-[0.9375rem] leading-relaxed text-text-secondary">{it.text}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    {about.sections.map((s, i) => (
+      <section aria-labelledby={`about-${i}`} class="mt-12 grid gap-4 border-t border-border-secondary pt-12 md:grid-cols-12 md:gap-10">
+        <h2 id={`about-${i}`} class={`${h2} md:col-span-4`}>{s.title}</h2>
+        <div class="max-w-[40rem] text-base leading-relaxed text-text-secondary md:col-span-8">
+          {s.paragraphs.map((t, j) => <p class:list={['m-0', j > 0 && 'mt-4']}>{t}</p>)}
+        </div>
+      </section>
+    ))}
+
+    <section aria-labelledby="about-cta" class="mt-16 rounded-2xl border border-border-secondary bg-bg px-6 py-10 sm:px-10">
+      <h2 id="about-cta" class={h2}>{about.cta.title}</h2>
+      <p class="m-0 mt-3 max-w-[36rem] text-base leading-relaxed text-text-secondary">{about.cta.line}</p>
+      <div class="mt-6 flex flex-wrap gap-3">
+        <Button href={about.cta.primary.href}>{about.cta.primary.label}</Button>
+        <Button href={about.cta.secondary.href} variant="secondary">{about.cta.secondary.label}</Button>
+      </div>
+      <p class="m-0 mt-6 text-sm text-text-tertiary">
+        Website: <a href={contact.website} class={link}>{contact.website}</a>
+        <span aria-hidden="true"> · </span>
+        Email: <a href={`mailto:${contact.email}`} class={link}>{contact.email}</a>
+      </p>
+    </section>
+  </div>
+</Page>

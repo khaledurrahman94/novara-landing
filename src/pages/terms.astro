@@ -1,0 +1,24 @@
+---
+import Page from '../layouts/Page.astro';
+import PageHead from '../components/company/PageHead.astro';
+import LegalDocument from '../components/company/LegalDocument.astro';
+import { legal } from '../content/legal';
+---
+<Page title={legal.seo.title} description={legal.seo.description}>
+  <PageHead eyebrow={legal.eyebrow} title={legal.title} />
+  <div class="mx-auto w-full max-w-[75rem] border-x border-border-secondary px-5 py-12 sm:px-8 md:px-12 md:py-16">
+    <div class="grid gap-10 lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-16">
+      <nav aria-label={legal.tocLabel} class="lg:sticky lg:top-24 lg:self-start">
+        <p class="m-0 mb-3 text-xs font-semibold text-text-tertiary">{legal.tocLabel}</p>
+        <ul class="m-0 flex list-none flex-col gap-2 p-0">
+          {legal.documents.map((d) => (
+            <li><a href={`#${d.id}`} class="text-sm text-text-secondary no-underline hover:text-text-primary hover:underline">{d.title}</a></li>
+          ))}
+        </ul>
+      </nav>
+      <div>
+        {legal.documents.map((d) => <LegalDocument doc={d} />)}
+      </div>
+    </div>
+  </div>
+</Page>
