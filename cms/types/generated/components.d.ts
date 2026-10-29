@@ -1,5 +1,92 @@
 import type { Schema, Struct } from '@strapi/strapi';
 
+export interface HomeAudience extends Struct.ComponentSchema {
+  collectionName: 'components_home_audiences';
+  info: {
+    description: 'Who it is for heading, button label and its four fixed groups.';
+    displayName: 'Audience';
+  };
+  attributes: {
+    cta: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 19;
+        minLength: 1;
+      }>;
+    groups: Schema.Attribute.Component<'home.audience-group', true> &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 4;
+          min: 4;
+        },
+        number
+      >;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 70;
+        minLength: 1;
+      }>;
+  };
+}
+
+export interface HomeAudienceGroup extends Struct.ComponentSchema {
+  collectionName: 'components_home_audience_groups';
+  info: {
+    description: 'One Who it is for tab. Points must describe Available features only.';
+    displayName: 'Audience group';
+  };
+  attributes: {
+    built: Schema.Attribute.Component<'home.audience-point', true> &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 6;
+          min: 3;
+        },
+        number
+      >;
+    description: Schema.Attribute.Text &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 130;
+        minLength: 1;
+      }>;
+    label: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 40;
+        minLength: 1;
+      }>;
+    points: Schema.Attribute.Component<'home.audience-point', true> &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 5;
+          min: 3;
+        },
+        number
+      >;
+  };
+}
+
+export interface HomeAudiencePoint extends Struct.ComponentSchema {
+  collectionName: 'components_home_audience_points';
+  info: {
+    description: 'One short line: a sub-audience or a check-marked point.';
+    displayName: 'Audience point';
+  };
+  attributes: {
+    text: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 95;
+        minLength: 1;
+      }>;
+  };
+}
+
 export interface HomeClose extends Struct.ComponentSchema {
   collectionName: 'components_home_closes';
   info: {
@@ -255,6 +342,12 @@ export interface HomePlatform extends Struct.ComponentSchema {
       Schema.Attribute.Required;
     scheduling: Schema.Attribute.Component<'home.tile', false> &
       Schema.Attribute.Required;
+    intro: Schema.Attribute.Text &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 230;
+        minLength: 1;
+      }>;
     title: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.SetMinMaxLength<{
@@ -381,6 +474,9 @@ export interface SeoMeta extends Struct.ComponentSchema {
 declare module '@strapi/strapi' {
   export namespace Public {
     export interface ComponentSchemas {
+      'home.audience': HomeAudience;
+      'home.audience-group': HomeAudienceGroup;
+      'home.audience-point': HomeAudiencePoint;
       'home.close': HomeClose;
       'home.decide': HomeDecide;
       'home.faq': HomeFaq;

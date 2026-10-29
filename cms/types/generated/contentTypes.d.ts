@@ -455,6 +455,8 @@ export interface ApiHomeHome extends Struct.SingleTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    audience: Schema.Attribute.Component<'home.audience', false> &
+      Schema.Attribute.Required;
     close: Schema.Attribute.Component<'home.close', false> &
       Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;

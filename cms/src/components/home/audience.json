@@ -1,0 +1,30 @@
+{
+  "collectionName": "components_home_audiences",
+  "info": {
+    "displayName": "Audience",
+    "description": "Who it is for heading, button label and its four fixed groups."
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 70
+    },
+    "cta": {
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 19
+    },
+    "groups": {
+      "type": "component",
+      "repeatable": true,
+      "component": "home.audience-group",
+      "min": 4,
+      "max": 4,
+      "required": true
+    }
+  }
+}

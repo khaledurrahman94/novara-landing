@@ -12,6 +12,12 @@
       "minLength": 1,
       "maxLength": 46
     },
+    "intro": {
+      "type": "text",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 230
+    },
     "pipeline": {
       "type": "component",
       "repeatable": false,

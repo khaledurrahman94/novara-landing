@@ -30,8 +30,11 @@ const trendJson = JSON.stringify({ tabs: trendTabs, data: platform.trend, weeks:
 ---
 <Section id="platform" labelledby="platform-title" tone="white" innerClass="px-0! sm:px-0! md:px-0!">
   <div data-platform class="home-platform">
-    <div class="px-5 sm:px-8 md:px-12" data-reveal>
-      <h2 data-speed="0.1" id="platform-title" class="m-0 max-w-[36rem] text-[clamp(2rem,1.2rem+2.8vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.03em]">{platform.title}</h2>
+    <div class="grid items-start gap-8 px-5 sm:px-8 md:px-12 lg:grid-cols-12 lg:gap-12" data-reveal>
+      <div class="rounded-lg border border-border-secondary bg-bg p-5 lg:col-span-4 lg:mt-3">
+        <p class="m-0 text-[0.9375rem] leading-relaxed text-text-secondary">{platform.intro}</p>
+      </div>
+      <h2 data-speed="0.1" id="platform-title" class="m-0 max-w-[36rem] text-[clamp(2rem,1.2rem+2.8vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.03em] lg:col-span-8">{platform.title}</h2>
     </div>
 
     <div data-bento class="mt-14 grid gap-px border-y border-border-secondary bg-border-secondary md:grid-cols-2 xl:grid-cols-6">
