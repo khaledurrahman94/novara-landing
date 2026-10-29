@@ -4,7 +4,7 @@ Wiring table for the Astro side. Strapi type `api::home.home` (single type, Draf
 
 ## How to fetch
 - `GET /api/home` returns every section populated, with no `populate` query (route middleware). A `populate` you send wins.
-- Strapi 5 shape: `{ data: { documentId, publishedAt, seo, nav, hero, results, decide, how, platform, faq, close, footer } }`. No `attributes` wrapper. Components carry an `id`; ignore it.
+- Strapi 5 shape: `{ data: { documentId, publishedAt, seo, nav, hero, results, decide, how, platform, audience, faq, close, footer } }`. No `attributes` wrapper. Components carry an `id`; ignore it.
 - Same token rules as everything else: `Authorization: Bearer <STRAPI_TOKEN>`. Only `find` exists over REST (no write routes).
 - Mirror the caps below in zod (`.max(cap)`, `.min(1)`), and `how.steps` as exactly 4, `faq.items` as 3 to 10. A mismatch fails the build.
 - Merge, do not replace: build the page copy as `{ ...codeCopy, hero: { ...codeCopy.hero, title, sub, secondary }, ... }`, so the keys marked "code" below keep coming from `home.ts`.
@@ -33,8 +33,15 @@ Every field is required and non-empty. Strapi checks min and required rules on p
 | `how.steps[i].title` | `how.steps[i].title` | string | 26 | exactly 4 |
 | `how.steps[i].text` | `how.steps[i].text` | text | 110 | exactly 4 |
 | `platform.title` | `platform.title` | string | 46 | 1 |
+| `platform.intro` | `platform.intro` | text | 230 | 1 |
 | `platform.tiles.<k>.title` | `platform.<k>.title` | string | 28 | 6 named tiles |
 | `platform.tiles.<k>.line` | `platform.<k>.line` | text | 93 | 6 named tiles |
+| `audience.title` | `audience.title` | string | 70 | 1 |
+| `audience.cta` | `audience.cta` | string | 19 | 1 |
+| `audience.groups[i].label` | `audience.groups[i].label` | string | 40 | exactly 4 |
+| `audience.groups[i].description` | `audience.groups[i].description` | text | 130 | exactly 4 |
+| `audience.groups[i].built[j]` | `audience.groups[i].built[j].text` | string | 95 | 3 to 6 per group |
+| `audience.groups[i].points[j]` | `audience.groups[i].points[j].text` | string | 95 | 3 to 5 per group |
 | `faq.title` | `faq.title` | string | 34 | 1 |
 | `faq.items[i].q` | `faq.items[i].question` | string | 62 | 3 to 10 (8 now) |
 | `faq.items[i].a` | `faq.items[i].answer` | text | 285 | 3 to 10 (8 now) |
@@ -49,6 +56,7 @@ Every field is required and non-empty. Strapi checks min and required rules on p
 
 Notes:
 - `<k>` is one of `pipeline`, `career`, `scheduling`, `roles`, `email`, `analytics`. Tiles are named fields, not a list, so a tile's text cannot be paired with the wrong demo. Each is `{ title, line }`.
+- `audience.groups` is exactly 4 and keeps its order; each group's icon is chosen in code by its `key` (`company`, `role`, `industry`, `agency`), which is not in the CMS. Group points and `built` lines may describe only features marked Available in `docs/novara-current-feature-overview.pdf`; no outcomes or stats.
 - `how.steps` and `faq.items` keep the order the editor sets. The `how` section is pinned and animated, so its count is fixed at 4. Adding a step is a code change.
 - `seo` is the shared `seo.meta` component (see 05-cms). The seed sets only `metaTitle`, `metaDescription`, `index: true`, `follow: true`; everything else is empty. `metaTitle` is the complete home title. Apply `titleTemplate` only when `metaTitle` is empty (the template would double the brand here).
 - `nav.label`, `nav.home`, hrefs and the footer link list come from code. The footer link labels reuse the five nav labels.
@@ -64,6 +72,7 @@ Rule 4 of 05-cms: if changing it can break an animation or the product truth, it
 | `results.figures[]` (key, label, note, callout, value, suffix) | numbers drive the funnel and are product truth |
 | `results.phases`, `legend`, `hired`, `hintFine`, `hintTouch` | drive the dot animation |
 | `decide.caption`, `from`, `to`, `stamp`, `dragHelp`, `drop`, `movedStatus`, `backStatus`, `evidenceTitle`, `evidence.*`, `note` | demo internals, aria and status strings, product truth |
+| `audience.tabsLabel`, `audience.builtFor`, `audience.groups[].key` | aria label, small label, icon and id key |
 | `platform.copyEmbed`, `copied`, `copyFail`, `candidateName`, `candidateNamePlaceholder`, `restore`, `save`, `saved`, `hoverBar`, `trend`, `note` | demo internals and status strings |
 | The two labs: `components/home/labs/screening/copy.ts`, `components/home/labs/interview/copy.ts` (titles and subs included) | rule 4 names the labs' `copy.ts` explicitly |
 | Inline `figcaption` strings in `Platform.astro` | aria |

@@ -94,6 +94,8 @@ export const home = {
   },
   platform: {
     title: 'Everything between apply and offer.',
+    intro:
+      'The pipeline, career page, interview scheduling, roles, email templates and analytics sit in one workspace. Each view below is built from the Novara dashboard.',
     tiles: {
       pipeline: { title: 'Pipeline board', line: 'Every candidate in a named stage, from Applied to Offered or Rejected.' },
       career: { title: 'Career page', line: 'Branded, with embed code for your site and a link for every job.' },
@@ -118,6 +120,62 @@ export const home = {
       Selected: [0, 1, 0, 2, 1],
     },
     note: 'Numbers in these views are illustrative.',
+  },
+  audience: {
+    title: 'Recruitment Platform for Every Team, Role and Industry',
+    tabsLabel: 'Who Novara is for',
+    builtFor: 'Built for',
+    cta: 'Book a demo',
+    groups: [
+      {
+        key: 'company',
+        label: 'For Company',
+        description: 'Post jobs, screen resumes and run first-round interviews from one workspace, whatever your size.',
+        built: ['Small and medium businesses', 'Startups and growing companies', 'Enterprise hiring', 'BPO'],
+        points: [
+          'Draft the job description with AI and share a link for each job',
+          'Get a Job Fit Score for every resume against the job',
+          'Run AI interviews and read a scored report for each one',
+          "Keep each company's data separate from every other company",
+        ],
+      },
+      {
+        key: 'role',
+        label: 'By Role',
+        description: 'Give each person on the hiring team the access and the evidence their part of the process needs.',
+        built: ['HR teams', 'Hiring managers', 'IT', 'Finance'],
+        points: [
+          'Admin, HR Manager and Recruiter roles with module-level access',
+          'Assign recruiters to a job and see its applicants in one place',
+          'Review matching and missing criteria with the AI reasoning',
+          'Read question-level interview scores and watch the recording',
+        ],
+      },
+      {
+        key: 'industry',
+        label: 'Industry',
+        description: 'Set the requirements, skills and experience for any role, then screen and interview against them.',
+        built: ['Healthcare', 'Manufacturing', 'Insurance', 'Transportation', 'Accounting', 'Information technology'],
+        points: [
+          'Define requirements, skills and experience criteria per job',
+          'Add your own interview questions to the ones Novara writes',
+          'Review integrity events, each timestamped in the interview report',
+          'Move candidates from Applied to Offered or Rejected',
+        ],
+      },
+      {
+        key: 'agency',
+        label: 'Recruitment & Staffing Agencies',
+        description: 'Run several searches at once with a shared pipeline, a branded career page and templated emails.',
+        built: ['In-house recruitment', 'Corporate recruiting', 'Executive search firms', 'Direct hire agencies', 'Consulting and staffing firms'],
+        points: [
+          'See every candidate in a named pipeline stage, filtered by job',
+          'Publish a branded career page and embed it on your own site',
+          'Let candidates pick interview slots, with reschedules kept on record',
+          'Send invitations from editable email templates',
+        ],
+      },
+    ],
   },
   faq: {
     title: 'Frequently asked questions',

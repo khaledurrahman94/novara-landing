@@ -1,0 +1,62 @@
+---
+import { home } from '../../content/home';
+import Section from './Section.astro';
+import Button from './Button.astro';
+import Icon from '../shared/ui/Icon.astro';
+const { audience } = home;
+const icons: Record<string, string> = { company: 'briefcase', role: 'user', industry: 'globe', agency: 'users' };
+---
+<Section id="audience" labelledby="audience-title" tone="plate">
+  <div data-audience>
+    <h2 id="audience-title" class="m-0 max-w-[40rem] text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leading-[1.08] tracking-[-0.03em]">{audience.title}</h2>
+    <div class="mt-12 grid gap-6 lg:grid-cols-12 lg:gap-8">
+      <div role="tablist" aria-label={audience.tabsLabel} aria-orientation="vertical" class="flex flex-col gap-2 lg:col-span-4">
+        {audience.groups.map((g, i) => (
+          <button
+            type="button"
+            role="tab"
+            id={`aud-tab-${g.key}`}
+            aria-controls={`aud-panel-${g.key}`}
+            aria-selected={i === 0 ? 'true' : 'false'}
+            tabindex={i === 0 ? 0 : -1}
+            data-aud-tab
+            class="flex items-center gap-3 rounded-lg border border-transparent px-4 py-3.5 text-left text-[1.0625rem] font-medium tracking-[-0.01em] text-text-secondary transition-[background-color,border-color,color,box-shadow] duration-[var(--duration-fast)] hover:text-text-primary aria-selected:border-border-secondary aria-selected:bg-white aria-selected:text-text-primary aria-selected:shadow-xs"
+          >
+            <span class="grid size-9 shrink-0 place-items-center rounded-md bg-primary-50 text-primary-700"><Icon name={icons[g.key] ?? 'briefcase'} size={18} /></span>
+            <span>{g.label}</span>
+          </button>
+        ))}
+      </div>
+      <div class="lg:col-span-8">
+        {audience.groups.map((g) => (
+          <div role="tabpanel" id={`aud-panel-${g.key}`} aria-labelledby={`aud-tab-${g.key}`} data-aud-panel class="rounded-xl border border-border-secondary bg-white p-6 shadow-xs sm:p-8">
+            <div class="flex items-center gap-3">
+              <span class="grid size-11 shrink-0 place-items-center rounded-lg bg-primary-50 text-primary-700"><Icon name={icons[g.key] ?? 'briefcase'} size={22} /></span>
+              <h3 class="m-0 text-xl font-semibold tracking-[-0.02em]">{g.label}</h3>
+            </div>
+            <p class="m-0 mt-4 max-w-[34rem] text-[1.0625rem] leading-relaxed text-text-secondary">{g.description}</p>
+            <p class="m-0 mt-6 text-xs font-medium uppercase tracking-wide text-text-tertiary">{audience.builtFor}</p>
+            <ul class="m-0 mt-2 flex list-none flex-wrap gap-2 p-0">
+              {g.built.map((b) => <li class="rounded-full border border-border-secondary bg-bg px-3 py-1 text-[0.8125rem] text-text-secondary">{b}</li>)}
+            </ul>
+            <ul class="m-0 mt-6 grid list-none gap-3 border-t border-border-secondary p-0 pt-6">
+              {g.points.map((pt) => (
+                <li class="flex items-start gap-3 text-[0.9375rem] leading-snug text-text-primary">
+                  <span class="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-primary-50 text-primary-700"><Icon name="check" size={12} /></span>
+                  <span>{pt}</span>
+                </li>
+              ))}
+            </ul>
+            <div class="mt-8"><Button href="#demo-close" data-home-cta>{audience.cta}</Button></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</Section>
+
+<script>
+  import { initAudience } from './motion/audience';
+  const root = document.querySelector<HTMLElement>('[data-audience]');
+  if (root) initAudience(root);
+</script>

@@ -49,7 +49,18 @@ const homeData = (copy: Copy) => ({
   how: { title: copy.how.title, steps: copy.how.steps.map((s) => ({ title: s.title, text: s.text })) },
   platform: {
     title: copy.platform.title,
+    intro: copy.platform.intro,
     ...Object.fromEntries(tileKeys.map((k) => [k, { title: copy.platform.tiles[k].title, line: copy.platform.tiles[k].line }])),
+  },
+  audience: {
+    title: copy.audience.title,
+    cta: copy.audience.cta,
+    groups: copy.audience.groups.map((g) => ({
+      label: g.label,
+      description: g.description,
+      built: g.built.map((text) => ({ text })),
+      points: g.points.map((text) => ({ text })),
+    })),
   },
   faq: { title: copy.faq.title, items: copy.faq.items.map((i) => ({ question: i.q, answer: i.a })) },
   close: { title: copy.close.title, line: copy.close.line, cta: copy.form.submit },

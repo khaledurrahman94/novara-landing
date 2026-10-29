@@ -58,6 +58,10 @@ html {
 .home-faq summary::-webkit-details-marker {
   display: none;
 }
+.home-faq summary:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+}
 .home-faq summary .home-plus {
   transition: transform var(--duration-base) var(--ease-out-quart);
 }

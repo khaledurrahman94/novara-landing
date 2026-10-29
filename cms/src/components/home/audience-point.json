@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_home_audience_points",
+  "info": {
+    "displayName": "Audience point",
+    "description": "One short line: a sub-audience or a check-marked point."
+  },
+  "options": {},
+  "attributes": {
+    "text": {
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 95
+    }
+  }
+}
