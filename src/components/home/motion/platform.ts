@@ -1,7 +1,7 @@
 /**
  * Platform bento: every tile is something you can use, and every tile keeps itself busy.
  * Each tile runs a small ambient loop (a slot gets booked, a card moves on, the embed code is
- * copied, a permission flips, a name is typed into the template, the analytics view changes).
+ * copied, the selected role changes, the analytics view changes).
  * The loops are presence aware: when a pointer or focus arrives, the tile finishes its current
  * step and then stays calm and fully interactive; about 2s after it leaves, the loop resumes.
  * Loops pause off screen. Under reduced motion there are no loops and every interaction still
@@ -267,90 +267,49 @@ function career(root: HTMLElement, reduced: boolean): Tile {
 }
 
 function roles(root: HTMLElement): Tile {
-  const switches = $(root, '[data-tile="roles"] [role="switch"]');
-  const handlers = switches.map((sw) => {
-    const onClick = (): void => sw.setAttribute('aria-checked', sw.getAttribute('aria-checked') === 'true' ? 'false' : 'true');
-    sw.addEventListener('click', onClick);
-    return () => sw.removeEventListener('click', onClick);
+  const card = one(root, '[data-roles-card]');
+  if (!card) return NOOP;
+  const buttons = $(card, '[data-role]');
+  const perms = $(card, '[data-perm]');
+  const groups = $(card, '[data-group]');
+  const title = one(card, '[data-role-title]');
+  const users = one(card, '[data-role-users]');
+  const total = one(card, '[data-role-perms]');
+  let counts: Record<string, number> = {};
+  try {
+    counts = JSON.parse(card.dataset['rolePermsMap'] ?? '{}') as Record<string, number>;
+  } catch {
+    counts = {};
+  }
+  /** Show one role. System roles are read-only, so selecting is the only interaction. */
+  const show = (btn: HTMLElement): void => {
+    const key = btn.dataset['role'] ?? '';
+    buttons.forEach((b) => b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'));
+    perms.forEach((el) => el.setAttribute('aria-checked', (el.dataset['roles'] ?? '').split(' ').includes(key) ? 'true' : 'false'));
+    groups.forEach((g) => {
+      const count = one(g, '[data-group-count]');
+      const items = $(g, '[data-perm]');
+      if (count) count.textContent = `${items.filter((i) => i.getAttribute('aria-checked') === 'true').length}/${items.length} selected`;
+    });
+    if (title) title.textContent = btn.dataset['name'] ?? '';
+    if (users) users.textContent = btn.dataset['users'] ?? '';
+    if (total) total.textContent = String(counts[key] ?? '');
+  };
+  const handlers = buttons.map((btn) => {
+    const onClick = (): void => show(btn);
+    btn.addEventListener('click', onClick);
+    return () => btn.removeEventListener('click', onClick);
   });
-  // Ambient: one toggle flips at a time. Each one flips twice per lap, so a lap returns to the start.
-  const order = [switches[4], switches[3], switches[5], switches[4], switches[3], switches[5]].filter((x): x is HTMLElement => !!x);
-  let k = 0;
+  // Ambient: the selection moves to the next role.
   return {
     step: () =>
       step((tl) => {
-        const sw = order[k++ % Math.max(1, order.length)];
-        if (sw) sw.setAttribute('aria-checked', sw.getAttribute('aria-checked') === 'true' ? 'false' : 'true');
-        tl.to({}, { duration: 0.7 });
+        const i = buttons.findIndex((b) => b.getAttribute('aria-pressed') === 'true');
+        const next = buttons[(i + 1) % Math.max(1, buttons.length)];
+        if (next) show(next);
+        tl.to({}, { duration: 1.2 });
       }),
     cleanup: () => handlers.forEach((h) => h()),
-  };
-}
-
-function email(root: HTMLElement): Tile {
-  const input = one(root, '[data-name-input]') as HTMLInputElement | null;
-  const chip = one(root, '[data-name-chip]');
-  const restore = one(root, '[data-restore]');
-  const save = one(root, '[data-save]');
-  const saveLabel = one(root, '[data-save-label]');
-  const status = one(root, '[data-email-status]');
-  if (!input || !chip || !restore || !save || !saveLabel || !status) return NOOP;
-  const fallback = chip.dataset['default'] ?? '';
-  let timer: ReturnType<typeof setTimeout> | undefined;
-  const sync = (): void => void (chip.textContent = input.value.trim() || fallback);
-  /** The last value the ambient loop wrote. If the input differs, the visitor changed it and the loop stays out. */
-  let written = '';
-  const names = ['Amara', 'Ines', 'Leo'];
-  let n = 0;
-  const onRestore = (): void => {
-    input.value = '';
-    written = '';
-    sync();
-    status.textContent = 'Default template restored.';
-  };
-  const onSave = (): void => {
-    saveLabel.textContent = p.saved;
-    status.textContent = p.saved;
-    clearTimeout(timer);
-    timer = setTimeout(() => void (saveLabel.textContent = p.save), 1600);
-  };
-  input.addEventListener('input', sync);
-  restore.addEventListener('click', onRestore);
-  save.addEventListener('click', onSave);
-  return {
-    // Ambient: the template empties, then a candidate name is typed into {{candidate_name}}.
-    step: () =>
-      step((tl) => {
-        if (input.value !== written || document.activeElement === input) return void tl.to({}, { duration: 0.1 });
-        const name = names[n++ % names.length] ?? '';
-        input.value = '';
-        written = '';
-        sync();
-        const o = { c: 0 };
-        let aborted = false;
-        tl.fromTo(chip, { opacity: 0.4 }, { opacity: 1, duration: 0.3, ease: EASE })
-          .to(o, {
-            c: name.length,
-            duration: name.length * 0.11,
-            ease: 'none',
-            onUpdate: () => {
-              if (aborted || input.value !== written) {
-                aborted = true;
-                return;
-              }
-              written = name.slice(0, Math.round(o.c));
-              input.value = written;
-              sync();
-            },
-          }, 0.5)
-          .to({}, { duration: 1.4 });
-      }),
-    cleanup: () => {
-      clearTimeout(timer);
-      input.removeEventListener('input', sync);
-      restore.removeEventListener('click', onRestore);
-      save.removeEventListener('click', onSave);
-    },
   };
 }
 
@@ -454,8 +413,7 @@ export function initPlatform(root: HTMLElement, reduced: boolean): () => void {
     ['scheduling', scheduling(root, reduced), 1.8],
     ['career', career(root, reduced), 2.8],
     ['roles', roles(root), 3.6],
-    ['email', email(root), 4.4],
-    ['analytics', analytics(root, reduced), 5.4],
+    ['analytics', analytics(root, reduced), 4.4],
   ];
   const cleanups = tiles.map(([, t]) => t.cleanup);
   if (!reduced) {

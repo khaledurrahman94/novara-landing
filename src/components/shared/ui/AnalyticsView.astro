@@ -1,0 +1,70 @@
+---
+import AppFrame from './AppFrame.astro';
+import StatCards from './StatCards.astro';
+import { analyticsView } from '../../../data/platform';
+import { STRONG_MATCH } from './tone';
+import { hiringTrend } from '../../../data/demo';
+/**
+ * Analytics: stat cards, the Hiring Trend chart (switch Applications / Qualified / AI Interviews / Selected, hover
+ * a bar for its week) and the Job Fit Score and Interview Analytics panels. The trend series come from
+ * `home.platform.trend`, passed in as `trendJson` and the first series.
+ * Hooks: [data-analytics] with data-trend, [role=tab][data-tab], [data-value], [data-bar], [data-bar-btn], [data-readout].
+ */
+interface Props { trendJson: string; first: readonly number[]; readout: string; class?: string }
+const { trendJson, first, readout, class: cls = '' } = Astro.props;
+const max = Math.max(...first);
+const tabs = hiringTrend.tabs;
+const { fit, interviews } = analyticsView;
+---
+<AppFrame title="Analytics" active="analytics" class={cls}>
+  <div data-analytics data-trend={trendJson} class="flex flex-col gap-3">
+    <StatCards items={analyticsView.stats} />
+    <section aria-label="Hiring Trend" class="rounded-lg border border-border-secondary bg-white p-3">
+      <div class="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <p class="m-0 text-[0.8125rem] font-semibold leading-tight">Hiring Trend</p>
+          <p class="m-0 hidden text-[0.6875rem] text-text-tertiary @lg:block">Track how candidate numbers change across each stage over time.</p>
+        </div>
+        <div role="tablist" aria-label="Hiring trend view" data-cursor="Toggle" class="flex flex-wrap gap-0.5 rounded-md border border-border-secondary p-0.5 text-[0.625rem] font-medium">
+          {tabs.map((tab, i) => (
+            <button type="button" role="tab" data-tab={tab} aria-selected={i === 0 ? 'true' : 'false'} class="rounded-sm px-2 py-1 text-text-tertiary transition-[color,background-color] duration-[var(--duration-fast)] hover:text-text-primary aria-selected:bg-bg-tertiary aria-selected:text-text-primary">{tab}</button>
+          ))}
+        </div>
+      </div>
+      <ol class="m-0 mt-3 grid list-none grid-cols-5 gap-3 p-0">
+        {first.map((v) => <li data-value class="text-center text-[0.625rem] font-semibold tabular-nums">{v}</li>)}
+      </ol>
+      <ol class="m-0 mt-1 grid h-24 list-none grid-cols-5 items-end gap-3 border-b border-border-primary p-0">
+        {hiringTrend.weeks.map((w, i) => (
+          <li class="h-full">
+            <button type="button" data-bar-btn aria-label={`${w.label}, ${first[i]} applications`} class="group/bar flex h-full w-full items-end justify-center rounded-t-sm">
+              <span data-bar class="block h-full w-1/2 origin-bottom rounded-t-sm bg-primary-300 transition-[background-color] duration-[var(--duration-fast)] group-hover/bar:bg-primary group-focus-visible/bar:bg-primary" style={`transform:scaleY(${Math.max(0.04, (first[i] ?? 0) / max).toFixed(3)})`}></span>
+            </button>
+          </li>
+        ))}
+      </ol>
+      <ol class="m-0 mt-1.5 grid list-none grid-cols-5 gap-3 p-0">
+        {hiringTrend.weeks.map((w) => <li class="text-center text-[0.5625rem] text-text-tertiary">Week of {w.label}</li>)}
+      </ol>
+      <p data-readout role="status" class="m-0 mt-2 min-h-4 text-[0.6875rem] text-text-tertiary">{readout}</p>
+    </section>
+
+    <div class="grid gap-3 @2xl:grid-cols-2">
+      <section aria-label="Job Fit Score" class="rounded-lg border border-border-secondary bg-white p-3">
+        <p class="m-0 text-[0.8125rem] font-semibold leading-tight">Job Fit Score</p>
+        <p class="m-0 text-[0.6875rem] text-text-tertiary">How closely candidates match your job requirements.</p>
+        <p class="m-0 mt-3 text-lg font-semibold leading-none tabular-nums">{fit.average}%<span class="ml-1.5 text-[0.625rem] font-normal text-text-tertiary">Average Score</span></p>
+        <div class="mt-3 flex items-baseline justify-between text-[0.6875rem]"><span class="font-medium text-text-primary">80-100: {STRONG_MATCH}</span><span class="tabular-nums text-text-tertiary">{fit.strong} candidates</span></div>
+        <div class="mt-1 h-1.5 overflow-hidden rounded-full bg-gray-200"><div class="h-full rounded-full bg-success" style={`width:${Math.round((fit.strong / fit.total) * 100)}%`}></div></div>
+      </section>
+      <section aria-label="Interview Analytics" class="rounded-lg border border-border-secondary bg-white p-3">
+        <p class="m-0 text-[0.8125rem] font-semibold leading-tight">Interview Analytics</p>
+        <dl class="m-0 mt-3 grid grid-cols-2 gap-x-4 gap-y-3">
+          {interviews.map((x) => (
+            <div><dd class="m-0 text-lg font-semibold leading-none tabular-nums">{x.value}</dd><dt class="mt-0.5 text-[0.625rem] text-text-tertiary">{x.label}</dt></div>
+          ))}
+        </dl>
+      </section>
+    </div>
+  </div>
+</AppFrame>

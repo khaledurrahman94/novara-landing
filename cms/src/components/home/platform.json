@@ -2,7 +2,7 @@
   "collectionName": "components_home_platforms",
   "info": {
     "displayName": "Platform",
-    "description": "Platform heading and its six fixed tiles. Each tile is a named field so text cannot be paired with the wrong demo."
+    "description": "Platform heading and its nine fixed tiles. Each tile is a named field so text cannot be paired with the wrong demo."
   },
   "options": {},
   "attributes": {
@@ -18,13 +18,25 @@
       "minLength": 1,
       "maxLength": 230
     },
-    "pipeline": {
+    "dashboard": {
       "type": "component",
       "repeatable": false,
       "component": "home.tile",
       "required": true
     },
-    "career": {
+    "jobs": {
+      "type": "component",
+      "repeatable": false,
+      "component": "home.tile",
+      "required": true
+    },
+    "candidate": {
+      "type": "component",
+      "repeatable": false,
+      "component": "home.tile",
+      "required": true
+    },
+    "pipeline": {
       "type": "component",
       "repeatable": false,
       "component": "home.tile",
@@ -36,13 +48,19 @@
       "component": "home.tile",
       "required": true
     },
-    "roles": {
+    "interviews": {
       "type": "component",
       "repeatable": false,
       "component": "home.tile",
       "required": true
     },
-    "email": {
+    "career": {
+      "type": "component",
+      "repeatable": false,
+      "component": "home.tile",
+      "required": true
+    },
+    "roles": {
       "type": "component",
       "repeatable": false,
       "component": "home.tile",

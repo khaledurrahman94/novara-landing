@@ -1,0 +1,93 @@
+---
+import AppFrame from './AppFrame.astro';
+import StatCards from './StatCards.astro';
+import Icon from './Icon.astro';
+import { activity, dashStats, jobsChart, todo } from '../../../data/platform';
+/**
+ * Dashboard home: stat cards, Things to Do, the stacked Jobs overview chart (hover or focus a bar for its
+ * stage counts) and Recent Activity. Illustrative recreation of the real dashboard.
+ */
+interface Props { class?: string }
+const { class: cls = '' } = Astro.props;
+const tint: Record<string, string> = { blue: 'bg-blue-light/10 text-blue-light', warning: 'bg-warning/10 text-warning' };
+const total = (v: readonly number[]) => v.reduce((a, b) => a + b, 0);
+---
+<AppFrame title="Dashboard" action="Create New Job Post" sidebar="full" class={cls}>
+  <StatCards items={dashStats} arrows />
+  <div class="grid gap-3 @3xl:grid-cols-[minmax(0,1.9fr)_minmax(0,1fr)]">
+    <div class="flex min-w-0 flex-col gap-3">
+      <section aria-label="Things to Do" class="overflow-hidden rounded-lg border border-primary bg-white">
+        <div class="bg-primary px-3 py-2 text-white">
+          <p class="m-0 text-[0.8125rem] font-semibold leading-tight">Things to Do</p>
+          <p class="m-0 text-[0.6875rem] opacity-90">You have {todo.count} actions to take</p>
+        </div>
+        <ul class="m-0 list-none p-0">
+          {todo.rows.map((r, i) => (
+            <li class:list={['flex items-center gap-2.5 px-3 py-2', i > 0 && 'border-t border-border-secondary']}>
+              <span class:list={['grid size-6 shrink-0 place-items-center rounded-full', tint[r.tone]]}><Icon name={r.icon} size={12} /></span>
+              <p class="m-0 min-w-0 flex-1 text-[0.6875rem] text-text-secondary @lg:text-xs"><strong class="font-semibold text-text-primary">{r.lead}</strong> for <strong class="font-semibold text-text-primary">{r.job}</strong></p>
+              <span class="shrink-0 rounded-md border border-border-primary px-2 py-1 text-[0.6875rem] font-medium text-text-secondary">Take action</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section aria-label="My Assigned Jobs" class="rounded-lg border border-border-secondary bg-white">
+        <div class="flex flex-wrap items-start justify-between gap-x-4 gap-y-1 border-b border-border-secondary px-3 py-2">
+          <div>
+            <p class="m-0 text-[0.8125rem] font-semibold leading-tight">My Assigned Jobs ({jobsChart.jobs.length})</p>
+            <p class="m-0 text-[0.6875rem] text-text-tertiary">Jobs overview</p>
+          </div>
+          <ul class="m-0 flex list-none flex-wrap gap-x-3 gap-y-1 p-0 text-[0.625rem] text-text-tertiary">
+            {jobsChart.legend.map((l) => <li class="flex items-center gap-1"><span class:list={['size-2 rounded-full', l.cls]} aria-hidden="true"></span>{l.label}</li>)}
+          </ul>
+        </div>
+        <div class="flex gap-2 px-3 pb-2 pt-3">
+          <ol class="m-0 flex h-36 list-none flex-col justify-between p-0 text-[0.625rem] tabular-nums text-text-placeholder" aria-hidden="true">
+            {jobsChart.ticks.map((t) => <li class="leading-none">{t}</li>)}
+          </ol>
+          <ol class="m-0 grid h-36 min-w-0 flex-1 list-none grid-cols-4 gap-2 border-b border-border-secondary p-0">
+            {jobsChart.jobs.map((j) => (
+              <li class="group/col relative flex h-full items-end justify-center">
+                <button
+                  type="button"
+                  aria-label={`${j.label}: ${jobsChart.legend.map((l, i) => `${l.label} ${j.vals[i]}`).join(', ')}`}
+                  class="flex w-1/2 max-w-9 flex-col-reverse overflow-hidden rounded-t-sm outline-offset-2 transition-[filter] duration-[var(--duration-fast)] hover:brightness-95 focus-visible:outline-2 focus-visible:outline-primary"
+                  style={`height:${(total(j.vals) / jobsChart.max) * 100}%`}
+                >
+                  {j.vals.map((v, i) => <span class:list={['block w-full', jobsChart.legend[i]?.cls]} style={`height:${(v / total(j.vals)) * 100}%`}></span>)}
+                </button>
+                <p role="presentation" class="pointer-events-none absolute bottom-full left-1/2 z-10 m-0 hidden -translate-x-1/2 translate-y-2 whitespace-nowrap rounded-md border border-border-secondary bg-white px-2 py-1.5 text-[0.625rem] leading-relaxed text-text-secondary shadow-md group-focus-within/col:block group-hover/col:block">
+                  {jobsChart.legend.map((l, i) => <span class="block">{l.label} - {j.vals[i]}</span>)}
+                </p>
+              </li>
+            ))}
+          </ol>
+        </div>
+        <ol class="m-0 ml-[2.125rem] mr-3 grid list-none grid-cols-4 gap-2 p-0 pb-2.5 text-center text-[0.625rem] text-text-tertiary" aria-hidden="true">
+          {jobsChart.jobs.map((j) => <li class="truncate">{j.label}</li>)}
+        </ol>
+      </section>
+    </div>
+
+    <section aria-label="Recent Activity" class="hidden rounded-lg border border-border-secondary bg-white @3xl:block">
+      <div class="flex items-start justify-between gap-2 border-b border-border-secondary px-3 py-2">
+        <div>
+          <p class="m-0 text-[0.8125rem] font-semibold leading-tight">Recent Activity</p>
+          <p class="m-0 text-[0.6875rem] text-text-tertiary">What is happening across the jobs</p>
+        </div>
+        <span class="rounded-md border border-border-primary px-2 py-1 text-[0.6875rem] font-medium text-text-secondary" aria-hidden="true">View all</span>
+      </div>
+      <p class="m-0 px-3 pt-2 text-[0.625rem] font-medium tracking-wide text-text-tertiary">TODAY</p>
+      <ol class="m-0 list-none p-0 px-3 pb-3">
+        {activity.map((a) => (
+          <li class="relative border-l border-border-secondary py-2 pl-3 last:border-l-transparent">
+            <span class="absolute -left-[0.1875rem] top-3 size-1.5 rounded-full bg-primary" aria-hidden="true"></span>
+            <p class="m-0 text-[0.625rem] text-text-tertiary">{a.ago}</p>
+            <p class="m-0 mt-0.5 text-[0.6875rem] leading-snug text-text-secondary"><span class="font-medium text-text-primary underline decoration-border-primary underline-offset-2">{a.who}</span> {a.text} <span class="font-medium text-text-primary underline decoration-border-primary underline-offset-2">{a.job}</span></p>
+          </li>
+        ))}
+      </ol>
+    </section>
+  </div>
+</AppFrame>

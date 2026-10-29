@@ -30,7 +30,17 @@ const anchorLabel = (copy: Copy, href: string): string => {
   return hit.label;
 };
 
-const tileKeys = ['pipeline', 'career', 'scheduling', 'roles', 'email', 'analytics'] as const;
+const tileKeys = [
+  'dashboard',
+  'jobs',
+  'candidate',
+  'pipeline',
+  'scheduling',
+  'interviews',
+  'career',
+  'roles',
+  'analytics',
+] as const;
 
 /** The only place that maps copy-file paths to Strapi fields. docs/implementation/05a-home-fields.md mirrors it. */
 const homeData = (copy: Copy) => ({
