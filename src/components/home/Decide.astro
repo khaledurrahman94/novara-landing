@@ -6,7 +6,7 @@ import Section from './Section.astro';
 import Figure from './Figure.astro';
 import Avatar from '../shared/ui/Avatar.astro';
 import Icon from '../shared/ui/Icon.astro';
-import ScoreTriplet from '../shared/ui/ScoreTriplet.astro';
+import Evaluation from './Evaluation.astro';
 const { decide } = home;
 const amara = byId('amara');
 const ines = byId('ines');
@@ -41,21 +41,21 @@ const slotH = 'h-[8rem]';
                     data-evidence-for="amara"
                     data-cursor="Drag"
                     tabindex="0"
-                    aria-label={`${amara.name}, Job Fit ${amara.fit}`}
+                    aria-label={`${amara.name}, Job Fit ${amara.fit}%`}
                     aria-describedby="decide-help"
                     class="absolute inset-0 flex select-none flex-col rounded-md border border-border-secondary bg-white p-2.5 shadow-md outline-offset-2 transition-[border-color] duration-[var(--duration-fast)] hover:border-primary-300 data-[landed=true]:border-primary"
                   >
                     <div class="flex items-center gap-2"><Avatar initials={amara.initials} size="xs" lead /><span class="min-w-0 truncate text-xs font-semibold">{amara.name}</span></div>
-                    <p class="m-0 mt-1.5 text-[0.6875rem] text-text-tertiary">Job Fit {amara.fit}</p>
+                    <p class="m-0 mt-1.5 text-[0.6875rem] text-text-tertiary">Job Fit {amara.fit}%</p>
                     <p data-stamp class="m-0 mt-auto flex items-center gap-1.5 border-t border-border-secondary pt-2 text-[0.6875rem] font-medium text-text-secondary opacity-0">
                       <span class="grid size-4 place-items-center rounded-full bg-primary text-white"><Icon name="check" size={10} /></span>{decide.stamp}
                     </p>
                   </article>
                 </li>
                 <li class:list={[slotH]}>
-                  <article data-evidence-for="ines" tabindex="0" aria-label={`${ines.name}, Job Fit ${ines.fit}`} class="flex h-full flex-col rounded-md border border-border-secondary bg-white p-2.5 shadow-xs transition-[border-color,transform] duration-[var(--duration-base)] ease-[var(--ease-out-quart)] hover:border-primary-300">
+                  <article data-evidence-for="ines" tabindex="0" aria-label={`${ines.name}, Job Fit ${ines.fit}%`} class="flex h-full flex-col rounded-md border border-border-secondary bg-white p-2.5 shadow-xs transition-[border-color,transform] duration-[var(--duration-base)] ease-[var(--ease-out-quart)] hover:border-primary-300">
                     <div class="flex items-center gap-2"><Avatar initials={ines.initials} size="xs" /><span class="min-w-0 truncate text-xs font-semibold">{ines.name}</span></div>
-                    <p class="m-0 mt-1.5 text-[0.6875rem] text-text-tertiary">Job Fit {ines.fit}</p>
+                    <p class="m-0 mt-1.5 text-[0.6875rem] text-text-tertiary">Job Fit {ines.fit}%</p>
                   </article>
                 </li>
               </ul>
@@ -70,9 +70,9 @@ const slotH = 'h-[8rem]';
                   <span data-drop class="absolute inset-0 grid place-items-center rounded-md border border-dashed border-border-primary text-[0.6875rem] text-text-tertiary transition-[background-color] duration-[var(--duration-fast)] data-[hot=true]:bg-primary-50" aria-hidden="true">{decide.drop}</span>
                 </li>
                 <li class:list={[slotH]}>
-                  <article data-evidence-for="kenji" tabindex="0" aria-label={`${kenji.name}, Job Fit ${kenji.fit}`} class="flex h-full flex-col rounded-md border border-border-secondary bg-white p-2.5 shadow-xs transition-[border-color] duration-[var(--duration-base)] hover:border-primary-300">
+                  <article data-evidence-for="kenji" tabindex="0" aria-label={`${kenji.name}, Job Fit ${kenji.fit}%`} class="flex h-full flex-col rounded-md border border-border-secondary bg-white p-2.5 shadow-xs transition-[border-color] duration-[var(--duration-base)] hover:border-primary-300">
                     <div class="flex items-center gap-2"><Avatar initials={kenji.initials} size="xs" /><span class="min-w-0 truncate text-xs font-semibold">{kenji.name}</span></div>
-                    <p class="m-0 mt-1.5 text-[0.6875rem] text-text-tertiary">Job Fit {kenji.fit}</p>
+                    <p class="m-0 mt-1.5 text-[0.6875rem] text-text-tertiary">Job Fit {kenji.fit}%</p>
                   </article>
                 </li>
               </ul>
@@ -86,14 +86,8 @@ const slotH = 'h-[8rem]';
           {cards.map((c, i) => {
             const e = decide.evidence[c.id as 'amara' | 'ines' | 'kenji'];
             return (
-              <div data-evidence={c.id} data-active={i === 0 ? 'true' : 'false'} class="w-full rounded-lg border border-border-secondary bg-white p-5 font-ui text-text-primary shadow-md">
-                <p class="m-0 text-xs font-medium text-text-tertiary">AI Interview Score</p>
-                <p class="m-0 mt-1 flex items-baseline gap-1">
-                  <span class="text-4xl font-semibold tabular-nums" data-evidence-score data-count={e.score}>{e.score}</span>
-                  <span class="text-sm text-text-tertiary">/ 100</span>
-                </p>
-                <p class="m-0 mt-0.5 text-xs text-text-tertiary">{c.name} · Job Fit {e.jobFit}</p>
-                <ScoreTriplet items={e.items} class="mt-5 border-t border-border-secondary pt-4" />
+              <div data-evidence={c.id} data-active={i === 0 ? 'true' : 'false'}>
+                <Evaluation name={c.name} jobFit={e.jobFit} score={e.score} swot={e.swot} />
               </div>
             );
           })}

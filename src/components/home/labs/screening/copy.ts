@@ -6,8 +6,8 @@ export const copy = {
   caption:
     'An interactive Job Fit Score demo. Toggle requirements to re-rank six applicants, open a row for its matched and missing criteria, and screen two new resumes.',
   jobMeta: 'Remote · Senior · Full time',
-  requirementsLabel: 'Requirements',
-  requirementsHint: 'Each score is how well a resume meets the checked requirements. Node.js counts most.',
+  requirementsLabel: 'Job requirements',
+  requirementsHint: 'Each score is how well a resume meets the checked criteria. In this demo, Node.js counts most.',
   staticScored: 'Scored against',
   lastRequirement: 'Keep at least one requirement checked.',
   rankingLabel: 'Ranked by Job Fit Score',
@@ -24,8 +24,8 @@ export const copy = {
   missing: 'Missing',
   whyPrefix: 'Why Novara ranks',
   whySuffix: 'here',
-  qualified: 'Qualified',
-  notAFit: 'Not a fit',
+  strong: 'Strong match',
+  below: 'Below 80',
   evidence: 'Novara shows the evidence. You decide who moves on.',
-  note: 'Scores in this demo are illustrative.',
+  note: 'Novara scores out of 100. Names, resumes and weights here are illustrative.',
 } as const;

@@ -5,9 +5,11 @@
  * Job Fit Score = round(100 * sum(weight * strength) / sum(weight)) over the
  * requirements that are checked. Strength is 0 to 1 per resume and requirement.
  * A requirement counts as matched from 0.6, otherwise it is missing.
- * Illustrative demo data. Not Novara's real scoring.
+ * Illustrative demo data. Novara reports a Job Fit Score out of 100 with matching and
+ * missing criteria and AI reasoning, but does not publish its weights, so the weights and
+ * the strengths below are this demo's own stand-in for the AI.
  */
-export type ReqId = 'node' | 'ts' | 'pg' | 'api' | 'k8s' | 'tz';
+export type ReqId = 'node' | 'ts' | 'pg' | 'api' | 'k8s' | 'exp';
 
 export interface Requirement {
   id: ReqId;
@@ -23,11 +25,12 @@ export const REQS: readonly Requirement[] = [
   { id: 'pg', label: 'PostgreSQL', weight: 2, on: true },
   { id: 'api', label: 'API design', weight: 2, on: true },
   { id: 'k8s', label: 'Kubernetes', weight: 1, on: false },
-  { id: 'tz', label: 'Remote-friendly time zone', weight: 1, on: false },
+  { id: 'exp', label: 'Experience level: Senior', weight: 1, on: false },
 ];
 
 export const MATCH_AT = 0.6;
-export const QUALIFIED_AT = 70;
+/** The dashboard's top Job Fit band is "80-100 Strong Match". Nothing else about the bands is shown. */
+export const STRONG_AT = 80;
 
 type Six<T> = readonly [T, T, T, T, T, T];
 
@@ -49,43 +52,43 @@ export const APPLICANTS: readonly Applicant[] = [
   {
     id: 'amara', name: 'Amara Okafor', initials: 'AO',
     s: [1, 0.9, 0.9, 0.85, 0.2, 0.9],
-    ev: ['6 yrs, services in production', 'Typed APIs end to end', 'At scale, tuned slow queries', 'Led an API migration', 'No Kubernetes listed', 'Within 3 hours of your team'],
+    ev: ['6 yrs, services in production', 'Typed APIs end to end', 'At scale, tuned slow queries', 'Led an API migration', 'No Kubernetes listed', '6 yrs, matches Senior'],
   },
   {
     id: 'ines', name: 'Ines Duarte', initials: 'ID',
     s: [0.85, 0.8, 1, 0.7, 0.6, 0.7],
-    ev: ['4 yrs, event consumers', 'Daily use, strict mode', 'Schema design and replication', 'Designed internal APIs', 'Ran services on a cluster', 'Overlaps most of the day'],
+    ev: ['4 yrs, event consumers', 'Daily use, strict mode', 'Schema design and replication', 'Designed internal APIs', 'Ran services on a cluster', '4 yrs, near the Senior bar'],
   },
   {
     id: 'leo', name: 'Leo Park', initials: 'LP',
     s: [0.9, 0.65, 0.7, 0.95, 0.2, 0.9],
-    ev: ['5 yrs, payments APIs', 'In recent projects', 'Solid, some tuning', 'Built a public payments API', 'No Kubernetes listed', 'Within 2 hours of your team'],
+    ev: ['5 yrs, payments APIs', 'In recent projects', 'Solid, some tuning', 'Built a public payments API', 'No Kubernetes listed', '5 yrs, matches Senior'],
   },
   {
     id: 'kenji', name: 'Kenji Sato', initials: 'KS',
-    s: [0.7, 0.95, 0.6, 0.95, 0.8, 0.2],
-    ev: ['Used in side services', '7 yrs, large codebases', 'Working knowledge', 'Led service design', 'Deployed on clusters', 'Eight hours from your team'],
+    s: [0.7, 0.95, 0.6, 0.95, 0.8, 0.95],
+    ev: ['Used in side services', '7 yrs, large codebases', 'Working knowledge', 'Led service design', 'Deployed on clusters', '9 yrs overall, matches Senior'],
   },
   {
     id: 'marcus', name: 'Marcus Webb', initials: 'MW',
     s: [1, 0.4, 0.7, 0.8, 0.1, 0.9],
-    ev: ['6 yrs, REST and queues', 'Mostly plain JavaScript', 'Solid, light tuning', 'REST and queue APIs', 'No Kubernetes listed', 'Within 2 hours of your team'],
+    ev: ['6 yrs, REST and queues', 'Mostly plain JavaScript', 'Solid, light tuning', 'REST and queue APIs', 'No Kubernetes listed', '6 yrs, matches Senior'],
   },
   {
     id: 'nadia', name: 'Nadia Rahman', initials: 'NR',
-    s: [0.5, 0.85, 0.5, 0.5, 0.2, 0.8],
-    ev: ['Little Node.js on the resume', 'Strong, front and back end', 'Basic SQL only', 'No API design shown', 'No Kubernetes listed', 'Within 3 hours of your team'],
+    s: [0.5, 0.85, 0.5, 0.5, 0.2, 0.3],
+    ev: ['Little Node.js on the resume', 'Strong, front and back end', 'Basic SQL only', 'No API design shown', 'No Kubernetes listed', '3 yrs, below Senior'],
   },
   {
     id: 'hana', name: 'Hana Fischer', initials: 'HF', fresh: true,
     s: [0.9, 0.85, 0.8, 0.9, 0.7, 0.6],
-    ev: ['7 yrs, high-traffic services', 'Shared type libraries', 'Production, with migrations', 'Versioned public API', 'Some cluster work', 'Overlaps part of the day'],
+    ev: ['7 yrs, high-traffic services', 'Shared type libraries', 'Production, with migrations', 'Versioned public API', 'Some cluster work', '7 yrs, matches Senior'],
     snippet: ['Senior backend engineer, 7 yrs', 'Node.js, TypeScript, PostgreSQL'],
   },
   {
     id: 'tomas', name: 'Tomas Reyes', initials: 'TR', fresh: true,
-    s: [0.3, 0.5, 0.9, 0.4, 0.9, 0.9],
-    ev: ['Only in side projects', 'Little TypeScript', 'Database admin background', 'No API design shown', 'Runs clusters daily', 'Within 2 hours of your team'],
+    s: [0.3, 0.5, 0.9, 0.4, 0.9, 0.8],
+    ev: ['Only in side projects', 'Little TypeScript', 'Database admin background', 'No API design shown', 'Runs clusters daily', '6 yrs, matches Senior'],
     snippet: ['Platform engineer, 6 yrs', 'PostgreSQL, Kubernetes, Go'],
   },
 ];
@@ -143,3 +146,6 @@ export function rank(ids: readonly string[], active: ReadonlySet<ReqId>): string
     return score(ay.a, active) - score(ax.a, active) || ax.i - ay.i;
   });
 }
+
+/** Label key for a score band. Only the top band is named in the dashboard. */
+export const band = (n: number): 'strong' | 'below' => (n >= STRONG_AT ? 'strong' : 'below');

@@ -1,5 +1,7 @@
 ---
-import InterviewScore from '../../../shared/ui/InterviewScore.astro';
+import Evaluation from '../../Evaluation.astro';
+import { home } from '../../../../content/home';
+import { lead } from '../../../../data/demo';
 import Ico from './Ico.astro';
 import { lab, kinds } from './copy';
 import { integrity } from '../../../../data/demo';
@@ -67,7 +69,7 @@ const events = integrity.events;
         <span class="size-1.5 rounded-full bg-primary" aria-hidden="true"></span>{lab.score.chip}
       </span>
     </p>
-    <InterviewScore />
+    <Evaluation name={lead.name} jobFit={home.decide.evidence.amara.jobFit} score={home.decide.evidence.amara.score} swot={home.decide.evidence.amara.swot} />
     <p class="m-0 text-xs leading-snug text-text-tertiary">{lab.score.note}</p>
   </div>
 </div>
