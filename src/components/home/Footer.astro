@@ -6,7 +6,7 @@ const social = footer.social.filter((s) => s.href);
 const ai = footer.aiSummary;
 const iconLink = 'grid size-9 place-items-center rounded-md border border-border-primary bg-white text-text-secondary shadow-xs transition-colors duration-[var(--duration-fast)] hover:text-text-primary';
 ---
-<footer class="border-t border-border-secondary bg-bg">
+<footer class="overflow-hidden border-t border-border-secondary bg-bg">
   <div class="mx-auto w-full max-w-[75rem] border-x border-border-secondary px-5 py-14 sm:px-8 md:px-12">
     <div class="grid gap-10 md:grid-cols-12">
       <div class="md:col-span-6">
@@ -52,5 +52,9 @@ const iconLink = 'grid size-9 place-items-center rounded-md border border-border
       </div>
       <a href={footer.terms.href} class="text-text-tertiary no-underline hover:text-text-primary hover:underline">{footer.terms.label}</a>
     </div>
+  </div>
+
+  <div aria-hidden="true" class="pointer-events-none select-none overflow-hidden [mask-image:linear-gradient(to_bottom,black_15%,transparent_92%)]">
+    <p class="m-0 text-center font-display text-[clamp(6rem,25vw,24rem)] font-bold leading-[0.8] tracking-[-0.05em] text-primary-200">Novara</p>
   </div>
 </footer>
