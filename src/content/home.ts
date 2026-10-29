@@ -1,13 +1,19 @@
 /** All home page copy. Marketing may edit this file; components render it. The labs keep their own copy files. */
 
+/**
+ * Link visibility: a nav, hero or footer link renders only when its `live` flag is true, so no link points at a page
+ * that does not exist yet. The data stays here: when a page ships, flip its `live` to true (one word). Every live
+ * internal link is also checked against the site's pages at build time (see homeProvider in src/lib/pages.ts).
+ */
+
 /** PLACEHOLDER: the real app sign-in URL is not known yet. Replace before launch. */
 export const SIGN_IN_HREF = 'https://app.novara.com.my/sign-in';
 
 export const home = {
   seo: {
-    title: 'Novara: try AI resume screening and AI interviews',
+    title: 'Novara: AI resume screening and AI interviews',
     description:
-      'Re-rank resumes, try to cheat an AI interview and make the shortlist call yourself. Novara shows your hiring team the evidence. Request a demo.',
+      'Re-rank resumes, watch an AI interview flag cheating and make the shortlist call yourself. Novara shows your hiring team the evidence. Request a demo.',
   },
   nav: {
     label: 'Primary',
@@ -21,13 +27,13 @@ export const home = {
     ],
     cta: 'Request a demo',
     getStarted: { label: 'Get started', href: SIGN_IN_HREF },
-    /** Rendered now. Later items (Platform, Features, Solutions, ROI Calculator, Resources) join this list when their pages exist. */
+    /** Rendered when `live`. Later items (Platform, Features, Solutions, ROI Calculator, Resources) join this list when their pages exist. */
     links: [
-      { label: 'Home', href: '/' },
-      { label: 'Login', href: SIGN_IN_HREF },
-      { label: 'Contact us', href: '/contact' },
-      { label: 'About us', href: '/about' },
-      { label: 'Pricing', href: '/pricing' },
+      { label: 'Home', href: '/', live: true },
+      { label: 'Login', href: SIGN_IN_HREF, live: true },
+      { label: 'Contact us', href: '/contact', live: true },
+      { label: 'About us', href: '/about', live: true },
+      { label: 'Pricing', href: '/pricing', live: false },
     ],
   },
   form: {
@@ -43,9 +49,9 @@ export const home = {
   hero: {
     title: 'Hire the person, not the pile.',
     sub: 'Novara scores every resume against the job, runs the first round with an AI interviewer, and shows your team the evidence behind every shortlist.',
-    secondary: 'Try the AI interview',
-    pricing: { label: 'See pricing', href: '/pricing' },
-    signIn: { label: 'Login', href: SIGN_IN_HREF },
+    secondary: 'See the AI interview',
+    pricing: { label: 'See pricing', href: '/pricing', live: false },
+    signIn: { label: 'Login', href: SIGN_IN_HREF, live: true },
     shotCaption: 'Novara candidate review: ranked applicants on the left, and Amara Okafor with a Job Fit Score of 92, an AI Interview Score of 88 and one integrity event to review.',
     chips: {
       node: 'Matched: Node.js',
@@ -76,8 +82,6 @@ export const home = {
       { key: 'shortlisted', label: 'HR Round', note: 'Moved to the HR round after the AI interview.', callout: '12 of the 600 interviewed', value: 12, suffix: '' },
       { key: 'hired', label: 'Offered', note: 'Offers made after the HR round.', callout: '4 of the 12 in the HR round', value: 4, suffix: '' },
     ],
-    hintFine: 'Hover an applicant. Values are illustrative.',
-    hintTouch: 'Tap an applicant. Values are illustrative.',
     phases: [
       '1,200+ applicants, one dot each.',
       "Screened against the job's requirements.",
@@ -90,15 +94,11 @@ export const home = {
   },
   decide: {
     title: 'You decide who moves on. Novara shows you why.',
-    sub: 'Drag Amara to your HR round. That call is yours.',
-    caption: 'A pipeline with two columns. Drag Amara Okafor from Completed to HR Round, with her evidence shown beside it.',
+    sub: 'Novara shows the evidence. Moving someone on is your call.',
+    caption: 'A pipeline with two columns. Amara Okafor moves from Completed to HR Round, with each candidate\'s evidence shown beside it in turn.',
     from: 'Completed',
     to: 'HR Round',
     stamp: 'Moved on by you',
-    dragHelp: 'Drag this card between the columns. With the keyboard, press the right arrow to move it to HR Round and the left arrow to move it back to Completed.',
-    drop: 'Drop here',
-    movedStatus: 'Amara Okafor moved to HR Round by you.',
-    backStatus: 'Amara Okafor moved back to Completed.',
     evidenceTitle: 'The evidence',
     evaluation: {
       interviewScore: 'AI Interview Score',
@@ -173,8 +173,6 @@ export const home = {
     },
     copyEmbed: 'Copy embed code',
     copied: 'Copied',
-    copyFail: 'Copy failed. Select the code and copy it.',
-    hoverBar: 'Hover a bar for the week.',
     trend: {
       Applications: [4, 9, 16, 31, 38],
       Qualified: [2, 8, 9, 22, 20],
@@ -292,30 +290,31 @@ export const home = {
       { key: 'youtube', label: 'YouTube', href: '' },
       { key: 'instagram', label: 'Instagram', href: '' },
     ] as { key: string; label: string; href: string }[],
+    /** A column renders only while at least one of its links is `live`. */
     columns: [
       {
         label: 'Product',
         links: [
-          { label: 'ATS', href: '/ats' },
-          { label: 'AI interview', href: '/ai-interview' },
-          { label: 'Features', href: '/features' },
-          { label: 'Solutions', href: '/solutions' },
-          { label: 'ROI Calculator', href: '/roi-calculator' },
-          { label: 'Integration', href: '/integrations' },
+          { label: 'ATS', href: '/ats', live: false },
+          { label: 'AI interview', href: '/ai-interview', live: false },
+          { label: 'Features', href: '/features', live: false },
+          { label: 'Solutions', href: '/solutions', live: false },
+          { label: 'ROI Calculator', href: '/roi-calculator', live: false },
+          { label: 'Integration', href: '/integrations', live: false },
         ],
       },
       {
         label: 'Company',
         links: [
-          { label: 'About us', href: '/about' },
-          { label: 'Contact us', href: '/contact' },
-          { label: 'Pricing', href: '/pricing' },
-          { label: 'Resources', href: '/resources' },
-          { label: 'Security', href: '/security' },
+          { label: 'About us', href: '/about', live: true },
+          { label: 'Contact us', href: '/contact', live: true },
+          { label: 'Pricing', href: '/pricing', live: false },
+          { label: 'Resources', href: '/resources', live: false },
+          { label: 'Security', href: '/security', live: false },
         ],
       },
     ],
-    terms: { label: 'Terms and policy', href: '/terms' },
+    terms: { label: 'Terms and policy', href: '/terms', live: true },
     aiSummary: {
       label: 'Get an AI summary of Novara',
       prompt: 'Summarize what Novara (https://novara.my/) does, who it is for and how it works.',
@@ -329,7 +328,7 @@ export const home = {
   },
   notFound: {
     title: "We can't find that page",
-    line: 'The link may be old or mistyped. The home page has the live demos and the demo request form.',
+    line: 'The link may be old or mistyped. The home page has the animated demos and the demo request form.',
     cta: 'Go to the home page',
   },
 } as const;

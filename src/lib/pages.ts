@@ -62,9 +62,21 @@ export function homeSeoMeta(): SeoMeta {
   return seoMetaSchema.parse({ metaTitle: home.seo.title, metaDescription: home.seo.description, breadcrumbLabel: 'Home' });
 }
 
+/** Every nav, hero and footer link marked `live` in home.ts. Listing them as page links makes the build check that each one resolves. */
+const homeLiveLinks = (): string[] => {
+  const all: readonly { href: string; live: boolean }[] = [
+    ...home.nav.links,
+    home.hero.pricing,
+    home.hero.signIn,
+    ...home.footer.columns.flatMap((c): readonly { href: string; live: boolean }[] => c.links),
+    home.footer.terms,
+  ];
+  return all.filter((l) => l.live).map((l) => l.href);
+};
+
 const homeProvider: PageProvider = {
   type: 'home',
-  pages: () => [{ type: 'home', path: '/', route: 'code', where: 'home', seo: homeSeoMeta(), images: [], links: [] }],
+  pages: () => [{ type: 'home', path: '/', route: 'code', where: 'home', seo: homeSeoMeta(), images: [], links: homeLiveLinks() }],
 };
 
 /** Code-owned content pages (About, Contact, Terms and Policy): copy in src/content/company.ts and legal.ts. */

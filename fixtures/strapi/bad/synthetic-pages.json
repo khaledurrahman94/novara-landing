@@ -5,8 +5,8 @@
     "path": "/blog/hello",
     "title": "Hello",
     "seo": {
-      "metaTitle": "Novara: try AI resume screening and AI interviews",
-      "metaDescription": "Re-rank resumes, try to cheat an AI interview and make the shortlist call yourself. Novara shows your hiring team the evidence. Request a demo.",
+      "metaTitle": "Novara: AI resume screening and AI interviews",
+      "metaDescription": "Re-rank resumes, watch an AI interview flag cheating and make the shortlist call yourself. Novara shows your hiring team the evidence. Request a demo.",
       "canonicalUrl": "/blog/not-published"
     },
     "images": [{ "url": "https://cms.example.com/uploads/cover.png", "alt": null, "field": "cover" }],
