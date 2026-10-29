@@ -4,7 +4,7 @@ Wiring table for the Astro side. Strapi type `api::home.home` (single type, Draf
 
 ## How to fetch
 - `GET /api/home` returns every section populated, with no `populate` query (route middleware). A `populate` you send wins.
-- Strapi 5 shape: `{ data: { documentId, publishedAt, seo, nav, hero, results, decide, how, platform, faq, close, footer } }`. No `attributes` wrapper. Components carry an `id`; ignore it.
+- Strapi 5 shape: `{ data: { documentId, publishedAt, seo, nav, hero, socialProof?, results, decide, how, platform, faq, close, footer } }`. No `attributes` wrapper. Components carry an `id`; ignore it.
 - Same token rules as everything else: `Authorization: Bearer <STRAPI_TOKEN>`. Only `find` exists over REST (no write routes).
 - Mirror the caps below in zod (`.max(cap)`, `.min(1)`), and `how.steps` as exactly 4, `faq.items` as 3 to 10. A mismatch fails the build.
 - Merge, do not replace: build the page copy as `{ ...codeCopy, hero: { ...codeCopy.hero, title, sub, secondary }, ... }`, so the keys marked "code" below keep coming from `home.ts`.
@@ -25,6 +25,9 @@ Every field is required and non-empty. Strapi checks min and required rules on p
 | `hero.title` | `hero.title` | string | 39 | 1 |
 | `hero.sub` | `hero.sub` | text | 189 | 1 |
 | `hero.secondary` | `hero.secondary` | string | 26 | 1 |
+| `socialProof.heading` | `socialProof.heading` | string | 60 | 0 or 1 (optional) |
+| `socialProof.count` | `socialProof.count` | string, optional | 60 | 0 or 1 |
+| `socialProof.logos[i]` `{ name, src, href? }` | `socialProof.logos[i]` (`home.logo`: `name` string 60, `src` string path or https URL, `href` optional https URL) | list | 1 to 12 | 0 to 12 |
 | `results.title` | `results.title` | string | 45 | 1 |
 | `results.caption` | `results.caption` | string | 77 | 1 |
 | `decide.title` | `decide.title` | string | 60 | 1 |
@@ -53,6 +56,8 @@ Notes:
 - `seo` is the shared `seo.meta` component (see 05-cms). The seed sets only `metaTitle`, `metaDescription`, `index: true`, `follow: true`; everything else is empty. `metaTitle` is the complete home title. Apply `titleTemplate` only when `metaTitle` is empty (the template would double the brand here).
 - `nav.label`, `nav.home`, hrefs and the footer link list come from code. The footer link labels reuse the five nav labels.
 
+- `socialProof` is optional and ships empty. The component is not required in Strapi; once added it needs a heading and 1 to 12 logos. `SocialProof.astro` renders nothing when `logos` is empty, so leave the whole component unset until there are confirmed customers. The seed skips it while `home.ts` has no logos. Treat a missing `socialProof` in the API response as "no section".
+
 ## Stays in code (never in the CMS)
 Rule 4 of 05-cms: if changing it can break an animation or the product truth, it stays in code.
 
@@ -63,7 +68,7 @@ Rule 4 of 05-cms: if changing it can break an animation or the product truth, it
 | `hero.shotCaption`, `hero.chips.*` | screen-reader description of the mock, and demo chips |
 | `results.figures[]` (key, label, note, callout, value, suffix) | numbers drive the funnel and are product truth |
 | `results.phases`, `legend`, `hired`, `hintFine`, `hintTouch` | drive the dot animation |
-| `decide.caption`, `from`, `to`, `stamp`, `dragHelp`, `drop`, `movedStatus`, `backStatus`, `evidenceTitle`, `evidence.*`, `note` | demo internals, aria and status strings, product truth |
+| `decide.caption`, `from`, `to`, `stamp`, `dragHelp`, `drop`, `movedStatus`, `backStatus`, `evidenceTitle`, `evaluation.*`, `evidence.*`, `note` | demo internals, aria and status strings, product truth |
 | `platform.copyEmbed`, `copied`, `copyFail`, `candidateName`, `candidateNamePlaceholder`, `restore`, `save`, `saved`, `hoverBar`, `trend`, `note` | demo internals and status strings |
 | The two labs: `components/home/labs/screening/copy.ts`, `components/home/labs/interview/copy.ts` (titles and subs included) | rule 4 names the labs' `copy.ts` explicitly |
 | Inline `figcaption` strings in `Platform.astro` | aria |

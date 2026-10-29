@@ -13,6 +13,7 @@
     "seo": { "type": "component", "repeatable": false, "component": "seo.meta", "required": true },
     "nav": { "type": "component", "repeatable": false, "component": "home.nav", "required": true },
     "hero": { "type": "component", "repeatable": false, "component": "home.hero", "required": true },
+    "socialProof": { "type": "component", "repeatable": false, "component": "home.social-proof", "required": false },
     "results": { "type": "component", "repeatable": false, "component": "home.results", "required": true },
     "decide": { "type": "component", "repeatable": false, "component": "home.decide", "required": true },
     "how": { "type": "component", "repeatable": false, "component": "home.how", "required": true },
