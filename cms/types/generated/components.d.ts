@@ -197,12 +197,6 @@ export interface HomeFooter extends Struct.ComponentSchema {
         maxLength: 17;
         minLength: 1;
       }>;
-    footnote: Schema.Attribute.Text &
-      Schema.Attribute.Required &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 160;
-        minLength: 1;
-      }>;
     line: Schema.Attribute.Text &
       Schema.Attribute.Required &
       Schema.Attribute.SetMinMaxLength<{

@@ -79,7 +79,6 @@ const homeData = (copy: Copy) => ({
     maker: copy.footer.maker,
     makerHref: copy.footer.makerHref,
     copyright: copy.footer.copyright,
-    footnote: copy.footer.footnote,
   },
 });
 

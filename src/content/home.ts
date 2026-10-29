@@ -1,7 +1,7 @@
 /** All home page copy. Marketing may edit this file; components render it. The labs keep their own copy files. */
 
 /** PLACEHOLDER: the real app sign-in URL is not known yet. Replace before launch. */
-export const SIGN_IN_HREF_PLACEHOLDER = 'https://app.novara.my/sign-in';
+export const SIGN_IN_HREF = 'https://app.novara.com.my/sign-in';
 
 export const home = {
   seo: {
@@ -23,7 +23,7 @@ export const home = {
     /** Rendered now. Later items (Platform, Features, Solutions, ROI Calculator, Resources) join this list when their pages exist. */
     links: [
       { label: 'Home', href: '/' },
-      { label: 'Sign in', href: SIGN_IN_HREF_PLACEHOLDER },
+      { label: 'Sign in', href: SIGN_IN_HREF },
       { label: 'Contact us', href: '/contact' },
       { label: 'About us', href: '/about' },
       { label: 'Pricing', href: '/pricing' },
@@ -44,7 +44,7 @@ export const home = {
     sub: 'Novara scores every resume against the job, runs the first round with an AI interviewer, and shows your team the evidence behind every shortlist.',
     secondary: 'Try the AI interview',
     pricing: { label: 'See pricing', href: '/pricing' },
-    signIn: { label: 'Sign in', href: SIGN_IN_HREF_PLACEHOLDER },
+    signIn: { label: 'Sign in', href: SIGN_IN_HREF },
     shotCaption: 'Novara candidate review: ranked applicants on the left, and Amara Okafor with a Job Fit Score of 92, an AI Interview Score of 88 and one integrity event to review.',
     chips: {
       node: 'Matched: Node.js',
@@ -285,8 +285,6 @@ export const home = {
     makerHref: 'https://vivasoftltd.com/products/',
     copyright: '© 2026 Novara',
     rights: 'All rights reserved.',
-    footnote:
-      'Names and profiles in product views are illustrative. The results funnel is illustrative, not a customer result.',
     followLabel: 'Follow us',
     /** Real profile URLs are not known yet. An empty href hides that icon. */
     social: [

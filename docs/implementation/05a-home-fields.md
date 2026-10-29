@@ -55,7 +55,6 @@ Every field is required and non-empty. Strapi checks min and required rules on p
 | `footer.maker` | `footer.maker` | string | 28 | 1 |
 | `footer.makerHref` | `footer.makerHref` | string, `^https?://\S+$` | 200 (URL, not copy) | 1 |
 | `footer.copyright` | `footer.copyright` | string | 17 | 1 |
-| `footer.footnote` | `footer.footnote` | text | 160 | 1 |
 
 Notes:
 - `<k>` is one of `pipeline`, `career`, `scheduling`, `roles`, `email`, `analytics`. Tiles are named fields, not a list, so a tile's text cannot be paired with the wrong demo. Each is `{ title, line }`.
@@ -63,7 +62,7 @@ Notes:
 - `how.steps` and `faq.items` keep the order the editor sets. The `how` section is pinned and animated, so its count is fixed at 9. Adding a step is a code change.
 - `seo` is the shared `seo.meta` component (see 05-cms). The seed sets only `metaTitle`, `metaDescription`, `index: true`, `follow: true`; everything else is empty. `metaTitle` is the complete home title. Apply `titleTemplate` only when `metaTitle` is empty (the template would double the brand here).
 - `nav.label`, `nav.home`, hrefs and the footer link list come from code. The five in-page `nav.anchors` labels stay seeded but are no longer rendered.
-- Added by the DM feedback (06), all code-owned for now and not yet CMS fields: `nav.links[]` (label, href; the rendered header), `hero.pricing` and `hero.signIn` (label, href), `footer.rights`, `footer.followLabel`, `footer.social[]` (key, label, href; an empty href hides the icon), `footer.columns[]` (label, links[]), `footer.terms`, `footer.aiSummary` (label, prompt, assistants[] with key, label, url). `SIGN_IN_HREF_PLACEHOLDER` in `home.ts` is the sign-in URL until the app URL is known. Promote these to Strapi fields (and `seed.ts`) when the DM team needs to edit them.
+- Added by the DM feedback (06), all code-owned for now and not yet CMS fields: `nav.links[]` (label, href; the rendered header), `hero.pricing` and `hero.signIn` (label, href), `footer.rights`, `footer.followLabel`, `footer.social[]` (key, label, href; an empty href hides the icon), `footer.columns[]` (label, links[]), `footer.terms`, `footer.aiSummary` (label, prompt, assistants[] with key, label, url). `SIGN_IN_HREF` in `home.ts` is the sign-in URL (https://app.novara.com.my/sign-in). Promote these to Strapi fields (and `seed.ts`) when the DM team needs to edit them.
 
 - `socialProof` is optional and ships empty. The component is not required in Strapi; once added it needs a heading and 1 to 12 logos. `SocialProof.astro` renders nothing when `logos` is empty, so leave the whole component unset until there are confirmed customers. The seed skips it while `home.ts` has no logos. Treat a missing `socialProof` in the API response as "no section".
 
