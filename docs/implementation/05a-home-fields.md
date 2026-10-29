@@ -6,7 +6,7 @@ Wiring table for the Astro side. Strapi type `api::home.home` (single type, Draf
 - `GET /api/home` returns every section populated, with no `populate` query (route middleware). A `populate` you send wins.
 - Strapi 5 shape: `{ data: { documentId, publishedAt, seo, nav, hero, results, decide, how, platform, faq, close, footer } }`. No `attributes` wrapper. Components carry an `id`; ignore it.
 - Same token rules as everything else: `Authorization: Bearer <STRAPI_TOKEN>`. Only `find` exists over REST (no write routes).
-- Mirror the caps below in zod (`.max(cap)`, `.min(1)`), and `how.steps` as exactly 4, `faq.items` as 3 to 10. A mismatch fails the build.
+- Mirror the caps below in zod (`.max(cap)`, `.min(1)`), and `how.steps` as exactly 9, `faq.items` as 3 to 10. A mismatch fails the build.
 - Merge, do not replace: build the page copy as `{ ...codeCopy, hero: { ...codeCopy.hero, title, sub, secondary }, ... }`, so the keys marked "code" below keep coming from `home.ts`.
 
 ## In the CMS
@@ -30,8 +30,8 @@ Every field is required and non-empty. Strapi checks min and required rules on p
 | `decide.title` | `decide.title` | string | 60 | 1 |
 | `decide.sub` | `decide.sub` | text | 63 | 1 |
 | `how.title` | `how.title` | string | 16 | 1 |
-| `how.steps[i].title` | `how.steps[i].title` | string | 26 | exactly 4 |
-| `how.steps[i].text` | `how.steps[i].text` | text | 110 | exactly 4 |
+| `how.steps[i].title` | `how.steps[i].title` | string | 45 | exactly 9 |
+| `how.steps[i].text` | `how.steps[i].text` | text | 137 | exactly 9 |
 | `platform.title` | `platform.title` | string | 46 | 1 |
 | `platform.tiles.<k>.title` | `platform.<k>.title` | string | 28 | 6 named tiles |
 | `platform.tiles.<k>.line` | `platform.<k>.line` | text | 93 | 6 named tiles |
@@ -49,7 +49,7 @@ Every field is required and non-empty. Strapi checks min and required rules on p
 
 Notes:
 - `<k>` is one of `pipeline`, `career`, `scheduling`, `roles`, `email`, `analytics`. Tiles are named fields, not a list, so a tile's text cannot be paired with the wrong demo. Each is `{ title, line }`.
-- `how.steps` and `faq.items` keep the order the editor sets. The `how` section is pinned and animated, so its count is fixed at 4. Adding a step is a code change.
+- `how.steps` and `faq.items` keep the order the editor sets. The `how` section is pinned and animated, so its count is fixed at 9. Adding a step is a code change.
 - `seo` is the shared `seo.meta` component (see 05-cms). The seed sets only `metaTitle`, `metaDescription`, `index: true`, `follow: true`; everything else is empty. `metaTitle` is the complete home title. Apply `titleTemplate` only when `metaTitle` is empty (the template would double the brand here).
 - `nav.label`, `nav.home`, hrefs and the footer link list come from code. The footer link labels reuse the five nav labels.
 
