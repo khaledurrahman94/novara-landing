@@ -51,7 +51,8 @@ Notes:
 - `<k>` is one of `pipeline`, `career`, `scheduling`, `roles`, `email`, `analytics`. Tiles are named fields, not a list, so a tile's text cannot be paired with the wrong demo. Each is `{ title, line }`.
 - `how.steps` and `faq.items` keep the order the editor sets. The `how` section is pinned and animated, so its count is fixed at 4. Adding a step is a code change.
 - `seo` is the shared `seo.meta` component (see 05-cms). The seed sets only `metaTitle`, `metaDescription`, `index: true`, `follow: true`; everything else is empty. `metaTitle` is the complete home title. Apply `titleTemplate` only when `metaTitle` is empty (the template would double the brand here).
-- `nav.label`, `nav.home`, hrefs and the footer link list come from code. The footer link labels reuse the five nav labels.
+- `nav.label`, `nav.home`, hrefs and the footer link list come from code. The five in-page `nav.anchors` labels stay seeded but are no longer rendered.
+- Added by the DM feedback (06), all code-owned for now and not yet CMS fields: `nav.links[]` (label, href; the rendered header), `hero.pricing` and `hero.signIn` (label, href), `footer.rights`, `footer.followLabel`, `footer.social[]` (key, label, href; an empty href hides the icon), `footer.columns[]` (label, links[]), `footer.terms`, `footer.aiSummary` (label, prompt, assistants[] with key, label, url). `SIGN_IN_HREF_PLACEHOLDER` in `home.ts` is the sign-in URL until the app URL is known. Promote these to Strapi fields (and `seed.ts`) when the DM team needs to edit them.
 
 ## Stays in code (never in the CMS)
 Rule 4 of 05-cms: if changing it can break an animation or the product truth, it stays in code.

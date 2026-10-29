@@ -1,4 +1,8 @@
 /** All home page copy. Marketing may edit this file; components render it. The labs keep their own copy files. */
+
+/** PLACEHOLDER: the real app sign-in URL is not known yet. Replace before launch. */
+export const SIGN_IN_HREF_PLACEHOLDER = 'https://app.novara.my/sign-in';
+
 export const home = {
   seo: {
     title: 'Novara: try AI resume screening and AI interviews',
@@ -16,6 +20,14 @@ export const home = {
       { label: 'FAQ', href: '#faq' },
     ],
     cta: 'Request a demo',
+    /** Rendered now. Later items (Platform, Features, Solutions, ROI Calculator, Resources) join this list when their pages exist. */
+    links: [
+      { label: 'Home', href: '/' },
+      { label: 'Sign in', href: SIGN_IN_HREF_PLACEHOLDER },
+      { label: 'Contact us', href: '/contact' },
+      { label: 'About us', href: '/about' },
+      { label: 'Pricing', href: '/pricing' },
+    ],
   },
   form: {
     label: 'Work email',
@@ -31,6 +43,8 @@ export const home = {
     title: 'Hire the person, not the pile.',
     sub: 'Novara scores every resume against the job, runs the first round with an AI interviewer, and shows your team the evidence behind every shortlist.',
     secondary: 'Try the AI interview',
+    pricing: { label: 'See pricing', href: '/pricing' },
+    signIn: { label: 'Sign in', href: SIGN_IN_HREF_PLACEHOLDER },
     shotCaption: 'Novara candidate review: ranked applicants on the left, and Amara Okafor with a Job Fit Score of 92, an AI Interview Score of 88 and one integrity event to review.',
     chips: {
       node: 'Matched: Node.js',
@@ -163,8 +177,51 @@ export const home = {
     maker: 'A product of Vivasoft',
     makerHref: 'https://vivasoftltd.com/products/',
     copyright: '© 2026 Novara',
+    rights: 'All rights reserved.',
     footnote:
       'Names and profiles in product views are illustrative. Results figures are from one real hiring round for engineering roles.',
+    followLabel: 'Follow us',
+    /** Real profile URLs are not known yet. An empty href hides that icon. */
+    social: [
+      { key: 'linkedin', label: 'LinkedIn', href: '' },
+      { key: 'x', label: 'X', href: '' },
+      { key: 'youtube', label: 'YouTube', href: '' },
+      { key: 'instagram', label: 'Instagram', href: '' },
+    ] as { key: string; label: string; href: string }[],
+    columns: [
+      {
+        label: 'Product',
+        links: [
+          { label: 'ATS', href: '/ats' },
+          { label: 'AI interview', href: '/ai-interview' },
+          { label: 'Features', href: '/features' },
+          { label: 'Solutions', href: '/solutions' },
+          { label: 'ROI Calculator', href: '/roi-calculator' },
+          { label: 'Integration', href: '/integrations' },
+        ],
+      },
+      {
+        label: 'Company',
+        links: [
+          { label: 'About us', href: '/about' },
+          { label: 'Contact us', href: '/contact' },
+          { label: 'Pricing', href: '/pricing' },
+          { label: 'Resources', href: '/resources' },
+          { label: 'Security', href: '/security' },
+        ],
+      },
+    ],
+    terms: { label: 'Terms and conditions', href: '/terms' },
+    aiSummary: {
+      label: 'Get an AI summary of Novara',
+      prompt: 'Summarize what Novara (https://novara.my/) does, who it is for and how it works.',
+      assistants: [
+        { key: 'chatgpt', label: 'ChatGPT', url: 'https://chatgpt.com/?q=' },
+        { key: 'claude', label: 'Claude', url: 'https://claude.ai/new?q=' },
+        { key: 'gemini', label: 'Gemini', url: 'https://gemini.google.com/app?q=' },
+        { key: 'grok', label: 'Grok', url: 'https://grok.com/?q=' },
+      ],
+    },
   },
   notFound: {
     title: "We can't find that page",

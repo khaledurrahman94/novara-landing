@@ -1,6 +1,10 @@
 ---
 import { home } from '../../content/home';
-const { footer, nav } = home;
+import BrandIcon from './BrandIcon.astro';
+const { footer } = home;
+const social = footer.social.filter((s) => s.href);
+const ai = footer.aiSummary;
+const iconLink = 'grid size-9 place-items-center rounded-md border border-border-primary bg-white text-text-secondary shadow-xs transition-colors duration-[var(--duration-fast)] hover:text-text-primary';
 ---
 <footer class="border-t border-border-secondary bg-bg">
   <div class="mx-auto w-full max-w-[75rem] border-x border-border-secondary px-5 py-14 sm:px-8 md:px-12">
@@ -8,19 +12,45 @@ const { footer, nav } = home;
       <div class="md:col-span-6">
         <img src="/brand/novara-full.svg" width="143" height="41" alt="Novara" class="block h-7 w-auto" />
         <p class="m-0 mt-4 max-w-[22rem] text-[0.9375rem] leading-relaxed text-text-secondary">{footer.line}</p>
+        {social.length > 0 && (
+          <div class="mt-6">
+            <p class="m-0 text-xs font-semibold text-text-tertiary">{footer.followLabel}</p>
+            <ul class="m-0 mt-3 flex list-none gap-2 p-0">
+              {social.map((s) => (
+                <li><a href={s.href} class={iconLink} rel="noopener" aria-label={s.label}><BrandIcon name={s.key} /></a></li>
+              ))}
+            </ul>
+          </div>
+        )}
+        <p class="m-0 mt-6">
+          <a href={footer.makerHref} class="text-sm text-text-secondary no-underline hover:text-text-primary hover:underline" rel="noopener">{footer.maker}</a>
+        </p>
       </div>
-      <nav aria-label={footer.nav} class="md:col-span-3">
-        <ul class="m-0 flex list-none flex-col gap-3 p-0">
-          {nav.anchors.map((a) => <li><a href={a.href} class="text-sm text-text-secondary no-underline hover:text-text-primary hover:underline">{a.label}</a></li>)}
-        </ul>
-      </nav>
-      <div class="md:col-span-3">
-        <a href={footer.makerHref} class="text-sm text-text-secondary no-underline hover:text-text-primary hover:underline" rel="noopener">{footer.maker}</a>
-      </div>
+      {footer.columns.map((col) => (
+        <nav aria-label={col.label} class="md:col-span-3">
+          <p class="m-0 mb-4 text-xs font-semibold text-text-tertiary">{col.label}</p>
+          <ul class="m-0 flex list-none flex-col gap-3 p-0">
+            {col.links.map((l) => <li><a href={l.href} class="text-sm text-text-secondary no-underline hover:text-text-primary hover:underline">{l.label}</a></li>)}
+          </ul>
+        </nav>
+      ))}
     </div>
-    <div class="mt-12 flex flex-col gap-2 border-t border-border-secondary pt-6 text-xs text-text-tertiary sm:flex-row sm:justify-between sm:gap-8">
-      <p class="m-0">{footer.copyright}</p>
-      <p class="m-0 max-w-[36rem] sm:text-right">{footer.footnote}</p>
+
+    <div class="mt-12 flex flex-col gap-3 border-t border-border-secondary pt-6 sm:flex-row sm:items-center sm:gap-4">
+      <p id="ai-summary-label" class="m-0 text-sm text-text-secondary">{ai.label}</p>
+      <ul aria-labelledby="ai-summary-label" class="m-0 flex list-none gap-2 p-0">
+        {ai.assistants.map((a) => (
+          <li><a href={`${a.url}${encodeURIComponent(ai.prompt)}`} class={iconLink} target="_blank" rel="noopener noreferrer" aria-label={`${a.label}: ${ai.label}`}><BrandIcon name={a.key} /></a></li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="mt-6 flex flex-col gap-2 border-t border-border-secondary pt-6 text-xs text-text-tertiary sm:flex-row sm:items-start sm:justify-between sm:gap-8">
+      <div>
+        <p class="m-0">{footer.copyright}. {footer.rights}</p>
+        <p class="m-0 mt-2 max-w-[36rem]">{footer.footnote}</p>
+      </div>
+      <a href={footer.terms.href} class="text-text-tertiary no-underline hover:text-text-primary hover:underline">{footer.terms.label}</a>
     </div>
   </div>
 </footer>
