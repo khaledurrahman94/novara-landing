@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+import InterviewLab from '../components/home/labs/InterviewLab.astro';
+import '../components/home/home.css';
+---
+<Base title="InterviewLab (R&D)" description="Test page for the InterviewLab." noindex fluid>
+  <script is:inline>
+    document.documentElement.classList.add('js');
+  </script>
+  <div class="home bg-white text-text-primary">
+    <main>
+      <div class="mx-auto flex min-h-[70vh] max-w-[75rem] items-end px-5 pb-10 sm:px-8 md:px-12">
+        <p class="m-0 text-sm text-text-tertiary">Test page. Scroll room above the lab.</p>
+      </div>
+      <InterviewLab tone="plate" />
+      <div class="mx-auto flex min-h-[80vh] max-w-[75rem] items-start border-t border-border-secondary px-5 pt-10 sm:px-8 md:px-12">
+        <p class="m-0 text-sm text-text-tertiary">Test page. Scroll room below the lab.</p>
+      </div>
+    </main>
+  </div>
+</Base>

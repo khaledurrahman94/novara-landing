@@ -1,0 +1,11 @@
+---
+/** The mockup plate: white UI on a bg-tertiary plate in a 1px frame. */
+interface Props { caption: string; class?: string; parallax?: boolean; innerClass?: string }
+const { caption, class: cls = '', parallax = false, innerClass = '' } = Astro.props;
+---
+<figure class:list={['m-0 overflow-hidden rounded-xl border border-border-secondary bg-bg-tertiary p-3 sm:p-6', cls]} data-plate>
+  <div data-anim={parallax ? 'plate-inner' : undefined} class:list={['mx-auto flex w-full justify-center', innerClass]}>
+    <slot />
+  </div>
+  <figcaption class="sr-only">{caption}</figcaption>
+</figure>

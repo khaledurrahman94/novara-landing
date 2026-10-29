@@ -1,0 +1,39 @@
+---
+// The one on-demand route. Strapi's admin Preview button opens /preview/<path>?secret=<PREVIEW_SECRET>.
+export const prerender = false;
+
+import { PREVIEW_SECRET, STRAPI_PREVIEW_TOKEN, STRAPI_URL } from 'astro:env/server';
+import Base from '../../layouts/Base.astro';
+import { normalizePath } from '../../lib/paths';
+import { resolvePreview, safeEqual } from '../../lib/preview';
+import { previewResolvers } from '../../preview/resolvers';
+
+// Preview is never indexed and never cached, whatever happens below (meta tag and header).
+const noindexHeaders = { 'X-Robots-Tag': 'noindex, nofollow', 'Cache-Control': 'no-store' };
+for (const [name, value] of Object.entries(noindexHeaders)) Astro.response.headers.set(name, value);
+
+if (!PREVIEW_SECRET) return new Response('Preview is not configured.', { status: 404, headers: noindexHeaders });
+const given = Astro.url.searchParams.get('secret') ?? Astro.request.headers.get('x-preview-secret') ?? '';
+if (!safeEqual(given, PREVIEW_SECRET)) return new Response('Unauthorized.', { status: 401, headers: noindexHeaders });
+
+const path = normalizePath(`/${Astro.params.path ?? ''}`);
+const result = await resolvePreview(previewResolvers, path, {
+  siteEnv: 'staging',
+  ...(STRAPI_URL ? { url: STRAPI_URL } : {}),
+  ...(STRAPI_PREVIEW_TOKEN ? { previewToken: STRAPI_PREVIEW_TOKEN } : {}),
+});
+
+if (result.kind === 'not-found') return new Response(`No preview is registered for ${path}.`, { status: 404, headers: noindexHeaders });
+
+const Page = result.kind === 'page' ? (result.component as (props: Record<string, unknown>) => unknown) : null;
+const pageProps = result.kind === 'page' ? { ...result.props, forceNoindex: true } : {};
+---
+{Page
+  ? <Page {...pageProps} />
+  : (
+    <Base title="Preview" description="Draft preview. Not indexed." noindex forceNoindex fluid>
+      <main class="mx-auto max-w-xl p-10">
+        <p class="m-0 text-lg text-text-secondary">{result.kind === 'pending' ? result.message : ''}</p>
+      </main>
+    </Base>
+  )}

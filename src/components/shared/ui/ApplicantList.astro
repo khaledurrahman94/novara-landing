@@ -1,0 +1,34 @@
+---
+import Avatar from './Avatar.astro';
+import Chip from './Chip.astro';
+import { candidates, role, type Candidate } from '../../../data/demo';
+import { stageTone } from './tone';
+/** Ranked applicants. Each score shows its own reason in the note line. */
+interface Props { rows?: readonly Candidate[]; heading?: string; class?: string; showStage?: boolean }
+const { rows = candidates.slice(0, 3), heading = 'Ranked by Job Fit Score', class: cls = '', showStage = true } = Astro.props;
+---
+<div class:list={['@container w-full max-w-[40rem] rounded-lg border border-border-secondary bg-bg-secondary font-ui shadow-md', cls]} data-card="applicants">
+  <div class="flex items-center justify-between gap-3 border-b border-border-secondary px-4 py-3">
+    <div class="min-w-0">
+      <p class="m-0 truncate text-sm font-semibold text-text-primary">{role.title}</p>
+      <p class="m-0 text-xs text-text-tertiary">{heading}</p>
+    </div>
+  </div>
+  <ol class="m-0 list-none p-0">
+    {rows.map((c, i) => (
+      <li data-anim="row" class:list={['flex items-center gap-3 px-4 py-3', i > 0 && 'border-t border-border-secondary']}>
+        <span class="w-4 shrink-0 text-center text-xs font-medium tabular-nums text-text-placeholder">{i + 1}</span>
+        <Avatar initials={c.initials} lead={c.id === 'amara'} />
+        <div class="min-w-0 flex-1">
+          <p class="m-0 truncate text-[0.8125rem] font-semibold text-text-primary">{c.name}</p>
+          <p class="m-0 truncate text-xs text-text-tertiary">{c.note}</p>
+        </div>
+        {showStage && <Chip tone={stageTone[c.stage]} class="hidden @md:inline-flex">{c.stage}</Chip>}
+        <span class="flex w-[4.25rem] shrink-0 flex-col items-end">
+          <span class="text-sm font-semibold tabular-nums text-text-primary">{c.fit}</span>
+          <span class="text-[0.6875rem] text-text-tertiary">{c.fitLabel}</span>
+        </span>
+      </li>
+    ))}
+  </ol>
+</div>

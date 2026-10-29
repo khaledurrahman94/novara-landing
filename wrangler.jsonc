@@ -1,0 +1,12 @@
+{
+  // Cloudflare Workers (the @astrojs/cloudflare adapter no longer targets Pages).
+  // Static pages are served from dist/client; the Worker only answers /preview/*.
+  // Variables and secrets (STRAPI_URL, STRAPI_PREVIEW_TOKEN, PREVIEW_SECRET) are set in the
+  // Cloudflare dashboard or with `wrangler secret put`; keep_vars stops a deploy from wiping them.
+  // Build-time variables (PUBLIC_SITE_ENV, STRAPI_URL, STRAPI_TOKEN) belong to the build environment. See docs/deploy-site.md.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "novara-site",
+  "compatibility_date": "2026-10-12",
+  "keep_vars": true,
+  "observability": { "enabled": true }
+}

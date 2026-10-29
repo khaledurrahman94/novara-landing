@@ -1,0 +1,41 @@
+{
+  "collectionName": "components_home_footers",
+  "info": {
+    "displayName": "Footer",
+    "description": "Footer text and the maker link."
+  },
+  "options": {},
+  "attributes": {
+    "line": {
+      "type": "text",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 95
+    },
+    "maker": {
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 28
+    },
+    "makerHref": {
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 200,
+      "regex": "^https?://\\S+$"
+    },
+    "copyright": {
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 17
+    },
+    "footnote": {
+      "type": "text",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 160
+    }
+  }
+}

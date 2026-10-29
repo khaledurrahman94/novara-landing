@@ -1,0 +1,18 @@
+{
+  "kind": "collectionType",
+  "collectionName": "redirects",
+  "info": {
+    "singularName": "redirect",
+    "pluralName": "redirects",
+    "displayName": "Redirect",
+    "description": "Root-relative redirects. The site build writes these to _redirects (permanent = 301, temporary = 302)."
+  },
+  "options": { "draftAndPublish": false },
+  "pluginOptions": {},
+  "attributes": {
+    "from": { "type": "string", "required": true, "unique": true, "maxLength": 200, "regex": "^/[a-z0-9/_-]*$" },
+    "to": { "type": "string", "required": true, "maxLength": 300, "regex": "^(/(?!/)\\S*|https://\\S+)$" },
+    "kind": { "type": "enumeration", "enum": ["permanent", "temporary"], "default": "permanent", "required": true },
+    "note": { "type": "text", "maxLength": 500 }
+  }
+}

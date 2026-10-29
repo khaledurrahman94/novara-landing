@@ -1,0 +1,24 @@
+{
+  "kind": "singleType",
+  "collectionName": "homes",
+  "info": {
+    "singularName": "home",
+    "pluralName": "homes",
+    "displayName": "Home",
+    "description": "Marketing copy and SEO for the home page. Sections are fixed; structure and motion live in code."
+  },
+  "options": { "draftAndPublish": true },
+  "pluginOptions": {},
+  "attributes": {
+    "seo": { "type": "component", "repeatable": false, "component": "seo.meta", "required": true },
+    "nav": { "type": "component", "repeatable": false, "component": "home.nav", "required": true },
+    "hero": { "type": "component", "repeatable": false, "component": "home.hero", "required": true },
+    "results": { "type": "component", "repeatable": false, "component": "home.results", "required": true },
+    "decide": { "type": "component", "repeatable": false, "component": "home.decide", "required": true },
+    "how": { "type": "component", "repeatable": false, "component": "home.how", "required": true },
+    "platform": { "type": "component", "repeatable": false, "component": "home.platform", "required": true },
+    "faq": { "type": "component", "repeatable": false, "component": "home.faq", "required": true },
+    "close": { "type": "component", "repeatable": false, "component": "home.close", "required": true },
+    "footer": { "type": "component", "repeatable": false, "component": "home.footer", "required": true }
+  }
+}

@@ -1,0 +1,19 @@
+---
+import { interview } from '../../../data/demo';
+/** Three question-level scores, each bar proportional to its score out of 10. */
+interface Props { items?: readonly { label: string; score: number }[]; class?: string }
+const { items = interview.questions, class: cls = '' } = Astro.props;
+---
+<ul class:list={['m-0 flex list-none flex-col gap-3 p-0 font-ui', cls]}>
+  {items.map((q) => (
+    <li>
+      <div class="mb-1 flex items-baseline justify-between text-[0.8125rem]">
+        <span class="text-text-secondary">{q.label}</span>
+        <span class="font-semibold tabular-nums text-text-primary">{q.score}/10</span>
+      </div>
+      <div class="h-1.5 overflow-hidden rounded-full bg-gray-200">
+        <div data-anim="bar" class="h-full origin-left rounded-full bg-primary" style={`width:${q.score * 10}%`}></div>
+      </div>
+    </li>
+  ))}
+</ul>

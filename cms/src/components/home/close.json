@@ -1,0 +1,28 @@
+{
+  "collectionName": "components_home_closes",
+  "info": {
+    "displayName": "Close band",
+    "description": "Closing band heading, line and form button label."
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 46
+    },
+    "line": {
+      "type": "text",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 77
+    },
+    "cta": {
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 19
+    }
+  }
+}

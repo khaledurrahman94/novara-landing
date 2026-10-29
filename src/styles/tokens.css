@@ -1,0 +1,151 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/urbanist';
+
+@theme {
+  /* Reset default palette: only brand colors exist */
+  --color-*: initial;
+  --color-white: #fff;
+  --color-black: #000;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  /* Sampled from the Novara product design system */
+  --color-bg: #F9FAFB;
+  --color-bg-secondary: #FFFFFF;
+  --color-bg-tertiary: #F2F4F7;
+  --color-blue-light: #0BA5EC;
+  --color-border-primary: #D0D5DD;
+  --color-border-secondary: #E4E7EC;
+  --color-primary: #7237FB;
+  --color-success: #17B26A;
+  --color-warning: #F79009;
+  --color-text-placeholder: #667085;
+  --color-text-primary: #101828;
+  --color-text-secondary: #344054;
+  --color-text-tertiary: #475467;
+
+  /* DERIVED: Untitled UI in-between grays (UI states only) */
+  --color-gray-100: #F2F4F7;
+  --color-gray-200: #EAECF0;
+  --color-gray-400: #98A2B3;
+  --color-gray-800: #1D2939;
+  --color-gray-950: #0C111D;
+
+  /* DERIVED: primary scale from #7237FB (500 = brand primary; UI states only) */
+  --color-primary-50: #F5F1FF;
+  --color-primary-100: #ECE3FF;
+  --color-primary-200: #DACBFF;
+  --color-primary-300: #C0A6FE;
+  --color-primary-400: #9F73FD;
+  --color-primary-500: #7237FB;
+  --color-primary-600: #5F1FEF;
+  --color-primary-700: #5017CB;
+  --color-primary-800: #4316A3;
+  --color-primary-900: #371483;
+  --color-primary-950: #220B57;
+
+  /* Brand gradient stops (use .bg-brand-gradient / var(--gradient-brand)) */
+  --color-brand-from: #8C75FB;
+  --color-brand-to: #421DF8;
+
+  /* Fonts */
+  --font-display: 'Urbanist Variable', 'Inter Variable', system-ui, sans-serif;
+  --font-ui: 'Inter Variable', system-ui, sans-serif;
+  --font-sans: 'Urbanist Variable', 'Inter Variable', system-ui, sans-serif;
+
+  /* Type scale (fluid display) */
+  --text-display-2xl: clamp(3.25rem, 2rem + 6vw, 7.5rem);
+  --text-display-xl: clamp(2.75rem, 1.7rem + 4.6vw, 5.5rem);
+  --text-display-lg: clamp(2.25rem, 1.5rem + 3.2vw, 4rem);
+  --text-display-md: clamp(1.75rem, 1.3rem + 1.9vw, 2.75rem);
+
+  /* Spacing: Tailwind base step plus fluid rhythm */
+  --spacing: 0.25rem;
+  --spacing-section: clamp(5rem, 3rem + 8vw, 10rem);
+  --spacing-gutter: clamp(1.25rem, 0.8rem + 2vw, 3rem);
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+  --radius-full: 9999px;
+
+  /* Shadows: soft, low-opacity, cool-gray (#101828) tinted */
+  --shadow-xs: 0 1px 2px rgb(16 24 40 / 0.05);
+  --shadow-sm: 0 1px 3px rgb(16 24 40 / 0.08), 0 1px 2px rgb(16 24 40 / 0.04);
+  --shadow-md: 0 4px 8px -2px rgb(16 24 40 / 0.08), 0 2px 4px -2px rgb(16 24 40 / 0.04);
+  --shadow-lg: 0 12px 16px -4px rgb(16 24 40 / 0.08), 0 4px 6px -2px rgb(16 24 40 / 0.04);
+  --shadow-xl: 0 24px 48px -12px rgb(16 24 40 / 0.14);
+
+  /* Motion */
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 400ms;
+  --duration-slower: 700ms;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+:root {
+  --gradient-brand: linear-gradient(135deg, #8C75FB 0%, #421DF8 100%);
+}
+
+@utility bg-brand-gradient {
+  background-image: var(--gradient-brand);
+}
+
+@layer base {
+  html { background: var(--color-bg); color: var(--color-text-primary); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+  html.lenis, html.lenis body { height: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
+  .lenis.lenis-stopped { overflow: clip; }
+}
+
+/* =========================================================
+   Utilities
+   ========================================================= */
+
+@utility scrollbar-stable {
+  scrollbar-gutter: stable;
+}
+
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* =========================================================
+   Scrollbars (WebKit)
+   ========================================================= */
+
+::-webkit-scrollbar {
+  width: 8px; /* For vertical scrollbar */
+  height: 8px; /* For horizontal scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* Hide track */
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+  background-clip: padding-box;
+}
+
+/* Hide scrollbar buttons (arrows) */
+::-webkit-scrollbar-button {
+  display: none;
+}

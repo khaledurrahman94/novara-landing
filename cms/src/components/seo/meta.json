@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_seo_metas",
+  "info": {
+    "displayName": "SEO meta",
+    "description": "Per-page SEO fields. focusKeyword and keywords feed the editor SEO panel only and are never rendered as meta tags."
+  },
+  "options": {},
+  "attributes": {
+    "metaTitle": { "type": "string", "maxLength": 70 },
+    "metaDescription": { "type": "text", "required": true, "minLength": 50, "maxLength": 170 },
+    "focusKeyword": { "type": "string", "maxLength": 60 },
+    "keywords": { "type": "string", "maxLength": 255 },
+    "canonicalUrl": { "type": "string", "maxLength": 300, "regex": "^(/(?!/)\\S*|https?://\\S+)$" },
+    "index": { "type": "boolean", "default": true },
+    "follow": { "type": "boolean", "default": true },
+    "ogTitle": { "type": "string", "maxLength": 90 },
+    "ogDescription": { "type": "text", "maxLength": 200 },
+    "ogImage": { "type": "media", "multiple": false, "allowedTypes": ["images"] },
+    "structuredData": { "type": "json" },
+    "breadcrumbLabel": { "type": "string", "maxLength": 40 }
+  }
+}

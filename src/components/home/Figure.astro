@@ -1,0 +1,9 @@
+---
+/** A product view on a plate. Real text inside, caption for assistive tech. */
+interface Props { caption: string; tone?: 'plate' | 'white'; class?: string }
+const { caption, tone = 'plate', class: cls = '' } = Astro.props;
+---
+<figure class:list={['m-0 rounded-xl border border-border-secondary p-3 sm:p-6', tone === 'plate' ? 'bg-bg' : 'bg-white', cls]}>
+  <slot />
+  <figcaption class="sr-only">{caption}</figcaption>
+</figure>

@@ -1,0 +1,29 @@
+[
+  {
+    "type": "post",
+    "slug": "hello",
+    "path": "/blog/hello",
+    "title": "Hello",
+    "seo": {
+      "metaTitle": "Novara: try AI resume screening and AI interviews",
+      "metaDescription": "Re-rank resumes, try to cheat an AI interview and make the shortlist call yourself. Novara shows your hiring team the evidence. Request a demo.",
+      "canonicalUrl": "/blog/not-published"
+    },
+    "images": [{ "url": "https://cms.example.com/uploads/cover.png", "alt": null, "field": "cover" }],
+    "links": ["/pricing", "/", "https://example.com/ok", "mailto:hello@example.com"]
+  },
+  {
+    "type": "post",
+    "slug": "hello",
+    "path": "/blog/hello-again",
+    "title": "Hello again",
+    "seo": { "metaDescription": "A second post that reuses the slug of the first one, which a uid field never allows in Strapi." }
+  },
+  {
+    "type": "legal-page",
+    "slug": "lab",
+    "path": "/lab",
+    "title": "Collides with a code route",
+    "seo": { "metaDescription": "A legal page whose path is the same as the R and D route that code already owns on this site." }
+  }
+]

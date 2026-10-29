@@ -1,0 +1,73 @@
+---
+import InterviewScore from '../../../shared/ui/InterviewScore.astro';
+import Ico from './Ico.astro';
+import { lab, kinds } from './copy';
+import { integrity } from '../../../../data/demo';
+/**
+ * The integrity report. `sample` renders the static version (no JS): demo events, no "Try again".
+ * Live, the script fills the counters, summary and timeline from the visitor's real events.
+ */
+interface Props { sample?: boolean }
+const { sample = false } = Astro.props;
+const sampleCount: Record<string, number> = { focus: 1 };
+const events = integrity.events;
+---
+<div
+  data-il-report={sample ? undefined : ''}
+  data-il-static={sample ? '' : undefined}
+  hidden={!sample}
+  class="grid items-start gap-5 font-ui text-text-primary lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]"
+>
+  <div class="rounded-lg border border-border-secondary bg-bg-secondary p-5 shadow-md sm:p-6">
+    <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+      <h3 data-il-report-title tabindex="-1" class="m-0 text-xl font-semibold tracking-[-0.01em] outline-none">{sample ? lab.report.sampleTitle : lab.report.title}</h3>
+      <span data-il-rchip class="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-warning/10 px-2 py-0.5 text-xs font-medium text-text-secondary">
+        <span class="size-1.5 rounded-full bg-warning" aria-hidden="true"></span>
+        <span data-il-rchip-text>{lab.review(sample ? 1 : 0)}</span>
+      </span>
+    </div>
+    <p data-il-summary class="m-0 mt-1.5 text-[0.9375rem] text-text-secondary">{sample ? lab.report.summary(1) : ''}</p>
+
+    <ul class="m-0 mt-5 grid list-none grid-cols-2 gap-x-6 gap-y-2 p-0 text-[0.8125rem] sm:grid-cols-4">
+      {kinds.map((k) => (
+        <li data-il-rkind={k.key} class:list={['flex items-baseline justify-between gap-2 border-b border-border-secondary pb-1.5 text-text-tertiary', k.key === 'away' && 'il-fine',]}>
+          <span class="truncate">{k.label}</span>
+          <span data-il-rcount class:list={['font-semibold tabular-nums', (sampleCount[k.key] ?? 0) > 0 ? 'text-text-primary' : 'text-text-tertiary']}>{sampleCount[k.key] ?? 0}</span>
+        </li>
+      ))}
+    </ul>
+
+    <ol data-il-rtimeline class="m-0 mt-5 list-none p-0">
+      {sample && events.map((e, i) => (
+        <li class="relative flex gap-3 pb-4 last:pb-0">
+          {i < events.length - 1 && <span class="absolute left-[0.3125rem] top-4 h-full w-px bg-border-secondary" aria-hidden="true"></span>}
+          <span class:list={['relative mt-1 size-[0.6875rem] shrink-0 rounded-full border-2 bg-bg-secondary', e.flagged ? 'border-warning' : 'border-border-primary']} aria-hidden="true"></span>
+          <span class="min-w-0 flex-1 text-[0.8125rem]">
+            <span class="mr-2 tabular-nums text-text-tertiary">{e.time}</span>
+            <span class:list={[e.flagged ? 'font-semibold text-text-primary' : 'text-text-secondary']}>{e.label}</span>
+            {e.flagged && <span class="mt-0.5 block text-xs text-text-tertiary">{lab.flagged}</span>}
+          </span>
+        </li>
+      ))}
+    </ol>
+
+    <p class="m-0 mt-5 border-t border-border-secondary pt-4 text-[0.9375rem] font-medium leading-snug text-text-primary">{lab.report.line}</p>
+    {sample
+      ? <p class="m-0 mt-2 text-xs text-text-tertiary">{lab.report.sampleNote}</p>
+      : (
+        <button type="button" data-il-again data-cursor="Reset" class="il-btn il-btn-primary mt-4">
+          <Ico name="arrow-right" size={16} class="-scale-x-100" />{lab.report.again}
+        </button>
+      )}
+  </div>
+
+  <div class="flex flex-col gap-3">
+    <p class="m-0 flex items-center gap-2 text-xs font-medium text-text-tertiary">
+      <span class="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-primary-50 px-2 py-0.5 font-medium text-text-secondary">
+        <span class="size-1.5 rounded-full bg-primary" aria-hidden="true"></span>{lab.score.chip}
+      </span>
+    </p>
+    <InterviewScore />
+    <p class="m-0 text-xs leading-snug text-text-tertiary">{lab.score.note}</p>
+  </div>
+</div>

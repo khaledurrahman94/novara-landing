@@ -1,0 +1,41 @@
+---
+import Icon from './Icon.astro';
+import { slots, role } from '../../../data/demo';
+/** Candidate-facing slot picker: slots are set by recruiters. The confirmation toast is an in-flow row at the card bottom, so it never covers the slots. */
+interface Props { class?: string; showToast?: boolean }
+const { class: cls = '', showToast = true } = Astro.props;
+---
+<div class:list={['relative w-full max-w-[26rem] rounded-lg border border-border-secondary bg-bg-secondary p-5 font-ui text-text-primary shadow-md', cls]} data-card="slot-picker">
+  <p class="m-0 text-sm font-semibold">Pick an interview slot</p>
+  <p class="m-0 mt-0.5 text-xs text-text-tertiary">{role.title} · AI interview</p>
+
+  <ul class="m-0 mt-4 grid list-none grid-cols-3 gap-2 p-0">
+    {slots.days.map((d) => {
+      const on = d.key === slots.selected.day;
+      return (
+        <li class:list={['rounded-md border px-3 py-2 text-center', on ? 'border-primary bg-primary-50' : 'border-border-secondary']}>
+          <span class="block text-xs text-text-tertiary">{d.label}</span>
+          <span class="block text-[0.8125rem] font-semibold">{d.date}</span>
+        </li>
+      );
+    })}
+  </ul>
+
+  <ul class="m-0 mt-3 grid list-none grid-cols-2 gap-2 p-0">
+    {slots.times.map((t) => {
+      const on = t === slots.selected.time;
+      return (
+        <li data-anim="slot" data-selected={on ? 'true' : undefined} class:list={['flex items-center justify-center gap-1.5 rounded-md border py-2 text-[0.8125rem] font-medium tabular-nums', on ? 'border-primary bg-primary text-white' : 'border-border-secondary text-text-secondary']}>
+          <Icon name="clock" size={13} />{t}
+        </li>
+      );
+    })}
+  </ul>
+
+  {showToast && (
+    <div data-anim="toast" role="status" class="mt-4 flex items-center gap-2.5 rounded-md bg-gray-950 px-3.5 py-2.5 text-xs font-medium text-white shadow-lg">
+      <span class="grid size-5 shrink-0 place-items-center rounded-full bg-success text-white"><Icon name="check" size={12} /></span>
+      {slots.toast}
+    </div>
+  )}
+</div>

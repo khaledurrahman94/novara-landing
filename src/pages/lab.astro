@@ -1,0 +1,103 @@
+---
+import Base from '../layouts/Base.astro';
+import Plate from '../components/shared/ui/Plate.astro';
+import JobDraft from '../components/shared/ui/JobDraft.astro';
+import JobFitCard from '../components/shared/ui/JobFitCard.astro';
+import ApplicantList from '../components/shared/ui/ApplicantList.astro';
+import InterviewFrame from '../components/shared/ui/InterviewFrame.astro';
+import IntegrityPanel from '../components/shared/ui/IntegrityPanel.astro';
+import InterviewScore from '../components/shared/ui/InterviewScore.astro';
+import PipelineBoard from '../components/shared/ui/PipelineBoard.astro';
+import SlotPicker from '../components/shared/ui/SlotPicker.astro';
+import CareerPage from '../components/shared/ui/CareerPage.astro';
+import StageChart from '../components/shared/ui/StageChart.astro';
+import ScoreTriplet from '../components/shared/ui/ScoreTriplet.astro';
+import ScoreRing from '../components/shared/ui/ScoreRing.astro';
+import Chip from '../components/shared/ui/Chip.astro';
+import { candidates, byId } from '../data/demo';
+const tones = ['success', 'warning', 'blue', 'primary', 'gray'] as const;
+---
+<Base title="Component lab (R&D)" description="Every shared product UI component in each state." noindex fluid>
+  <main class="mx-auto max-w-[84rem] px-gutter py-16 font-ui">
+    <h1 class="m-0 font-display text-display-md font-semibold">Component lab</h1>
+    <p class="mt-2 text-text-tertiary">Shared product UI, shown in each state. Static render, no motion.</p>
+
+    <section class="mt-12" aria-labelledby="l-jobdraft">
+      <h2 id="l-jobdraft" class="text-xl font-semibold">JobDraft</h2>
+      <Plate caption="JobDraft"><JobDraft /></Plate>
+    </section>
+
+    <section class="mt-12" aria-labelledby="l-fit">
+      <h2 id="l-fit" class="text-xl font-semibold">JobFitCard: full, detail, ring, and a not-a-fit case</h2>
+      <div class="mt-4 grid gap-6 lg:grid-cols-4">
+        <Plate caption="JobFitCard full"><JobFitCard variant="full" /></Plate>
+        <Plate caption="JobFitCard detail"><JobFitCard variant="detail" /></Plate>
+        <Plate caption="JobFitCard ring"><JobFitCard variant="ring" /></Plate>
+        <Plate caption="JobFitCard not a fit">
+          <JobFitCard
+            variant="full"
+            name={byId('nadia').name}
+            score={58}
+            matched={['Node.js']}
+            missing={[{ label: 'TypeScript', note: 'required' }, { label: 'PostgreSQL', note: 'required' }, { label: 'REST API design', note: 'required' }]}
+            reasoning="Three required skills are missing from the resume, so this profile does not meet the job's core requirements."
+          />
+        </Plate>
+      </div>
+    </section>
+
+    <section class="mt-12" aria-labelledby="l-list">
+      <h2 id="l-list" class="text-xl font-semibold">ApplicantList: top three, and all six</h2>
+      <div class="mt-4 grid gap-6 lg:grid-cols-2">
+        <Plate caption="ApplicantList top three"><ApplicantList rows={candidates.slice(0, 3)} /></Plate>
+        <Plate caption="ApplicantList all"><ApplicantList rows={candidates} /></Plate>
+      </div>
+    </section>
+
+    <section class="mt-12" aria-labelledby="l-frame">
+      <h2 id="l-frame" class="text-xl font-semibold">InterviewFrame: md, sm, second caption</h2>
+      <div class="mt-4 grid items-start gap-6 lg:grid-cols-3">
+        <Plate caption="InterviewFrame md"><InterviewFrame /></Plate>
+        <Plate caption="InterviewFrame sm"><InterviewFrame size="sm" /></Plate>
+        <Plate caption="InterviewFrame answer caption"><InterviewFrame caption="I would start with the billing boundary, because it changes least." timer="10:58" /></Plate>
+      </div>
+    </section>
+
+    <section class="mt-12" aria-labelledby="l-int">
+      <h2 id="l-int" class="text-xl font-semibold">IntegrityPanel, InterviewScore, ScoreTriplet</h2>
+      <div class="mt-4 grid items-start gap-6 lg:grid-cols-3">
+        <Plate caption="IntegrityPanel"><IntegrityPanel /></Plate>
+        <Plate caption="InterviewScore"><InterviewScore /></Plate>
+        <Plate caption="ScoreTriplet">
+          <div class="w-full max-w-[22rem] rounded-lg border border-border-secondary bg-bg-secondary p-5 shadow-md"><ScoreTriplet /></div>
+        </Plate>
+      </div>
+    </section>
+
+    <section class="mt-12" aria-labelledby="l-board">
+      <h2 id="l-board" class="text-xl font-semibold">PipelineBoard, SlotPicker (with and without toast)</h2>
+      <div class="mt-4 grid items-start gap-6 lg:grid-cols-[2fr_1fr_1fr]">
+        <Plate caption="PipelineBoard"><PipelineBoard /></Plate>
+        <Plate caption="SlotPicker with toast"><SlotPicker /></Plate>
+        <Plate caption="SlotPicker without toast"><SlotPicker showToast={false} /></Plate>
+      </div>
+    </section>
+
+    <section class="mt-12" aria-labelledby="l-career">
+      <h2 id="l-career" class="text-xl font-semibold">CareerPage, StageChart</h2>
+      <div class="mt-4 grid items-start gap-6 lg:grid-cols-2">
+        <Plate caption="CareerPage"><CareerPage /></Plate>
+        <Plate caption="StageChart"><StageChart /></Plate>
+      </div>
+    </section>
+
+    <section class="mt-12" aria-labelledby="l-small">
+      <h2 id="l-small" class="text-xl font-semibold">Chip tones, ScoreRing</h2>
+      <div class="mt-4 flex flex-wrap items-center gap-3">
+        {tones.map((t) => <Chip tone={t}>{t}</Chip>)}
+        <ScoreRing score={92} size={72} />
+        <ScoreRing score={58} size={72} />
+      </div>
+    </section>
+  </main>
+</Base>

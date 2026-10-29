@@ -1,0 +1,20 @@
+node_modules/
+dist/
+.astro/
+.DS_Store
+# Apple SF Pro: license forbids web use. Never import, ship or reference.
+src/assets/fonts/sf-pro/
+
+# Local tool settings (per machine)
+.claude/settings.local.json
+.impeccable/config.local.json
+.impeccable/*.cache.json
+
+# Agent worktrees
+.claude/worktrees/
+
+# Local env and Cloudflare dev state
+.env
+.env.local
+.dev.vars
+.wrangler/

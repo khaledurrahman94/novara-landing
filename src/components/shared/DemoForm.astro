@@ -1,0 +1,123 @@
+---
+/**
+ * Inline demo-request form: work email plus one button.
+ * TODO: pass `action` (the demo-request endpoint) once it exists. Without one, a valid submit shows
+ * the success state in dev only; a production build logs a warning and shows a neutral fallback line.
+ */
+interface Props {
+  id: string;
+  action?: string;
+  label?: string;
+  placeholder?: string;
+  submit?: string;
+  error?: string;
+  sendError?: string;
+  success?: string;
+  sending?: string;
+  fallback?: string;
+  class?: string;
+}
+const {
+  id,
+  action,
+  label = 'Work email',
+  placeholder = 'Work email',
+  submit = 'Request a demo',
+  error = 'Enter a work email, like name@company.com.',
+  sendError = 'Something went wrong. Please try again.',
+  success = 'Thanks. We will be in touch to book your demo.',
+  sending = 'Sending',
+  fallback = 'The demo form is not connected yet. Please check back soon.',
+  class: cls = '',
+} = Astro.props;
+---
+<form
+  id={id}
+  data-demo-form
+  data-error={error}
+  data-send-error={sendError}
+  data-sending={sending}
+  data-fallback={fallback}
+  action={action}
+  method="post"
+  class:list={['w-full max-w-[30rem]', cls]}
+>
+  <div data-fields class="flex flex-col gap-2 sm:flex-row">
+    <label for={`${id}-email`} class="sr-only">{label}</label>
+    <input
+      id={`${id}-email`}
+      name="email"
+      type="email"
+      required
+      autocomplete="email"
+      inputmode="email"
+      placeholder={placeholder}
+      aria-describedby={`${id}-msg`}
+      class="h-11 min-w-0 flex-1 rounded-md border border-border-primary bg-white px-3.5 font-[inherit] text-[0.9375rem] text-text-primary shadow-xs transition-[border-color,box-shadow] duration-[var(--duration-fast)] focus:border-primary focus:outline-2 focus:outline-offset-0 focus:outline-primary-200 aria-[invalid=true]:border-warning"
+    />
+    <button
+      type="submit"
+      class="h-11 whitespace-nowrap rounded-md bg-primary px-5 text-[0.9375rem] font-medium text-white shadow-xs transition-[background-color] duration-[var(--duration-fast)] hover:bg-primary-600 disabled:cursor-progress disabled:bg-primary-400"
+    >{submit}</button>
+  </div>
+  <p id={`${id}-msg`} data-msg role="alert" class="m-0 mt-2 min-h-5 text-sm text-text-secondary"></p>
+  <p data-success role="status" hidden class="m-0 flex items-center gap-2.5 rounded-md border border-border-secondary bg-bg px-4 py-3 text-[0.9375rem] text-text-primary">
+    <span class="grid size-5 shrink-0 place-items-center rounded-full bg-success/10 text-success" aria-hidden="true">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+    </span>
+    <span>{success}</span>
+  </p>
+</form>
+
+<script>
+  const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  document.querySelectorAll<HTMLFormElement>('form[data-demo-form]').forEach((form) => {
+    form.noValidate = true;
+    const input = form.querySelector<HTMLInputElement>('input[name="email"]');
+    const btn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+    const msg = form.querySelector<HTMLElement>('[data-msg]');
+    const fields = form.querySelector<HTMLElement>('[data-fields]');
+    const ok = form.querySelector<HTMLElement>('[data-success]');
+    if (!input || !btn || !msg || !fields || !ok) return;
+    const setError = (text: string): void => {
+      msg.textContent = text;
+      input.setAttribute('aria-invalid', text ? 'true' : 'false');
+    };
+    input.addEventListener('input', () => {
+      if (input.getAttribute('aria-invalid') === 'true') setError('');
+    });
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!EMAIL.test(input.value.trim())) {
+        setError(form.dataset['error'] ?? '');
+        input.focus();
+        return;
+      }
+      setError('');
+      const action = form.getAttribute('action');
+      if (!action && !import.meta.env.DEV) {
+        // TODO: remove once the demo-request endpoint is set as `action`.
+        console.warn('DemoForm: no action configured, the request was not sent.');
+        msg.textContent = form.dataset['fallback'] ?? '';
+        return;
+      }
+      if (action) {
+        const label = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = form.dataset['sending'] ?? '';
+        try {
+          const res = await fetch(action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } });
+          if (!res.ok) throw new Error(String(res.status));
+        } catch {
+          btn.disabled = false;
+          btn.textContent = label;
+          setError(form.dataset['sendError'] ?? '');
+          return;
+        }
+      }
+      fields.hidden = true;
+      msg.hidden = true;
+      ok.hidden = false;
+    });
+  });
+</script>

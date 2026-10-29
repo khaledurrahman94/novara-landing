@@ -1,0 +1,69 @@
+---
+import Avatar from '../../../shared/ui/Avatar.astro';
+import Icon from '../../../shared/ui/Icon.astro';
+import { copy } from './copy';
+import { QUALIFIED_AT, breakdown, type Applicant, type ReqId } from './model';
+/** One ranked applicant. The panel holds the matched and missing items and the reason. */
+interface Props { applicant: Applicant; rank: number; score: number; active: ReadonlySet<ReqId>; open?: boolean; hidden?: boolean }
+const { applicant: a, rank, score, active, open = false, hidden = false } = Astro.props;
+const b = breakdown(a, active);
+const n = b.matched.length + b.missing.length;
+const first = a.name.split(' ')[0];
+---
+<li class="sl-row" data-row data-id={a.id} data-open={open ? 'true' : 'false'} hidden={hidden}>
+  <button
+    type="button"
+    class="sl-row-btn"
+    data-row-btn
+    aria-expanded={open ? 'true' : 'false'}
+    aria-controls={`sl-panel-${a.id}`}
+    data-cursor="Open"
+  >
+    <span class="sl-rank" data-rank>{rank}</span>
+    <Avatar initials={a.initials} lead={a.id === 'amara'} />
+    <span class="min-w-0 flex-1">
+      <span class="block truncate text-[0.8125rem] font-semibold text-text-primary">{a.name}</span>
+      <span class="block truncate text-xs text-text-tertiary" data-sub>{b.matched.length} of {n} requirements met</span>
+    </span>
+    <span class="flex w-[4.5rem] shrink-0 flex-col items-end gap-1">
+      <span class="text-base font-semibold leading-none tabular-nums text-text-primary" data-score>{score}</span>
+      <span class="sl-bar" aria-hidden="true"><span class="sl-bar-fill" data-bar style={`transform:scaleX(${score / 100})`}></span></span>
+      <span class="text-[0.6875rem] leading-none text-text-tertiary" data-fitlabel>{score >= QUALIFIED_AT ? copy.qualified : copy.notAFit}</span>
+    </span>
+    <svg class="sl-chevron text-text-placeholder" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+  </button>
+  <div class="sl-panel" id={`sl-panel-${a.id}`} data-panel>
+    <div class="sl-panel-in">
+      <div class="grid gap-x-6 gap-y-4 px-4 pb-4 pl-[3.75rem] @md:grid-cols-2">
+        <div>
+          <p class="m-0 mb-2 text-xs font-semibold text-text-tertiary">{copy.matched} (<span data-count-matched>{b.matched.length}</span>)</p>
+          <ul class="m-0 flex list-none flex-col gap-1.5 p-0" data-matched>
+            {b.matched.map((m) => (
+              <li class="flex items-start gap-2.5 text-[0.8125rem] text-text-secondary">
+                <span class="mt-px grid size-5 shrink-0 place-items-center rounded-full bg-success/10 text-success"><Icon name="check" size={12} /></span>
+                <span><span class="font-medium text-text-primary">{m.label}</span> <span class="text-text-tertiary">{m.note}</span></span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <p class="m-0 mb-2 text-xs font-semibold text-text-tertiary">{copy.missing} (<span data-count-missing>{b.missing.length}</span>)</p>
+          <ul class="m-0 flex list-none flex-col gap-1.5 p-0" data-missing>
+            {b.missing.map((m) => (
+              <li class="flex items-start gap-2.5 text-[0.8125rem] text-text-secondary">
+                <span class="mt-px grid size-5 shrink-0 place-items-center rounded-full bg-warning/10 text-warning"><Icon name="alert" size={12} /></span>
+                <span><span class="font-medium text-text-primary">{m.label}</span> <span class="text-text-tertiary">{m.note}</span></span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="rounded-md bg-bg-tertiary p-3.5 @md:col-span-2">
+          <p class="m-0 mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-text-primary">
+            <Icon name="sparkles" size={13} class="text-primary" />{copy.whyPrefix} {first} {copy.whySuffix}
+          </p>
+          <p class="m-0 text-[0.8125rem] leading-[1.55] text-text-secondary" data-reason>{b.reason}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</li>

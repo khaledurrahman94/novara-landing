@@ -1,0 +1,28 @@
+---
+import { roundBars } from '../../../data/demo';
+/** One real hiring round. Bar heights are strictly proportional to value: the tiny bars are the point. */
+interface Props { class?: string }
+const { class: cls = '' } = Astro.props;
+const max = Math.max(...roundBars.map((b) => b.value));
+---
+<div class:list={['w-full max-w-[34rem] rounded-lg border border-border-secondary bg-bg-secondary p-5 font-ui text-text-primary shadow-md [--plot:11rem] sm:[--plot:14rem]', cls]} data-card="stage-chart">
+  <div class="flex items-baseline justify-between gap-3">
+    <p class="m-0 text-sm font-semibold">One real hiring round</p>
+    <p class="m-0 text-xs text-text-tertiary">Engineering roles · drawn to scale</p>
+  </div>
+  <ol class="m-0 mt-5 grid list-none grid-cols-4 gap-3 border-b border-border-primary p-0 sm:gap-6">
+    {roundBars.map((b) => (
+      <li class="flex flex-col items-center justify-end" style="height:calc(var(--plot) + 1.75rem)">
+        <span class="mb-1.5 text-sm font-semibold tabular-nums" data-anim="bar-value">{b.display}</span>
+        <span
+          data-anim="stage-bar"
+          class:list={['block w-full origin-bottom rounded-t-sm', b.key === 'hired' ? 'bg-primary' : 'bg-primary-400']}
+          style={`height:max(1px, calc(var(--plot) * ${(b.value / max).toFixed(5)}))`}
+        ></span>
+      </li>
+    ))}
+  </ol>
+  <ol class="m-0 mt-2 grid list-none grid-cols-4 gap-3 p-0 sm:gap-6">
+    {roundBars.map((b) => <li class="text-center text-xs text-text-tertiary">{b.label}</li>)}
+  </ol>
+</div>

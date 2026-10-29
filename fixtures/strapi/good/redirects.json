@@ -1,0 +1,35 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "documentId": "fxredirect00000000001",
+      "from": "/home",
+      "to": "/",
+      "kind": "permanent",
+      "note": "Old home path.",
+      "createdAt": "2026-10-01T09:00:00.000Z",
+      "updatedAt": "2026-10-01T09:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "documentId": "fxredirect00000000002",
+      "from": "/landing",
+      "to": "/home",
+      "kind": "permanent",
+      "note": "A chain on purpose: the build flattens it to /landing -> / and warns.",
+      "createdAt": "2026-10-01T09:00:00.000Z",
+      "updatedAt": "2026-10-01T09:00:00.000Z"
+    },
+    {
+      "id": 3,
+      "documentId": "fxredirect00000000003",
+      "from": "/demo",
+      "to": "/#demo-close",
+      "kind": "temporary",
+      "note": "Campaign link to the demo form.",
+      "createdAt": "2026-10-01T09:00:00.000Z",
+      "updatedAt": "2026-10-01T09:00:00.000Z"
+    }
+  ],
+  "meta": { "pagination": { "page": 1, "pageSize": 100, "pageCount": 1, "total": 3 } }
+}
