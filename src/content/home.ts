@@ -286,7 +286,7 @@ export const home = {
     copyright: '© 2026 Novara',
     rights: 'All rights reserved.',
     footnote:
-      'Names and profiles in product views are illustrative. Results figures are from one real hiring round for engineering roles.',
+      'Names and profiles in product views are illustrative. The results funnel is illustrative, not a customer result.',
     followLabel: 'Follow us',
     /** Real profile URLs are not known yet. An empty href hides that icon. */
     social: [
