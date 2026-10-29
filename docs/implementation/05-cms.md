@@ -1,6 +1,6 @@
 # 05 CMS (Strapi 5) and SEO
 
-The DM team edits words, images and SEO in Strapi. Code owns structure, components and motion. V3 is the winner and becomes `/`. Read 00-foundation and DESIGN.md first.
+The DM team edits words, images and SEO in Strapi. Code owns structure, components and motion. The home page lives at `/`. Read 00-foundation and DESIGN.md first.
 
 ## Decisions
 - **Strapi 5** (latest stable, TypeScript) lives in `cms/`, in this repo. It is its own package with its own lockfile, not a pnpm workspace. If Strapi's admin build fails under pnpm's strict linking, add `cms/.npmrc` with `node-linker=hoisted`.
@@ -9,13 +9,13 @@ The DM team edits words, images and SEO in Strapi. Code owns structure, componen
 - **Rebuild on publish:** Strapi server code, not a raw webhook. After a publish, unpublish or delete on any content type, or a media change, wait 60s for things to settle, then POST to `DEPLOY_HOOK_URL` (body and headers configurable by env). It must work with a Cloudflare deploy hook, or with GitHub `repository_dispatch` and an Actions build. Document whichever path you choose.
 - **Build input:** Astro reads Strapi at build time with a read-only API token (`STRAPI_URL`, `STRAPI_TOKEN`). Strapi is the source of truth. There's no silent fallback to local copy: a build without Strapi fails, with a clear message.
 - **Environments:** `PUBLIC_SITE_ENV=production|staging`. Anything but production renders `noindex,nofollow` on every page, and robots.txt says `Disallow: /`.
-- **R&D routes:** `/v3` gets a 301 to `/`. `/v1`, `/v2` and `/lab*` stay noindex and out of the sitemap. Don't delete them.
+- **Legacy and lab routes:** `/v1`, `/v2` and `/v3` get a 301 to `/` (code redirects). `/lab*` stays noindex and out of the sitemap.
 
 ## Lock-down: the DM team can't touch components or motion
 These layers are enforced. Every agent must keep them true.
-1. **No field for structure or style.** Schemas store only text, media, links, booleans and enums that name designed variants (`tone: white | plate`). No colour, size, font, class, CSS, animation, raw HTML, iframe or embed fields. Ever.
+1. **No field for structure or style.** Schemas store only text, media, links, booleans and enums that name designed options (`tone: white | plate`). No colour, size, font, class, CSS, animation, raw HTML, iframe or embed fields. Ever.
 2. **Fixed sections on hand-built pages.** Home (and later AI Platform and ROI) is a single type with fixed components, never a dynamic zone. Lists whose count drives layout or animation get `min = max` (the current count), or stay in code.
-3. **Copy only, length-capped.** Every string has `maxLength`, set to about 1.3× the current V3 copy rounded up, so long copy can't break the fluid layout or the pinned scenes.
+3. **Copy only, length-capped.** Every string has `maxLength`, set to about 1.3× the current home copy rounded up, so long copy can't break the fluid layout or the pinned scenes.
 4. **Demo internals stay in code.** Chips, `results.phases`, evidence and trend data, drag help, status and aria strings, and everything in the labs' `copy.ts`. Rule: if changing it can break an animation or the product truth, it stays in code.
 5. **Schemas are code.** Schema JSON lives in git. The Content-Type Builder only works in dev mode, so production can't change schemas.
 6. **Role.** A "Marketing" admin role, created in Strapi `bootstrap` code so it's reproducible. It gets content-manager create, read, update, delete and publish on content types, and the media library. It gets no settings, plugins, roles, users, webhooks, API tokens or Content-Type Builder.
@@ -65,13 +65,13 @@ All page types have Draft & publish on. Slugs are `uid` fields, lowercase and hy
 - Generated at build:
   - `robots.txt` from `site-settings` (staging overrides it);
   - the sitemap (`@astrojs/sitemap`, which drops every noindex page and uses `updatedAt` as `lastmod`);
-  - `_redirects` from the `redirect` collection plus code redirects (`/v3`);
-  - `404.astro` in V3 style.
+  - `_redirects` from the `redirect` collection plus code redirects (`/v1`, `/v2`, `/v3`);
+  - `404.astro` in the home page's style.
 - Preview: an on-demand route `/preview/[...path]` (`prerender = false`). It needs a `PREVIEW_SECRET`, fetches `status=draft` with a separate preview token, and always sends noindex (meta and `X-Robots-Tag`). Wire it to Strapi 5's admin preview config so editors get a Preview button.
 
 ## Validation (build fails with a readable list)
 - A zod mismatch, a required field missing, or a value over its length cap.
-- Duplicate slugs within a type, or a path that collides across types or with code routes (`/`, `/v1`…, `/preview`, `/404`).
+- Duplicate slugs within a type, or a path that collides across types or with code routes (`/`, `/v1`…`/v3`, `/lab*`, `/preview`, `/404`).
 - Duplicate `metaTitle` or `metaDescription` across indexable pages.
 - An image without alt text.
 - Redirects:
@@ -85,15 +85,15 @@ All page types have Draft & publish on. Slugs are `uid` fields, lowercase and hy
 ## Phases
 - **1a, foundation slice (now):**
   - **CMS:** the `cms/` app, contracts, `home`, the Marketing role, the rebuild trigger, preview config, Docker, and `docs/deploy.md` (the user's runbook for Vivasoft cloud and Cloudflare: env vars, tokens, the first admin, backups via a nightly `pg_dump`).
-  - **Site:** Astro plumbing, V3 at `/` with its copy from Strapi, validation.
+  - **Site:** Astro plumbing, the home page at `/` with its copy from Strapi, validation.
 - **1b:**
   - blog (post, category, author; hub, category and post pages, Article JSON-LD);
   - legal (one `legal-page` collection, one URL each under `/legal/*`, shared tab layout);
   - the Book a Demo page;
   - redirects created automatically when a published slug changes (Document Service middleware);
   - an SEO side panel (Strapi admin `addEditViewSidePanel`) with a Google preview, a social preview, length meters, focus-keyword checks, missing alt and metadata, and a score.
-- **2:** feature and solution templates, the block library from V3 components (About, Security), the HR glossary (DefinedTerm), Integrations, Pricing.
+- **2:** feature and solution templates, the block library from the home page components (About, Security), the HR glossary (DefinedTerm), Integrations, Pricing.
 - **3:** AI Platform (hand-built), the ROI calculator (logic in code, labels and default assumptions in the CMS), and Reviews (only with real reviews).
 
 ## Product truth (unchanged)
-Claim only features marked Available. No invented quotes, stats, certifications or prices. The seed carries the V3 copy as it is.
+Claim only features marked Available. No invented quotes, stats, certifications or prices. The seed carries the home copy as it is.

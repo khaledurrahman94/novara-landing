@@ -454,64 +454,64 @@
         "purpose": "Hero shot flattens with scroll; 5deg below 640px."
       },
       {
-        "name": "v3-cursor-follow",
+        "name": "motion-cursor-follow",
         "value": "quickTo 0.28s power3.out, offset +14px/+16px",
-        "purpose": "/v3 contextual cursor pill trail; fine pointers only."
+        "purpose": "home page contextual cursor pill trail; fine pointers only."
       },
       {
-        "name": "v3-magnetic",
+        "name": "motion-magnetic",
         "value": "0.3 x offset, clamp 6px, quickTo 0.4s power3.out",
-        "purpose": "/v3 nav CTA and demo-form submit."
+        "purpose": "home page nav CTA and demo-form submit."
       },
       {
-        "name": "v3-tilt",
+        "name": "motion-tilt",
         "value": "perspective 1400px, max 6deg (4 on hero/bento), quickTo 0.7s; depth n x 10px, 0.8s",
-        "purpose": "/v3 data-tilt / data-depth cursor tilt and layer parallax."
+        "purpose": "home page data-tilt / data-depth cursor tilt and layer parallax."
       },
       {
-        "name": "v3-scroll-depth",
+        "name": "motion-scroll-depth",
         "value": "y -s*90px -> +s*90px, scrub true, top bottom -> bottom top",
-        "purpose": "/v3 data-speed drift, 768px and up."
+        "purpose": "home page data-speed drift, 768px and up."
       },
       {
-        "name": "v3-scrub",
+        "name": "motion-scrub",
         "value": "scrub 0.6-0.8",
-        "purpose": "/v3 reversible scroll-tied motion: hero reassembly, results, interview zoom, how track."
+        "purpose": "home page reversible scroll-tied motion: hero reassembly, results, interview zoom, how track."
       },
       {
-        "name": "v3-reveal",
+        "name": "motion-reveal",
         "value": "y 20 -> 0, 0.8s expo.out at top 85%, once",
-        "purpose": "/v3 triggered heading and intro entries; 4s failsafe."
+        "purpose": "home page triggered heading and intro entries; 4s failsafe."
       },
       {
-        "name": "v3-spring-home",
+        "name": "motion-spring-home",
         "value": "elastic.out(1, 0.7), 0.9s",
-        "purpose": "/v3 missed drag returns home."
+        "purpose": "home page missed drag returns home."
       },
       {
-        "name": "v3-spring-land",
+        "name": "motion-spring-land",
         "value": "back.out(1.4), 0.55s",
-        "purpose": "/v3 slow drag release into its target."
+        "purpose": "home page slow drag release into its target."
       },
       {
-        "name": "v3-throw",
+        "name": "motion-throw",
         "value": "InertiaPlugin, own velocity, exact end; threshold 250px/s",
-        "purpose": "/v3 thrown drag lands on target."
+        "purpose": "home page thrown drag lands on target."
       },
       {
-        "name": "v3-hold-to-drag",
+        "name": "motion-hold-to-drag",
         "value": "250ms hold, 8px move cancels, touch-action pan-y",
-        "purpose": "/v3 touch drags never trap vertical swipes."
+        "purpose": "home page touch drags never trap vertical swipes."
       },
       {
-        "name": "v3-pin-query",
+        "name": "motion-pin-query",
         "value": "(min-width: 768px) and (min-height: 620px)",
-        "purpose": "/v3 pins only here; refreshPriority in DOM order (results 3, interview 2, how 1); ScrollTrigger.sort on refreshInit."
+        "purpose": "home page pins only here; refreshPriority in DOM order (results 3, interview 2, how 1); ScrollTrigger.sort on refreshInit."
       },
       {
-        "name": "v3-canvas-dpr",
+        "name": "motion-canvas-dpr",
         "value": "min(devicePixelRatio, 2), redraw on demand",
-        "purpose": "/v3 canvas performance cap."
+        "purpose": "home page canvas performance cap."
       },
       {
         "name": "fluid-root",
@@ -529,14 +529,9 @@
         "purpose": "Paired breakpoints leave no fractional-px gap."
       },
       {
-        "name": "v1-pin-query",
+        "name": "pin-query",
         "value": "(min-width: 1024px) and (min-height: 680px) and (prefers-reduced-motion: no-preference)",
-        "purpose": "/v1 pinned scenes and the /v3 interview lab pin only here; header stays inside the pin."
-      },
-      {
-        "name": "v1-pin-step",
-        "value": "How 0.35, Platform 0.4, Job Fit 0.5 viewports per step; settle 180ms, ease to nearest step centre over 0.6s",
-        "purpose": "Short pins; snapping exempt in the outer half of the first and last steps."
+        "purpose": "the interview lab pins only here; header stays inside the pin."
       },
       {
         "name": "ghost-pointer",
@@ -563,7 +558,7 @@
         "value": "1024px"
       },
       {
-        "name": "v3-pin-min-height",
+        "name": "motion-pin-min-height",
         "value": "620px"
       },
       {
@@ -637,7 +632,7 @@
       "name": "Cursor Pill",
       "kind": "custom",
       "refersTo": "ui",
-      "description": "/v3 contextual pill naming the one action under a fine pointer (data-cursor).",
+      "description": "home page contextual pill naming the one action under a fine pointer (data-cursor).",
       "html": "<span class=\"ds-cursor\">Drag</span>",
       "css": ".ds-cursor { display: inline-block; padding: 4px 10px; border-radius: 9999px; background: var(--color-text-primary, #101828); color: var(--color-white, #fff); font: 500 12px/1.2 'Geist Variable', system-ui, sans-serif; white-space: nowrap; transition: transform 150ms cubic-bezier(0.25, 1, 0.5, 1); } .ds-cursor:hover { transform: scale(1.04); } .ds-cursor:active { transform: scale(0.92); }"
     },
@@ -652,7 +647,7 @@
   ],
   "narrative": {
     "northStar": "The Ruled Column",
-    "overview": "A white page with one centred 1200px column, framed full-height by two 1px hairlines and cut into sections by full-width hairlines. Inside that frame the page is quiet: Geist in near-black, semibold headings with tight negative tracking, and plenty of air. The product carries the visual weight. Every section's image is the rebuilt Novara app in Inter, set on a pale plate, and it animates once to show the feature working.\n\nThe density is low and the rhythm even. Sections alternate between white and the pale gray plate (#F9FAFB), so the page reads as a stack of ruled bands, not floating cards. Violet is rare. It marks actions (buttons, focus, caret, selection) and data (funnel bars, the hired bar, chart bars, active states inside the product UI). The brand gradient appears exactly once, as a masked horizon glow behind the hero product shot.\n\nThis system documents the /v2 page. Tokens, the product UI components and the motion bootstrap are shared with /v1 and /v3 (see the closing notes in Components). /v3 keeps this world and adds a hands-on interaction layer on top of it.",
+    "overview": "A white page with one centred 1200px column, framed full-height by two 1px hairlines and cut into sections by full-width hairlines. Inside that frame the page is quiet: Geist in near-black, semibold headings with tight negative tracking, and plenty of air. The product carries the visual weight. Every section's image is the rebuilt Novara app in Inter, set on a pale plate, and it animates once to show the feature working.\n\nThe density is low and the rhythm even. Sections alternate between white and the pale gray plate (#F9FAFB), so the page reads as a stack of ruled bands, not floating cards. Violet is rare. It marks actions (buttons, focus, caret, selection) and data (funnel bars, the hired bar, chart bars, active states inside the product UI). The brand gradient appears exactly once, as a masked horizon glow behind the hero product shot.\n\nThis system documents the home page (`/`). It is hands-on: every feature can be touched, dragged, toggled or tested, and a layer of pointer and scroll interaction sits on top of the quiet frame (see Interaction layer and Motion).",
     "keyCharacteristics": [
       "One 1200px column framed by border-secondary hairlines, with a hairline at the top of every section.",
       "White and #F9FAFB bands alternate, and there are no section backgrounds beyond those two.",
@@ -707,8 +702,8 @@
         "section": "components"
       },
       {
-        "name": "The Scale Once Rule",
-        "body": "The fluid root grows everything, and ScaleToFit only shrinks. Nothing scales twice and nothing scales up.",
+        "name": "The Root-Grows Rule",
+        "body": "The fluid root grows everything. Nothing else scales, so nothing scales twice.",
         "section": "layout"
       },
       {
@@ -743,11 +738,11 @@
       "Do show features as rebuilt product UI in Inter on a plate, with real text and a screen-reader caption.",
       "Do keep violet to actions and data, and make the final or most important bar the only full-strength one.",
       "Do set headings in Geist 600 with -0.03em tracking and balanced wrapping.",
-      "Do animate once, on entry, with expo-out on /v2, and leave every end state visible without JS or under reduced motion on every page.",
-      "Do give each /v3 element one motion kind (scrubbed, triggered or interactive), and make scrubbed motion fully reversible.",
-      "Do opt into the /v3 interaction layer with data attributes (`data-cursor`, `data-magnetic`, `data-tilt`, `data-depth`, `data-speed`), and give every drag a button or keyboard equivalent.",
+      "Do play triggered motion once, on entry, with expo-out, and leave every end state visible without JS or under reduced motion.",
+      "Do give each home page element one motion kind (scrubbed, triggered or interactive), and make scrubbed motion fully reversible.",
+      "Do opt into the home page interaction layer with data attributes (`data-cursor`, `data-magnetic`, `data-tilt`, `data-depth`, `data-speed`), and give every drag a button or keyboard equivalent.",
       "Do set product-UI text on the 10, 11, 12 and 13px Inter steps.",
-      "Do author page and mockup sizes in rem under data-fluid, and let ScaleToFit only shrink.",
+      "Do author page and mockup sizes in rem under data-fluid.",
       "Do write paired breakpoints as .98px complements or not all and (...).",
       "Do keep a pinned scene's heading inside the pin, and leave the first and last steps free of snapping.",
       "Do cancel an auto demo on the first real input, restore what it changed, and play it only once."
@@ -756,7 +751,7 @@
       "Don't use the brand gradient anywhere but the single hero horizon, and never behind text.",
       "Don't put shadows on marketing surfaces. Shadows are for product UI.",
       "Don't fill status chips with full-strength color. Use the 10% tint, a dot and dark text.",
-      "Don't pin sections or hijack scroll on /v2. On /v3, pin only at 768px wide and 620px tall or more, and never trap vertical swipes on touch.",
+      "Don't pin below 768px wide or 620px tall, and never trap vertical swipes on touch.",
       "Don't add a cursor pill to an element that does nothing, or run pointer effects under reduced motion or on touch (except the idle drift).",
       "Don't introduce colors outside the token palette. The palette is binding.",
       "Don't use range media syntax (width < 1024px), px text inside a rem mockup, or zoom on a Draggable or Flip scene.",

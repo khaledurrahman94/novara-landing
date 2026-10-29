@@ -8,9 +8,9 @@ Scripts: `pnpm dev | build | preview | check | validate:fixtures`. Builds need c
 - `astro.config.mjs` (Cloudflare adapter, sitemap, code redirects), `wrangler.jsonc`, `tsconfig.json`, `.env.example`, `public/brand/` (logos). `robots.txt`, `_redirects`, `_headers` and `404.html` are generated.
 - `src/styles/tokens.css`: Tailwind import, fonts, `@theme`. Imported by Base only.
 - `src/layouts/Base.astro` props: `seo` (a `seo.meta` object, for CMS pages) or `title, description, noindex` (code pages), plus `pageTitle, schemas, breadcrumbs, forceNoindex, noCanonical, fluid`. It loads `site-settings` itself.
-- `src/components/seo/Seo.astro` renders head tags from `seo.meta` + site settings; `src/lib/seo.ts` resolves them (also used by validation). `components/{shared,v1,v2,v3}/`
+- `src/components/seo/Seo.astro` renders head tags from `seo.meta` + site settings; `src/lib/seo.ts` resolves them (also used by validation). `components/{shared,home}/`
 - `src/scripts/motion.ts`
-- `src/pages/`: `index.astro` (V3 home, via `components/v3/HomePage.astro`), `v1/`, `v2/`, `lab*` (noindex), `rnd/index.astro` (R&D chooser, noindex), `404.astro`, `robots.txt.ts`, `preview/[...path].astro` (the only on-demand route). `/v3` is a code redirect to `/` (`src/lib/redirects.ts`).
+- `src/pages/`: `index.astro` (the home page, via `components/home/HomePage.astro`), `lab*` (component and lab test pages, noindex), `404.astro`, `robots.txt.ts`, `preview/[...path].astro` (the only on-demand route). The legacy URLs `/v1`, `/v2` and `/v3` are code redirects to `/` (`src/lib/redirects.ts`).
 - `src/content.config.ts` + `src/lib/{collections,schemas,strapi-loader}.ts`: Content Layer loaders for `site-settings` and `redirect`; schemas mirror the contracts in 05-cms.md.
 - `src/lib/strapi.ts` (REST client, populate helper) and `strapi-build.ts` (env files, fixtures; Node only).
 - `src/lib/validate.ts` (build checks), `pages.ts` (page providers: add one per new collection), `site-build.ts`, `routes-scan.ts`. `src/integrations/novara-site.ts` runs them at `astro:config:done` and writes `_redirects`/`_headers`.
@@ -39,7 +39,7 @@ Exports `onReady(cb)`, `prefersReducedMotion()`, `getLenis()`, plus re-exports `
 ## SEO
 - Always render through `Base`. CMS pages pass `seo` (the `seo.meta` shape); code pages pass `title` + `description`. Canonical is self by default (`Astro.url` + site), or `canonicalUrl`.
 - Title is `metaTitle`, else `<pageTitle> | Novara` from the `titleTemplate` setting. OG and Twitter fall back to the meta title and description, then to `site-settings.defaultOgImage`, then to `/brand/novara-full.svg` (build warning until a 1200x630 PNG is uploaded).
-- Indexing: `PUBLIC_SITE_ENV=production` is the only environment that renders `index`; anything else is `noindex,nofollow` on every page and `robots.txt` says `Disallow: /`. A page is also noindex if `seo.index` is false or the page passes `noindex`/`forceNoindex` (R&D routes, labs, 404, preview). The sitemap lists only registered indexable pages, in production.
-- `/` takes its SEO from `v3.seo` mapped into the `seo.meta` shape (`homeSeoMeta()` in `src/lib/pages.ts`) until home is read from Strapi.
+- Indexing: `PUBLIC_SITE_ENV=production` is the only environment that renders `index`; anything else is `noindex,nofollow` on every page and `robots.txt` says `Disallow: /`. A page is also noindex if `seo.index` is false or the page passes `noindex`/`forceNoindex` (labs, 404, preview). The sitemap lists only registered indexable pages, in production.
+- `/` takes its SEO from `home.seo` mapped into the `seo.meta` shape (`homeSeoMeta()` in `src/lib/pages.ts`) until home is read from Strapi.
 - JSON-LD in Seo: Organization (Vivasoft, maker) + SoftwareApplication "Novara" (BusinessApplication, no ratings/prices), per-type schemas (`schemas` prop), BreadcrumbList, then `seo.structuredData`. The home FAQPage block stays in `HomePage.astro`.
 - Copy: sentence case, no em dashes, hiring-only positioning.

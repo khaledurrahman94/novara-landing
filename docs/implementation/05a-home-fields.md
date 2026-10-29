@@ -1,18 +1,18 @@
-# 05a Home fields: `v3` object path to Strapi field
+# 05a Home fields: `home` object path to Strapi field
 
-Wiring table for the Astro side. Strapi type `api::home.home` (single type, Draft & publish on). Read it at build time with `GET /api/home` (published) and, for preview, `GET /api/home?status=draft`. The seed (`cms/scripts/seed.ts`) fills it from `src/content/v3.ts`, so the table below is also the seed's mapping.
+Wiring table for the Astro side. Strapi type `api::home.home` (single type, Draft & publish on). Read it at build time with `GET /api/home` (published) and, for preview, `GET /api/home?status=draft`. The seed (`cms/scripts/seed.ts`) fills it from `src/content/home.ts`, so the table below is also the seed's mapping.
 
 ## How to fetch
 - `GET /api/home` returns every section populated, with no `populate` query (route middleware). A `populate` you send wins.
 - Strapi 5 shape: `{ data: { documentId, publishedAt, seo, nav, hero, results, decide, how, platform, faq, close, footer } }`. No `attributes` wrapper. Components carry an `id`; ignore it.
 - Same token rules as everything else: `Authorization: Bearer <STRAPI_TOKEN>`. Only `find` exists over REST (no write routes).
 - Mirror the caps below in zod (`.max(cap)`, `.min(1)`), and `how.steps` as exactly 4, `faq.items` as 3 to 10. A mismatch fails the build.
-- Merge, do not replace: build the page copy as `{ ...codeCopy, hero: { ...codeCopy.hero, title, sub, secondary }, ... }`, so the keys marked "code" below keep coming from `v3.ts`.
+- Merge, do not replace: build the page copy as `{ ...codeCopy, hero: { ...codeCopy.hero, title, sub, secondary }, ... }`, so the keys marked "code" below keep coming from `home.ts`.
 
 ## In the CMS
 Every field is required and non-empty. Strapi checks min and required rules on publish, not on draft save, so a draft can be incomplete but cannot go live that way. Caps are 1.3x the longest current string, rounded up, with a floor of 10 (3-char `FAQ` would otherwise cap at 4). Lists take the longest of their current items.
 
-| `v3` path | Strapi field | Type | Cap | Count |
+| `home` path | Strapi field | Type | Cap | Count |
 |---|---|---|---|---|
 | `seo.title` | `seo.metaTitle` | string | 70 (contract) | 1 |
 | `seo.description` | `seo.metaDescription` | text | 50 to 170 (contract) | 1 |
@@ -56,7 +56,7 @@ Notes:
 ## Stays in code (never in the CMS)
 Rule 4 of 05-cms: if changing it can break an animation or the product truth, it stays in code.
 
-| `v3` path | Why |
+| `home` path | Why |
 |---|---|
 | `nav.label`, `nav.home`, `nav.anchors[].href`, `footer.nav` | aria strings and link targets |
 | `form.label`, `placeholder`, `error`, `sendError`, `success`, `sending`, `fallback` | validation, live-region and status strings |
@@ -65,5 +65,5 @@ Rule 4 of 05-cms: if changing it can break an animation or the product truth, it
 | `results.phases`, `legend`, `hired`, `hintFine`, `hintTouch` | drive the dot animation |
 | `decide.caption`, `from`, `to`, `stamp`, `dragHelp`, `drop`, `movedStatus`, `backStatus`, `evidenceTitle`, `evidence.*`, `note` | demo internals, aria and status strings, product truth |
 | `platform.copyEmbed`, `copied`, `copyFail`, `candidateName`, `candidateNamePlaceholder`, `restore`, `save`, `saved`, `hoverBar`, `trend`, `note` | demo internals and status strings |
-| The two labs: `components/v3/labs/screening/copy.ts`, `components/v3/labs/interview/copy.ts` (titles and subs included) | rule 4 names the labs' `copy.ts` explicitly |
+| The two labs: `components/home/labs/screening/copy.ts`, `components/home/labs/interview/copy.ts` (titles and subs included) | rule 4 names the labs' `copy.ts` explicitly |
 | Inline `figcaption` strings in `Platform.astro` | aria |

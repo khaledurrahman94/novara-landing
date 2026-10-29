@@ -1,8 +1,8 @@
 # Launch checklist
 
-Work through this before the site goes live. V3 is `/` now; struck items are done in code.
+Work through this before the site goes live. The home page is `/`; struck items are done in code.
 
-- [ ] **Demo form endpoint.** Pass `action` to DemoForm (V2) and to the V1 CTA form, using HubSpot, Formspree, the CRM or whatever marketing uses. Without it, production builds warn and send nothing.
+- [ ] **Demo form endpoint.** Pass `action` to the home page's DemoForm, using HubSpot, Formspree, the CRM or whatever marketing uses. Without it, production builds warn and send nothing.
 - [x] ~~**Indexing.** Remove `noindex` from the winning page and the sitemap filter.~~ Done in code: `PUBLIC_SITE_ENV=production` renders `index` on `/`, and the sitemap and `robots.txt` are generated. Left to do: set `PUBLIC_SITE_ENV=production` on the production deploy only (see `docs/deploy-site.md`).
 - [ ] **Social preview.** Upload a 1200×630 PNG as `defaultOgImage` in Strapi Site settings (with alt text). The default is an SVG, which LinkedIn, X and Facebook don't render; the build warns until the PNG exists.
 - [ ] **AI interviewer media.** Replace InterviewFrame's neutral stand-in with a real still or clip of Novara's avatar.
