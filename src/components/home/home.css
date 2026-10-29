@@ -253,6 +253,15 @@ html {
   border-color: var(--color-text-primary);
   color: var(--color-white);
 }
+.home-how [data-how-dot] {
+  transition:
+    background-color var(--duration-base) var(--ease-out-quart),
+    border-color var(--duration-base) var(--ease-out-quart);
+}
+.home-how [data-how-dot][data-on='true'] {
+  background: var(--color-text-primary);
+  border-color: var(--color-text-primary);
+}
 .home-how [data-vignette] {
   transition: border-color var(--duration-base) var(--ease-out-quart);
 }

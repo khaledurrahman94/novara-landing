@@ -1,5 +1,5 @@
 /**
- * How it works. Desktop: the section pins and the four steps slide past on a horizontal track,
+ * How it works. Desktop: the section pins and the nine steps slide past on a horizontal track,
  * scrubbed to scroll; each step's vignette is a slice of that same timeline, so it plays in
  * proportion to scroll and reverses with it. Phones: a vertical list whose vignettes play once on entry.
  */
@@ -7,52 +7,44 @@ import { gsap, ScrollTrigger, getLenis } from '../../../scripts/motion';
 import { $, EASE, navH, num, one } from './util';
 import { createGhost, type Ghost } from './ghost';
 
-/** Loops that run only while their step is active and on screen (the interview waveform). */
-const loops = new Map<number, gsap.core.Animation>();
 /** Ghost pointers created for the vignettes, removed on cleanup. */
 const pointers: Ghost[] = [];
-const syncLoops = (active: number | null): void => loops.forEach((a, i) => (i === active ? a.play() : a.pause()));
-const clearLoops = (): void => {
-  loops.forEach((a) => a.kill());
-  loops.clear();
-  pointers.splice(0).forEach((g) => g.destroy());
-};
+const clearPointers = (): void => void pointers.splice(0).forEach((g) => g.destroy());
 
-/** One vignette's animation, 0..1 long. Elements are looked up by data-v. */
+/** One vignette's animation, 0..1 long. Elements are looked up by data-v, or by the shared cards' own data-anim hooks. */
 function vignette(i: number, el: HTMLElement, paused: boolean): gsap.core.Timeline {
   const tl = gsap.timeline({ paused, defaults: { ease: 'power2.out' } });
   const all = (k: string): HTMLElement[] => $(el, `[data-v="${k}"]`);
+  const anim = (k: string): HTMLElement[] => $(el, `[data-anim="${k}"]`);
   const first = (k: string): HTMLElement | null => one(el, `[data-v="${k}"]`);
 
   if (i === 0) {
-    tl.fromTo(all('chip'), { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.15 }, 0);
-    tl.fromTo(all('title'), { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.15 }, 0.05);
-    tl.fromTo(all('skill'), { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.12, stagger: 0.05 }, 0.15);
-    // The description writes itself in, word by word.
-    tl.fromTo(all('word'), { opacity: 0.1 }, { opacity: 1, duration: 0.05, stagger: 0.7 / Math.max(1, all('word').length), ease: 'none' }, 0.3);
+    // The draft writes itself in, line by line.
+    tl.fromTo(anim('draft-line'), { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.2, stagger: 0.18 }, 0.1);
   } else if (i === 1) {
+    tl.fromTo(anim('row'), { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.25, stagger: 0.15, ease: EASE }, 0.05);
+  } else if (i === 2) {
     // A candidate presses Apply, then the applications land in the list.
     tl.fromTo(all('apply').slice(0, 1), { scale: 1 }, { scale: 0.86, duration: 0.08, yoyo: true, repeat: 1 }, 0.05);
     tl.fromTo(all('applied'), { opacity: 0, x: 28 }, { opacity: 1, x: 0, duration: 0.3, stagger: 0.2, ease: EASE }, 0.25);
-  } else if (i === 2) {
-    all('fit-num').forEach((n, k) => {
+  } else if (i === 3) {
+    // What matches, what is missing, and the reasoning.
+    tl.fromTo(anim('criteria-row'), { opacity: 0, x: -8 }, { opacity: 1, x: 0, duration: 0.2, stagger: 0.12 }, 0.05);
+    tl.fromTo(anim('reasoning'), { opacity: 0 }, { opacity: 1, duration: 0.3 }, 0.6);
+  } else if (i === 4) {
+    tl.fromTo(anim('row'), { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.25, stagger: 0.15, ease: EASE }, 0.05);
+  } else if (i === 5) {
+    // Pick a slot, then the booking confirms.
+    tl.fromTo(anim('slot'), { opacity: 0.4 }, { opacity: 1, duration: 0.2, stagger: 0.08 }, 0.05);
+    tl.fromTo(anim('toast'), { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.25 }, 0.6);
+  } else if (i === 6) {
+    const count = one(el, '[data-anim="count"]');
+    if (count) {
       const o = { v: 0 };
-      tl.fromTo(o, { v: 0 }, { v: num(n.dataset['count']), duration: 0.5, ease: 'power2.out', onUpdate: () => void (n.textContent = String(Math.round(o.v))) }, 0.05 + k * 0.1);
-    });
-    tl.fromTo(all('fit-bar'), { scaleX: 0 }, { scaleX: 1, duration: 0.5, stagger: 0.1, ease: 'power2.out' }, 0.05);
-    tl.fromTo(all('qualified'), { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.15 }, 0.55);
-    tl.fromTo(all('interview'), { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.15 }, 0.6);
-    tl.fromTo(all('wave'), { opacity: 0, scaleY: 0.2 }, { opacity: 1, scaleY: 1, duration: 0.15, stagger: 0.015 }, 0.68);
-    // Captions appear word by word, as in the live interview.
-    tl.fromTo(all('cap'), { opacity: 0 }, { opacity: 1, duration: 0.05, stagger: 0.28 / Math.max(1, all('cap').length), ease: 'none' }, 0.72);
-    // While this step is active the waveform keeps moving, bar by bar.
-    const bars = all('wave');
-    if (bars.length) {
-      const lp = gsap.timeline({ paused: true, repeat: -1 });
-      bars.forEach((b, k) => lp.fromTo(b, { scaleY: 1 }, { scaleY: 0.3 + ((k * 37) % 5) * 0.1, duration: 0.35 + (k % 3) * 0.1, ease: 'sine.inOut', yoyo: true, repeat: 3 }, k * 0.06));
-      loops.set(i, lp);
+      tl.fromTo(o, { v: 0 }, { v: num(count.dataset['count']), duration: 0.5, onUpdate: () => void (count.textContent = String(Math.round(o.v))) }, 0.05);
     }
-  } else {
+    tl.fromTo(anim('bar'), { scaleX: 0 }, { scaleX: 1, duration: 0.4, stagger: 0.1 }, 0.3);
+  } else if (i === 7) {
     // A pointer picks Amara up from Completed, drops her in HR Round, and the stamp lands.
     const card = first('card');
     const from = first('from');
@@ -78,6 +70,12 @@ function vignette(i: number, el: HTMLElement, paused: boolean): gsap.core.Timeli
       tl.to(g.el, { opacity: 0, duration: 0.15 }, 0.82);
       if (stamp) tl.fromTo(stamp, { opacity: 0, y: 4 }, { opacity: 1, y: 0, duration: 0.2 }, 0.74);
     }
+  } else {
+    // The recruiter presses Offer, and the stage chip changes to Offered.
+    tl.fromTo(all('offer'), { scale: 1 }, { scale: 0.92, duration: 0.1, yoyo: true, repeat: 1 }, 0.15);
+    tl.fromTo(all('stage-from'), { opacity: 1 }, { opacity: 0, duration: 0.15 }, 0.45);
+    tl.fromTo(all('stage-to'), { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.2 }, 0.45);
+    tl.fromTo(all('stamp'), { opacity: 0, y: 4 }, { opacity: 1, y: 0, duration: 0.2 }, 0.65);
   }
   return tl;
 }
@@ -90,6 +88,8 @@ function setActive(root: HTMLElement, i: number): void {
     if (k === i) b?.setAttribute('aria-current', 'step');
     else b?.removeAttribute('aria-current');
   });
+  // The progress rail fills up to the active step.
+  $(root, '[data-how-dot]').forEach((d, k) => void (d.dataset['on'] = k <= i ? 'true' : 'false'));
 }
 
 /** Every step is a button. Clicking one makes it active, and the mode-specific handler does the rest. */
@@ -117,7 +117,6 @@ export function initHowPinned(root: HTMLElement): (() => void) | void {
   if (!viewport || !track || !progress || !line || steps.length < 2) return;
 
   const n = steps.length;
-  let current = 0;
   root.classList.add('is-h');
   progress.hidden = false;
   const dist = (): number => (n - 1) * viewport.clientWidth;
@@ -127,19 +126,16 @@ export function initHowPinned(root: HTMLElement): (() => void) | void {
     scrollTrigger: {
       trigger: root,
       start: () => `top ${navH()}px`,
-      // Modest: the track needs only about 2.5 screens of scroll.
-      end: () => `+=${Math.round(Math.min(dist() * 0.45 + 200, window.innerHeight * 3))}`,
+      // About a third of a screen of scroll per step, so nine steps stay under four screens.
+      end: () => `+=${Math.round(Math.min(n * window.innerHeight * 0.36, window.innerHeight * 3.6))}`,
       pin: true,
       scrub: 0.7,
       anticipatePin: 1,
       refreshPriority: 1,
       invalidateOnRefresh: true,
-      onToggle: (self) => syncLoops(self.isActive ? current : null),
     },
     onUpdate: () => {
-      current = Math.min(n - 1, Math.max(0, Math.round(master.time() - 0.5)));
-      setActive(root, current);
-      if (master.scrollTrigger?.isActive) syncLoops(current);
+      setActive(root, Math.min(n - 1, Math.max(0, Math.round(master.time() - 0.5))));
     },
   });
   // Slide i is centred at time HOLD + i. A short hold at each end lets the first and last steps rest.
@@ -185,7 +181,7 @@ export function initHowPinned(root: HTMLElement): (() => void) | void {
 
   return () => {
     btnCleanups.forEach((c) => c());
-    clearLoops();
+    clearPointers();
     root.classList.remove('is-h');
     progress.hidden = true;
     master.scrollTrigger?.kill();
@@ -206,14 +202,10 @@ export function initHowSimple(root: HTMLElement): () => void {
     const vt = vignette(i, v, true);
     replays[i] = () => void vt.duration(1.4).restart();
     triggers.push(ScrollTrigger.create({ trigger: step, start: 'top 75%', once: true, onEnter: () => void vt.duration(1.4).play() }));
-    // Loops run only while their step is on screen.
-    triggers.push(
-      ScrollTrigger.create({ trigger: step, start: 'top 85%', end: 'bottom 15%', onToggle: (self) => void (self.isActive ? loops.get(i)?.play() : loops.get(i)?.pause()) }),
-    );
   });
   return () => {
     triggers.forEach((t) => t.kill());
-    clearLoops();
+    clearPointers();
     Object.keys(replays).forEach((k) => delete replays[Number(k)]);
   };
 }

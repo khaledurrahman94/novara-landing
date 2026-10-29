@@ -86,10 +86,15 @@ export const home = {
   how: {
     title: 'How it works',
     steps: [
-      { title: 'Post the job', text: 'Novara drafts the description from the role, level and skills.' },
-      { title: 'Candidates apply', text: 'From your branded career page or a shared link.' },
-      { title: 'Screen and interview', text: 'A Job Fit Score for every resume, and AI first rounds for the candidates you invite.' },
-      { title: 'You decide', text: 'Review the evidence and move people to your HR round.' },
+      { title: 'Create a Job', text: 'Enter the role, level and key skills. Novara drafts the description and requirements.' },
+      { title: 'Publish the Job', text: 'Go live on your branded career page and as a shareable link, with embed code for your own site.' },
+      { title: 'Receive Applications', text: 'Candidates apply with a resume from your career page or a shared link and land in Applied.' },
+      { title: 'Analyze Resumes', text: 'Novara reads each resume against the job and shows what matches, what is missing and why.' },
+      { title: 'Evaluate Job Fit Scores', text: 'Every applicant gets a Job Fit Score, so you can rank them and choose who to invite.' },
+      { title: 'Invite Candidates to AI Interviews', text: 'Invite the candidates you choose. They pick a slot you set and take the interview with an AI interviewer.' },
+      { title: 'Generate Interview Evaluation', text: 'Novara scores every answer and the whole interview, with a report, the recording and any integrity flags.' },
+      { title: 'Shortlist and Manage Candidates', text: 'Review the resume, Job Fit Score and interview report together, then move people through your stages.' },
+      { title: 'Make the Final Hiring Decision', text: 'Move candidates to HR Round, then to Offered or Rejected. Your team makes the call.' },
     ],
   },
   platform: {
