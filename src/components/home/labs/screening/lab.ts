@@ -1,23 +1,22 @@
 /**
- * ScreeningLab behaviour. Scoped to its root, deterministic (see model.ts),
- * and cleans up every listener, tween, Draggable and ScrollTrigger it makes.
+ * ScreeningLab animation. It plays by itself, once, when the ranking scrolls into view: the job's
+ * remaining requirements light up one after another, the scores roll and the list re-sorts with Flip
+ * each time, then a new application arrives and is scored. Every number comes from model.ts.
+ * Scoped to its root; cleans up every timeline, tween and ScrollTrigger it makes.
+ * Without JS the page shows the start state; under reduced motion it shows the final state.
  */
 import { gsap, ScrollTrigger, onReady, prefersReducedMotion } from '../../../../scripts/motion';
-import { Draggable } from 'gsap/Draggable';
-import { holdToDrag } from '../../motion/util';
-import { InertiaPlugin } from 'gsap/InertiaPlugin';
 import { Flip } from 'gsap/Flip';
 import { copy } from './copy';
-import { APPLICANTS, band, breakdown, rank, score, type Applicant, type Item, type ReqId } from './model';
+import { APPLICANTS, REQS, band, breakdown, defaultActive, rank, score, type Applicant, type Item, type ReqId } from './model';
 
-gsap.registerPlugin(Draggable, InertiaPlugin, Flip, ScrollTrigger);
+gsap.registerPlugin(Flip, ScrollTrigger);
 
 const byId = new Map(APPLICANTS.map((a) => [a.id, a]));
 
 interface RowRefs {
   a: Applicant;
   li: HTMLElement;
-  btn: HTMLButtonElement;
   panel: HTMLElement;
   scoreEl: HTMLElement;
   bar: HTMLElement;
@@ -33,19 +32,6 @@ interface RowRefs {
   n: { v: number };
 }
 
-interface CardRefs {
-  a: Applicant;
-  slot: HTMLElement;
-  card: HTMLElement;
-  status: HTMLElement;
-  btn: HTMLButtonElement;
-  arc: SVGCircleElement | null;
-  count: HTMLElement | null;
-  ring: HTMLElement | null;
-  drag: Draggable | null;
-  state: 'idle' | 'screening' | 'done';
-}
-
 const must = <T extends Element>(scope: ParentNode, sel: string): T => {
   const el = scope.querySelector<T>(sel);
   if (!el) throw new Error(`ScreeningLab: missing ${sel}`);
@@ -53,26 +39,16 @@ const must = <T extends Element>(scope: ParentNode, sel: string): T => {
 };
 
 function mount(root: HTMLElement): () => void {
-  const ac = new AbortController();
-  const { signal } = ac;
-  const reduced = (): boolean => prefersReducedMotion();
-
-  const figure = root.closest('figure') ?? root;
-  const chipsBox = must<HTMLElement>(root, '[data-chips]');
-  const chips = Array.from(chipsBox.querySelectorAll<HTMLButtonElement>('[data-req]'));
-  const hint = must<HTMLElement>(root, '[data-hint]');
+  const reduced = prefersReducedMotion();
   const list = must<HTMLElement>(root, '[data-list]');
-  const ranking = must<HTMLElement>(root, '[data-ranking]');
-  const tray = must<HTMLElement>(root, '[data-tray]');
-  const trayCards = must<HTMLElement>(root, '[data-tray-cards]');
-  const trayHint = must<HTMLElement>(root, '[data-tray-hint]');
-  const trayCount = must<HTMLElement>(root, '[data-tray-count]');
-  const trayDone = must<HTMLElement>(root, '[data-tray-done]');
-  const live = must<HTMLElement>(root, '[data-live]');
+  const status = must<HTMLElement>(root, '[data-status]');
   const tplMatched = must<HTMLTemplateElement>(root, '[data-tpl="matched"]');
   const tplMissing = must<HTMLTemplateElement>(root, '[data-tpl="missing"]');
+  const hint = status.textContent ?? '';
+  const chips = new Map<ReqId, HTMLElement>();
+  root.querySelectorAll<HTMLElement>('[data-req]').forEach((c) => chips.set(c.dataset['req'] as ReqId, c));
 
-  const active = new Set<ReqId>(chips.filter((c) => c.getAttribute('aria-pressed') === 'true').map((c) => c.dataset['req'] as ReqId));
+  const active = defaultActive();
 
   /* ---------- refs ---------- */
   const rows = new Map<string, RowRefs>();
@@ -82,7 +58,6 @@ function mount(root: HTMLElement): () => void {
     rows.set(a.id, {
       a,
       li,
-      btn: must<HTMLButtonElement>(li, '[data-row-btn]'),
       panel: must<HTMLElement>(li, '[data-panel]'),
       scoreEl: must<HTMLElement>(li, '[data-score]'),
       bar: must<HTMLElement>(li, '[data-bar]'),
@@ -97,37 +72,8 @@ function mount(root: HTMLElement): () => void {
       n: { v: 0 },
     });
   });
-
-  const cards = new Map<string, CardRefs>();
-  trayCards.querySelectorAll<HTMLElement>('[data-slot]').forEach((slot) => {
-    const a = byId.get(slot.dataset['id'] ?? '');
-    if (!a) return;
-    const card = must<HTMLElement>(slot, '[data-card]');
-    cards.set(a.id, {
-      a,
-      slot,
-      card,
-      status: must<HTMLElement>(card, '[data-status]'),
-      btn: must<HTMLButtonElement>(card, '[data-screen]'),
-      arc: card.querySelector<SVGCircleElement>('[data-anim="ring-arc"]'),
-      count: card.querySelector<HTMLElement>('[data-anim="count"]'),
-      ring: card.querySelector<HTMLElement>('.sl-card-ring'),
-      drag: null,
-      state: 'idle',
-    });
-  });
-
   const inRanking = new Set<string>([...rows.values()].filter((r) => !r.li.hidden).map((r) => r.a.id));
-  const timers: number[] = [];
-  const later = (fn: () => void, ms: number): void => {
-    timers.push(window.setTimeout(fn, ms));
-  };
-
-  /* ---------- reveal the interactive parts, hide the static fallbacks ---------- */
-  root.querySelectorAll<HTMLElement>('[data-static-reqs]').forEach((el) => (el.hidden = true));
-  chipsBox.hidden = false;
-  tray.hidden = false;
-  root.setAttribute('data-ready', '');
+  const visibleIds = (): string[] => [...inRanking];
 
   /* ---------- rendering ---------- */
   const fill = (tpl: HTMLTemplateElement, target: HTMLElement, items: Item[]): void => {
@@ -156,7 +102,7 @@ function mount(root: HTMLElement): () => void {
     gsap.killTweensOf(r.bar);
     if (from !== undefined) r.n.v = from;
     r.label.textContent = copy[band(to)];
-    if (reduced()) {
+    if (reduced) {
       r.n.v = to;
       r.scoreEl.textContent = String(to);
       gsap.set(r.bar, { scaleX: to / 100 });
@@ -176,25 +122,8 @@ function mount(root: HTMLElement): () => void {
     gsap.fromTo(r.bar, { scaleX: from === undefined ? gsap.getProperty(r.bar, 'scaleX') : from / 100 }, { scaleX: to / 100, duration: 0.8, ease: 'power3.out' });
   };
 
-  const visibleIds = (): string[] => [...inRanking];
-  const visibleLis = (): HTMLElement[] => visibleIds().map((id) => rows.get(id)?.li).filter((x): x is HTMLElement => !!x);
-
-  const ordinal = (n: number): string => {
-    const s = ['th', 'st', 'nd', 'rd'];
-    const v = n % 100;
-    return n + (s[(v - 20) % 10] ?? s[v] ?? s[0] ?? 'th');
-  };
-
-  let liveTimer = 0;
-  const announce = (msg: string): void => {
-    window.clearTimeout(liveTimer);
-    liveTimer = window.setTimeout(() => {
-      live.textContent = msg;
-    }, 350);
-  };
-
   /** Recompute scores, re-sort the DOM and animate the move with Flip. */
-  const refresh = (opts: { roll?: boolean; entering?: string } = {}): void => {
+  const refresh = (opts: { entering?: string } = {}): void => {
     const order = rank(visibleIds(), active);
     const enteringLi = opts.entering ? rows.get(opts.entering)?.li : undefined;
     const before = Array.from(list.children).filter((el) => !(el as HTMLElement).hidden && el !== enteringLi);
@@ -204,9 +133,8 @@ function mount(root: HTMLElement): () => void {
     order.forEach((id, i) => {
       const r = rows.get(id);
       if (!r) return;
-      const to = score(r.a, active);
       paintDetails(r);
-      if (opts.roll !== false) rollTo(r, to, id === opts.entering ? 0 : undefined);
+      rollTo(r, score(r.a, active), id === opts.entering ? 0 : undefined);
       r.rankEl.textContent = String(i + 1);
       list.append(r.li);
     });
@@ -218,434 +146,110 @@ function mount(root: HTMLElement): () => void {
     const moved = order.some((id, i) => before[i] !== rows.get(id)?.li);
     if (moved || enteringLi) {
       Flip.from(state, {
-        duration: reduced() ? 0 : 0.7,
+        duration: reduced ? 0 : 0.7,
         ease: 'power3.out',
-        stagger: reduced() ? 0 : 0.025,
+        stagger: reduced ? 0 : 0.025,
         absolute: false,
         onEnter: (els: Element[]) =>
-          gsap.fromTo(els, { opacity: 0, y: -14, scale: 0.98 }, { opacity: 1, y: 0, scale: 1, duration: reduced() ? 0 : 0.55, ease: 'expo.out', clearProps: 'transform,opacity' }),
-        onLeave: (els: Element[]) => gsap.to(els, { opacity: 0, duration: reduced() ? 0 : 0.25, ease: 'power2.out' }),
+          gsap.fromTo(els, { opacity: 0, y: -14, scale: 0.98 }, { opacity: 1, y: 0, scale: 1, duration: reduced ? 0 : 0.55, ease: 'expo.out', clearProps: 'transform,opacity' }),
+        onLeave: (els: Element[]) => gsap.to(els, { opacity: 0, duration: reduced ? 0 : 0.25, ease: 'power2.out' }),
       });
     }
-    const top = rows.get(order[0] ?? '');
-    if (top) announce(`Ranking updated. ${top.a.name} is first with ${score(top.a, active)}.`);
   };
 
-  /* ---------- initial paint ---------- */
-  rows.forEach((r) => {
-    const s = score(r.a, active);
-    r.n.v = s;
-    gsap.set(r.bar, { scaleX: s / 100 });
-  });
-  const setOpen = (r: RowRefs, open: boolean): void => {
-    r.li.dataset['open'] = open ? 'true' : 'false';
-    r.btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-    r.panel.toggleAttribute('inert', !open);
-  };
-  rows.forEach((r) => setOpen(r, r.li.dataset['open'] === 'true'));
-
-  /* ---------- requirement chips ---------- */
-  let hintTimer = 0;
-  const defaultHint = hint.textContent ?? '';
-  chips.forEach((chip) => {
-    chip.addEventListener(
-      'click',
-      () => {
-        const id = chip.dataset['req'] as ReqId;
-        const on = chip.getAttribute('aria-pressed') === 'true';
-        if (on && active.size === 1) {
-          chip.setAttribute('aria-disabled', 'true');
-          hint.textContent = copy.lastRequirement;
-          window.clearTimeout(hintTimer);
-          hintTimer = window.setTimeout(() => {
-            hint.textContent = defaultHint;
-            chip.removeAttribute('aria-disabled');
-          }, 2400);
-          if (!reduced()) gsap.fromTo(chip, { x: -4 }, { x: 0, duration: 0.5, ease: 'elastic.out(1, 0.35)', clearProps: 'transform' });
-          return;
-        }
-        if (on) active.delete(id);
-        else active.add(id);
-        chip.setAttribute('aria-pressed', on ? 'false' : 'true');
-        chip.removeAttribute('aria-disabled');
-        refresh();
-      },
-      { signal },
-    );
-  });
-
-  /* ---------- rows: expand and collapse ---------- */
+  /* ---------- the open row, the lit requirement, the status line ---------- */
   let refreshTimer = 0;
   const settleScroll = (): void => {
     window.clearTimeout(refreshTimer);
-    refreshTimer = window.setTimeout(() => ScrollTrigger.refresh(), reduced() ? 50 : 520);
+    refreshTimer = window.setTimeout(() => ScrollTrigger.refresh(), reduced ? 50 : 520);
   };
-  rows.forEach((r) => {
-    r.btn.addEventListener(
-      'click',
-      () => {
-        const open = r.li.dataset['open'] !== 'true';
-        rows.forEach((o) => {
-          if (o !== r && o.li.dataset['open'] === 'true') setOpen(o, false);
-        });
-        setOpen(r, open);
-        settleScroll();
-      },
-      { signal },
-    );
-  });
-
-  /* ---------- screening a new application ---------- */
-  const setRing = (c: CardRefs, p: number): void => {
-    if (c.arc) {
-      const circ = Number(c.arc.dataset['circ'] ?? 0);
-      c.arc.style.strokeDashoffset = String(circ * (1 - p / 100));
-    }
-    if (c.count) c.count.textContent = String(Math.round(p));
-  };
-  const resetRing = (c: CardRefs): void => {
-    if (c.arc) c.arc.style.strokeDashoffset = c.arc.dataset['circ'] ?? '0';
-    if (c.count) c.count.textContent = '–';
-    c.ring?.setAttribute('aria-label', 'Job Fit Score not screened');
-  };
-  cards.forEach(resetRing);
-
-  const updateTray = (): void => {
-    const left = [...cards.values()].filter((c) => c.state !== 'done').length;
-    trayCount.textContent = String(left);
-    const any = left < cards.size;
-    trayDone.hidden = !any;
-    trayHint.textContent = left === 0 ? copy.trayDone : copy.trayHint;
-    (trayDone.querySelector('p') as HTMLElement | null)?.toggleAttribute('hidden', left !== 0);
-  };
-  updateTray();
-
-  const spring = (c: CardRefs, done?: () => void): void => {
-    gsap.killTweensOf(c.card);
-    if (reduced()) {
-      gsap.set(c.card, { x: 0, y: 0, scale: 1, rotation: 0 });
-      c.drag?.update();
-      done?.();
-      return;
-    }
-    gsap.to(c.card, {
-      x: 0,
-      y: 0,
-      scale: 1,
-      rotation: 0,
-      duration: 0.9,
-      ease: 'elastic.out(1, 0.7)',
-      onUpdate: () => c.drag?.update(),
-      onComplete: () => {
-        c.drag?.update();
-        done?.();
-      },
-    });
-  };
-
-  const addToRanking = (c: CardRefs): void => {
-    const r = rows.get(c.a.id);
-    if (!r) return;
-    inRanking.add(c.a.id);
-    rows.forEach((o) => {
-      if (o !== r && o.li.dataset['open'] === 'true') setOpen(o, false);
-    });
-    setOpen(r, true);
-    refresh({ roll: true, entering: c.a.id });
-    // A soft wash on the new row, so the eye finds it.
-    const wash = getComputedStyle(root).getPropertyValue('--color-primary-50').trim() || '#F5F1FF';
-    if (!reduced()) gsap.fromTo(r.btn, { backgroundColor: wash }, { backgroundColor: 'rgba(255,255,255,0)', duration: 1.6, ease: 'power2.out', clearProps: 'backgroundColor' });
-    const place = [...rank(visibleIds(), active)].indexOf(c.a.id) + 1;
-    announce(`${c.a.name} screened. Job Fit ${score(c.a, active)}, ranked ${ordinal(place)}.`);
-    settleScroll();
-  };
-
-  const screen = (id: string): void => {
-    const c = cards.get(id);
-    if (!c || c.state !== 'idle') return;
-    c.state = 'screening';
-    c.card.dataset['state'] = 'screening';
-    c.btn.disabled = true;
-    c.status.textContent = copy.screening;
-    c.drag?.disable();
-    const target = score(c.a, active);
-    const o = { p: 0 };
-    spring(c);
-    const finish = (): void => {
-      setRing(c, target);
-      c.ring?.setAttribute('aria-label', `Job Fit Score ${target} out of 100`);
-      c.status.textContent = `Job Fit ${target}%`;
-      const leave = (): void => {
-        c.state = 'done';
-        c.card.dataset['state'] = 'done';
-        c.slot.dataset['done'] = 'true';
-        gsap.set(c.card, { clearProps: 'opacity,y,scale' });
-        updateTray();
-        addToRanking(c);
-      };
-      if (reduced()) return leave();
-      later(() => gsap.to(c.card, { opacity: 0, y: -10, scale: 0.97, duration: 0.3, ease: 'power2.in', onComplete: leave }), 380);
-    };
-    if (reduced()) return finish();
-    gsap.to(o, { p: target, duration: 1.1, delay: 0.15, ease: 'power2.out', onUpdate: () => setRing(c, o.p), onComplete: finish });
-  };
-
-  cards.forEach((c) => {
-    c.btn.addEventListener('click', () => screen(c.a.id), { signal });
-  });
-
-  const reset = (): void => {
-    const state = Flip.getState(visibleLis());
-    cards.forEach((c) => {
-      gsap.killTweensOf(c.card);
-      c.state = 'idle';
-      c.card.dataset['state'] = 'idle';
-      delete c.slot.dataset['done'];
-      c.btn.disabled = false;
-      c.status.textContent = copy.notScreened;
-      gsap.set(c.card, { clearProps: 'all' });
-      resetRing(c);
-      c.drag?.enable();
-      c.drag?.update();
-      const r = rows.get(c.a.id);
-      if (r) {
-        inRanking.delete(c.a.id);
-        r.li.hidden = true;
-        setOpen(r, false);
-      }
-      if (!reduced()) gsap.fromTo(c.card, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.5, ease: 'expo.out', clearProps: 'opacity,transform' });
-    });
-    const order = rank(visibleIds(), active);
-    order.forEach((id, i) => {
-      const r = rows.get(id);
-      if (!r) return;
-      r.rankEl.textContent = String(i + 1);
-      list.append(r.li);
-    });
+  const openOnly = (id: string | undefined): void => {
     rows.forEach((r) => {
-      if (!inRanking.has(r.a.id)) list.append(r.li);
+      const open = r.a.id === id;
+      r.li.dataset['open'] = open ? 'true' : 'false';
+      r.panel.toggleAttribute('inert', !open);
     });
-    Flip.from(state, { duration: reduced() ? 0 : 0.6, ease: 'power3.out', absolute: false });
-    updateTray();
-    announce('Applications reset.');
     settleScroll();
   };
-  must<HTMLButtonElement>(trayDone, '[data-reset]').addEventListener('click', reset, { signal });
+  const first = (): string | undefined => rank(visibleIds(), active)[0];
 
-  /* ---------- drag a resume onto the ranking ---------- */
-  const draggables: Draggable[] = [];
-  const unholds: (() => void)[] = [];
-  cards.forEach((c) => {
-    let settled = true;
-    const settle = (): void => {
-      const d = c.drag;
-      if (settled || !d) return;
-      settled = true;
-      const hit = d.hitTest(ranking, '40%');
-      delete root.dataset['dragging'];
-      delete ranking.dataset['over'];
-      c.card.dataset['grabbed'] = 'false';
-      delete c.slot.dataset['lifted'];
-      if (hit && c.state === 'idle') screen(c.a.id);
-      else spring(c);
-    };
-    const d = Draggable.create(c.card, {
-      type: 'x,y',
-      bounds: figure,
-      edgeResistance: 0.7,
-      inertia: !reduced(),
-      dragClickables: false,
-      zIndexBoost: false,
-      onPress() {
-        settled = false;
-        gsap.killTweensOf(c.card);
-        c.slot.dataset['lifted'] = 'true';
-        c.card.dataset['grabbed'] = 'true';
-        if (!reduced()) gsap.to(c.card, { scale: 1.03, duration: 0.3, ease: 'expo.out' });
-      },
-      onDragStart() {
-        root.dataset['dragging'] = 'true';
-      },
-      onDrag() {
-        ranking.dataset['over'] = this.hitTest(ranking, '40%') ? 'true' : 'false';
-      },
-      onRelease() {
-        if (!reduced()) gsap.to(c.card, { scale: 1, duration: 0.4, ease: 'expo.out' });
-        
-        window.setTimeout(() => {
-          if (!c.drag?.isThrowing) settle();
-        }, 0);
-      },
-      onThrowComplete() {
-        settle();
-      },
-    })[0];
-    if (d) {
-      c.drag = d;
-      draggables.push(d);
-      unholds.push(holdToDrag(c.card, d));
-    }
+  const light = (id: ReqId): void => {
+    const chip = chips.get(id);
+    if (!chip) return;
+    active.add(id);
+    chip.dataset['on'] = 'true';
+    const state = chip.querySelector('[data-chip-state]');
+    if (state) state.textContent = `, ${copy.counted}`;
+    if (!reduced) gsap.fromTo(chip, { scale: 0.94 }, { scale: 1, duration: 0.6, ease: 'back.out(2.4)', clearProps: 'transform' });
+  };
+  const say = (text: string): void => void (status.textContent = text);
+  const labelOf = (id: ReqId): string => REQS.find((r) => r.id === id)?.label ?? id;
+
+  /* ---------- start state, then the sequence ---------- */
+  rows.forEach((r) => {
+    r.n.v = score(r.a, active);
+    gsap.set(r.bar, { scaleX: r.n.v / 100 });
   });
+  root.setAttribute('data-ready', '');
+  openOnly(first());
 
-  /* ---------- intro: the cards fan out of a stack, once, and always end side by side ---------- */
-  const pointer = must<HTMLElement>(root, '[data-pointer]');
-  let touched = false;
-  let showTl: gsap.core.Timeline | null = null;
-  let ghostTl: gsap.core.Timeline | null = null;
-  let showState: 'wait' | 'run' | 'done' = 'wait';
-  let demoChip: HTMLButtonElement | null = null;
+  const later = REQS.filter((r) => !active.has(r.id)).map((r) => r.id);
+  const fresh = [...rows.values()].find((r) => r.li.hidden)?.a.id;
 
-  const openOnly = (r: RowRefs | null): void => {
-    rows.forEach((o) => setOpen(o, o === r));
-    settleScroll();
-  };
-  const firstRow = (): RowRefs | null => rows.get(rank(visibleIds(), active)[0] ?? '') ?? null;
+  if (reduced) {
+    later.forEach(light);
+    if (fresh) inRanking.add(fresh);
+    refresh(fresh ? { entering: fresh } : {});
+    openOnly(first());
+    return () => window.clearTimeout(refreshTimer);
+  }
 
-  /** Ends the demo and puts the UI back to how it loads. Also used when the demo finishes. */
-  const inViewport = (): boolean => {
-    const r = root.getBoundingClientRect();
-    return r.bottom > 0 && r.top < window.innerHeight;
-  };
-  const endShowcase = (target?: EventTarget | null): void => {
-    if (showState === 'done') return;
-    const wasRunning = showState === 'run';
-    showState = 'done';
-    showTl?.kill();
-    showTl = null;
-    ghostTl?.kill();
-    ghostTl = null;
-    gsap.killTweensOf(pointer);
-    gsap.set(pointer, { opacity: 0 });
-    if (!wasRunning) return;
-    const pressed = demoChip && demoChip.getAttribute('aria-pressed') === 'true' ? demoChip : null;
-    demoChip = null;
-    // The visitor's own press on that chip toggles it; don't toggle twice.
-    if (pressed && !(target instanceof Node && pressed.contains(target))) pressed.click();
-    // Never change row heights while the lab is off screen.
-    if (inViewport()) openOnly(firstRow());
-  };
+  const tl = gsap.timeline({ paused: true });
+  let t = 0.5;
+  later.forEach((id) => {
+    tl.call(
+      () => {
+        say(`${copy.addingRequirement} ${labelOf(id)}.`);
+        light(id);
+        refresh();
+        openOnly(first());
+      },
+      undefined,
+      t,
+    );
+    t += 3;
+  });
+  if (fresh) {
+    const a = rows.get(fresh)?.a;
+    tl.call(
+      () => {
+        inRanking.add(fresh);
+        refresh({ entering: fresh });
+        openOnly(fresh);
+        say(`${copy.newApplication} ${a?.name ?? ''}, ${a ? score(a, active) : ''}.`);
+      },
+      undefined,
+      t,
+    );
+    t += 3.4;
+  }
+  tl.call(
+    () => {
+      say(hint);
+      openOnly(first());
+    },
+    undefined,
+    t,
+  );
 
-  const ctx = gsap.context(() => {
-    if (reduced()) {
-      showState = 'done';
-      return;
-    }
-    const slots = [...cards.values()].map((c) => c.slot);
-    const first = slots[0];
-    if (first) {
-      const stack = (s: HTMLElement): { x: number; y: number } => ({
-        x: trayCards.clientWidth / 2 - (s.offsetLeft + s.offsetWidth / 2),
-        y: first.offsetTop - s.offsetTop,
-      });
-      const fan = gsap.timeline({ paused: true, defaults: { ease: 'expo.out', duration: 1.1 }, onComplete: () => void gsap.set(slots, { clearProps: 'transform' }) });
-      slots.forEach((s, i) => {
-        fan.fromTo(
-          s,
-          { x: () => stack(s).x + (i - 0.5) * 6, y: () => stack(s).y + i * 8, rotation: i === 0 ? -5 : 4, scale: 0.96, transformOrigin: '50% 90%' },
-          { x: 0, y: 0, rotation: 0, scale: 1 },
-          i * 0.08,
-        );
-      });
-      ScrollTrigger.create({
-        trigger: tray,
-        start: 'top 90%',
-        once: true,
-        onEnter: () => {
-          fan.invalidate();
-          fan.play(0);
-        },
-      });
-    }
+  const st = ScrollTrigger.create({ trigger: list, start: 'top 68%', once: true, onEnter: () => void tl.play(0) });
 
-    /* ---------- auto showcase, once: open the 4th row, then a ghost toggles Kubernetes on and off ---------- */
-    const k8s = chips.find((c) => c.dataset['req'] === 'k8s');
-    const target = rows.get(rank(visibleIds(), active)[3] ?? '');
-    const point = (el: HTMLElement): { x: number; y: number } => {
-      const w = root.getBoundingClientRect();
-      const r = el.getBoundingClientRect();
-      return { x: r.left - w.left + 18, y: r.top - w.top + r.height / 2 };
-    };
-    const onScreen = (el: HTMLElement): boolean => {
-      const r = el.getBoundingClientRect();
-      return r.top > 0 && r.bottom < window.innerHeight;
-    };
-    const run = (): void => {
-      if (touched || showState !== 'wait' || !target) return;
-      showState = 'run';
-      const tl = gsap.timeline({ onComplete: () => void (showTl = null) });
-      showTl = tl;
-      tl.call(() => openOnly(target), undefined, 0.4);
-      if (k8s && !k8s.disabled) {
-        const kb = k8s;
-        const at = 3.8;
-        tl.call(
-          () => {
-            if (!onScreen(kb)) {
-              // Chip out of view: leave the opened row as it is.
-              showState = 'done';
-              showTl?.kill();
-              showTl = null;
-              return;
-            }
-            const t = point(kb);
-            gsap.set(pointer, { x: t.x + 90, y: t.y + 60, scale: 1, opacity: 0 });
-            ghostTl = gsap
-              .timeline()
-              .to(pointer, { opacity: 0.85, duration: 0.25, ease: 'power2.out' }, 0)
-              .to(pointer, { x: t.x, y: t.y, duration: 1.1, ease: 'expo.out' }, 0)
-              .to(pointer, { scale: 0.85, duration: 0.12, ease: 'power2.out' }, 1.2)
-              .call(() => {
-                demoChip = kb;
-                kb.click();
-              })
-              .to(pointer, { scale: 1, duration: 0.25, ease: 'expo.out' })
-              .to(pointer, { scale: 0.85, duration: 0.12, ease: 'power2.out' }, 4.2)
-              .call(() => {
-                kb.click();
-                demoChip = null;
-              })
-              .to(pointer, { scale: 1, duration: 0.25, ease: 'expo.out' })
-              .to(pointer, { opacity: 0, duration: 0.35, ease: 'power2.in' }, '>+0.3')
-              .call(() => {
-                if (inViewport()) openOnly(firstRow());
-                showState = 'done';
-              }, undefined, '>+1.2');
-          },
-          undefined,
-          at,
-        );
-      } else {
-        tl.call(() => void (showState = 'done'), undefined, 4);
-      }
-    };
-    ScrollTrigger.create({ trigger: ranking, start: 'top 68%', once: true, onEnter: () => later(run, 500) });
-  }, root);
-
-  // Any input from the visitor stops the demo for good, and puts everything back.
-  const stop = (e?: Event): void => {
-    touched = true;
-    endShowcase(e?.target);
-  };
-  root.addEventListener('pointerdown', stop, { signal });
-  root.addEventListener('touchstart', stop, { passive: true, signal });
-  root.addEventListener('keydown', stop, { signal });
-  root.addEventListener('pointermove', (e) => void ((Math.abs(e.movementX) + Math.abs(e.movementY) > 0) && stop()), { signal });
-
-  /* ---------- cleanup ---------- */
   return () => {
-    ac.abort();
-    timers.forEach((t) => window.clearTimeout(t));
-    window.clearTimeout(liveTimer);
-    window.clearTimeout(hintTimer);
+    st.kill();
+    tl.kill();
     window.clearTimeout(refreshTimer);
-    unholds.forEach((fn) => fn());
-    draggables.forEach((d) => d.kill());
-    showTl?.kill();
-    ghostTl?.kill();
-    gsap.killTweensOf(pointer);
-    ctx.revert();
-    const targets: Element[] = [...rows.values()].flatMap((r) => [r.li, r.bar, r.btn]);
-    cards.forEach((c) => targets.push(c.card, c.slot));
+    const targets: Element[] = [...rows.values()].flatMap((r) => [r.li, r.bar]);
+    chips.forEach((c) => targets.push(c));
     gsap.killTweensOf(targets);
     rows.forEach((r) => gsap.killTweensOf(r.n));
     Flip.killFlipsOf(targets);
