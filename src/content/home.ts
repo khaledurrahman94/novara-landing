@@ -30,10 +30,10 @@ export const home = {
     /** Rendered when `live`. Later items (Platform, Features, Solutions, ROI Calculator, Resources) join this list when their pages exist. */
     links: [
       { label: 'Home', href: '/', live: true },
-      { label: 'Login', href: SIGN_IN_HREF, live: true },
+      { label: 'Sign in', href: SIGN_IN_HREF, live: true },
       { label: 'Contact us', href: '/contact', live: true },
       { label: 'About us', href: '/about', live: true },
-      { label: 'Pricing', href: '/pricing', live: false },
+      { label: 'Pricing', href: '/pricing', live: true },
     ],
   },
   form: {
@@ -50,8 +50,8 @@ export const home = {
     title: 'Hire the person, not the pile.',
     sub: 'Novara scores every resume against the job, runs the first round with an AI interviewer, and shows your team the evidence behind every shortlist.',
     secondary: 'See the AI interview',
-    pricing: { label: 'See pricing', href: '/pricing', live: false },
-    signIn: { label: 'Login', href: SIGN_IN_HREF, live: true },
+    pricing: { label: 'See pricing', href: '/pricing', live: true },
+    signIn: { label: 'Sign in', href: SIGN_IN_HREF, live: true },
     shotCaption: 'Novara candidate review: ranked applicants on the left, and Amara Okafor with a Job Fit Score of 92, an AI Interview Score of 88 and one integrity event to review.',
     chips: {
       node: 'Matched: Node.js',
@@ -306,15 +306,16 @@ export const home = {
       {
         label: 'Company',
         links: [
-          { label: 'About us', href: '/about', live: true },
+          { label: 'Home', href: '/', live: true },
           { label: 'Contact us', href: '/contact', live: true },
-          { label: 'Pricing', href: '/pricing', live: false },
+          { label: 'About us', href: '/about', live: true },
+          { label: 'Pricing', href: '/pricing', live: true },
+          { label: 'Terms and conditions', href: '/terms', live: true },
           { label: 'Resources', href: '/resources', live: false },
           { label: 'Security', href: '/security', live: false },
         ],
       },
     ],
-    terms: { label: 'Terms and policy', href: '/terms', live: true },
     aiSummary: {
       label: 'Get an AI summary of Novara',
       prompt: 'Summarize what Novara (https://novara.my/) does, who it is for and how it works.',

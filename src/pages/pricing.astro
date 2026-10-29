@@ -1,0 +1,17 @@
+---
+// The DM team still owes the pricing content (plans, prices, trial). Until it arrives this page only routes to a demo or the contact page.
+import Page from '../layouts/Page.astro';
+import PageHead from '../components/company/PageHead.astro';
+import Button from '../components/home/Button.astro';
+import { company } from '../content/company';
+const p = company.pricing;
+---
+<Page title={p.seo.title} description={p.seo.description}>
+  <PageHead eyebrow={p.title} title={p.heading} line={p.line} />
+  <div class="mx-auto w-full max-w-[75rem] border-x border-border-secondary px-5 py-12 sm:px-8 md:px-12 md:py-16">
+    <div class="flex flex-wrap gap-3">
+      <Button href={p.primary.href}>{p.primary.label}</Button>
+      <Button href={p.secondary.href} variant="secondary">{p.secondary.label}</Button>
+    </div>
+  </div>
+</Page>

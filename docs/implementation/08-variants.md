@@ -9,7 +9,7 @@ The DM team compares four versions of the landing page. They are all in one buil
 | `/v2` | V2, the standard page (in-flow motion) | no |
 | `/v3` | V3, the bold interactive page that won, as it was before the DM feedback | no |
 | `/v4` | V4, the home page with the DM feedback (`components/home/HomePage.astro`) | yes (production) |
-| `/about`, `/contact`, `/terms` | Company pages, part of V4 | yes (production) |
+| `/about`, `/contact`, `/pricing`, `/terms` | Company pages, part of V4 | yes (production) |
 
 ## Legacy snapshot
 

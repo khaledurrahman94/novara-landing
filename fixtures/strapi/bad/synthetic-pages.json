@@ -10,7 +10,7 @@
       "canonicalUrl": "/blog/not-published"
     },
     "images": [{ "url": "https://cms.example.com/uploads/cover.png", "alt": null, "field": "cover" }],
-    "links": ["/pricing", "/", "https://example.com/ok", "mailto:hello@example.com"]
+    "links": ["/no-such-page", "/", "https://example.com/ok", "mailto:hello@example.com"]
   },
   {
     "type": "post",

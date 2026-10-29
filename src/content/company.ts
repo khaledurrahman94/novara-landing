@@ -78,4 +78,16 @@ export const company = {
     labels: { email: 'Email', phone: 'Phone', address: 'Address', website: 'Website' },
     demo: { label: 'Book a demo', href: HOME_DEMO_HREF },
   },
+  /** PENDING DM TEAM: the pricing content (plans, prices, trial) is still owed. Until then this page only routes to a demo or the contact page. Invent nothing here. */
+  pricing: {
+    seo: {
+      title: 'Novara pricing | Request a demo',
+      description: 'Request a demo or contact the Novara team and we will share pricing details for your team.',
+    },
+    title: 'Pricing',
+    heading: 'Talk to us about pricing',
+    line: 'Request a demo or contact us and we will share pricing details for your team.',
+    primary: { label: 'Request a demo', href: HOME_DEMO_HREF },
+    secondary: { label: 'Contact us', href: '/contact' },
+  },
 } as const;

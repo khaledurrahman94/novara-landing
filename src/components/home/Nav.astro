@@ -14,13 +14,13 @@ const { nav } = home;
 const links = nav.links.filter((l) => l.live);
 ---
 <header data-nav data-scrolled={solid ? 'true' : 'false'} class="sticky top-0 z-50 border-b border-transparent bg-transparent transition-[background-color,border-color] duration-[var(--duration-slow)] ease-[var(--ease-out-quart)] data-[scrolled=true]:border-border-secondary data-[scrolled=true]:bg-white">
-  <div class="mx-auto grid h-16 w-full max-w-[75rem] grid-cols-[1fr_auto] items-center gap-6 border-x border-border-secondary px-5 sm:px-8 md:grid-cols-[1fr_auto_1fr] md:px-12">
+  <div class="mx-auto grid h-16 w-full max-w-[75rem] grid-cols-[1fr_auto] items-center gap-6 border-x border-border-secondary px-5 sm:px-8 md:grid-cols-[1fr_auto_1fr] md:gap-4 lg:gap-6 lg:px-12">
     <a href={HOME_PATH} class="justify-self-start rounded-sm" aria-label={nav.home}>
       <img src="/brand/novara-full.svg" width="143" height="41" alt="Novara" class="block h-7 w-auto" />
     </a>
     {links.length > 0 && (
       <nav aria-label={nav.label} class="hidden md:block">
-        <ul class="m-0 flex list-none items-center gap-6 p-0 lg:gap-8">
+        <ul class="m-0 flex list-none items-center gap-4 p-0 lg:gap-8">
           {links.map((a) => (
             <li><a href={homeHref(a.href)} class="text-sm font-medium text-text-tertiary no-underline transition-colors duration-[var(--duration-fast)] hover:text-text-primary">{a.label}</a></li>
           ))}
@@ -28,7 +28,7 @@ const links = nav.links.filter((l) => l.live);
       </nav>
     )}
     <div class="flex items-center gap-2 justify-self-end sm:gap-3 md:col-start-3">
-      <Button href={nav.getStarted.href} variant="secondary" class="hidden sm:inline-flex">{nav.getStarted.label}</Button>
+      <Button href={nav.getStarted.href} variant="secondary" class="hidden lg:inline-flex">{nav.getStarted.label}</Button>
       <Button href={ctaHref} data-home-cta>{nav.cta}</Button>
     </div>
   </div>
