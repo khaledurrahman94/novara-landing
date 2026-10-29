@@ -1,0 +1,77 @@
+---
+import AppFrame from './AppFrame.astro';
+import Icon from './Icon.astro';
+import { careerWidget } from '../../../data/platform';
+/**
+ * Career Page Setup: a live preview of the branded career page next to the widget options. The Layout (List or
+ * Grid) and Theme (Auto, Light or Dark) radios change the preview right away, as in the real settings.
+ * Illustrative recreation; the company and jobs are fictional.
+ */
+interface Props { class?: string }
+const { class: cls = '' } = Astro.props;
+const radio = 'size-3 shrink-0 accent-[var(--color-primary)]';
+---
+<AppFrame title="Career Page Setup" active="career" class={cls}>
+  <div class="cs flex flex-col gap-3 @2xl:flex-row">
+    <section aria-label="Live preview" class="min-w-0 flex-1 overflow-hidden rounded-lg border border-border-secondary bg-white">
+      <div class="flex items-center justify-between gap-2 border-b border-border-secondary px-3 py-2">
+        <p class="m-0 flex items-center gap-2 text-[0.6875rem] font-semibold">Live preview<span class="rounded-sm bg-success/10 px-1.5 py-0.5 text-[0.5625rem] font-medium text-text-secondary">Updates as you edit</span></p>
+        <span class="hidden rounded-md border border-border-secondary p-0.5 text-[0.625rem] font-medium text-text-tertiary @md:flex" aria-hidden="true"><span class="rounded-sm bg-bg-tertiary px-1.5 py-0.5 text-text-primary">Desktop</span><span class="px-1.5 py-0.5">Mobile</span></span>
+      </div>
+      <div class="p-2.5">
+        <p class="m-0 mb-1.5 truncate rounded-sm bg-bg-tertiary px-2 py-1 font-mono text-[0.5625rem] text-text-tertiary">your-site.com/careers</p>
+        <div class="cs-stage rounded-md p-3">
+          <p class="cs-pill mx-auto mb-2.5 w-fit rounded-full px-2.5 py-0.5 text-[0.625rem] font-medium">{careerWidget.open} open positions</p>
+          <ul class="cs-list m-0 grid list-none gap-2 p-0">
+            {careerWidget.jobs.map((j) => (
+              <li class="cs-card flex items-center gap-2 rounded-md border p-2.5">
+                <div class="min-w-0 flex-1">
+                  <p class="cs-tag m-0 w-fit rounded-sm px-1.5 py-0.5 text-[0.5rem] font-medium tracking-wide">{careerWidget.tag}</p>
+                  <p class="m-0 mt-1 truncate text-xs font-semibold">{j.title}</p>
+                  <p class="cs-meta m-0 mt-0.5 flex flex-wrap items-center gap-x-2 text-[0.625rem]"><span class="inline-flex items-center gap-0.5"><Icon name="pin" size={10} />{careerWidget.location}</span><span class="rounded-sm bg-success/10 px-1 text-text-secondary">Full Time</span><span>Deadline: {j.deadline}</span></p>
+                </div>
+                <span class="inline-flex shrink-0 items-center gap-1 rounded-md bg-primary px-2 py-1 text-[0.625rem] font-medium text-white">View Details<Icon name="external" size={10} /></span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section aria-label="Widget options" class="shrink-0 rounded-lg border border-border-secondary bg-white p-3 @2xl:w-44">
+      <p class="m-0 text-xs font-semibold">Widget options</p>
+      <p class="m-0 text-[0.625rem] text-text-tertiary">Changes show in the preview right away.</p>
+      <fieldset class="m-0 mt-3 border-0 p-0">
+        <legend class="p-0 text-[0.6875rem] font-medium">Layout</legend>
+        <div class="mt-1 flex gap-3 text-[0.6875rem] text-text-secondary">
+          <label class="flex items-center gap-1.5"><input type="radio" name="cs-layout" value="list" checked class={radio} data-cursor="Try it" />List</label>
+          <label class="flex items-center gap-1.5"><input type="radio" name="cs-layout" value="grid" class={radio} data-cursor="Try it" />Grid</label>
+        </div>
+      </fieldset>
+      <fieldset class="m-0 mt-3 border-0 p-0">
+        <legend class="p-0 text-[0.6875rem] font-medium">Theme</legend>
+        <div class="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-[0.6875rem] text-text-secondary">
+          <label class="flex items-center gap-1.5"><input type="radio" name="cs-theme" value="auto" checked class={radio} data-cursor="Try it" />Auto</label>
+          <label class="flex items-center gap-1.5"><input type="radio" name="cs-theme" value="light" class={radio} data-cursor="Try it" />Light</label>
+          <label class="flex items-center gap-1.5"><input type="radio" name="cs-theme" value="dark" class={radio} data-cursor="Try it" />Dark</label>
+        </div>
+      </fieldset>
+      <p class="m-0 mt-3 text-[0.625rem] leading-snug text-text-tertiary">Name, logo and slug come from your company profile. Jobs you publish or close appear or disappear automatically.</p>
+    </section>
+  </div>
+</AppFrame>
+
+<style is:global>
+  .cs-stage { background: var(--color-gray-950); }
+  .cs-card { background: var(--color-gray-800); border-color: var(--color-gray-800); color: #fff; }
+  .cs-pill { background: color-mix(in srgb, var(--color-primary) 22%, transparent); color: var(--color-primary-200); }
+  .cs-tag { background: color-mix(in srgb, var(--color-primary) 22%, transparent); color: var(--color-primary-200); }
+  .cs-meta { color: var(--color-gray-400); }
+  .cs:has(input[value='grid']:checked) .cs-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cs:has(input[value='grid']:checked) .cs-card { flex-direction: column; align-items: stretch; }
+  .cs:has(input[value='light']:checked) .cs-stage { background: var(--color-bg); }
+  .cs:has(input[value='light']:checked) .cs-card { background: #fff; border-color: var(--color-border-secondary); color: var(--color-text-primary); }
+  .cs:has(input[value='light']:checked) .cs-pill,
+  .cs:has(input[value='light']:checked) .cs-tag { background: var(--color-primary-50); color: var(--color-primary-700); }
+  .cs:has(input[value='light']:checked) .cs-meta { color: var(--color-text-tertiary); }
+</style>

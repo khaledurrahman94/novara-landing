@@ -32,3 +32,10 @@ export const toneDot: Record<Tone, string> = {
 
 /** Fit score tone: shown as tint plus dark text, so contrast stays above 4.5:1. */
 export const fitTone = (score: number): Tone => (score >= 80 ? 'success' : score >= 70 ? 'primary' : 'warning');
+
+/**
+ * Score chips as the dashboard shows them: percent, green from 80 ("Strong Match", 80-100), amber below.
+ * The dashboard also shows a red chip for low scores; the palette has no red, so below 60 is neutral gray.
+ */
+export const scoreTone = (score: number): Tone => (score >= 80 ? 'success' : score >= 60 ? 'warning' : 'gray');
+export const STRONG_MATCH = 'Strong Match';

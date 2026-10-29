@@ -37,8 +37,8 @@ Every field is required and non-empty. Strapi checks min and required rules on p
 | `how.steps[i].text` | `how.steps[i].text` | text | 137 | exactly 9 |
 | `platform.title` | `platform.title` | string | 46 | 1 |
 | `platform.intro` | `platform.intro` | text | 230 | 1 |
-| `platform.tiles.<k>.title` | `platform.<k>.title` | string | 28 | 6 named tiles |
-| `platform.tiles.<k>.line` | `platform.<k>.line` | text | 93 | 6 named tiles |
+| `platform.tiles.<k>.title` | `platform.<k>.title` | string | 28 | 9 named tiles |
+| `platform.tiles.<k>.line` | `platform.<k>.line` | text | 93 | 9 named tiles |
 | `audience.title` | `audience.title` | string | 70 | 1 |
 | `audience.cta` | `audience.cta` | string | 19 | 1 |
 | `audience.groups[i].label` | `audience.groups[i].label` | string | 40 | exactly 4 |
@@ -57,7 +57,7 @@ Every field is required and non-empty. Strapi checks min and required rules on p
 | `footer.copyright` | `footer.copyright` | string | 17 | 1 |
 
 Notes:
-- `<k>` is one of `pipeline`, `career`, `scheduling`, `roles`, `email`, `analytics`. Tiles are named fields, not a list, so a tile's text cannot be paired with the wrong demo. Each is `{ title, line }`.
+- `<k>` is one of `dashboard`, `jobs`, `candidate`, `pipeline`, `scheduling`, `interviews`, `career`, `roles`, `analytics`. Tiles are named fields, not a list, so a tile's text cannot be paired with the wrong demo. Each is `{ title, line }`.
 - `audience.groups` is exactly 4 and keeps its order; each group's icon is chosen in code by its `key` (`company`, `role`, `industry`, `agency`), which is not in the CMS. Group points and `built` lines may describe only features marked Available in `docs/novara-current-feature-overview.pdf`; no outcomes or stats.
 - `how.steps` and `faq.items` keep the order the editor sets. The `how` section is pinned and animated, so its count is fixed at 9. Adding a step is a code change.
 - `seo` is the shared `seo.meta` component (see 05-cms). The seed sets only `metaTitle`, `metaDescription`, `index: true`, `follow: true`; everything else is empty. `metaTitle` is the complete home title. Apply `titleTemplate` only when `metaTitle` is empty (the template would double the brand here).
@@ -78,6 +78,6 @@ Rule 4 of 05-cms: if changing it can break an animation or the product truth, it
 | `results.phases`, `legend`, `hired`, `hintFine`, `hintTouch` | drive the dot animation |
 | `decide.caption`, `from`, `to`, `stamp`, `dragHelp`, `drop`, `movedStatus`, `backStatus`, `evidenceTitle`, `evaluation.*`, `evidence.*`, `note` | demo internals, aria and status strings, product truth |
 | `audience.tabsLabel`, `audience.builtFor`, `audience.groups[].key` | aria label, small label, icon and id key |
-| `platform.copyEmbed`, `copied`, `copyFail`, `candidateName`, `candidateNamePlaceholder`, `restore`, `save`, `saved`, `hoverBar`, `trend`, `note` | demo internals and status strings |
+| `platform.copyEmbed`, `copied`, `copyFail`, `hoverBar`, `trend`, `note` | demo internals and status strings |
 | The two labs: `components/home/labs/screening/copy.ts`, `components/home/labs/interview/copy.ts` (titles and subs included) | rule 4 names the labs' `copy.ts` explicitly |
 | Inline `figcaption` strings in `Platform.astro` | aria |

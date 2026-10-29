@@ -345,15 +345,21 @@ export interface HomeNav extends Struct.ComponentSchema {
 export interface HomePlatform extends Struct.ComponentSchema {
   collectionName: 'components_home_platforms';
   info: {
-    description: 'Platform heading and its six fixed tiles. Each tile is a named field so text cannot be paired with the wrong demo.';
+    description: 'Platform heading and its nine fixed tiles. Each tile is a named field so text cannot be paired with the wrong demo.';
     displayName: 'Platform';
   };
   attributes: {
     analytics: Schema.Attribute.Component<'home.tile', false> &
       Schema.Attribute.Required;
+    candidate: Schema.Attribute.Component<'home.tile', false> &
+      Schema.Attribute.Required;
     career: Schema.Attribute.Component<'home.tile', false> &
       Schema.Attribute.Required;
-    email: Schema.Attribute.Component<'home.tile', false> &
+    dashboard: Schema.Attribute.Component<'home.tile', false> &
+      Schema.Attribute.Required;
+    interviews: Schema.Attribute.Component<'home.tile', false> &
+      Schema.Attribute.Required;
+    jobs: Schema.Attribute.Component<'home.tile', false> &
       Schema.Attribute.Required;
     pipeline: Schema.Attribute.Component<'home.tile', false> &
       Schema.Attribute.Required;

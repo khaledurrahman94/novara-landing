@@ -2,31 +2,29 @@
 import { home } from '../../content/home';
 import { slots, hiringTrend, embed } from '../../data/demo';
 import Section from './Section.astro';
+import DashboardOverview from '../shared/ui/DashboardOverview.astro';
+import JobsOverview from '../shared/ui/JobsOverview.astro';
+import CandidateProfile from '../shared/ui/CandidateProfile.astro';
 import PipelineBoard from '../shared/ui/PipelineBoard.astro';
-import CareerPage from '../shared/ui/CareerPage.astro';
+import InterviewSchedule from '../shared/ui/InterviewSchedule.astro';
+import CareerSetup from '../shared/ui/CareerSetup.astro';
+import RolesPermissions from '../shared/ui/RolesPermissions.astro';
+import AnalyticsView from '../shared/ui/AnalyticsView.astro';
 import Chip from '../shared/ui/Chip.astro';
 import Icon from '../shared/ui/Icon.astro';
 const { platform } = home;
 const t = platform.tiles;
-const tile = 'group relative flex flex-col bg-white p-6 sm:p-8';
+const tile = 'group relative flex min-w-0 flex-col bg-white p-6 sm:p-8';
 const tileTitle = 'm-0 text-[1.0625rem] font-semibold tracking-[-0.01em]';
-const tileLine = 'm-0 mt-1.5 max-w-[26rem] text-[0.9375rem] leading-snug text-text-secondary';
-const plate = 'relative m-0 mt-6 flex flex-1 items-center justify-center rounded-lg bg-bg p-3 sm:p-5';
-const modules = ['Candidates', 'Interviews'];
-const roleRows = [
-  { name: 'Admin', on: [true, true] },
-  { name: 'HR Manager', on: [true, true] },
-  { name: 'Recruiter', on: [false, true] },
-];
-const field = 'h-9 w-full rounded-md border border-border-primary bg-white px-3 font-[inherit] text-[0.8125rem] text-text-primary shadow-xs transition-[border-color] duration-[var(--duration-fast)] focus:border-primary focus:outline-2 focus:outline-offset-0 focus:outline-primary-200';
-const varCls = 'rounded-sm bg-primary-50 px-1.5 py-0.5 text-xs font-medium text-primary-700';
+const tileLine = 'm-0 mt-1.5 max-w-[34rem] text-[0.9375rem] leading-snug text-text-secondary';
+const plate = 'relative m-0 mt-6 flex flex-1 items-center justify-center rounded-lg bg-bg-tertiary p-3 sm:p-5';
 const btn = 'inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-md border border-border-primary bg-white px-3 text-[0.8125rem] font-medium text-text-secondary shadow-xs transition-[background-color] duration-[var(--duration-fast)] hover:bg-bg';
 const selectedTime = slots.selected.time;
 const selIdx = slots.times.indexOf(selectedTime);
 const trendTabs = hiringTrend.tabs;
-const trendFirst = platform.trend[trendTabs[0] ?? 'Applications'];
-const maxFirst = Math.max(...trendFirst);
+const trendFirst = platform.trend[trendTabs[0] ?? 'Applications'] ?? [];
 const trendJson = JSON.stringify({ tabs: trendTabs, data: platform.trend, weeks: hiringTrend.weeks.map((w) => w.label) });
+---
 ---
 <Section id="platform" labelledby="platform-title" tone="white" innerClass="px-0! sm:px-0! md:px-0!">
   <div data-platform class="home-platform">
@@ -38,6 +36,33 @@ const trendJson = JSON.stringify({ tabs: trendTabs, data: platform.trend, weeks:
     </div>
 
     <div data-bento class="mt-14 grid gap-px border-y border-border-secondary bg-border-secondary md:grid-cols-2 xl:grid-cols-6">
+      <article data-tile="dashboard" aria-labelledby="t-dashboard" class:list={[tile, 'md:col-span-2 xl:col-span-6']}>
+        <h3 id="t-dashboard" class={tileTitle}>{t.dashboard.title}</h3>
+        <p class={tileLine}>{t.dashboard.line}</p>
+        <figure class={plate}>
+          <DashboardOverview />
+          <figcaption class="sr-only">Novara dashboard with active jobs, things to do, a jobs overview chart and recent activity. Hover or focus a bar for its stage counts.</figcaption>
+        </figure>
+      </article>
+
+      <article data-tile="jobs" aria-labelledby="t-jobs" class:list={[tile, 'xl:col-span-3']}>
+        <h3 id="t-jobs" class={tileTitle}>{t.jobs.title}</h3>
+        <p class={tileLine}>{t.jobs.line}</p>
+        <figure class={plate}>
+          <JobsOverview />
+          <figcaption class="sr-only">Jobs list with applicants, shortlisted candidates, source, hiring summary and status.</figcaption>
+        </figure>
+      </article>
+
+      <article data-tile="candidate" aria-labelledby="t-candidate" class:list={[tile, 'xl:col-span-3']}>
+        <h3 id="t-candidate" class={tileTitle}>{t.candidate.title}</h3>
+        <p class={tileLine}>{t.candidate.line}</p>
+        <figure class={plate}>
+          <CandidateProfile />
+          <figcaption class="sr-only">Candidate profile with job history. Each application shows a Job Fit Score and an AI Interview Score as percentages.</figcaption>
+        </figure>
+      </article>
+
       <article data-tile="pipeline" aria-labelledby="t-pipeline" class:list={[tile, 'md:col-span-2 xl:col-span-4']}>
         <h3 id="t-pipeline" class={tileTitle}>{t.pipeline.title}</h3>
         <p class={tileLine}>{t.pipeline.line}</p>
@@ -47,22 +72,7 @@ const trendJson = JSON.stringify({ tabs: trendTabs, data: platform.trend, weeks:
         </figure>
       </article>
 
-      <article data-tile="career" aria-labelledby="t-career" class:list={[tile, 'xl:col-span-2 xl:row-span-2']}>
-        <h3 id="t-career" class={tileTitle}>{t.career.title}</h3>
-        <p class={tileLine}>{t.career.line}</p>
-        <figure class:list={[plate, 'flex-col gap-3!']}>
-          <div class="w-full"><CareerPage class="max-w-none!" /></div>
-          <div class="self-start">
-            <button type="button" data-copy data-embed={JSON.stringify(embed)} data-cursor="Copy" class={btn}>
-              <Icon name="copy" size={14} /><span data-copy-label>{platform.copyEmbed}</span>
-            </button>
-          </div>
-          <p data-copy-status role="status" class="sr-only"></p>
-          <figcaption class="sr-only">Branded career page with a button that copies the embed code.</figcaption>
-        </figure>
-      </article>
-
-      <article data-tile="scheduling" aria-labelledby="t-sched" class:list={[tile, 'xl:col-span-2']}>
+      <article data-tile="scheduling" aria-labelledby="t-sched" class:list={[tile, 'md:col-span-2 xl:col-span-2']}>
         <h3 id="t-sched" class={tileTitle}>{t.scheduling.title}</h3>
         <p class={tileLine}>{t.scheduling.line}</p>
         <figure class={plate}>
@@ -95,100 +105,45 @@ const trendJson = JSON.stringify({ tabs: trendTabs, data: platform.trend, weeks:
         </figure>
       </article>
 
-      <article data-tile="roles" aria-labelledby="t-roles" class:list={[tile, 'xl:col-span-2']}>
+      <article data-tile="interviews" aria-labelledby="t-interviews" class:list={[tile, 'xl:col-span-3']}>
+        <h3 id="t-interviews" class={tileTitle}>{t.interviews.title}</h3>
+        <p class={tileLine}>{t.interviews.line}</p>
+        <figure class={plate}>
+          <InterviewSchedule />
+          <figcaption class="sr-only">Interview dashboard with completed, rescheduled, booked and expired counts and the scheduled interviews table.</figcaption>
+        </figure>
+      </article>
+
+      <article data-tile="career" aria-labelledby="t-career" class:list={[tile, 'xl:col-span-3']}>
+        <h3 id="t-career" class={tileTitle}>{t.career.title}</h3>
+        <p class={tileLine}>{t.career.line}</p>
+        <figure class:list={[plate, 'flex-col gap-3!']}>
+          <div class="w-full"><CareerSetup /></div>
+          <div class="self-start">
+            <button type="button" data-copy data-embed={JSON.stringify(embed)} data-cursor="Copy" class={btn}>
+              <Icon name="copy" size={14} /><span data-copy-label>{platform.copyEmbed}</span>
+            </button>
+          </div>
+          <p data-copy-status role="status" class="sr-only"></p>
+          <figcaption class="sr-only">Career page setup with a live preview. Choose a layout and theme, and copy the embed code.</figcaption>
+        </figure>
+      </article>
+
+      <article data-tile="roles" aria-labelledby="t-roles" class:list={[tile, 'xl:col-span-3']}>
         <h3 id="t-roles" class={tileTitle}>{t.roles.title}</h3>
         <p class={tileLine}>{t.roles.line}</p>
         <figure class={plate}>
-          <div class="w-full max-w-[20rem] overflow-hidden rounded-lg border border-border-secondary bg-white font-ui text-text-primary shadow-xs">
-            <div class="grid grid-cols-[minmax(0,1fr)_repeat(2,5.25rem)] items-center border-b border-border-secondary bg-bg px-3 py-2 text-[0.6875rem] font-medium text-text-tertiary">
-              <span>Role</span>{modules.map((m) => <span class="truncate text-center">{m}</span>)}
-            </div>
-            {roleRows.map((r) => (
-              <div class="grid grid-cols-[minmax(0,1fr)_repeat(2,5.25rem)] items-center border-b border-border-secondary px-3 py-3 last:border-b-0">
-                <span class="text-[0.8125rem] font-semibold">{r.name}</span>
-                {r.on.map((on, i) => (
-                  <span class="grid place-items-center">
-                    <button
-                      type="button"
-                      role="switch"
-                      aria-checked={on ? 'true' : 'false'}
-                      aria-label={`${r.name} can open ${modules[i]}`}
-                      data-cursor="Toggle"
-                      class="group/sw relative h-5 w-9 rounded-full bg-gray-200 transition-[background-color] duration-[var(--duration-base)] before:absolute before:-inset-2 before:content-[''] aria-checked:bg-primary"
-                    >
-                      <span aria-hidden="true" class="absolute left-0.5 top-0.5 size-4 rounded-full bg-white shadow-xs transition-transform duration-[var(--duration-slow)] ease-[var(--ease-out-expo)] group-aria-checked/sw:translate-x-4"></span>
-                    </button>
-                  </span>
-                ))}
-              </div>
-            ))}
-          </div>
-          <figcaption class="sr-only">Access switches for Admin, HR Manager and Recruiter roles. Each one toggles.</figcaption>
+          <RolesPermissions />
+          <figcaption class="sr-only">Roles and permissions. Select Admin, HR Manager or Recruiter to see what each role can do.</figcaption>
         </figure>
       </article>
 
-      <article data-tile="email" aria-labelledby="t-email" class:list={[tile, 'md:col-span-1 xl:col-span-3']}>
-        <h3 id="t-email" class={tileTitle}>{t.email.title}</h3>
-        <p class={tileLine}>{t.email.line}</p>
-        <figure class={plate}>
-          <div data-email class="w-full max-w-[26rem] rounded-lg border border-border-secondary bg-white p-4 font-ui text-text-primary shadow-xs">
-            <label for="home-candidate-name" class="block text-xs font-medium text-text-tertiary">{platform.candidateName}</label>
-            <input id="home-candidate-name" data-name-input type="text" autocomplete="off" maxlength="40" placeholder={platform.candidateNamePlaceholder} data-cursor="Try it" class={`${field} mt-1.5`} />
-            <p class="m-0 mt-4 text-[0.8125rem] font-semibold">Interview booked</p>
-            <p class="m-0 mt-2 text-[0.8125rem] leading-[2] text-text-secondary">
-              Hi <span data-name-chip data-default="{{candidate_name}}" class={varCls}>{'{{candidate_name}}'}</span>, your interview for
-              <span class={varCls}>{'{{job_title}}'}</span> is confirmed for
-              <span class={varCls}>{'{{slot}}'}</span>.
-            </p>
-            <div class="mt-4 flex justify-end gap-2 text-[0.8125rem] font-medium">
-              <button type="button" data-restore class={btn}>{platform.restore}</button>
-              <button type="button" data-save class="inline-flex h-9 items-center justify-center rounded-md bg-primary px-3 text-[0.8125rem] font-medium text-white shadow-xs transition-[background-color] duration-[var(--duration-fast)] hover:bg-primary-600"><span data-save-label>{platform.save}</span></button>
-            </div>
-            <p data-email-status role="status" class="sr-only"></p>
-          </div>
-          <figcaption class="sr-only">Email template with variables. Type a candidate name to fill the variable in the preview.</figcaption>
-        </figure>
-      </article>
-
-      <article data-tile="analytics" aria-labelledby="t-analytics" class:list={[tile, 'md:col-span-2 xl:col-span-3']}>
+      <article data-tile="analytics" aria-labelledby="t-analytics" class:list={[tile, 'xl:col-span-3']}>
         <h3 id="t-analytics" class={tileTitle}>{t.analytics.title}</h3>
         <p class={tileLine}>{t.analytics.line}</p>
         <figure class={plate}>
-          <div data-analytics data-trend={trendJson} class="w-full max-w-[26rem] rounded-lg border border-border-secondary bg-white p-4 font-ui text-text-primary shadow-xs">
-            <ul class="m-0 grid list-none grid-cols-2 gap-2 p-0">
-              {hiringTrend.stats.map((s) => (
-                <li class="rounded-md border border-border-secondary px-3 py-2">
-                  <span class="block text-[0.6875rem] text-text-tertiary">{s.label}</span>
-                  <span class="block text-xl font-semibold tabular-nums">{s.value}</span>
-                </li>
-              ))}
-            </ul>
-            <div class="mt-4 flex flex-wrap items-center justify-between gap-2">
-              <p class="m-0 text-[0.8125rem] font-semibold">Hiring trend</p>
-              <div role="tablist" aria-label="Hiring trend view" data-cursor="Toggle" class="flex flex-wrap gap-0.5 rounded-md bg-bg-tertiary p-0.5 text-[0.6875rem] font-medium">
-                {trendTabs.map((tab, i) => (
-                  <button type="button" role="tab" data-tab={tab} aria-selected={i === 0 ? 'true' : 'false'} class="rounded-sm px-2 py-1 text-text-tertiary transition-[color,background-color] duration-[var(--duration-fast)] hover:text-text-primary aria-selected:bg-white aria-selected:text-text-primary aria-selected:shadow-xs">{tab}</button>
-                ))}
-              </div>
-            </div>
-            <ol class="m-0 mt-3 grid list-none grid-cols-5 gap-3 p-0">
-              {trendFirst.map((v) => <li data-value class="text-center text-[0.6875rem] font-semibold tabular-nums">{v}</li>)}
-            </ol>
-            <ol class="m-0 mt-1 grid h-24 list-none grid-cols-5 items-end gap-3 border-b border-border-primary p-0">
-              {hiringTrend.weeks.map((w, i) => (
-                <li class="h-full">
-                  <button type="button" data-bar-btn aria-label={`${w.label}, ${trendFirst[i]} applications`} class="group/bar flex h-full w-full items-end rounded-t-sm">
-                    <span data-bar class="block h-full w-full origin-bottom rounded-t-sm bg-primary-300 transition-[background-color] duration-[var(--duration-fast)] group-hover/bar:bg-primary group-focus-visible/bar:bg-primary" style={`transform:scaleY(${Math.max(0.04, (trendFirst[i] ?? 0) / maxFirst).toFixed(3)})`}></span>
-                  </button>
-                </li>
-              ))}
-            </ol>
-            <ol class="m-0 mt-1.5 grid list-none grid-cols-5 gap-3 p-0">
-              {hiringTrend.weeks.map((w) => <li class="text-center text-[0.625rem] text-text-tertiary">{w.label}</li>)}
-            </ol>
-            <p data-readout role="status" class="m-0 mt-2 min-h-4 text-[0.6875rem] text-text-tertiary">{platform.hoverBar}</p>
-          </div>
-          <figcaption class="sr-only">Weekly hiring trend. Switch the view with the tabs and hover a bar for its value.</figcaption>
+          <AnalyticsView trendJson={trendJson} first={trendFirst} readout={platform.hoverBar} />
+          <figcaption class="sr-only">Analytics with a weekly hiring trend. Switch the view with the tabs and hover a bar for its value.</figcaption>
         </figure>
       </article>
     </div>

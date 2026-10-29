@@ -1,0 +1,47 @@
+---
+import AppFrame from './AppFrame.astro';
+import StatCards from './StatCards.astro';
+import Chip from './Chip.astro';
+import Icon from './Icon.astro';
+import TableFooter from './TableFooter.astro';
+import { interviewsList } from '../../../data/platform';
+import type { Tone } from './tone';
+/** Interview dashboard: counts, the Scheduled Interviews table (Candidate, Job Position, Date, Time, Status, Type). */
+interface Props { class?: string }
+const { class: cls = '' } = Astro.props;
+const tone: Record<string, Tone> = { Completed: 'success', Booked: 'blue', Expired: 'gray' };
+const cols = 'grid-cols-[minmax(0,1fr)_5rem_4.5rem] @xl:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_5.5rem_4.5rem_5rem_5rem]';
+---
+<AppFrame title="Interview" active="interviews" class={cls}>
+  <StatCards items={interviewsList.stats} />
+  <section aria-label="Scheduled interviews" class="overflow-hidden rounded-lg border border-border-secondary bg-white">
+    <div class="flex gap-4 border-b border-border-secondary px-3 pt-2 text-[0.6875rem] font-medium text-text-tertiary" aria-hidden="true">
+      <span class="border-b-2 border-primary pb-2 text-text-primary">Scheduled Interviews</span>
+      <span class="pb-2">Available Slots</span>
+    </div>
+    <div class="flex items-center gap-1.5 px-3 py-2 text-[0.6875rem] text-text-tertiary" aria-hidden="true">
+      <span class="inline-flex flex-1 items-center gap-1.5 rounded-md border border-border-secondary px-2 py-1"><Icon name="search" size={11} />Search</span>
+      <span class="hidden items-center gap-2 rounded-md border border-border-secondary px-2 py-1 @lg:inline-flex">All Jobs<Icon name="chevron-down" size={11} /></span>
+      <span class="hidden items-center gap-2 rounded-md border border-border-secondary px-2 py-1 @lg:inline-flex">All Status<Icon name="chevron-down" size={11} /></span>
+    </div>
+    <div class:list={['grid items-center gap-x-3 bg-bg-tertiary px-3 py-1.5 text-[0.6875rem] font-medium text-text-primary', cols]}>
+      <span>Candidate</span><span class="hidden @xl:block">Job Position</span><span>Date</span><span class="hidden @xl:block">Time</span><span>Status</span><span class="hidden @xl:block">Type</span>
+    </div>
+    <ul class="m-0 list-none p-0">
+      {interviewsList.rows.map((r) => (
+        <li class:list={['grid items-center gap-x-3 border-b border-border-secondary px-3 py-2 text-[0.6875rem] text-text-secondary last:border-b-0', cols]}>
+          <span class="min-w-0">
+            <span class="block truncate text-xs font-medium text-text-primary">{r.name}</span>
+            <span class="block truncate text-[0.625rem] text-text-tertiary">{r.email}</span>
+          </span>
+          <span class="hidden truncate @xl:block">{r.job}</span>
+          <span class="tabular-nums">{r.date}</span>
+          <span class="hidden tabular-nums @xl:block">{r.time}</span>
+          <span><Chip tone={tone[r.status] ?? 'gray'} dot={false} class="!rounded-sm !px-1.5 !py-0.5 !text-[0.625rem]">{r.status}</Chip></span>
+          <span class="hidden @xl:block">AI Interview</span>
+        </li>
+      ))}
+    </ul>
+    <TableFooter pages={36} />
+  </section>
+</AppFrame>

@@ -571,14 +571,11 @@ function mount(root: HTMLElement): () => void {
     if (byUser) rTitle.focus({ preventScroll: true });
 
     // The sample scoring panel plays in; the visitor's report rows rise.
-    const score = q('[data-card="interview-score"]', reportView);
-    const num = q('[data-anim="count"]', score);
-    const barEls = qa('[data-anim="bar"]', score);
+    const num = q('[data-evidence-score]', reportView);
     if (!rm) {
       const o = { v: 0 };
       gsap.fromTo(reportView.children, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.7, stagger: 0.1, ease: EASE });
       gsap.fromTo(rTimeline.children, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.08, delay: 0.25, ease: EASE });
-      gsap.fromTo(barEls, { scaleX: 0 }, { scaleX: 1, duration: 0.9, stagger: 0.1, delay: 0.4, ease: EASE });
       gsap.to(o, { v: Number(num.dataset['count'] ?? 0), duration: 1.2, delay: 0.3, ease: 'power3.out', onUpdate: () => void (num.textContent = String(Math.round(o.v))) });
     }
     ScrollTrigger.refresh();

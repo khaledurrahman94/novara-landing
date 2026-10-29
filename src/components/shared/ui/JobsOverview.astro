@@ -1,0 +1,46 @@
+---
+import AppFrame from './AppFrame.astro';
+import StatCards from './StatCards.astro';
+import Chip from './Chip.astro';
+import Icon from './Icon.astro';
+import TableFooter from './TableFooter.astro';
+import { jobsList } from '../../../data/platform';
+/** Jobs list: stat cards, then Job title, Total applicants, Shortlisted, Source breakdown, Hiring summary and Status. */
+interface Props { class?: string }
+const { class: cls = '' } = Astro.props;
+const cols = 'grid-cols-[minmax(0,1fr)_3.5rem_4.5rem] @xl:grid-cols-[minmax(0,1.6fr)_3.5rem_4rem_5rem_minmax(0,1.4fr)_4.5rem]';
+---
+<AppFrame title="Jobs" action="Create New Job Post" active="jobs" class={cls}>
+  <StatCards items={jobsList.stats} />
+  <section aria-label="Jobs" class="overflow-hidden rounded-lg border border-border-secondary bg-white">
+    <div class="flex items-center justify-between gap-2 px-3 py-2">
+      <p class="m-0 text-[0.8125rem] font-semibold">Total jobs ({jobsList.rows.length + 2})</p>
+      <span class="hidden items-center gap-1.5 text-[0.6875rem] text-text-tertiary @md:flex" aria-hidden="true">
+        <span class="inline-flex items-center gap-1 rounded-md border border-border-secondary px-2 py-1"><Icon name="search" size={11} />Search</span>
+        <span class="inline-flex items-center gap-2 rounded-md border border-border-secondary px-2 py-1">All Status<Icon name="chevron-down" size={11} /></span>
+      </span>
+    </div>
+    <div class:list={['grid items-center gap-x-3 bg-bg-tertiary px-3 py-1.5 text-[0.6875rem] font-medium text-text-primary', cols]}>
+      <span>Job title</span><span>Applicants</span><span class="hidden @xl:block">Shortlisted</span><span class="hidden @xl:block">Source</span><span class="hidden @xl:block">Hiring summary</span><span>Status</span>
+    </div>
+    <ul class="m-0 list-none p-0">
+      {jobsList.rows.map((j) => (
+        <li class:list={['grid items-center gap-x-3 border-b border-border-secondary px-3 py-2 text-[0.6875rem] last:border-b-0', cols]}>
+          <span class="min-w-0">
+            <span class="block truncate text-xs font-medium text-text-primary">{j.title}</span>
+            <span class="block truncate text-[0.625rem] text-text-tertiary">Deadline: {j.deadline}</span>
+          </span>
+          <span class="tabular-nums text-text-primary">{j.applicants}</span>
+          <span class="hidden tabular-nums text-text-primary @xl:block">{j.shortlisted}</span>
+          <span class="hidden text-text-tertiary @xl:block">Novara: <span class="text-text-primary">{j.applicants}</span></span>
+          <span class="hidden gap-1 @xl:flex">
+            <span class="rounded-sm bg-gray-100 px-1.5 py-0.5 text-[0.625rem] font-medium text-text-secondary">Interview: {j.interview}</span>
+            <span class="rounded-sm bg-gray-100 px-1.5 py-0.5 text-[0.625rem] font-medium text-text-secondary">Offered: {j.offered}</span>
+          </span>
+          <span><Chip tone={j.status === 'Active' ? 'blue' : 'gray'} dot={false} class="!rounded-sm !px-1.5 !py-0.5 !text-[0.625rem]">{j.status}</Chip></span>
+        </li>
+      ))}
+    </ul>
+    <TableFooter pages={2} />
+  </section>
+</AppFrame>

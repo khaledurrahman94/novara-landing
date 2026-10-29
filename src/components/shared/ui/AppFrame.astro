@@ -1,0 +1,88 @@
+---
+import Icon from './Icon.astro';
+import { appDate, appUser } from '../../../data/platform';
+/**
+ * The Novara app chrome: a slim icon rail (or the full sidebar), the page title with today's date and the
+ * page's primary action. Illustrative recreation of the real dashboard shell.
+ * `active` picks the highlighted rail item: dashboard, candidates, jobs, interviews, analytics, roles, career.
+ */
+interface Props { title: string; action?: string; active?: string; sidebar?: 'rail' | 'full'; class?: string }
+const { title, action, active = 'dashboard', sidebar = 'rail', class: cls = '' } = Astro.props;
+const rail = [
+  { key: 'dashboard', icon: 'grid' },
+  { key: 'candidates', icon: 'users' },
+  { key: 'jobs', icon: 'briefcase' },
+  { key: 'interviews', icon: 'calendar' },
+  { key: 'analytics', icon: 'chart' },
+  { key: 'roles', icon: 'shield' },
+  { key: 'career', icon: 'globe' },
+];
+const nav = [
+  { key: 'dashboard', label: 'Dashboard', icon: 'grid' },
+  { key: 'jobs', label: 'Jobs', icon: 'briefcase', badge: '5' },
+  { key: 'candidates', label: 'Candidates', icon: 'users' },
+  { key: 'interviews', label: 'Interviews', icon: 'window' },
+  { key: 'resume', label: 'Resume Bank', icon: 'file' },
+];
+---
+<div class:list={['@container w-full overflow-hidden rounded-lg border border-border-primary bg-bg font-ui text-text-primary shadow-md', cls]} data-card="app-frame">
+  <div class="flex">
+    {sidebar === 'full' ? (
+      <div class="hidden w-44 shrink-0 flex-col border-r border-border-secondary bg-white p-3 @3xl:flex" aria-hidden="true">
+        <div class="flex items-center gap-2 pb-3">
+          <img src="/brand/novara-mark.svg" alt="" width="24" height="24" class="size-6" />
+          <div>
+            <p class="m-0 text-[0.75rem] font-semibold leading-tight">Novara</p>
+            <p class="m-0 text-[0.625rem] leading-tight text-text-tertiary">AI Powered Recruitment</p>
+          </div>
+        </div>
+        <p class="m-0 mb-1 mt-2 text-[0.625rem] font-medium tracking-wide text-text-tertiary">MAIN</p>
+        <ul class="m-0 flex list-none flex-col gap-0.5 p-0">
+          {nav.map((n) => (
+            <li class:list={['flex items-center gap-2 rounded-md px-2 py-1.5 text-[0.6875rem]', n.key === active ? 'bg-bg-tertiary font-semibold' : 'text-text-secondary']}>
+              <Icon name={n.icon} size={13} />{n.label}
+              {'badge' in n && <span class="ml-auto rounded-sm bg-bg-tertiary px-1 text-[0.5625rem] font-medium">{n.badge}</span>}
+            </li>
+          ))}
+        </ul>
+        <p class="m-0 mb-1 mt-4 text-[0.625rem] font-medium tracking-wide text-text-tertiary">OTHER</p>
+        <ul class="m-0 flex list-none flex-col gap-0.5 p-0 text-[0.6875rem] text-text-secondary">
+          <li class="flex items-center gap-2 rounded-md px-2 py-1.5"><Icon name="bell" size={13} />Notifications</li>
+          <li class="flex items-center gap-2 rounded-md px-2 py-1.5"><Icon name="help" size={13} />Support Center</li>
+        </ul>
+        <div class="mt-auto flex items-center gap-2 border-t border-border-secondary pt-3">
+          <span class="grid size-7 place-items-center rounded-full bg-primary-100 text-[0.625rem] font-semibold text-primary-800">{appUser.initials}</span>
+          <div>
+            <p class="m-0 text-[0.6875rem] font-semibold leading-tight">{appUser.name}</p>
+            <p class="m-0 text-[0.625rem] leading-tight text-text-tertiary">{appUser.role}</p>
+          </div>
+        </div>
+      </div>
+    ) : (
+      <div class="hidden w-10 shrink-0 flex-col items-center gap-1 border-r border-border-secondary bg-white py-3 @lg:flex" aria-hidden="true">
+        <img src="/brand/novara-mark.svg" alt="" width="20" height="20" class="mb-2 size-5" />
+        {rail.map((r) => (
+          <span class:list={['grid size-7 place-items-center rounded-md', r.key === active ? 'bg-primary-50 text-primary' : 'text-text-placeholder']}>
+            <Icon name={r.icon} size={14} />
+          </span>
+        ))}
+      </div>
+    )}
+    <div class="min-w-0 flex-1">
+      <div class="flex items-center justify-between gap-3 px-3 py-2.5 @lg:px-4">
+        <div class="min-w-0">
+          <p class="m-0 truncate text-[0.8125rem] font-semibold leading-tight">{title}</p>
+          <p class="m-0 truncate text-[0.6875rem] text-text-tertiary">{appDate}</p>
+        </div>
+        {action && (
+          <span class="inline-flex h-7 shrink-0 items-center gap-1 rounded-md bg-primary px-2.5 text-[0.6875rem] font-medium text-white shadow-xs" aria-hidden="true">
+            <Icon name="plus" size={12} />{action}
+          </span>
+        )}
+      </div>
+      <div class="flex flex-col gap-3 px-3 pb-3 @lg:px-4 @lg:pb-4">
+        <slot />
+      </div>
+    </div>
+  </div>
+</div>

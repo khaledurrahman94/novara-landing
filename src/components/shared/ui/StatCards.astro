@@ -1,0 +1,26 @@
+---
+import Icon from './Icon.astro';
+import type { Tone } from './tone';
+/** The dashboard's stat cards: a tinted icon, a label and a figure. */
+interface Props { items: readonly { label: string; value: string; icon?: string; tone?: Tone }[]; arrows?: boolean; class?: string }
+const { items, arrows = false, class: cls = '' } = Astro.props;
+const tint: Record<Tone, string> = {
+  success: 'bg-success/10 text-success',
+  warning: 'bg-warning/10 text-warning',
+  blue: 'bg-blue-light/10 text-blue-light',
+  primary: 'bg-primary-50 text-primary',
+  gray: 'bg-gray-100 text-text-tertiary',
+};
+---
+<ul class:list={['m-0 grid list-none grid-cols-2 gap-2 p-0 @2xl:grid-cols-4', cls]}>
+  {items.map((s) => (
+    <li class="relative rounded-md border border-border-secondary bg-white px-2.5 py-2">
+      <p class="m-0 flex items-center gap-1.5 pr-3 text-[0.625rem] leading-tight text-text-secondary @lg:text-[0.6875rem]">
+        {s.icon && <span class:list={['grid size-5 shrink-0 place-items-center rounded', tint[s.tone ?? 'gray']]}><Icon name={s.icon} size={11} /></span>}
+        <span class="min-w-0">{s.label}</span>
+      </p>
+      <p class="m-0 mt-1 text-lg font-semibold leading-none tabular-nums">{s.value}</p>
+      {arrows && <Icon name="arrow-up-right" size={11} class="absolute right-2 top-2 text-text-placeholder" />}
+    </li>
+  ))}
+</ul>

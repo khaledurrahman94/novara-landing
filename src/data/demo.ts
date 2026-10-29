@@ -63,9 +63,9 @@ export const fit = {
 export const interview = {
   score: 88,
   questions: [
-    { label: 'Technical depth', score: 9 },
-    { label: 'Problem solving', score: 8 },
-    { label: 'Communication', score: 9 },
+    { label: 'Technical depth', score: 92 },
+    { label: 'Problem solving', score: 84 },
+    { label: 'Communication', score: 88 },
   ],
   duration: '24:36',
   /** Timer shown on the live frame. */

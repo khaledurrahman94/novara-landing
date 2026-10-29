@@ -68,7 +68,7 @@ const edge = 'pointer-events-none absolute -inset-px -z-10 rounded-lg border bor
                         <p class="m-0 truncate text-[0.8125rem] font-semibold">{cd.name}</p>
                         <p class="m-0 truncate text-xs text-text-tertiary">{cd.note}</p>
                       </div>
-                      <span class="text-sm font-semibold tabular-nums">{cd.fit}</span>
+                      <span class="text-sm font-semibold tabular-nums">{cd.fit}%</span>
                       {cd.id === 'amara' && <HeroChip k="rank" />}
                     </li>
                   ))}
@@ -111,7 +111,7 @@ const edge = 'pointer-events-none absolute -inset-px -z-10 rounded-lg border bor
                       <p class="m-0 text-xs font-medium text-text-tertiary">AI Interview Score</p>
                       <p class="m-0 mt-1 flex items-baseline gap-1">
                         <span class="text-[1.75rem] font-semibold leading-none tabular-nums" data-hero-count={interview.score}>{interview.score}</span>
-                        <span class="text-xs text-text-tertiary">/ 100</span>
+                        <span class="text-sm font-semibold text-text-tertiary">%</span>
                       </p>
                       <HeroChip k="interview" />
                     </div>
