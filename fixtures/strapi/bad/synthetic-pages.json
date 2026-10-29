@@ -21,8 +21,8 @@
   },
   {
     "type": "legal-page",
-    "slug": "v2",
-    "path": "/v2",
+    "slug": "lab",
+    "path": "/lab",
     "title": "Collides with a code route",
     "seo": { "metaDescription": "A legal page whose path is the same as the R and D route that code already owns on this site." }
   }

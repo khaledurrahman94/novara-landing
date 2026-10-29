@@ -4,7 +4,7 @@
  * pages are indexable. A new collection (blog, legal, ...) adds one provider to `pageProviders`.
  */
 import { z } from 'astro/zod';
-import { v3 } from '../content/v3';
+import { home } from '../content/home';
 import { error, fromZod, type Issue } from './issues';
 import { normalizePath } from './paths';
 import { seoMetaSchema, type Media, type Redirect, type SeoMeta, type SiteSettings } from './schemas';
@@ -53,11 +53,11 @@ export interface PageProvider {
 export const mediaToImage = (m: Media | undefined, field: string): ImageRef[] => (m ? [{ url: m.url, alt: m.alternativeText, field }] : []);
 
 /**
- * TODO(home wiring): `/` still takes its SEO from code. Replace `v3.seo` with the `home` entry's
+ * TODO(home wiring): `/` still takes its SEO from code. Replace `home.seo` with the `home` entry's
  * `seo` (its `updatedAt` becomes the sitemap lastmod) once the home content type is read.
  */
 export function homeSeoMeta(): SeoMeta {
-  return seoMetaSchema.parse({ metaTitle: v3.seo.title, metaDescription: v3.seo.description, breadcrumbLabel: 'Home' });
+  return seoMetaSchema.parse({ metaTitle: home.seo.title, metaDescription: home.seo.description, breadcrumbLabel: 'Home' });
 }
 
 const homeProvider: PageProvider = {

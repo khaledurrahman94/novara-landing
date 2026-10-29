@@ -1,5 +1,5 @@
 /**
- * Illustrative demo data shared by V1 and V2. One cast, one story.
+ * Illustrative demo data shared by the home page and the component lab. One cast, one story.
  * Names and profiles are fictional. `round` is from one real hiring round.
  */
 

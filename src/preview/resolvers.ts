@@ -10,7 +10,7 @@
 import type { PreviewRegistry } from '../lib/preview';
 
 export const previewResolvers: PreviewRegistry = {
-  // TODO(home wiring): fetch the draft `home` entry and render components/v3/HomePage.astro with it.
+  // TODO(home wiring): fetch the draft `home` entry and render components/home/HomePage.astro with it.
   // Until home is read from Strapi there is no draft to show, so this says so.
   '/': async () => ({ kind: 'pending', message: 'Home preview pending' }),
 };

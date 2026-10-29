@@ -13,7 +13,7 @@ export default defineConfig({
   // No astro:assets images and no sessions: skip the IMAGES and SESSION bindings so deploys need no extra resources.
   adapter: cloudflare({ imageService: 'passthrough' }),
   session: false,
-  // Code redirects (/v3 -> /). Strapi redirects are added to _redirects by the novara-site integration.
+  // Code redirects (legacy /v1, /v2, /v3 -> /). Strapi redirects are added to _redirects by the novara-site integration.
   redirects: Object.fromEntries(codeRedirects.map((r) => [r.from, { status: r.status, destination: r.to }])),
   env: {
     // Runtime only, for the preview route. The build reads STRAPI_URL and STRAPI_TOKEN itself (src/lib/strapi-build.ts).

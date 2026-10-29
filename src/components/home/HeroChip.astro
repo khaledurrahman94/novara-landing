@@ -1,0 +1,27 @@
+---
+import { home } from '../../content/home';
+/**
+ * An evidence chip. It lives inside the element it docks onto, so it rides that layer in the
+ * exploded view and settles (then fades) on the real value when the screen is assembled.
+ * Hidden until the hero script drives it, so no-JS readers never see it covering text.
+ */
+type Key = keyof typeof home.hero.chips;
+interface Props { k: Key }
+const { k } = Astro.props;
+const spec: Record<Key, { ex: string; depth: string; dot: string }> = {
+  node: { ex: '-0.06,0.05', depth: '3.2', dot: 'bg-success' },
+  postgres: { ex: '0.1,0.09', depth: '2.4', dot: 'bg-success' },
+  k8s: { ex: '-0.08,0.13', depth: '3.6', dot: 'bg-warning' },
+  fit: { ex: '-0.09,-0.1', depth: '3.4', dot: 'bg-primary' },
+  interview: { ex: '0,-0.14', depth: '2.8', dot: 'bg-primary' },
+  focus: { ex: '0.09,-0.12', depth: '3.8', dot: 'bg-warning' },
+  moved: { ex: '0.06,-0.15', depth: '3', dot: 'bg-primary' },
+  rank: { ex: '-0.04,-0.12', depth: '2.6', dot: 'bg-primary' },
+};
+const s = spec[k];
+---
+<span data-depth={s.depth} aria-hidden="true" class="pointer-events-none absolute left-0 top-1/2 z-20 -translate-y-1/2">
+  <span data-chip data-ex={s.ex} class="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-border-primary bg-white px-2.5 py-1 font-ui text-xs font-medium text-text-secondary opacity-0 shadow-md">
+    <span class:list={['size-1.5 rounded-full', s.dot]}></span>{home.hero.chips[k]}
+  </span>
+</span>

@@ -41,7 +41,7 @@ COPY --from=build --chown=node:node /app/public ./public
 COPY --from=build --chown=node:node /app/database ./database
 COPY --from=build --chown=node:node /app/scripts ./scripts
 # Copy the seed reads (npm run seed). Same layout as the repo, so no path changes.
-COPY --chown=node:node src/content/v2.ts src/content/v3.ts /seed/src/content/
+COPY --chown=node:node src/content/home.ts /seed/src/content/
 COPY --chown=node:node public/robots.txt /seed/public/robots.txt
 RUN mkdir -p /app/public/uploads && chown -R node:node /app/public/uploads
 

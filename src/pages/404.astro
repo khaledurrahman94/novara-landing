@@ -1,13 +1,12 @@
 ---
 import Base from '../layouts/Base.astro';
-import Button from '../components/v2/Button.astro';
-import { v3 } from '../content/v3';
-import '../components/v2/v2.css';
-import '../components/v3/v3.css';
-const { notFound, nav } = v3;
+import Button from '../components/home/Button.astro';
+import { home } from '../content/home';
+import '../components/home/home.css';
+const { notFound, nav } = home;
 ---
 <Base title="Page not found | Novara" description="This page doesn't exist. Go to the Novara home page for the live demos and the demo request form." noindex noCanonical fluid>
-  <div class="v2 v3 flex min-h-svh flex-col bg-white text-text-primary">
+  <div class="home flex min-h-svh flex-col bg-white text-text-primary">
     <header class="border-b border-border-secondary">
       <div class="mx-auto flex h-16 w-full max-w-[75rem] items-center border-x border-border-secondary px-5 sm:px-8 md:px-12">
         <a href="/" class="shrink-0 rounded-sm" aria-label={nav.home}>

@@ -8,7 +8,7 @@ Strapi 5 (TypeScript) for the Novara marketing site. Editors change words, image
 cd cms
 cp .env.example .env     # then fill the five secrets; see the comment at the top of the file
 pnpm install
-pnpm seed                # fills site-settings and home from ../src/content/v3.ts, then publishes. Safe to repeat.
+pnpm seed                # fills site-settings and home from ../src/content/home.ts, then publishes. Safe to repeat.
 pnpm dev                 # http://localhost:1337/admin (first run asks for the first admin)
 ```
 
