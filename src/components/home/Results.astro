@@ -51,16 +51,13 @@ const max = Math.max(...results.figures.map((f) => f.value));
 
     <div data-results-stage hidden>
       <div data-results-canvas-wrap class="relative min-h-[10rem] flex-1">
-        <canvas data-results-canvas tabindex="0" role="img" aria-label="1,200 applicant icons narrowing to 4 offers. Use the arrow keys to step through sample applicants." class="absolute inset-0 size-full"></canvas>
-        <p data-results-live role="status" class="sr-only"></p>
-        <div data-results-tip hidden class="pointer-events-none absolute left-0 top-0 z-10 whitespace-nowrap rounded-md border border-border-secondary bg-white px-2.5 py-1.5 font-ui text-xs font-medium text-text-primary shadow-md"></div>
+        <canvas data-results-canvas role="img" aria-label="1,200 applicant icons narrowing to 4 offers." class="absolute inset-0 size-full"></canvas>
       </div>
       <p data-results-phase class="m-0 shrink-0 text-[clamp(1rem,0.9rem+0.4vw,1.25rem)] font-medium leading-snug text-text-primary" aria-hidden="true">{results.phases[0]}</p>
     </div>
 
     <div class="home-results-foot mt-5 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
       <p class="m-0 text-sm text-text-tertiary">{results.caption}</p>
-      <p data-results-hint hidden class="m-0 text-sm text-text-tertiary"></p>
     </div>
   </div>
 </Section>

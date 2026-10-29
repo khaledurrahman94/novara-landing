@@ -1,5 +1,5 @@
 /**
- * Results. Desktop: a pinned, scrubbed canvas. 1,200 person icons, one per applicant, become 600 screened,
+ * Results. Desktop: a pinned, scrubbed canvas (no pointer input). 1,200 person icons, one per applicant, become 600 screened,
  * then 12 shortlisted, then 4 hired. Everything is drawn from one scroll value `t`, so scrolling
  * back replays it in reverse exactly. Elsewhere (phones, short screens, reduced motion, no JS)
  * the annotated funnel list stays and, with motion, plays once on entry.
@@ -8,13 +8,11 @@ import { gsap, ScrollTrigger } from '../../../scripts/motion';
 import { $, EASE, navH, clamp, cssVar, lerp, num, one, rng, seg, smooth } from './util';
 import { home } from '../../../content/home';
 import { byId, recruiter } from '../../../data/demo';
-import { createGhost } from './ghost';
 
 const N = 1200;
 const SURVIVORS = 600;
 const SHORTLIST = 12;
 const HIRED = 4;
-const SKILLS = ['Node.js', 'TypeScript', 'PostgreSQL', 'API design', 'Kubernetes'];
 /** Hired first (rank 0..3), then the rest of the shortlist: the demo cast leads, the last initials are filler. */
 const INITIALS = [...['amara', 'ines', 'kenji', 'leo', 'marcus'].map((id) => byId(id).initials), recruiter.initials, 'RM', 'HS', 'DK', 'TN', 'AB'];
 const TAU = Math.PI * 2;
@@ -31,14 +29,7 @@ interface Dot {
   /** Stagger position inside the morph, 0..1. */
   s1: number;
   s2: number;
-  fit: number;
-  skill: string;
-  ai: number;
   initials: string;
-  x: number;
-  y: number;
-  r: number;
-  a: number;
 }
 
 interface Layout {
@@ -78,16 +69,12 @@ function buildDots(): Dot[] {
     perm[j] = a;
   }
   const dots: Dot[] = Array.from({ length: N }, () => ({
-    tier: 0, ax: 0, ay: 0, bx: 0, by: 0, cx: 0, cy: 0, s1: 0, s2: 0, fit: 0, skill: '', ai: 0, initials: '', x: 0, y: 0, r: 0, a: 0,
+    tier: 0, ax: 0, ay: 0, bx: 0, by: 0, cx: 0, cy: 0, s1: 0, s2: 0, initials: '',
   }));
   perm.forEach((slot, rank) => {
     const d = dots[slot];
     if (!d) return;
     d.tier = rank < HIRED ? 3 : rank < SHORTLIST ? 2 : rank < SURVIVORS ? 1 : 0;
-    const f = rand();
-    d.fit = d.tier === 0 ? Math.round(28 + f * 40) : Math.round(70 + f * 25);
-    d.skill = SKILLS[Math.floor(rand() * SKILLS.length)] ?? 'Node.js';
-    d.ai = Math.round(80 + rand() * 15);
     d.initials = INITIALS[rank] ?? '';
   });
   return dots;
@@ -97,15 +84,12 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
   const stage = one(root, '[data-results-stage]');
   const wrap = one(root, '[data-results-canvas-wrap]');
   const canvas = one(root, '[data-results-canvas]') as HTMLCanvasElement | null;
-  const tip = one(root, '[data-results-tip]');
   const phaseEl = one(root, '[data-results-phase]');
-  const hint = one(root, '[data-results-hint]');
-  const live = one(root, '[data-results-live]');
   const legendEl = one(root, '[data-results-legend]');
   const legend = $(root, '[data-leg]');
   const legCounts = $(root, '[data-leg-count]');
   const ctx = canvas?.getContext('2d');
-  if (!stage || !wrap || !canvas || !tip || !phaseEl || !ctx || legend.length < 4) return;
+  if (!stage || !wrap || !canvas || !phaseEl || !ctx || legend.length < 4) return;
 
   const dots = buildDots();
   const order = dots.slice().sort((p, q) => p.tier - q.tier);
@@ -121,29 +105,18 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
     p700: cssVar('--color-primary-700'),
     p800: cssVar('--color-primary-800'),
     white: cssVar('--color-white'),
-    ink: cssVar('--color-text-primary'),
   };
   const rgb = { gray: toRgb(col.gray), primary: toRgb(col.primary) };
   const state = { t: 0 };
   let w = 0;
   let h = 0;
   let dpr = 1;
-  let hover: Dot | null = null;
   let phase = 0;
   let cellL2 = 0;
   let cell0 = 1;
   let cell1 = 1;
   /** Root-size scale (1 at 16px): canvas pixel constants follow the fluid root like rem does. */
   let u = 1;
-
-  // Fixed demo applicants for the auto hint, so the copy matches the spec exactly.
-  const demoA = dots.find((d) => d.tier === 0);
-  const demoB = t2[2];
-  if (demoA) {
-    demoA.skill = 'Node.js';
-    demoA.fit = 41;
-  }
-  if (demoB) demoB.fit = 88;
 
   const layout = (): void => {
     w = wrap.clientWidth;
@@ -187,16 +160,6 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
     ctx.roundRect(x, y, bw, bh, r);
   };
 
-  const placeTip = (): void => {
-    if (!hover || tip.hidden) return;
-    const tw = tip.offsetWidth;
-    const th = tip.offsetHeight;
-    const tx = clamp(hover.x + 14 * u, 0, Math.max(0, w - tw));
-    const above = hover.y - hover.r - th - 8 * u;
-    const ty = above < 0 ? hover.y + hover.r + 10 * u : above;
-    tip.style.transform = `translate(${tx}px, ${ty}px)`;
-  };
-
   const draw = (): void => {
     const t = state.t;
     const a1 = smooth(seg(t, 0.08, 0.28));
@@ -234,10 +197,6 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
           alpha *= 1 - smooth(a3m);
         }
       }
-      d.x = x;
-      d.y = y;
-      d.r = r;
-      d.a = alpha;
       if (alpha <= 0.01) continue;
 
       const top = d.tier >= 2;
@@ -280,14 +239,6 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
       }
     }
     ctx.globalAlpha = 1;
-    if (hover && hover.a > 0.25) {
-      ctx.strokeStyle = col.ink;
-      ctx.lineWidth = 1.5 * u;
-      ctx.beginPath();
-      ctx.arc(hover.x, hover.y, hover.r + 3 * u, 0, TAU);
-      ctx.stroke();
-    }
-    placeTip();
 
     // Counters and captions follow the same value.
     const counts = [
@@ -311,159 +262,13 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
       phaseEl.textContent = home.results.phases[p] ?? '';
       gsap.fromTo(phaseEl, { autoAlpha: 0, y: 6 }, { autoAlpha: 1, y: 0, duration: 0.35, ease: EASE, overwrite: 'auto' });
     }
-    maybeDemo();
   };
-
-  /* ---------- hover tooltips ---------- */
-
-  const tipText = (d: Dot): string => {
-    const t = state.t;
-    if (d.tier === 3 && t >= 0.8) return `${home.results.hired} · ${home.results.phases[4]?.replace(/\.$/, '')}`;
-    if (d.tier >= 2 && t >= 0.54) return `Shortlisted · Job Fit ${d.fit} · AI Interview ${d.ai}`;
-    if (d.tier >= 1 && t >= 0.3) return `Took the AI interview · Job Fit ${d.fit}`;
-    return d.tier === 0 ? `Applicant · Job Fit ${d.fit} · Missing: ${d.skill}` : `Applicant · Job Fit ${d.fit} · Matched: ${d.skill}`;
-  };
-  const showTip = (best: Dot | null, text?: string): void => {
-    if (best !== hover) {
-      hover = best;
-      draw();
-    }
-    if (!best) {
-      tip.hidden = true;
-      return;
-    }
-    tip.textContent = text ?? tipText(best);
-    tip.hidden = false;
-    placeTip();
-  };
-  const nearest = (e: PointerEvent, extra: number): Dot | null => {
-    const rect = canvas.getBoundingClientRect();
-    const px = e.clientX - rect.left;
-    const py = e.clientY - rect.top;
-    let best: Dot | null = null;
-    let bestD = Infinity;
-    for (const d of order) {
-      if (d.a < 0.25) continue;
-      const dist = Math.hypot(d.x - px, d.y - py);
-      if (dist <= Math.max(d.r + 3, 6) + extra && dist <= bestD) {
-        best = d;
-        bestD = dist;
-      }
-    }
-    return best;
-  };
-
-  /* ---------- auto hint: a ghost pointer shows what hovering does ---------- */
-
-  const ghost = createGhost(wrap);
-  let demo: gsap.core.Timeline | null = null;
-  let demoKind: 'a' | 'b' | null = null;
-  let retired = false;
-  const done = { a: false, b: false };
-
-  const stopDemo = (): void => {
-    if (!demo) return;
-    demo.kill();
-    demo = null;
-    const was = demoKind;
-    demoKind = null;
-    ghost.vanish();
-    if (was && hover) showTip(null);
-  };
-  const playDemo = (kind: 'a' | 'b'): void => {
-    const d = kind === 'a' ? demoA : demoB;
-    if (!d || w < 120) return;
-    const tx = kind === 'a' ? d.ax : d.cx;
-    const ty = kind === 'a' ? d.ay : d.cy;
-    const text = kind === 'a' ? `Applicant · Job Fit ${d.fit} · Missing: ${d.skill}` : `Shortlisted · Job Fit ${d.fit} · AI Interview ${d.ai}`;
-    demoKind = kind;
-    ghost.place(clamp(tx + w * 0.14, 12, w - 12), clamp(ty + h * 0.22, 12, h - 12));
-    const tl = gsap.timeline({
-      onComplete: () => {
-        done[kind] = true;
-        demo = null;
-        demoKind = null;
-      },
-    });
-    demo = tl;
-    ghost.show(tl, 0);
-    ghost.glide(tl, tx, ty, 1.1, 0);
-    ghost.press(tl, 1.0);
-    tl.call(() => showTip(d, text), undefined, 1.1);
-    tl.to({}, { duration: 2.2 });
-    tl.call(() => showTip(null));
-    ghost.hide(tl, '>');
-  };
-  function maybeDemo(): void {
-    if (retired) return;
-    const t = state.t;
-    if (demoKind === 'a' && (t < 0.04 || t > 0.3)) stopDemo();
-    else if (demoKind === 'b' && t < 0.7) stopDemo();
-    if (demo) return;
-    if (!done.a && t >= 0.1 && t <= 0.2) playDemo('a');
-    else if (!done.b && t >= 0.76 && t <= 0.92) playDemo('b');
-  }
-  // Any real pointer use ends the demos for good.
-  const retire = (): void => {
-    retired = true;
-    stopDemo();
-  };
-
-  const onMove = (e: PointerEvent): void => {
-    if (e.pointerType === 'touch') return;
-    // A cursor resting on the canvas must not cancel the demos; only real movement does.
-    if (Math.hypot(e.movementX, e.movementY) > 2) retire();
-    if (!demo) showTip(nearest(e, 0));
-  };
-  const onLeave = (e: PointerEvent): void => {
-    if (e.pointerType === 'touch') return;
-    showTip(null);
-  };
-  // Touch: tap a dot to read it, tap elsewhere to clear.
-  const onTap = (e: PointerEvent): void => {
-    if (e.pointerType !== 'touch') return;
-    retire();
-    const d = nearest(e, 10);
-    showTip(d);
-    if (live) live.textContent = d ? tipText(d) : '';
-  };
-  // Keyboard: arrow keys step through a few sample applicants; the tooltip is announced.
-  let step = -1;
-  const samples = (): Dot[] => {
-    const vis = order.filter((d) => d.a >= 0.25);
-    const top = vis.filter((d) => d.tier >= 2);
-    const pool = top.length >= 4 ? top : vis;
-    const n = Math.min(8, pool.length);
-    return Array.from({ length: n }, (_, i) => pool[Math.floor((i * pool.length) / Math.max(1, n))]).filter((d): d is Dot => !!d);
-  };
-  const onKey = (e: KeyboardEvent): void => {
-    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft' && e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
-    const list = samples();
-    if (!list.length) return;
-    e.preventDefault();
-    retire();
-    const dir = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : -1;
-    step = (step + dir + list.length * 2) % list.length;
-    const d = list[step];
-    showTip(d ?? null);
-    if (live && d) live.textContent = tipText(d);
-  };
-  const onBlur = (): void => showTip(null);
-  canvas.addEventListener('pointerdown', onTap);
-  canvas.addEventListener('keydown', onKey);
-  canvas.addEventListener('blur', onBlur);
-  canvas.addEventListener('pointermove', onMove);
-  canvas.addEventListener('pointerleave', onLeave);
 
   /* ---------- pin and scrub ---------- */
 
   root.classList.add('is-pinned');
   stage.hidden = false;
   if (legendEl) legendEl.hidden = false;
-  if (hint) {
-    hint.textContent = window.matchMedia('(pointer: fine)').matches ? home.results.hintFine : home.results.hintTouch;
-    hint.hidden = false;
-  }
   layout();
   draw();
   void document.fonts.load('600 12px "Inter Variable"').then(draw);
@@ -474,8 +279,7 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
   });
   ro.observe(wrap);
 
-  // About two viewports in all (one to arrive, one of scroll). Short holds at 0.12 and 0.79 leave
-  // room for the two auto-hint demos, so the page never scrolls past them unseen.
+  // About two viewports in all: one to arrive, one of scroll.
   const tween = gsap
     .timeline({
       defaults: { ease: 'none' },
@@ -491,28 +295,15 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
       },
       onUpdate: draw,
     })
-    .to(state, { t: 0.12, duration: 1 })
-    .to(state, { t: 0.12, duration: 1.6 })
-    .to(state, { t: 0.79, duration: 5.4 })
-    .to(state, { t: 0.79, duration: 1.6 })
-    .to(state, { t: 1, duration: 1.4 });
+    .to(state, { t: 1, duration: 1 });
 
   return () => {
-    stopDemo();
-    ghost.destroy();
     tween.scrollTrigger?.kill();
     tween.kill();
     ro.disconnect();
-    canvas.removeEventListener('pointermove', onMove);
-    canvas.removeEventListener('pointerleave', onLeave);
-    canvas.removeEventListener('pointerdown', onTap);
-    canvas.removeEventListener('keydown', onKey);
-    canvas.removeEventListener('blur', onBlur);
     root.classList.remove('is-pinned');
     stage.hidden = true;
     if (legendEl) legendEl.hidden = true;
-    tip.hidden = true;
-    if (hint) hint.hidden = true;
     legend.forEach((el) => (el.style.opacity = ''));
   };
 }

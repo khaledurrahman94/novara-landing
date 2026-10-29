@@ -1,14 +1,13 @@
 /**
- * Home page motion orchestrator. Three kinds of motion: scrubbed (hero, results, how, depth), triggered
- * (reveals, bento entrances) and interactive (cursor layer, drag, bento tiles).
- * Pins only from 768px wide and 620px tall. Reduced motion keeps every interaction but drops
- * parallax, tilt, follow, scrub and pins, and shows end states.
+ * Home page motion orchestrator. Two kinds of motion: scrubbed (hero, results, how, depth) and self-playing
+ * (reveals, bento loops, the Decide animation). Nothing reacts to the pointer.
+ * Pins only from 768px wide and 620px tall. Reduced motion drops scrub, pins and loops and shows end states.
  */
 import { gsap, ScrollTrigger, onReady, prefersReducedMotion, getLenis } from '../../../scripts/motion';
-import { initInteraction, initScrollDepth } from './interaction';
+import { initScrollDepth } from './depth';
 import { initHero } from './hero';
 import { initResultsPinned, initResultsSimple } from './results';
-import { initHowPinned, initHowSimple, initHowSteps, replayStep } from './how';
+import { initHowPinned, initHowSimple } from './how';
 import { initDecide } from './decide';
 import { initBentoReveal, initPlatform } from './platform';
 import { EASE, $, one, safe, scrollToEl } from './util';
@@ -90,14 +89,10 @@ export function initHome(): void {
     const platform = one(document, '[data-platform]');
     if (platform) add(safe('platform', () => initPlatform(platform, reduced)));
 
-    const howRoot = one(document, '[data-how]');
-    if (howRoot) add(safe('how-steps', () => initHowSteps(howRoot, reduced ? undefined : (i) => { if (!howRoot.classList.contains('is-h')) replayStep(i); })));
-
     if (reduced) return () => cleanups.forEach((c) => c());
 
     const mm = gsap.matchMedia();
     const ctx = gsap.context(() => {
-      add(safe('interaction', initInteraction));
       const hero = one(document, '[data-hero]');
       if (hero) safe('hero', () => initHero(hero));
       safe('reveals', initReveals);
