@@ -1,0 +1,10 @@
+---
+import { scoreTone, toneBg, toneDot, STRONG_MATCH } from './tone';
+/** Percent score chip as the dashboard shows it. `band` adds the band name where the dashboard names it (80-100, Strong Match). */
+interface Props { score: number; band?: boolean; class?: string }
+const { score, band = false, class: cls = '' } = Astro.props;
+const tone = scoreTone(score);
+---
+<span class:list={['inline-flex items-center gap-1.5 whitespace-nowrap rounded-md px-2 py-0.5 font-ui text-xs font-semibold tabular-nums text-text-primary', toneBg[tone], cls]}>
+  <span class:list={['size-1.5 rounded-full', toneDot[tone]]} aria-hidden="true"></span>{score}%{band && score >= 80 && <span class="font-medium text-text-secondary"> {STRONG_MATCH}</span>}
+</span>

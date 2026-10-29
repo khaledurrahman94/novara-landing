@@ -25,7 +25,7 @@ const { rows = candidates.slice(0, 3), heading = 'Ranked by Job Fit Score', clas
         </div>
         {showStage && <Chip tone={stageTone[c.stage]} class="hidden @md:inline-flex">{c.stage}</Chip>}
         <span class="flex w-[4.25rem] shrink-0 flex-col items-end">
-          <span class="text-sm font-semibold tabular-nums text-text-primary">{c.fit}</span>
+          <span class="text-sm font-semibold tabular-nums text-text-primary">{c.fit}%</span>
           <span class="text-[0.6875rem] text-text-tertiary">{c.fitLabel}</span>
         </span>
       </li>

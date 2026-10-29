@@ -39,7 +39,7 @@ const flagged = integrity.events.find((e) => e.flagged);
               <p class="m-0 truncate text-[0.8125rem] font-semibold">{c.name}</p>
               <p class="m-0 truncate text-xs text-text-tertiary">{c.note}</p>
             </div>
-            <span class="text-sm font-semibold tabular-nums">{c.fit}</span>
+            <span class="text-sm font-semibold tabular-nums">{c.fit}%</span>
           </li>
         ))}
       </ol>
@@ -70,7 +70,7 @@ const flagged = integrity.events.find((e) => e.flagged);
           <p class="m-0 text-xs font-medium text-text-tertiary">AI Interview Score</p>
           <p class="m-0 mt-1 flex items-baseline gap-1">
             <span class="text-[1.75rem] font-semibold leading-none tabular-nums" data-anim="count" data-count={interview.score}>{interview.score}</span>
-            <span class="text-xs text-text-tertiary">/ 100</span>
+            <span class="text-sm font-semibold text-text-tertiary">%</span>
           </p>
         </div>
         <div class="p-3 @lg:p-4">
