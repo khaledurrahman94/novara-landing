@@ -6,7 +6,7 @@ Wiring table for the Astro side. Strapi type `api::home.home` (single type, Draf
 - `GET /api/home` returns every section populated, with no `populate` query (route middleware). A `populate` you send wins.
 - Strapi 5 shape: `{ data: { documentId, publishedAt, seo, nav, hero, results, decide, how, platform, audience, faq, close, footer } }`. No `attributes` wrapper. Components carry an `id`; ignore it.
 - Same token rules as everything else: `Authorization: Bearer <STRAPI_TOKEN>`. Only `find` exists over REST (no write routes).
-- Mirror the caps below in zod (`.max(cap)`, `.min(1)`), and `how.steps` as exactly 4, `faq.items` as 3 to 10. A mismatch fails the build.
+- Mirror the caps below in zod (`.max(cap)`, `.min(1)`), and `how.steps` as exactly 9, `faq.items` as 3 to 10. A mismatch fails the build.
 - Merge, do not replace: build the page copy as `{ ...codeCopy, hero: { ...codeCopy.hero, title, sub, secondary }, ... }`, so the keys marked "code" below keep coming from `home.ts`.
 
 ## In the CMS
@@ -30,8 +30,8 @@ Every field is required and non-empty. Strapi checks min and required rules on p
 | `decide.title` | `decide.title` | string | 60 | 1 |
 | `decide.sub` | `decide.sub` | text | 63 | 1 |
 | `how.title` | `how.title` | string | 16 | 1 |
-| `how.steps[i].title` | `how.steps[i].title` | string | 26 | exactly 4 |
-| `how.steps[i].text` | `how.steps[i].text` | text | 110 | exactly 4 |
+| `how.steps[i].title` | `how.steps[i].title` | string | 45 | exactly 9 |
+| `how.steps[i].text` | `how.steps[i].text` | text | 137 | exactly 9 |
 | `platform.title` | `platform.title` | string | 46 | 1 |
 | `platform.intro` | `platform.intro` | text | 230 | 1 |
 | `platform.tiles.<k>.title` | `platform.<k>.title` | string | 28 | 6 named tiles |
@@ -57,7 +57,7 @@ Every field is required and non-empty. Strapi checks min and required rules on p
 Notes:
 - `<k>` is one of `pipeline`, `career`, `scheduling`, `roles`, `email`, `analytics`. Tiles are named fields, not a list, so a tile's text cannot be paired with the wrong demo. Each is `{ title, line }`.
 - `audience.groups` is exactly 4 and keeps its order; each group's icon is chosen in code by its `key` (`company`, `role`, `industry`, `agency`), which is not in the CMS. Group points and `built` lines may describe only features marked Available in `docs/novara-current-feature-overview.pdf`; no outcomes or stats.
-- `how.steps` and `faq.items` keep the order the editor sets. The `how` section is pinned and animated, so its count is fixed at 4. Adding a step is a code change.
+- `how.steps` and `faq.items` keep the order the editor sets. The `how` section is pinned and animated, so its count is fixed at 9. Adding a step is a code change.
 - `seo` is the shared `seo.meta` component (see 05-cms). The seed sets only `metaTitle`, `metaDescription`, `index: true`, `follow: true`; everything else is empty. `metaTitle` is the complete home title. Apply `titleTemplate` only when `metaTitle` is empty (the template would double the brand here).
 - `nav.label`, `nav.home`, hrefs and the footer link list come from code. The five in-page `nav.anchors` labels stay seeded but are no longer rendered.
 - Added by the DM feedback (06), all code-owned for now and not yet CMS fields: `nav.links[]` (label, href; the rendered header), `hero.pricing` and `hero.signIn` (label, href), `footer.rights`, `footer.followLabel`, `footer.social[]` (key, label, href; an empty href hides the icon), `footer.columns[]` (label, links[]), `footer.terms`, `footer.aiSummary` (label, prompt, assistants[] with key, label, url). `SIGN_IN_HREF_PLACEHOLDER` in `home.ts` is the sign-in URL until the app URL is known. Promote these to Strapi fields (and `seed.ts`) when the DM team needs to edit them.

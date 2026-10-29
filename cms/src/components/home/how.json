@@ -2,7 +2,7 @@
   "collectionName": "components_home_hows",
   "info": {
     "displayName": "How",
-    "description": "How it works heading and its four steps."
+    "description": "How it works heading and its nine steps."
   },
   "options": {},
   "attributes": {
@@ -16,8 +16,8 @@
       "type": "component",
       "repeatable": true,
       "component": "home.step",
-      "min": 4,
-      "max": 4,
+      "min": 9,
+      "max": 9,
       "required": true
     }
   }

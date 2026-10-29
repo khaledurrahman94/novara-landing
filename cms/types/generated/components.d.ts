@@ -234,7 +234,7 @@ export interface HomeHero extends Struct.ComponentSchema {
     secondary: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.SetMinMaxLength<{
-        maxLength: 26;
+        maxLength: 45;
         minLength: 1;
       }>;
     sub: Schema.Attribute.Text &
@@ -255,7 +255,7 @@ export interface HomeHero extends Struct.ComponentSchema {
 export interface HomeHow extends Struct.ComponentSchema {
   collectionName: 'components_home_hows';
   info: {
-    description: 'How it works heading and its four steps.';
+    description: 'How it works heading and its nine steps.';
     displayName: 'How';
   };
   attributes: {
@@ -263,8 +263,8 @@ export interface HomeHow extends Struct.ComponentSchema {
       Schema.Attribute.Required &
       Schema.Attribute.SetMinMax<
         {
-          max: 4;
-          min: 4;
+          max: 9;
+          min: 9;
         },
         number
       >;
@@ -389,13 +389,13 @@ export interface HomeStep extends Struct.ComponentSchema {
     text: Schema.Attribute.Text &
       Schema.Attribute.Required &
       Schema.Attribute.SetMinMaxLength<{
-        maxLength: 110;
+        maxLength: 137;
         minLength: 1;
       }>;
     title: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.SetMinMaxLength<{
-        maxLength: 26;
+        maxLength: 45;
         minLength: 1;
       }>;
   };

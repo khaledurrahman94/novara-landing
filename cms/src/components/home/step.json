@@ -10,13 +10,13 @@
       "type": "string",
       "required": true,
       "minLength": 1,
-      "maxLength": 26
+      "maxLength": 45
     },
     "text": {
       "type": "text",
       "required": true,
       "minLength": 1,
-      "maxLength": 110
+      "maxLength": 137
     }
   }
 }
