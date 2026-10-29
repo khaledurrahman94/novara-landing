@@ -4,8 +4,9 @@ import StatCards from './StatCards.astro';
 import Icon from './Icon.astro';
 import { activity, dashStats, jobsChart, todo } from '../../../data/platform';
 /**
- * Dashboard home: stat cards, Things to Do, the stacked Jobs overview chart (hover or focus a bar for its
- * stage counts) and Recent Activity. Illustrative recreation of the real dashboard.
+ * Dashboard home: stat cards, Things to Do, the stacked Jobs overview chart (the home page animates a callout
+ * over each bar in turn with its stage counts) and Recent Activity. Illustrative recreation of the real dashboard.
+ * Hooks: [data-job-col], [data-job-tip].
  */
 interface Props { class?: string }
 const { class: cls = '' } = Astro.props;
@@ -48,16 +49,16 @@ const total = (v: readonly number[]) => v.reduce((a, b) => a + b, 0);
           </ol>
           <ol class="m-0 grid h-36 min-w-0 flex-1 list-none grid-cols-4 gap-2 border-b border-border-secondary p-0">
             {jobsChart.jobs.map((j) => (
-              <li class="group/col relative flex h-full items-end justify-center">
-                <button
-                  type="button"
+              <li data-job-col class="relative flex h-full items-end justify-center">
+                <div
+                  role="img"
                   aria-label={`${j.label}: ${jobsChart.legend.map((l, i) => `${l.label} ${j.vals[i]}`).join(', ')}`}
-                  class="flex w-1/2 max-w-9 flex-col-reverse overflow-hidden rounded-t-sm outline-offset-2 transition-[filter] duration-[var(--duration-fast)] hover:brightness-95 focus-visible:outline-2 focus-visible:outline-primary"
+                  class="flex w-1/2 max-w-9 flex-col-reverse overflow-hidden rounded-t-sm"
                   style={`height:${(total(j.vals) / jobsChart.max) * 100}%`}
                 >
                   {j.vals.map((v, i) => <span class:list={['block w-full', jobsChart.legend[i]?.cls]} style={`height:${(v / total(j.vals)) * 100}%`}></span>)}
-                </button>
-                <p role="presentation" class="pointer-events-none absolute bottom-full left-1/2 z-10 m-0 hidden -translate-x-1/2 translate-y-2 whitespace-nowrap rounded-md border border-border-secondary bg-white px-2 py-1.5 text-[0.625rem] leading-relaxed text-text-secondary shadow-md group-focus-within/col:block group-hover/col:block">
+                </div>
+                <p data-job-tip aria-hidden="true" class="pointer-events-none absolute bottom-full left-1/2 z-10 m-0 -translate-x-1/2 translate-y-2 whitespace-nowrap rounded-md border border-border-secondary bg-white px-2 py-1.5 text-[0.625rem] leading-relaxed text-text-secondary opacity-0 shadow-md">
                   {jobsChart.legend.map((l, i) => <span class="block">{l.label} - {j.vals[i]}</span>)}
                 </p>
               </li>

@@ -4,9 +4,9 @@ import Icon from './Icon.astro';
 import { rolesData } from '../../../data/platform';
 /**
  * Roles and Permissions: the role list on the left, the selected role's access scope and permission groups
- * on the right. Selecting a role shows what it can do (system roles are read-only, so nothing toggles).
+ * on the right. The home page selects each role in turn to show what it can do (system roles are read-only).
  * The role names are Admin, HR Manager and Recruiter; which permission each holds here is illustrative.
- * Hooks: [data-roles-card], [data-role], [data-perm][data-roles], [data-role-title], [data-role-users], [data-role-perms], [data-group-count].
+ * Hooks: [data-roles-card], [data-role][data-selected], [data-perm][data-roles], [data-role-title], [data-role-users], [data-role-perms], [data-group-count].
  */
 interface Props { class?: string }
 const { class: cls = '' } = Astro.props;
@@ -17,23 +17,21 @@ const rolePerms = Object.fromEntries(rolesData.roles.map((r) => [r.key, permCoun
 ---
 <AppFrame title="Roles & Permissions" active="roles" class={cls}>
   <div data-roles-card class="flex flex-col gap-3 @2xl:flex-row" data-role-perms-map={JSON.stringify(rolePerms)}>
-    <div role="group" aria-label="Roles" class="flex shrink-0 flex-row gap-2 @2xl:w-40 @2xl:flex-col">
+    <div class="flex shrink-0 flex-row gap-2 @2xl:w-40 @2xl:flex-col">
       <span class="hidden items-center gap-1.5 rounded-md border border-border-secondary bg-white px-2 py-1.5 text-[0.6875rem] text-text-tertiary @2xl:flex" aria-hidden="true"><Icon name="search" size={11} />Search roles</span>
       <span class="hidden h-7 items-center justify-center gap-1 rounded-md bg-primary text-[0.6875rem] font-medium text-white @2xl:inline-flex" aria-hidden="true"><Icon name="plus" size={12} />Create Role</span>
       {rolesData.roles.map((r) => (
-        <button
-          type="button"
+        <div
           data-role={r.key}
           data-users={r.users}
           data-name={r.name}
-          aria-pressed={r.key === first.key ? 'true' : 'false'}
-          data-cursor="Try it"
-          class="min-w-0 flex-1 rounded-lg border border-border-secondary bg-white p-2 text-left transition-[border-color,background-color] duration-[var(--duration-fast)] hover:border-primary-300 aria-pressed:border-primary aria-pressed:bg-primary-50 @2xl:flex-none"
+          data-selected={r.key === first.key ? 'true' : 'false'}
+          class="min-w-0 flex-1 rounded-lg border border-border-secondary bg-white p-2 text-left transition-[border-color,background-color] duration-[var(--duration-base)] data-[selected=true]:border-primary data-[selected=true]:bg-primary-50 @2xl:flex-none"
         >
           <span class="block truncate text-xs font-semibold text-text-primary">{r.name}</span>
           <span class="mt-1 inline-block rounded-sm bg-gray-100 px-1.5 py-0.5 text-[0.625rem] text-text-secondary">System</span>
           <span class="mt-1 block text-[0.625rem] text-text-tertiary">{r.users} users</span>
-        </button>
+        </div>
       ))}
     </div>
 
@@ -65,7 +63,7 @@ const rolePerms = Object.fromEntries(rolesData.roles.map((r) => [r.key, permCoun
             <ul class="m-0 mt-2 grid list-none gap-1.5 p-0 pl-5 @xl:grid-cols-2">
               {g.items.map((i) => (
                 <li class="flex items-center gap-2 text-[0.6875rem] text-text-secondary">
-                  <span role="checkbox" aria-readonly="true" aria-label={i.label} aria-checked={holds(i.on, first.key) ? 'true' : 'false'} data-perm data-roles={i.on.join(' ')} class="grid size-3.5 shrink-0 place-items-center rounded-sm border border-border-primary bg-white text-transparent transition-[background-color,border-color] duration-[var(--duration-fast)] aria-checked:border-primary-300 aria-checked:bg-primary-300 aria-checked:text-white">
+                  <span role="checkbox" aria-readonly="true" aria-label={i.label} aria-checked={holds(i.on, first.key) ? 'true' : 'false'} data-perm data-roles={i.on.join(' ')} class="grid size-3.5 shrink-0 place-items-center rounded-sm border border-border-primary bg-white text-transparent transition-[background-color,border-color] duration-[var(--duration-base)] aria-checked:border-primary-300 aria-checked:bg-primary-300 aria-checked:text-white">
                     <Icon name="check" size={10} />
                   </span>
                   {i.label}

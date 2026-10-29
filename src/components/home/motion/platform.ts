@@ -1,11 +1,10 @@
 /**
- * Platform bento: every tile is something you can use, and every tile keeps itself busy.
- * Each tile runs a small ambient loop (a slot gets booked, a card moves on, the embed code is
- * copied, the selected role changes, the analytics view changes).
- * The loops are presence aware: when a pointer or focus arrives, the tile finishes its current
- * step and then stays calm and fully interactive; about 2s after it leaves, the loop resumes.
- * Loops pause off screen. Under reduced motion there are no loops and every interaction still
- * works with instant state changes. No tile tilts or follows the cursor.
+ * Platform bento: every tile plays by itself. Each tile runs a small loop that shows the product doing its job:
+ * the dashboard chart calls out each bar, a card moves on in the pipeline, a slot gets booked, the career page
+ * switches layout and theme and copies its embed code, the selected role changes, the analytics view changes and
+ * each bar is highlighted in turn.
+ * Nothing reacts to the pointer or keyboard. The loops run only while their tile is on screen and the tab is
+ * visible. Under reduced motion there are no loops: the tiles keep their start state.
  */
 import { gsap, ScrollTrigger } from '../../../scripts/motion';
 import { Flip } from 'gsap/Flip';
@@ -32,25 +31,22 @@ const step = (build: (tl: gsap.core.Timeline) => void): Promise<void> =>
   });
 
 /**
- * Run `stepFn` forever with `gap` seconds between steps, starting `first` seconds after the tile
- * is on screen. It stops while the tile is off screen or the user is present (pointer or focus)
- * and resumes 2s after they leave. A step already running is always allowed to finish.
+ * Run `stepFn` forever with `gap` seconds between steps, starting `first` seconds after the tile is on
+ * screen. It stops while the tile is off screen or the tab is hidden. A step already running always finishes.
  */
 function ambient(tile: HTMLElement, stepFn: () => Promise<void>, first: number, gap: number): () => void {
   let visible = false;
-  let present = false;
   let busy = false;
   let alive = true;
   let timer: ReturnType<typeof setTimeout> | undefined;
-  let resume: ReturnType<typeof setTimeout> | undefined;
 
   const queue = (sec: number): void => {
     clearTimeout(timer);
-    if (!alive || !visible || present || busy || document.hidden) return;
+    if (!alive || !visible || busy || document.hidden) return;
     timer = setTimeout(() => void run(), sec * 1000);
   };
   const run = async (): Promise<void> => {
-    if (!alive || !visible || present || busy || document.hidden) return;
+    if (!alive || !visible || busy || document.hidden) return;
     busy = true;
     try {
       await stepFn();
@@ -69,52 +65,47 @@ function ambient(tile: HTMLElement, stepFn: () => Promise<void>, first: number, 
     { threshold: 0.25 },
   );
   io.observe(tile);
-  const enter = (): void => {
-    present = true;
-    clearTimeout(timer);
-    clearTimeout(resume);
-  };
-  const leave = (): void => {
-    if (tile.matches(':focus-within')) return;
-    present = false;
-    clearTimeout(resume);
-    resume = setTimeout(() => queue(0), 2000);
-  };
-  const onFocusOut = (e: FocusEvent): void => {
-    if (!tile.contains(e.relatedTarget as Node | null)) leave();
-  };
   const onVisibility = (): void => queue(gap);
-  tile.addEventListener('pointerenter', enter);
-  tile.addEventListener('pointerleave', leave);
-  tile.addEventListener('focusin', enter);
-  tile.addEventListener('focusout', onFocusOut);
   document.addEventListener('visibilitychange', onVisibility);
   return () => {
     alive = false;
     clearTimeout(timer);
-    clearTimeout(resume);
     io.disconnect();
-    tile.removeEventListener('pointerenter', enter);
-    tile.removeEventListener('pointerleave', leave);
-    tile.removeEventListener('focusin', enter);
-    tile.removeEventListener('focusout', onFocusOut);
     document.removeEventListener('visibilitychange', onVisibility);
   };
 }
 
 interface Tile {
   cleanup: () => void;
-  /** One ambient step, if the tile has one. */
+  /** One loop step, if the tile has one. */
   step?: () => Promise<void>;
 }
 const NOOP: Tile = { cleanup: () => undefined };
 
-/** Pipeline: cards lift on hover (CSS) and take focus. Ambient: one card moves on to the next column. */
+/** Dashboard: a callout with the stage counts moves over each bar of the jobs chart in turn. */
+function dashboard(root: HTMLElement): Tile {
+  const cols = $(root, '[data-tile="dashboard"] [data-job-col]');
+  const tips = cols.map((c) => one(c, '[data-job-tip]'));
+  if (!cols.length || tips.some((t) => !t)) return NOOP;
+  return {
+    cleanup: () => undefined,
+    step: () =>
+      step((tl) => {
+        tips.forEach((tip, i) => {
+          if (!tip) return;
+          const at = i * 1.4;
+          tl.fromTo(tip, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.35, ease: EASE }, at);
+          tl.to(tip, { autoAlpha: 0, y: 8, duration: 0.3, ease: 'power2.in' }, at + 1.05);
+        });
+      }),
+  };
+}
+
+/** Pipeline: one card moves on to the next column. */
 function pipeline(root: HTMLElement): Tile {
   const board = one(root, '[data-tile="pipeline"] [data-card="pipeline"]');
   if (!board) return NOOP;
   const cards = $(board, '[data-anim]');
-  cards.forEach((el) => el.setAttribute('tabindex', '0'));
   const columns = $(board, 'section');
   const lists = columns.map((c) => one(c, 'ul'));
   const mover = cards.find((c) => c.dataset['anim'] === 'board-card');
@@ -132,7 +123,10 @@ function pipeline(root: HTMLElement): Tile {
         const state = Flip.getState(cards);
         target.prepend(mover);
         recount();
-        const f = Flip.from(state, { duration: 0.75, ease: 'power3.inOut', onComplete: () => {
+        const f = Flip.from(state, {
+          duration: 0.75,
+          ease: 'power3.inOut',
+          onComplete: () => {
             live.delete(f);
             resolve();
           },
@@ -142,48 +136,38 @@ function pipeline(root: HTMLElement): Tile {
   };
 }
 
-function scheduling(root: HTMLElement, reduced: boolean): Tile {
+/** Scheduling: the booked slot moves to the next time and a confirmation appears. The old booking stays on record. */
+function scheduling(root: HTMLElement): Tile {
   const sched = one(root, '[data-sched]');
-  const grid = one(root, '[data-slot-grid]');
   const pick = one(root, '[data-pick]');
   const booked = one(root, '[data-booked]');
   const previous = one(root, '[data-previous]');
   const toast = one(root, '[data-toast]');
-  if (!sched || !grid || !pick || !booked || !previous || !toast) return NOOP;
+  if (!sched || !pick || !booked || !previous || !toast) return NOOP;
   const day = sched.dataset['day'] ?? '';
-  const buttons = $(grid, '[role="radio"]');
-  let current = buttons.find((b) => b.getAttribute('aria-checked') === 'true');
+  const times = $(sched, '[data-time]');
+  let current = times.find((b) => b.dataset['selected'] === 'true');
   let timer: ReturnType<typeof setTimeout> | undefined;
 
-  const place = (btn: HTMLElement, animate: boolean): void => {
-    const x = btn.offsetLeft - pick.offsetLeft;
-    const y = btn.offsetTop - pick.offsetTop;
-    if (animate && !reduced) gsap.to(pick, { x, y, duration: 0.6, ease: 'back.out(1.5)', overwrite: true });
+  const place = (el: HTMLElement, animate: boolean): void => {
+    const x = el.offsetLeft - pick.offsetLeft;
+    const y = el.offsetTop - pick.offsetTop;
+    if (animate) gsap.to(pick, { x, y, duration: 0.6, ease: 'back.out(1.5)', overwrite: true });
     else gsap.set(pick, { x, y });
   };
-  const flash = (text: string): void => {
-    toast.textContent = text;
-    clearTimeout(timer);
-    if (reduced) gsap.set(toast, { opacity: 1, y: 0 });
-    else gsap.fromTo(toast, { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: EASE, overwrite: true });
-    timer = setTimeout(() => gsap.to(toast, { opacity: 0, y: reduced ? 0 : 6, duration: reduced ? 0 : 0.3, overwrite: true }), 2600);
-  };
-  /** Book a slot. The ambient loop books silently: no toast, so screen readers are not interrupted. */
-  const choose = (btn: HTMLElement, silent: boolean): void => {
-    if (btn === current) return;
-    current = btn;
-    buttons.forEach((b) => b.setAttribute('aria-checked', b === btn ? 'true' : 'false'));
+  const choose = (el: HTMLElement): void => {
+    if (el === current) return;
+    current = el;
+    times.forEach((b) => void (b.dataset['selected'] = b === el ? 'true' : 'false'));
     previous.textContent = booked.textContent;
-    booked.textContent = `${day}, ${btn.dataset['time'] ?? ''}`;
-    place(btn, true);
-    if (!silent) flash(`Interview booked for ${day}, ${btn.dataset['time'] ?? ''}`);
-    else if (!reduced) gsap.fromTo([booked, previous], { opacity: 0.25, y: 4 }, { opacity: 1, y: 0, duration: 0.5, ease: EASE, overwrite: 'auto' });
+    booked.textContent = `${day}, ${el.dataset['time'] ?? ''}`;
+    place(el, true);
+    toast.textContent = `Interview booked for ${day}, ${el.dataset['time'] ?? ''}`;
+    clearTimeout(timer);
+    gsap.fromTo(toast, { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: EASE, overwrite: true });
+    timer = setTimeout(() => gsap.to(toast, { opacity: 0, y: 6, duration: 0.3, overwrite: true }), 2000);
+    gsap.fromTo([booked, previous], { opacity: 0.25, y: 4 }, { opacity: 1, y: 0, duration: 0.5, ease: EASE, overwrite: 'auto' });
   };
-  const handlers = buttons.map((btn) => {
-    const onClick = (): void => choose(btn, false);
-    btn.addEventListener('click', onClick);
-    return () => btn.removeEventListener('click', onClick);
-  });
   const onResize = (): void => {
     if (current) place(current, false);
   };
@@ -192,84 +176,69 @@ function scheduling(root: HTMLElement, reduced: boolean): Tile {
   return {
     step: () =>
       step((tl) => {
-        const i = current ? buttons.indexOf(current) : -1;
-        const next = buttons[(i + 1) % buttons.length];
-        if (next) choose(next, true);
-        tl.to({}, { duration: 1 });
+        const i = current ? times.indexOf(current) : -1;
+        const next = times[(i + 1) % times.length];
+        if (next) choose(next);
+        tl.to({}, { duration: 1.4 });
       }),
     cleanup: () => {
       clearTimeout(timer);
       window.removeEventListener('resize', onResize);
-      handlers.forEach((h) => h());
     },
   };
 }
 
-async function copyText(text: string): Promise<boolean> {
-  try {
-    await navigator.clipboard.writeText(text);
-    return true;
-  } catch {
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    ta.setAttribute('readonly', '');
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.append(ta);
-    ta.select();
-    let ok = false;
-    try {
-      ok = document.execCommand('copy');
-    } catch {
-      ok = false;
-    }
-    ta.remove();
-    return ok;
-  }
-}
-
-function career(root: HTMLElement, reduced: boolean): Tile {
+/** Career page: the Layout and Theme options switch by themselves, then the embed code is "copied". */
+function career(root: HTMLElement): Tile {
+  const setup = one(root, '[data-career-setup]');
   const btn = one(root, '[data-copy]');
   const label = one(root, '[data-copy-label]');
-  const status = one(root, '[data-copy-status]');
-  if (!btn || !label || !status) return NOOP;
-  let timer: ReturnType<typeof setTimeout> | undefined;
-  const onClick = async (): Promise<void> => {
-    let lines: string[] = [];
-    try {
-      lines = JSON.parse(btn.dataset['embed'] ?? '[]') as string[];
-    } catch {
-      lines = [];
-    }
-    const ok = await copyText(lines.join('\n'));
-    clearTimeout(timer);
-    label.textContent = ok ? p.copied : p.copyEmbed;
-    status.textContent = ok ? p.copied : p.copyFail;
-    if (!reduced) gsap.fromTo(label, { y: 6, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: EASE, overwrite: true });
-    if (ok) timer = setTimeout(() => void (label.textContent = p.copyEmbed), 2000);
+  if (!setup || !btn || !label) return NOOP;
+  const settings: ['layout' | 'theme', string][] = [
+    ['layout', 'grid'],
+    ['theme', 'light'],
+    ['layout', 'list'],
+    ['theme', 'auto'],
+  ];
+  let n = 0;
+  const apply = (kind: 'layout' | 'theme', value: string): void => {
+    if (kind === 'layout') {
+      const cards = $(setup, '.cs-card');
+      const state = Flip.getState(cards);
+      setup.dataset['layout'] = value;
+      const f = Flip.from(state, {
+        duration: 0.6,
+        ease: 'power3.inOut',
+        scale: true,
+        onComplete: () => void live.delete(f),
+      });
+      live.add(f);
+    } else setup.dataset['theme'] = value;
+    $(setup, `[data-opt^="${kind}:"]`).forEach((o) => void (o.dataset['on'] = o.dataset['opt'] === `${kind}:${value}` ? 'true' : 'false'));
   };
-  btn.addEventListener('click', onClick);
   return {
-    // Ambient: the button shows "Copied" for a moment. It never touches the clipboard.
     step: () =>
       step((tl) => {
+        const [kind, value] = settings[n % settings.length] ?? settings[0]!;
+        n += 1;
+        apply(kind, value);
+        tl.to({}, { duration: 1.6 });
+        // The embed code is "copied": the button presses and shows Copied for a moment. The clipboard is never touched.
         tl.call(() => void (label.textContent = p.copied))
-          .fromTo(btn, { scale: 1 }, { scale: 0.95, duration: 0.1, yoyo: true, repeat: 1, ease: 'power2.out' }, 0)
-          .fromTo(label, { y: 6, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: EASE }, 0)
+          .fromTo(btn, { scale: 1 }, { scale: 0.95, duration: 0.1, yoyo: true, repeat: 1, ease: 'power2.out' }, '<')
+          .fromTo(label, { y: 6, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: EASE }, '<')
           .to({}, { duration: 1.5 })
           .call(() => void (label.textContent = p.copyEmbed));
       }),
-    cleanup: () => {
-      clearTimeout(timer);
-      btn.removeEventListener('click', onClick);
-    },
+    cleanup: () => undefined,
   };
 }
 
+/** Roles: the selection moves to the next role and the permissions below follow. */
 function roles(root: HTMLElement): Tile {
   const card = one(root, '[data-roles-card]');
   if (!card) return NOOP;
-  const buttons = $(card, '[data-role]');
+  const items = $(card, '[data-role]');
   const perms = $(card, '[data-perm]');
   const groups = $(card, '[data-group]');
   const title = one(card, '[data-role-title]');
@@ -281,35 +250,28 @@ function roles(root: HTMLElement): Tile {
   } catch {
     counts = {};
   }
-  /** Show one role. System roles are read-only, so selecting is the only interaction. */
-  const show = (btn: HTMLElement): void => {
-    const key = btn.dataset['role'] ?? '';
-    buttons.forEach((b) => b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'));
-    perms.forEach((el) => el.setAttribute('aria-checked', (el.dataset['roles'] ?? '').split(' ').includes(key) ? 'true' : 'false'));
+  const show = (el: HTMLElement): void => {
+    const key = el.dataset['role'] ?? '';
+    items.forEach((b) => void (b.dataset['selected'] = b === el ? 'true' : 'false'));
+    perms.forEach((x) => x.setAttribute('aria-checked', (x.dataset['roles'] ?? '').split(' ').includes(key) ? 'true' : 'false'));
     groups.forEach((g) => {
       const count = one(g, '[data-group-count]');
-      const items = $(g, '[data-perm]');
-      if (count) count.textContent = `${items.filter((i) => i.getAttribute('aria-checked') === 'true').length}/${items.length} selected`;
+      const boxes = $(g, '[data-perm]');
+      if (count) count.textContent = `${boxes.filter((i) => i.getAttribute('aria-checked') === 'true').length}/${boxes.length} selected`;
     });
-    if (title) title.textContent = btn.dataset['name'] ?? '';
-    if (users) users.textContent = btn.dataset['users'] ?? '';
+    if (title) title.textContent = el.dataset['name'] ?? '';
+    if (users) users.textContent = el.dataset['users'] ?? '';
     if (total) total.textContent = String(counts[key] ?? '');
   };
-  const handlers = buttons.map((btn) => {
-    const onClick = (): void => show(btn);
-    btn.addEventListener('click', onClick);
-    return () => btn.removeEventListener('click', onClick);
-  });
-  // Ambient: the selection moves to the next role.
   return {
     step: () =>
       step((tl) => {
-        const i = buttons.findIndex((b) => b.getAttribute('aria-pressed') === 'true');
-        const next = buttons[(i + 1) % Math.max(1, buttons.length)];
+        const i = items.findIndex((b) => b.dataset['selected'] === 'true');
+        const next = items[(i + 1) % Math.max(1, items.length)];
         if (next) show(next);
-        tl.to({}, { duration: 1.2 });
+        tl.to({}, { duration: 1.6 });
       }),
-    cleanup: () => handlers.forEach((h) => h()),
+    cleanup: () => undefined,
   };
 }
 
@@ -319,7 +281,8 @@ interface Trend {
   weeks: string[];
 }
 
-function analytics(root: HTMLElement, reduced: boolean): Tile {
+/** Analytics: the view switches to the next stage, the bars morph, then each bar is highlighted in turn with its week. */
+function analytics(root: HTMLElement): Tile {
   const box = one(root, '[data-analytics]');
   if (!box) return NOOP;
   let trend: Trend;
@@ -328,100 +291,67 @@ function analytics(root: HTMLElement, reduced: boolean): Tile {
   } catch {
     return NOOP;
   }
-  const tabs = $(box, '[role="tab"]');
+  const tabs = $(box, '[data-tab]');
   const values = $(box, '[data-value]');
   const bars = $(box, '[data-bar]');
-  const barBtns = $(box, '[data-bar-btn]');
   const readout = one(box, '[data-readout]');
   if (!readout) return NOOP;
-  let tab = tabs.find((t) => t.getAttribute('aria-selected') === 'true')?.dataset['tab'] ?? trend.tabs[0] ?? '';
+  let tab = tabs.find((t) => t.dataset['on'] === 'true')?.dataset['tab'] ?? trend.tabs[0] ?? '';
   const series = (): number[] => trend.data[tab] ?? [];
-  const label = (i: number): string => `${trend.weeks[i] ?? ''}: ${series()[i] ?? 0} ${tab.toLowerCase()}`;
+  const label = (i: number): string => `Week of ${trend.weeks[i] ?? ''}: ${series()[i] ?? 0} ${tab.toLowerCase()}`;
 
-  const render = (animate: boolean): void => {
+  const render = (): void => {
     const data = series();
     const max = Math.max(1, ...data);
     bars.forEach((bar, i) => {
       const s = Math.max(0.04, (data[i] ?? 0) / max);
-      if (animate && !reduced) gsap.to(bar, { scaleY: s, duration: 0.8, delay: i * 0.05, ease: EASE, overwrite: true });
-      else gsap.set(bar, { scaleY: s });
+      gsap.to(bar, { scaleY: s, duration: 0.8, delay: i * 0.05, ease: EASE, overwrite: true });
     });
     values.forEach((el, i) => {
       const to = data[i] ?? 0;
-      const from = num(el.textContent ?? '0');
-      if (animate && !reduced) {
-        const o = { v: from };
-        gsap.to(o, { v: to, duration: 0.6, ease: 'power3.out', overwrite: true, onUpdate: () => void (el.textContent = String(Math.round(o.v))) });
-      } else el.textContent = String(to);
+      const o = { v: num(el.textContent ?? '0') };
+      gsap.to(o, { v: to, duration: 0.6, ease: 'power3.out', overwrite: true, onUpdate: () => void (el.textContent = String(Math.round(o.v))) });
     });
-    barBtns.forEach((b, i) => b.setAttribute('aria-label', label(i)));
-    readout.textContent = p.hoverBar;
   };
-
+  const highlight = (at: number): void => {
+    bars.forEach((b, i) => void (b.dataset['on'] = i === at ? 'true' : 'false'));
+    values.forEach((v, i) => void (v.dataset['on'] = i === at ? 'true' : 'false'));
+    readout.textContent = at >= 0 ? label(at) : '';
+  };
   const select = (t: HTMLElement): void => {
-    if (t.dataset['tab'] === tab) return;
     tab = t.dataset['tab'] ?? tab;
-    tabs.forEach((x) => x.setAttribute('aria-selected', x === t ? 'true' : 'false'));
-    render(true);
+    tabs.forEach((x) => void (x.dataset['on'] = x === t ? 'true' : 'false'));
+    render();
   };
-  const tabHandlers = tabs.map((t) => {
-    const onClick = (): void => select(t);
-    t.addEventListener('click', onClick);
-    return () => t.removeEventListener('click', onClick);
-  });
-  const barHandlers = barBtns.map((b, i) => {
-    const on = (): void => {
-      readout.textContent = label(i);
-      values[i]?.classList.add('text-primary');
-    };
-    const off = (): void => {
-      readout.textContent = p.hoverBar;
-      values[i]?.classList.remove('text-primary');
-    };
-    b.addEventListener('pointerenter', on);
-    b.addEventListener('focus', on);
-    b.addEventListener('pointerleave', off);
-    b.addEventListener('blur', off);
-    return () => {
-      b.removeEventListener('pointerenter', on);
-      b.removeEventListener('focus', on);
-      b.removeEventListener('pointerleave', off);
-      b.removeEventListener('blur', off);
-    };
-  });
-  render(false);
   return {
-    // Ambient: the view switches to the next tab and the bars morph to its values.
     step: () =>
       step((tl) => {
-        const i = tabs.findIndex((t) => t.getAttribute('aria-selected') === 'true');
-        const next = tabs[(i + 1) % tabs.length];
+        const i = tabs.findIndex((t) => t.dataset['on'] === 'true');
+        const next = tabs[(i + 1) % Math.max(1, tabs.length)];
         if (next) select(next);
-        tl.to({}, { duration: 1.1 });
+        bars.forEach((_, k) => tl.call(() => highlight(k), undefined, 1.1 + k * 0.5));
+        tl.call(() => highlight(-1), undefined, 1.1 + bars.length * 0.5);
       }),
-    cleanup: () => {
-      tabHandlers.forEach((h) => h());
-      barHandlers.forEach((h) => h());
-    },
+    cleanup: () => highlight(-1),
   };
 }
 
-/** Interactions. These run under reduced motion too; the ambient loops do not. */
+/** The tile loops. Not started under reduced motion. */
 export function initPlatform(root: HTMLElement, reduced: boolean): () => void {
+  if (reduced) return () => undefined;
   const tiles: [string, Tile, number][] = [
+    ['dashboard', dashboard(root), 0.6],
     ['pipeline', pipeline(root), 0.8],
-    ['scheduling', scheduling(root, reduced), 1.8],
-    ['career', career(root, reduced), 2.8],
+    ['scheduling', scheduling(root), 1.8],
+    ['career', career(root), 2.8],
     ['roles', roles(root), 3.6],
-    ['analytics', analytics(root, reduced), 4.4],
+    ['analytics', analytics(root), 4.4],
   ];
   const cleanups = tiles.map(([, t]) => t.cleanup);
-  if (!reduced) {
-    tiles.forEach(([name, t, first]) => {
-      const el = one(root, `[data-tile="${name}"]`);
-      if (el && t.step) cleanups.push(ambient(el, t.step, first, 2.6));
-    });
-  }
+  tiles.forEach(([name, t, first]) => {
+    const el = one(root, `[data-tile="${name}"]`);
+    if (el && t.step) cleanups.push(ambient(el, t.step, first, 2.6));
+  });
   return () => {
     cleanups.forEach((c) => c());
     live.forEach((a) => a.kill());
