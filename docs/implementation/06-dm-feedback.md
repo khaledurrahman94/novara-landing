@@ -5,6 +5,7 @@ Source: "Novara pages layout and content outline" from the DM team. Items marked
 Rules that still apply: claim only features marked Available in `docs/novara-current-feature-overview.pdf`; no invented stats, customer names, logos or quotes; palette from `src/styles/tokens.css`; copy stays in `src/content/home.ts` (it seeds the CMS), structure stays in code.
 
 ## Header (Nav)
+_Update (2026-10-29): links to unbuilt pages are not rendered. See `07-company-pages.md` (`live` flags in `home.ts`)._
 - Now: Home, Sign in, Contact us, About us, Pricing, plus the Book a demo button.
 - Later, when the pages exist (do not render yet, but keep the nav data shaped so they can be added): Platform (AI Interview, ATS), Features, Solutions, ROI Calculator, Pricing, Resources (Knowledge Hub), Sign in, Book Demo. References: manatal.com, recruitcrm.io.
 
