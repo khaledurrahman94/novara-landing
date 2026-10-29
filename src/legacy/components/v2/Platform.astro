@@ -1,0 +1,163 @@
+---
+import { v2 } from '../../content/v2';
+import { slots, hiringTrend, byId } from '../../data/demo';
+import Section from './Section.astro';
+import PipelineBoard from '../shared/ui/PipelineBoard.astro';
+import CareerPage from '../shared/ui/CareerPage.astro';
+import Chip from '../shared/ui/Chip.astro';
+import Icon from '../shared/ui/Icon.astro';
+const { platform } = v2;
+const t = platform.tiles;
+const maxWeek = Math.max(...hiringTrend.weeks.map((w) => w.value));
+const tile = 'group relative flex flex-col bg-white p-6 sm:p-8 focus-visible:outline-offset-[-0.1875rem]';
+const tileTitle = 'm-0 text-[1.0625rem] font-semibold tracking-[-0.01em]';
+const tileLine = 'm-0 mt-1.5 max-w-[26rem] text-[0.9375rem] leading-snug text-text-secondary';
+const plate = 'm-0 mt-6 flex flex-1 items-center justify-center rounded-lg bg-bg p-3 sm:p-5';
+const amara = byId('amara');
+const modules = ['Jobs', 'Candidates', 'Interviews'];
+const roleRows = [
+  { name: 'Admin', on: [true, true, true] },
+  { name: 'HR Manager', on: [true, true, true] },
+  { name: 'Recruiter', on: [false, true, true] },
+];
+const vars = [
+  { name: '{{candidate_name}}', val: amara.name.split(' ')[0] ?? '' },
+  { name: '{{job_title}}', val: 'Backend Engineer' },
+  { name: '{{slot}}', val: 'Wed 21 Oct, 10:30' },
+];
+const varCls = 'rounded-sm bg-primary-50 px-1.5 py-0.5 text-xs font-medium text-primary-700';
+---
+<Section id="platform" labelledby="platform-title" innerClass="px-0! sm:px-0! md:px-0!">
+  <div class="px-5 sm:px-8 md:px-12">
+    <h2 id="platform-title" class="m-0 max-w-[36rem] text-[clamp(2rem,1.2rem+2.8vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.03em]">{platform.title}</h2>
+  </div>
+
+  <div data-bento class="mt-14 grid gap-px border-y border-border-secondary bg-border-secondary md:grid-cols-2 xl:grid-cols-6">
+    <article data-tile="pipeline" tabindex="0" aria-labelledby="t-pipeline" class:list={[tile, 'md:col-span-2 xl:col-span-4']}>
+      <h3 id="t-pipeline" class={tileTitle}>{t.pipeline.title}</h3>
+      <p class={tileLine}>{t.pipeline.line}</p>
+      <figure class={plate}>
+        <PipelineBoard class="max-w-none!" />
+        <figcaption class="sr-only">Pipeline board with stage columns</figcaption>
+      </figure>
+    </article>
+
+    <article data-tile="career" tabindex="0" aria-labelledby="t-career" class:list={[tile, 'xl:col-span-2 xl:row-span-2']}>
+      <h3 id="t-career" class={tileTitle}>{t.career.title}</h3>
+      <p class={tileLine}>{t.career.line}</p>
+      <figure class:list={[plate, 'flex-col gap-3!']}>
+        <CareerPage class="max-w-none!" />
+        <p data-copied class="m-0 flex items-center gap-1.5 self-start text-xs font-medium text-text-secondary">
+          <span class="grid size-4 place-items-center rounded-full bg-success/10 text-success"><Icon name="check" size={10} /></span>Embed code copied
+        </p>
+        <figcaption class="sr-only">Branded career page with embed code</figcaption>
+      </figure>
+    </article>
+
+    <article data-tile="scheduling" tabindex="0" aria-labelledby="t-sched" class:list={[tile, 'xl:col-span-2']}>
+      <h3 id="t-sched" class={tileTitle}>{t.scheduling.title}</h3>
+      <p class={tileLine}>{t.scheduling.line}</p>
+      <figure class={plate}>
+        <div class="w-full max-w-[20rem] rounded-lg border border-border-secondary bg-white p-3.5 font-ui text-text-primary shadow-xs">
+          <p class="m-0 text-xs font-semibold">Wed 21 Oct</p>
+          <ul data-slot-grid class="m-0 mt-2.5 grid list-none grid-cols-2 gap-2 p-0">
+            {slots.times.map((time) => {
+              const on = time === slots.selected.time;
+              return (
+                <li data-slot={on ? 'selected' : undefined} class="relative rounded-md border border-border-secondary py-2 text-center text-[0.8125rem] font-medium tabular-nums">
+                  {on && <span data-pick class="absolute -inset-px rounded-md bg-primary"></span>}
+                  <span data-slot-label class:list={['relative', on ? 'text-white' : 'text-text-secondary']}>{time}</span>
+                </li>
+              );
+            })}
+          </ul>
+          <ul class="m-0 mt-3 flex list-none flex-col gap-1.5 border-t border-border-secondary p-0 pt-3 text-xs">
+            <li class="flex items-center justify-between gap-2"><span class="tabular-nums text-text-primary">Wed 21 Oct, 10:30</span><Chip tone="success">Booked</Chip></li>
+            <li class="flex items-center justify-between gap-2"><span class="tabular-nums text-text-tertiary">Tue 20 Oct, 09:30</span><Chip tone="gray">Previous booking</Chip></li>
+          </ul>
+        </div>
+        <figcaption class="sr-only">Slot picker showing a booked interview and the previous booking kept on record</figcaption>
+      </figure>
+    </article>
+
+    <article data-tile="roles" tabindex="0" aria-labelledby="t-roles" class:list={[tile, 'xl:col-span-2']}>
+      <h3 id="t-roles" class={tileTitle}>{t.roles.title}</h3>
+      <p class={tileLine}>{t.roles.line}</p>
+      <figure class={plate}>
+        <div class="w-full max-w-[20rem] overflow-hidden rounded-lg border border-border-secondary bg-white font-ui text-text-primary shadow-xs">
+          <div class="grid grid-cols-[minmax(0,1fr)_repeat(3,3.75rem)] items-center border-b border-border-secondary bg-bg px-3 py-2 text-[0.6875rem] font-medium text-text-tertiary">
+            <span>Role</span>{modules.map((m) => <span class="text-center">{m}</span>)}
+          </div>
+          {roleRows.map((r) => (
+            <div class="grid grid-cols-[minmax(0,1fr)_repeat(3,3.75rem)] items-center border-b border-border-secondary px-3 py-3 last:border-b-0">
+              <span class="text-[0.8125rem] font-semibold">{r.name}</span>
+              {r.on.map((on, i) => (
+                <span class="grid place-items-center">
+                  <span data-switch={r.name === 'Recruiter' && i === 0 ? 'flip' : undefined} class:list={['relative h-4 w-7 rounded-full', on ? 'bg-primary' : 'bg-gray-200']}>
+                    <span data-knob class:list={['absolute top-0.5 size-3 rounded-full bg-white shadow-xs', on ? 'left-[0.875rem]' : 'left-0.5']}></span>
+                  </span>
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
+        <figcaption class="sr-only">Access switches for Admin, HR Manager and Recruiter roles</figcaption>
+      </figure>
+    </article>
+
+    <article data-tile="email" tabindex="0" aria-labelledby="t-email" class:list={[tile, 'md:col-span-1 xl:col-span-3']}>
+      <h3 id="t-email" class={tileTitle}>{t.email.title}</h3>
+      <p class={tileLine}>{t.email.line}</p>
+      <figure class={plate}>
+        <div class="w-full max-w-[26rem] rounded-lg border border-border-secondary bg-white p-4 font-ui text-text-primary shadow-xs">
+          <p class="m-0 text-[0.8125rem] font-semibold">Interview booked</p>
+          <p class="m-0 mt-3 text-[0.8125rem] leading-[2] text-text-secondary">
+            Hi <span data-var data-val={vars[0]?.val} class={varCls}>{vars[0]?.name}</span>, your interview for
+            <span data-var data-val={vars[1]?.val} class={varCls}>{vars[1]?.name}</span> is confirmed for
+            <span data-var data-val={vars[2]?.val} class={varCls}>{vars[2]?.name}</span>.
+          </p>
+          <div class="mt-4 flex justify-end gap-2 text-[0.8125rem] font-medium">
+            <span class="rounded-md border border-border-primary px-3 py-1.5 text-text-secondary shadow-xs">Restore default</span>
+            <span class="rounded-md bg-primary px-3 py-1.5 text-white shadow-xs">Save</span>
+          </div>
+        </div>
+        <figcaption class="sr-only">Email template with variables for candidate name, job title and slot</figcaption>
+      </figure>
+    </article>
+
+    <article data-tile="analytics" tabindex="0" aria-labelledby="t-analytics" class:list={[tile, 'md:col-span-2 xl:col-span-3']}>
+      <h3 id="t-analytics" class={tileTitle}>{t.analytics.title}</h3>
+      <p class={tileLine}>{t.analytics.line}</p>
+      <figure class={plate}>
+        <div class="w-full max-w-[26rem] rounded-lg border border-border-secondary bg-white p-4 font-ui text-text-primary shadow-xs">
+          <ul class="m-0 grid list-none grid-cols-2 gap-2 p-0">
+            {hiringTrend.stats.map((s) => (
+              <li class="rounded-md border border-border-secondary px-3 py-2">
+                <span class="block text-[0.6875rem] text-text-tertiary">{s.label}</span>
+                <span class="block text-xl font-semibold tabular-nums">{s.value}</span>
+              </li>
+            ))}
+          </ul>
+          <div class="mt-4 flex items-center justify-between gap-2">
+            <p class="m-0 text-[0.8125rem] font-semibold">Hiring trend</p>
+            <span class="flex gap-0.5 rounded-md bg-bg-tertiary p-0.5 text-[0.6875rem] font-medium">
+              {hiringTrend.tabs.slice(0, 2).map((tab, i) => <span class:list={['rounded-sm px-2 py-0.5', i === 0 ? 'bg-white text-text-primary shadow-xs' : 'text-text-tertiary']}>{tab}</span>)}
+            </span>
+          </div>
+          <ol class="m-0 mt-3 grid h-28 list-none grid-cols-5 items-end gap-3 border-b border-border-primary p-0">
+            {hiringTrend.weeks.map((w) => (
+              <li class="flex h-full flex-col justify-end">
+                <span class="mb-1 text-center text-[0.6875rem] font-semibold tabular-nums">{w.value}</span>
+                <span data-bar class="block origin-bottom rounded-t-sm bg-primary" style={`height:${((w.value / maxWeek) * 80).toFixed(1)}%`}></span>
+              </li>
+            ))}
+          </ol>
+          <ol class="m-0 mt-1.5 grid list-none grid-cols-5 gap-3 p-0">
+            {hiringTrend.weeks.map((w) => <li class="text-center text-[0.625rem] text-text-tertiary">{w.label}</li>)}
+          </ol>
+        </div>
+        <figcaption class="sr-only">Weekly hiring trend with candidate totals</figcaption>
+      </figure>
+    </article>
+  </div>
+</Section>

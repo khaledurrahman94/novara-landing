@@ -6,6 +6,7 @@
 import Base from './Base.astro';
 import Nav from '../components/home/Nav.astro';
 import Footer from '../components/home/Footer.astro';
+import { HOME_DEMO_HREF } from '../lib/home-path';
 import '../components/home/home.css';
 
 interface Props { title: string; description: string }
@@ -13,7 +14,7 @@ const { title, description } = Astro.props;
 ---
 <Base {title} {description} fluid>
   <div class="home bg-white text-text-primary">
-    <Nav ctaHref="/#demo-close" solid />
+    <Nav ctaHref={HOME_DEMO_HREF} solid />
     <main id="main">
       <slot />
     </main>

@@ -7,6 +7,7 @@ import { z } from 'astro/zod';
 import { company } from '../content/company';
 import { home } from '../content/home';
 import { legal } from '../content/legal';
+import { HOME_PATH, homeHref } from './home-path';
 import { error, fromZod, type Issue } from './issues';
 import { normalizePath } from './paths';
 import { seoMetaSchema, type Media, type Redirect, type SeoMeta, type SiteSettings } from './schemas';
@@ -55,7 +56,7 @@ export interface PageProvider {
 export const mediaToImage = (m: Media | undefined, field: string): ImageRef[] => (m ? [{ url: m.url, alt: m.alternativeText, field }] : []);
 
 /**
- * TODO(home wiring): `/` still takes its SEO from code. Replace `home.seo` with the `home` entry's
+ * TODO(home wiring): the home page (HOME_PATH) still takes its SEO from code. Replace `home.seo` with the `home` entry's
  * `seo` (its `updatedAt` becomes the sitemap lastmod) once the home content type is read.
  */
 export function homeSeoMeta(): SeoMeta {
@@ -71,12 +72,12 @@ const homeLiveLinks = (): string[] => {
     ...home.footer.columns.flatMap((c): readonly { href: string; live: boolean }[] => c.links),
     home.footer.terms,
   ];
-  return all.filter((l) => l.live).map((l) => l.href);
+  return all.filter((l) => l.live).map((l) => homeHref(l.href));
 };
 
 const homeProvider: PageProvider = {
   type: 'home',
-  pages: () => [{ type: 'home', path: '/', route: 'code', where: 'home', seo: homeSeoMeta(), images: [], links: homeLiveLinks() }],
+  pages: () => [{ type: 'home', path: HOME_PATH, route: 'code', where: 'home', seo: homeSeoMeta(), images: [], links: homeLiveLinks() }],
 };
 
 /** Code-owned content pages (About, Contact, Terms and Policy): copy in src/content/company.ts and legal.ts. */

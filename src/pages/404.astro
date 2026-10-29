@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Button from '../components/home/Button.astro';
+import { HOME_PATH } from '../lib/home-path';
 import { home } from '../content/home';
 import '../components/home/home.css';
 const { notFound, nav } = home;
@@ -9,7 +10,7 @@ const { notFound, nav } = home;
   <div class="home flex min-h-svh flex-col bg-white text-text-primary">
     <header class="border-b border-border-secondary">
       <div class="mx-auto flex h-16 w-full max-w-[75rem] items-center border-x border-border-secondary px-5 sm:px-8 md:px-12">
-        <a href="/" class="shrink-0 rounded-sm" aria-label={nav.home}>
+        <a href={HOME_PATH} class="shrink-0 rounded-sm" aria-label={nav.home}>
           <img src="/brand/novara-full.svg" width="143" height="41" alt="Novara" class="block h-7 w-auto" />
         </a>
       </div>
@@ -18,7 +19,7 @@ const { notFound, nav } = home;
       <p class="m-0 text-sm font-medium text-text-tertiary">404</p>
       <h1 class="m-0 mt-3 max-w-[40rem] text-[clamp(2rem,1.2rem+2.8vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.03em]">{notFound.title}</h1>
       <p class="m-0 mt-5 max-w-[32rem] text-lg leading-relaxed text-text-secondary">{notFound.line}</p>
-      <div class="mt-8"><Button href="/">{notFound.cta}</Button></div>
+      <div class="mt-8"><Button href={HOME_PATH}>{notFound.cta}</Button></div>
     </main>
   </div>
 </Base>

@@ -1,0 +1,28 @@
+---
+import { v2 } from '../../content/v2';
+import CandidateReview from '../shared/ui/CandidateReview.astro';
+import Icon from '../shared/ui/Icon.astro';
+const { hero } = v2;
+---
+<section data-hero id="top" aria-labelledby="hero-title" class="relative bg-white">
+  <div class="mx-auto w-full max-w-[75rem] border-x border-border-secondary px-5 pb-20 pt-16 sm:px-8 md:px-12 md:pb-32 md:pt-24">
+    <div class="max-w-[46rem]">
+      <h1 id="hero-title" class="m-0 text-[clamp(2.75rem,1.2rem+5.2vw,4.5rem)] font-semibold leading-[1.02] tracking-[-0.03em]">{hero.title}</h1>
+      <p data-rise class="m-0 mt-5 max-w-[34rem] text-lg leading-relaxed text-text-secondary">{hero.sub}</p>
+      <p data-rise class="m-0 mt-7">
+        <a href="#how" class="group inline-flex items-center gap-1.5 rounded-md text-base font-medium text-primary no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary">
+          {hero.secondary}
+          <Icon name="arrow-right" size={16} class="rotate-90 transition-transform duration-200 ease-out group-hover:translate-y-0.5" />
+        </a>
+      </p>
+    </div>
+
+    <div data-shot-stage class="relative mt-14 md:mt-16" style="perspective: 112.5rem">
+      <div class="v2-horizon pointer-events-none absolute -top-16 left-[-10%] right-[-10%] h-[26rem] opacity-50" aria-hidden="true"></div>
+      <figure data-shot class="relative m-0" style="transform-origin: 50% 0">
+        <CandidateReview />
+        <figcaption class="sr-only">{hero.shotCaption}</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,118 @@
+---
+import Avatar from './Avatar.astro';
+import Chip from './Chip.astro';
+import Icon from './Icon.astro';
+import ScoreRing from './ScoreRing.astro';
+import { candidates, fit, integrity, interview, lead, role } from '../../../data/demo';
+/**
+ * Candidate review: the app screen with its slim sidebar, a ranked applicant list and one
+ * candidate's profile (Job Fit Score, AI Interview Score, integrity, the move action).
+ * Adapts by container width: phones get the profile only, tablets add the rail, desktops all three panes.
+ * Animation hooks: ring-arc, count, criteria-row (+ data-tick), event.
+ */
+interface Props { class?: string }
+const { class: cls = '' } = Astro.props;
+const rail = ['window', 'users', 'briefcase', 'calendar', 'clipboard', 'globe'];
+const flagged = integrity.events.find((e) => e.flagged);
+---
+<div class:list={['@container w-full overflow-hidden rounded-xl border border-border-primary bg-white font-ui text-text-primary shadow-xl', cls]} data-card="candidate-review">
+  <div class="flex min-h-[28rem]">
+    <div class="hidden w-14 shrink-0 flex-col items-center gap-1 border-r border-border-secondary bg-bg py-3 @xl:flex" aria-hidden="true">
+      <img src="/brand/novara-mark.svg" alt="" width="24" height="24" class="mb-3 size-6" />
+      {rail.map((n) => (
+        <span class:list={['grid size-9 place-items-center rounded-md', n === 'users' ? 'bg-primary-50 text-primary' : 'text-text-placeholder']}>
+          <Icon name={n} size={18} />
+        </span>
+      ))}
+    </div>
+
+    <div class="hidden w-[19rem] shrink-0 flex-col border-r border-border-secondary @3xl:flex">
+      <div class="border-b border-border-secondary px-4 py-3">
+        <p class="m-0 text-sm font-semibold">{role.title}</p>
+        <p class="m-0 text-xs text-text-tertiary">Ranked by Job Fit Score</p>
+      </div>
+      <ol class="m-0 list-none p-0">
+        {candidates.map((c, i) => (
+          <li class:list={['flex items-center gap-3 px-4 py-3', i > 0 && 'border-t border-border-secondary', c.id === 'amara' && 'bg-primary-50']}>
+            <Avatar initials={c.initials} lead={c.id === 'amara'} />
+            <div class="min-w-0 flex-1">
+              <p class="m-0 truncate text-[0.8125rem] font-semibold">{c.name}</p>
+              <p class="m-0 truncate text-xs text-text-tertiary">{c.note}</p>
+            </div>
+            <span class="text-sm font-semibold tabular-nums">{c.fit}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+
+    <div class="min-w-0 flex-1 p-4 @lg:p-6">
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-3">
+        <Avatar initials={lead.initials} size="md" lead />
+        <div class="min-w-0">
+          <p class="m-0 text-base font-semibold leading-tight">{lead.name}</p>
+          <p class="m-0 mt-0.5 flex items-center gap-2 text-xs text-text-tertiary">{role.short}<Chip tone="success">Completed</Chip></p>
+        </div>
+        <div class="flex w-full gap-2 @xl:ml-auto @xl:w-auto">
+          <span class="inline-flex h-9 items-center rounded-md border border-border-primary bg-white px-3 text-[0.8125rem] font-medium text-text-secondary shadow-xs">View recording</span>
+          <span class="inline-flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-[0.8125rem] font-medium text-white shadow-xs">Move to HR Round<Icon name="arrow-right" size={14} /></span>
+        </div>
+      </div>
+
+      <div class="mt-5 grid grid-cols-1 divide-y divide-border-secondary rounded-lg border border-border-secondary @md:grid-cols-3 @md:divide-x @md:divide-y-0">
+        <div class="flex flex-row items-center gap-3 p-3 @md:flex-col @md:items-start @md:gap-2 @lg:flex-row @lg:items-center @lg:gap-3 @lg:p-4">
+          <ScoreRing score={fit.score} size={52} stroke={5} class="shrink-0" />
+          <div>
+            <p class="m-0 text-xs font-medium text-text-tertiary">Job Fit Score</p>
+            <p class="m-0 text-xs text-text-tertiary">Resume vs job</p>
+          </div>
+        </div>
+        <div class="p-3 @lg:p-4">
+          <p class="m-0 text-xs font-medium text-text-tertiary">AI Interview Score</p>
+          <p class="m-0 mt-1 flex items-baseline gap-1">
+            <span class="text-[1.75rem] font-semibold leading-none tabular-nums" data-anim="count" data-count={interview.score}>{interview.score}</span>
+            <span class="text-xs text-text-tertiary">/ 100</span>
+          </p>
+        </div>
+        <div class="p-3 @lg:p-4">
+          <p class="m-0 text-xs font-medium text-text-tertiary">Integrity</p>
+          <span data-anim="event" class="mt-1.5 inline-block"><Chip tone="warning" class="!whitespace-normal">{integrity.toReview} event to review</Chip></span>
+        </div>
+      </div>
+
+      <div class="mt-5 grid gap-5 @xl:grid-cols-2 @xl:gap-8">
+        <div>
+          <p class="m-0 mb-2 text-xs font-semibold text-text-tertiary">Why this score</p>
+          <ul class="m-0 flex list-none flex-col gap-2 p-0">
+            {fit.matched.map((m) => (
+              <li data-anim="criteria-row" class="flex items-center gap-2.5 text-[0.8125rem] text-text-secondary">
+                <span data-tick class="grid size-5 shrink-0 place-items-center rounded-full bg-success/10 text-text-secondary"><Icon name="check" size={12} /></span>{m}
+              </li>
+            ))}
+            {fit.missing.map((m) => (
+              <li data-anim="criteria-row" class="flex items-center gap-2.5 text-[0.8125rem] text-text-secondary">
+                <span data-tick class="grid size-5 shrink-0 place-items-center rounded-full bg-warning/10 text-text-secondary"><Icon name="alert" size={12} /></span>
+                <span><span class="font-medium text-text-primary">Missing:</span> {m.label} <span class="text-text-tertiary">({m.note})</span></span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="hidden @xl:block">
+          <p class="m-0 mb-2 text-xs font-semibold text-text-tertiary">Interview events</p>
+          <ol class="m-0 list-none p-0">
+            {integrity.events.map((e, i) => (
+              <li data-anim={e.flagged ? 'event' : undefined} class="relative flex gap-3 pb-3 last:pb-0">
+                {i < integrity.events.length - 1 && <span class="absolute left-[0.3125rem] top-4 h-full w-px bg-border-secondary" aria-hidden="true"></span>}
+                <span class:list={['relative mt-1 size-[0.6875rem] shrink-0 rounded-full border-2 bg-white', e.flagged ? 'border-warning' : 'border-border-primary']} aria-hidden="true"></span>
+                <span class="min-w-0 flex-1 text-[0.8125rem]">
+                  <span class="mr-2 tabular-nums text-text-tertiary">{e.time}</span>
+                  <span class:list={[e.flagged ? 'font-semibold' : 'text-text-secondary']}>{e.label}</span>
+                  {e.flagged && flagged && <span class="mt-0.5 block text-xs text-text-tertiary">Flagged for your review</span>}
+                </span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

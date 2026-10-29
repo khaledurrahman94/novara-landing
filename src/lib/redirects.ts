@@ -17,10 +17,6 @@ export interface RedirectRule {
  * adapter writes them into `_redirects`. They take part in loop, chain and live-page checks.
  */
 export const codeRedirects: ReadonlyArray<Pick<RedirectRule, 'from' | 'to' | 'status'>> = [
-  // Legacy URLs from the design review rounds: they may have been shared, so they land on the home page.
-  { from: '/v1', to: '/', status: 301 },
-  { from: '/v2', to: '/', status: 301 },
-  { from: '/v3', to: '/', status: 301 },
   // Common legal URLs land on their section of the combined Terms and Policy page.
   { from: '/privacy', to: '/terms#privacy-policy', status: 301 },
   { from: '/cookies', to: '/terms#cookie-policy', status: 301 },

@@ -1,0 +1,16 @@
+---
+/** Title on the left, an optional short line on the right. The eyebrow pill is used on at most three sections. */
+interface Props { id: string; title: string; eyebrow?: string; line?: string; class?: string }
+const { id, title, eyebrow, line, class: cls = '' } = Astro.props;
+---
+<div class:list={['grid gap-6 lg:items-end', line && 'lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] lg:gap-16', cls]}>
+  <div>
+    {eyebrow && (
+      <p class="m-0 mb-5 inline-flex items-center gap-2 rounded-full border border-border-primary bg-bg-secondary px-3 py-1 text-sm font-medium text-text-secondary">
+        <span class="size-1.5 rounded-full bg-primary" aria-hidden="true"></span>{eyebrow}
+      </p>
+    )}
+    <h2 id={id} class="m-0 max-w-[22ch] text-balance font-display text-display-md font-semibold leading-[1.08] tracking-[-0.025em] text-text-primary">{title}</h2>
+  </div>
+  {line && <p class="m-0 max-w-[30rem] text-lg leading-relaxed text-text-tertiary lg:justify-self-end">{line}</p>}
+</div>

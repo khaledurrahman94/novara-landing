@@ -1,0 +1,9 @@
+---
+import HomePage from '../../legacy/components/v3/HomePage.astro';
+import { v3 } from '../../legacy/content/v3';
+import { seoMetaSchema } from '../../lib/schemas';
+
+// The original V3 (the winner before the DM feedback), kept as it was. Always noindex: V4 is the indexable page.
+const seo = seoMetaSchema.parse({ metaTitle: v3.seo.title, metaDescription: v3.seo.description, breadcrumbLabel: 'Home' });
+---
+<HomePage {seo} forceNoindex />

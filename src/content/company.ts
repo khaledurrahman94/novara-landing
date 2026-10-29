@@ -2,6 +2,7 @@
  * Company page copy (About, Contact) and the shared contact details. Code-owned for now: no CMS wiring.
  * See docs/implementation/07-company-pages.md for what is still unconfirmed.
  */
+import { HOME_DEMO_HREF } from '../lib/home-path';
 import { SIGN_IN_HREF } from './home';
 
 /**
@@ -75,6 +76,6 @@ export const company = {
     title: 'Talk to the Novara team',
     line: 'Reach us by email or phone, or book a demo.',
     labels: { email: 'Email', phone: 'Phone', address: 'Address', website: 'Website' },
-    demo: { label: 'Book a demo', href: '/#demo-close' },
+    demo: { label: 'Book a demo', href: HOME_DEMO_HREF },
   },
 } as const;

@@ -26,6 +26,8 @@ export function headersFile(siteEnv: 'production' | 'staging'): string {
     '/preview/*',
     '  X-Robots-Tag: noindex, nofollow',
     '  Cache-Control: no-store',
+    // The variants showcase and the earlier designs: noindex in every environment (V4 is the page to index).
+    ...['/', '/v1', '/v2', '/v3'].flatMap((p) => ['', p, '  X-Robots-Tag: noindex, nofollow']),
   ];
   if (siteEnv !== 'production') rules.push('', '/*', '  X-Robots-Tag: noindex, nofollow');
   return `${rules.join('\n')}\n`;

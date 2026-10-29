@@ -1,0 +1,27 @@
+---
+import Avatar from '../../../shared/ui/Avatar.astro';
+import ScoreRing from '../../../shared/ui/ScoreRing.astro';
+import { copy } from './copy';
+import type { Applicant } from './model';
+/** A new application. The slot carries the scrubbed intro, the card carries the drag. */
+interface Props { applicant: Applicant }
+const { applicant: a } = Astro.props;
+---
+<div class="sl-slot" data-slot data-id={a.id}>
+  <article class="sl-card" data-card data-id={a.id} data-state="idle" aria-label={`Resume: ${a.name}`}>
+    <div data-cursor="Drag">
+      <div class="flex items-center gap-2.5">
+        <Avatar initials={a.initials} />
+        <p class="m-0 min-w-0 flex-1 truncate text-[0.8125rem] font-semibold text-text-primary">{a.name}</p>
+        <ScoreRing score={0} size={44} stroke={5} class="sl-card-ring" />
+      </div>
+      <p class="m-0 mt-2.5 text-xs text-text-tertiary">{a.snippet?.[0]}</p>
+      <p class="m-0 text-xs text-text-tertiary">{a.snippet?.[1]}</p>
+    </div>
+    <div class="mt-3 flex items-center justify-between gap-2 border-t border-border-secondary pt-3">
+      <span class="text-xs text-text-tertiary" data-status>{copy.notScreened}</span>
+      <button type="button" class="sl-btn" data-screen>{copy.screen}</button>
+    </div>
+  </article>
+  <div class="sl-ghost" data-ghost aria-hidden="true">{copy.screened}</div>
+</div>

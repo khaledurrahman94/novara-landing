@@ -1,0 +1,43 @@
+---
+import Avatar from './Avatar.astro';
+import { boardColumns, byId, pipelineStatus, recruiter, role } from '../../../data/demo';
+import { stageTone, toneDot } from './tone';
+/** Pipeline with real stage names. Amara carries the "moved by" status line. */
+interface Props { class?: string }
+const { class: cls = '' } = Astro.props;
+---
+<div class:list={['@container w-full max-w-[40rem] rounded-lg border border-border-secondary bg-bg-secondary p-4 font-ui text-text-primary shadow-md', cls]} data-card="pipeline">
+  <p class="m-0 mb-3 text-sm font-semibold">{role.title}</p>
+  <div class="grid grid-cols-2 gap-3 @lg:grid-cols-4">
+    {boardColumns.map((col) => (
+      <section aria-label={col.stage} class="rounded-md bg-bg-tertiary p-2">
+        <h4 class="m-0 mb-2 flex items-center gap-1.5 px-1 text-xs font-semibold text-text-secondary">
+          <span class:list={['size-1.5 rounded-full', toneDot[stageTone[col.stage]]]} aria-hidden="true"></span>
+          {col.stage}
+          <span class="ml-auto font-medium tabular-nums text-text-tertiary">{col.ids.length}</span>
+        </h4>
+        <ul class="m-0 flex list-none flex-col gap-2 p-0">
+          {col.ids.map((id) => {
+            const c = byId(id);
+            const moved = id === 'amara';
+            return (
+              <li data-anim={moved ? 'moved-card' : 'board-card'} class="rounded-md border border-border-secondary bg-bg-secondary p-2.5 shadow-xs">
+                <div class="flex items-center gap-2">
+                  <Avatar initials={c.initials} size="xs" lead={moved} />
+                  <span class="min-w-0 truncate text-xs font-semibold">{c.name}</span>
+                </div>
+                <p class="m-0 mt-1.5 text-[0.6875rem] text-text-tertiary">Job Fit {c.fit}</p>
+                {moved && (
+                  <p class="m-0 mt-2 flex items-start gap-1.5 border-t border-border-secondary pt-2 text-[0.6875rem] leading-snug text-text-secondary">
+                    <Avatar initials={recruiter.initials} size="xs" class="mt-px" />
+                    <span>{pipelineStatus}</span>
+                  </p>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    ))}
+  </div>
+</div>

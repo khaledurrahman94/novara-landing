@@ -1,6 +1,6 @@
 # Launch checklist
 
-Work through this before the site goes live. The home page is `/`; struck items are done in code.
+Work through this before the site goes live. The home page is V4 at `/v4`; at launch it becomes `/` (see [08-variants.md](implementation/08-variants.md): set `HOME_PATH`, move the page, remove the showcase and the legacy snapshot). Struck items are done in code.
 
 - [ ] **Demo form endpoint.** Pass `action` to the home page's DemoForm, using HubSpot, Formspree, the CRM or whatever marketing uses. Without it, production builds warn and send nothing.
 - [x] ~~**Indexing.** Remove `noindex` from the winning page and the sitemap filter.~~ Done in code: `PUBLIC_SITE_ENV=production` renders `index` on `/`, and the sitemap and `robots.txt` are generated. Left to do: set `PUBLIC_SITE_ENV=production` on the production deploy only (see `docs/deploy-site.md`).
@@ -9,3 +9,4 @@ Work through this before the site goes live. The home page is `/`; struck items 
 - [ ] **Domain.** Confirm `site` in `astro.config.mjs` (currently `https://novara.my`) and add the custom domain to the Worker (`docs/deploy-site.md`). It drives the canonical URLs, sitemap and OG links.
 - [ ] **Log in link.** Add one if existing customers need it from the landing page; it's left out because the URL is unknown.
 - [ ] **PM confirmations.** The page avoids these claims, so keep it that way until they're confirmed: automatic stage moves, score thresholds, offer letters.
+- [ ] **Promote V4 to `/`.** Follow "Promoting V4 to `/`" in `docs/implementation/08-variants.md` and re-run `pnpm build` and `pnpm validate:fixtures`.

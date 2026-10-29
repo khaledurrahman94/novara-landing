@@ -1,0 +1,7 @@
+---
+import HomePage from '../../components/home/HomePage.astro';
+import { homeSeoMeta } from '../../lib/pages';
+
+// The home page lives at `/v4` (see src/lib/home-path.ts). SEO is mapped from code until the home content type is wired to Strapi.
+---
+<HomePage seo={homeSeoMeta()} />

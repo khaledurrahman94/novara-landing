@@ -1,0 +1,22 @@
+---
+import ScoreTriplet from './ScoreTriplet.astro';
+import Icon from './Icon.astro';
+import { interview, lead } from '../../../data/demo';
+/** AI Interview Score (the interview, never the resume). */
+interface Props { wide?: boolean; class?: string }
+const { wide = false, class: cls = '' } = Astro.props;
+---
+<div class:list={[wide ? 'sm:grid sm:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] sm:items-center sm:gap-10' : 'max-w-[22rem]', 'w-full rounded-lg border border-border-secondary bg-bg-secondary p-5 font-ui text-text-primary shadow-md', cls]} data-card="interview-score">
+  <p class="m-0 text-xs font-medium text-text-tertiary">AI Interview Score</p>
+  <p class="m-0 mt-1 flex items-baseline gap-1">
+    <span class="text-4xl font-semibold tabular-nums" data-anim="count" data-count={interview.score}>{interview.score}</span>
+    <span class="text-sm text-text-tertiary">/ 100</span>
+  </p>
+  <p class="m-0 mt-0.5 text-xs text-text-tertiary">{lead.name}</p>
+  <ScoreTriplet class="mt-5 border-t border-border-secondary pt-4" />
+  <div class="mt-4 flex items-center gap-2.5 rounded-md bg-bg-tertiary px-3 py-2 text-[0.8125rem] text-text-secondary">
+    <span class="grid size-6 place-items-center rounded-full bg-primary text-white"><Icon name="play" size={10} /></span>
+    Recording
+    <span class="ml-auto tabular-nums text-text-tertiary">{interview.duration}</span>
+  </div>
+</div>

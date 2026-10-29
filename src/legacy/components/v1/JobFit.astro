@@ -1,0 +1,47 @@
+---
+import { v1 } from '../../content/v1';
+import { fit, lead, role, candidates } from '../../data/demo';
+import SectionHead from './SectionHead.astro';
+import Plate from '../shared/ui/Plate.astro';
+import ScaleToFit from '../shared/ScaleToFit.astro';
+import JobFitCard from '../shared/ui/JobFitCard.astro';
+import ApplicantList from '../shared/ui/ApplicantList.astro';
+import Chip from '../shared/ui/Chip.astro';
+const { fit: copy } = v1;
+---
+<section id="fit" data-fit data-scene aria-labelledby="fit-title" class="scroll-mt-16 bg-bg">
+  <div data-scene-stage class="scene-stage py-section">
+    <div class="scene-inner mx-auto w-full max-w-[var(--v1-max,84rem)] px-gutter">
+      <SectionHead id="fit-title" eyebrow={copy.eyebrow} title={copy.title} class="scene-head" />
+
+      <div class="scene-body fit-body grid gap-10 lg:gap-12">
+        <div data-fit-frame class="fit-frame grid gap-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-center lg:gap-16">
+          <div data-fit-score class="min-w-0">
+            <p class="m-0 text-base font-medium text-text-tertiary">{copy.scoreLabel}</p>
+            <p class="m-0 mt-2 font-display text-display-2xl font-semibold leading-[0.95] tracking-[-0.04em] text-text-primary tabular-nums" data-anim="count" data-count={fit.score} aria-label={`${copy.scoreLabel} ${fit.score}`}>{fit.score}</p>
+            <p class="m-0 mt-5 text-2xl font-semibold tracking-[-0.01em] text-text-primary">{lead.name}</p>
+            <p class="m-0 mt-1 text-base text-text-tertiary">{role.title}, {role.location}</p>
+            <Chip tone="success" class="mt-5 px-3! py-1! text-sm!">{copy.chip}</Chip>
+          </div>
+          <Plate caption={copy.figure} parallax class="fit-fig min-w-0">
+            <ScaleToFit design={28}><JobFitCard variant="detail" /></ScaleToFit>
+          </Plate>
+        </div>
+
+        <div data-fit-frame class="fit-frame fit-frame-list">
+          <Plate caption={copy.list}>
+            <ScaleToFit design={52} class="scale-fit-free"><ApplicantList rows={candidates.slice(0, 3)} class="max-w-[52rem]" /></ScaleToFit>
+          </Plate>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  [data-fit][data-pinned] .fit-body { display: grid; }
+  [data-fit][data-pinned] .fit-frame { grid-area: 1 / 1; min-height: 0; height: 100%; }
+  [data-fit][data-pinned] .fit-frame:first-child { grid-template-rows: minmax(0, 1fr); }
+  [data-fit][data-pinned] .fit-fig { height: 100%; }
+  [data-fit][data-pinned] .fit-frame-list { display: grid; align-content: center; }
+</style>

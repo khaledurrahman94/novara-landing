@@ -1,4 +1,5 @@
 ---
+import { HOME_PATH } from '../../lib/home-path';
 import { parseSiteEnv } from '../../lib/paths';
 import type { SeoMeta, SiteSettings } from '../../lib/schemas';
 import { resolveSeo } from '../../lib/seo';
@@ -30,10 +31,10 @@ const seo = resolveSeo({
   ...(pageTitle ? { pageTitle } : {}),
 });
 const abs = (p: string) => new URL(p, Astro.site).href;
-const isHome = Astro.url.pathname === '/';
+const isHome = Astro.url.pathname === HOME_PATH;
 
 const trail: Crumb[] = [
-  { name: 'Home', path: '/' },
+  { name: 'Home', path: HOME_PATH },
   ...breadcrumbs,
   ...(isHome || noCanonical ? [] : [{ name: meta.breadcrumbLabel ?? pageTitle ?? seo.title, path: Astro.url.pathname }]),
 ];

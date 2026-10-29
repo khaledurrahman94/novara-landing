@@ -1,0 +1,42 @@
+---
+import Icon from './Icon.astro';
+import Chip from './Chip.astro';
+import { integrity } from '../../../data/demo';
+/** Integrity events are for a human to review, not verdicts. */
+interface Props { class?: string }
+const { class: cls = '' } = Astro.props;
+---
+<div class:list={['w-full max-w-[26rem] rounded-lg border border-border-secondary bg-bg-secondary p-5 font-ui text-text-primary shadow-md', cls]} data-card="integrity">
+  <div class="flex items-center justify-between gap-3">
+    <p class="m-0 text-sm font-semibold">Integrity</p>
+    <Chip tone="warning">{integrity.toReview} event to review</Chip>
+  </div>
+
+  <ul class="m-0 mt-4 grid list-none grid-cols-2 gap-2 p-0">
+    {integrity.counters.map((c) => (
+      <li class="flex items-center gap-2.5 rounded-md border border-border-secondary px-3 py-2.5">
+        <span class:list={['grid size-7 shrink-0 place-items-center rounded-md', c.value > 0 ? 'bg-warning/10 text-warning' : 'bg-gray-100 text-text-tertiary']}>
+          <Icon name={c.icon} size={14} />
+        </span>
+        <span class="min-w-0">
+          <span class="block text-lg font-semibold leading-none tabular-nums" data-anim="counter" data-key={c.key} data-count={c.value}>{c.value}</span>
+          <span class="mt-0.5 block truncate text-[0.6875rem] text-text-tertiary">{c.label}</span>
+        </span>
+      </li>
+    ))}
+  </ul>
+
+  <ol class="m-0 mt-5 list-none p-0">
+    {integrity.events.map((e, i) => (
+      <li data-anim="event" data-flagged={e.flagged ? 'true' : undefined} class="relative flex gap-3 pb-4 last:pb-0">
+        {i < integrity.events.length - 1 && <span class="absolute left-[0.3125rem] top-4 h-full w-px bg-border-secondary" aria-hidden="true"></span>}
+        <span class:list={['relative mt-1 size-[0.6875rem] shrink-0 rounded-full border-2 bg-bg-secondary', e.flagged ? 'border-warning' : 'border-border-primary']} aria-hidden="true"></span>
+        <span class="min-w-0 flex-1 text-[0.8125rem]">
+          <span class="mr-2 tabular-nums text-text-tertiary">{e.time}</span>
+          <span class:list={[e.flagged ? 'font-semibold text-text-primary' : 'text-text-secondary']}>{e.label}</span>
+          {e.flagged && <span class="mt-0.5 block text-xs text-text-tertiary">Flagged for your review</span>}
+        </span>
+      </li>
+    ))}
+  </ol>
+</div>

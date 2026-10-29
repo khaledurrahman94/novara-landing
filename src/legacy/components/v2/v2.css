@@ -1,0 +1,84 @@
+@import '@fontsource-variable/geist';
+
+:root {
+  --font-geist: 'Geist Variable', system-ui, sans-serif;
+}
+
+html {
+  scroll-padding-top: 5rem;
+}
+
+.v2 {
+  font-family: var(--font-geist);
+  overflow-x: clip;
+  caret-color: var(--color-primary);
+  text-wrap: pretty;
+}
+.v2 h1,
+.v2 h2,
+.v2 h3 {
+  text-wrap: balance;
+}
+.v2 ::selection {
+  background: var(--color-primary-200);
+  color: var(--color-text-primary);
+}
+.v2 :focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+.v2 input::placeholder {
+  color: var(--color-text-placeholder);
+  opacity: 1;
+}
+.v2 a {
+  text-underline-offset: 3px;
+}
+
+/* Hero intro start states: only when JS is running and motion is allowed. */
+@media (prefers-reduced-motion: no-preference) {
+  .js:not(.js-fail) [data-rise],
+  .js:not(.js-fail) [data-shot] {
+    opacity: 0;
+  }
+}
+
+/* Hero horizon: the one use of the brand gradient, behind the product shot only. */
+.v2-horizon {
+  background-image: var(--gradient-brand);
+  -webkit-mask-image: radial-gradient(ellipse 60% 100% at 50% 0%, #000 0%, transparent 72%);
+  mask-image: radial-gradient(ellipse 60% 100% at 50% 0%, #000 0%, transparent 72%);
+}
+
+/* FAQ: native details, smooth where the browser supports it. */
+.v2-faq summary {
+  list-style: none;
+  cursor: pointer;
+}
+.v2-faq summary::-webkit-details-marker {
+  display: none;
+}
+.v2-faq summary .v2-plus {
+  transition: transform var(--duration-base) var(--ease-out-quart);
+}
+.v2-faq details[open] summary .v2-plus {
+  transform: rotate(45deg);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .v2-faq details {
+    interpolate-size: allow-keywords;
+  }
+  .v2-faq details::details-content {
+    block-size: 0;
+    overflow: clip;
+    opacity: 0;
+    transition:
+      block-size var(--duration-slow) var(--ease-out-quart),
+      opacity var(--duration-base) var(--ease-out-quart),
+      content-visibility var(--duration-slow) allow-discrete;
+  }
+  .v2-faq details[open]::details-content {
+    block-size: auto;
+    opacity: 1;
+  }
+}
