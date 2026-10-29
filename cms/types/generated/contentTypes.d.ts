@@ -484,6 +484,7 @@ export interface ApiHomeHome extends Struct.SingleTypeSchema {
       Schema.Attribute.Required;
     seo: Schema.Attribute.Component<'seo.meta', false> &
       Schema.Attribute.Required;
+    socialProof: Schema.Attribute.Component<'home.social-proof', false>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

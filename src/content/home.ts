@@ -57,14 +57,23 @@ export const home = {
       rank: 'Ranked 1 of 6',
     },
   },
+  /**
+   * Trust strip after the hero. Renders only when `logos` has real entries, so it ships empty.
+   * Add only confirmed customers: no invented names, counts or quotes. `src` is a path under /public or an https URL.
+   */
+  socialProof: {
+    heading: 'Trusted by hiring teams at',
+    count: '',
+    logos: [] as { name: string; src: string; href?: string }[],
+  },
   results: {
-    title: 'From 1,200+ applicants to 4 hires.',
-    caption: 'One real hiring round for engineering roles, run on Novara.',
+    title: 'From 1,200+ applicants to 4 offers.',
+    caption: 'Illustrative funnel for an engineering hire. Not a customer result.',
     figures: [
-      { key: 'applied', label: 'Applied', note: 'Resumes received for engineering roles.', callout: '', value: 1200, suffix: '+' },
-      { key: 'interviewed', label: 'AI interviews', note: "Screened against the job's requirements, then took the AI interview.", callout: '', value: 600, suffix: '' },
-      { key: 'shortlisted', label: 'Shortlisted', note: 'Shortlisted after the AI interview.', callout: '12 of the 600 interviewed', value: 12, suffix: '' },
-      { key: 'hired', label: 'Hired', note: 'Hired after in-person interviews.', callout: '4 of the 12 shortlisted', value: 4, suffix: '' },
+      { key: 'applied', label: 'Applied', note: 'Resumes received for the role.', callout: '', value: 1200, suffix: '+' },
+      { key: 'interviewed', label: 'AI interviews', note: "Scored against the job's requirements, then invited to the AI interview.", callout: '', value: 600, suffix: '' },
+      { key: 'shortlisted', label: 'HR Round', note: 'Moved to the HR round after the AI interview.', callout: '12 of the 600 interviewed', value: 12, suffix: '' },
+      { key: 'hired', label: 'Offered', note: 'Offers made after the HR round.', callout: '4 of the 12 in the HR round', value: 4, suffix: '' },
     ],
     hintFine: 'Hover an applicant. Values are illustrative.',
     hintTouch: 'Tap an applicant. Values are illustrative.',
@@ -72,11 +81,11 @@ export const home = {
       '1,200+ applicants, one dot each.',
       "Screened against the job's requirements.",
       'Took the AI interview.',
-      'Shortlisted after the AI interview.',
-      'Hired after in-person interviews.',
+      'Moved to the HR round.',
+      'Offers made.',
     ],
-    legend: ['Applied', 'AI interviews', 'Shortlisted', 'Hired'],
-    hired: 'Hired',
+    legend: ['Applied', 'AI interviews', 'HR Round', 'Offered'],
+    hired: 'Offered',
   },
   decide: {
     title: 'You decide who moves on. Novara shows you why.',
@@ -90,12 +99,47 @@ export const home = {
     movedStatus: 'Amara Okafor moved to HR Round by you.',
     backStatus: 'Amara Okafor moved back to Completed.',
     evidenceTitle: 'The evidence',
-    evidence: {
-      amara: { jobFit: 92, score: 88, items: [{ label: 'Technical depth', score: 9 }, { label: 'Problem solving', score: 8 }, { label: 'Communication', score: 9 }] },
-      ines: { jobFit: 84, score: 81, items: [{ label: 'Technical depth', score: 8 }, { label: 'Problem solving', score: 8 }, { label: 'Communication', score: 8 }] },
-      kenji: { jobFit: 79, score: 84, items: [{ label: 'Technical depth', score: 8 }, { label: 'Problem solving', score: 9 }, { label: 'Communication', score: 8 }] },
+    evaluation: {
+      interviewScore: 'AI Interview Score',
+      fitScore: 'Job Fit Score',
+      strengths: 'Strengths',
+      weaknesses: 'Weaknesses',
+      opportunities: 'Opportunities',
+      threats: 'Threats',
     },
-    note: 'Scores in this demo are illustrative.',
+    evidence: {
+      amara: {
+        jobFit: 92,
+        score: 88,
+        swot: {
+          strengths: 'Clear, structured answers on service design.',
+          weaknesses: 'Little hands-on Kubernetes.',
+          opportunities: 'Could lead the API migration work.',
+          threats: 'Likely to have other offers.',
+        },
+      },
+      ines: {
+        jobFit: 84,
+        score: 81,
+        swot: {
+          strengths: 'Strong PostgreSQL and event-driven design.',
+          weaknesses: 'Shorter time in senior roles.',
+          opportunities: 'Could own data-heavy services.',
+          threats: 'May want a wider scope than the role has.',
+        },
+      },
+      kenji: {
+        jobFit: 79,
+        score: 84,
+        swot: {
+          strengths: 'Methodical problem solving in large codebases.',
+          weaknesses: 'Node.js use is limited to side services.',
+          opportunities: 'Could shape service design standards.',
+          threats: 'Ramp-up time on the Node.js stack.',
+        },
+      },
+    },
+    note: 'Novara scores out of 100. Names and evaluation wording in this demo are illustrative.',
   },
   how: {
     title: 'How it works',

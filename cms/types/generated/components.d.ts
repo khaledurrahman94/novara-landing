@@ -277,6 +277,31 @@ export interface HomeHow extends Struct.ComponentSchema {
   };
 }
 
+export interface HomeLogo extends Struct.ComponentSchema {
+  collectionName: 'components_home_logos';
+  info: {
+    description: 'One customer logo for the social proof strip.';
+    displayName: 'Customer logo';
+  };
+  attributes: {
+    href: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+        minLength: 1;
+      }>;
+    src: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 300;
+      }>;
+  };
+}
+
 export interface HomeNav extends Struct.ComponentSchema {
   collectionName: 'components_home_navs';
   info: {
@@ -376,6 +401,35 @@ export interface HomeResults extends Struct.ComponentSchema {
         maxLength: 45;
         minLength: 1;
       }>;
+  };
+}
+
+export interface HomeSocialProof extends Struct.ComponentSchema {
+  collectionName: 'components_home_social_proofs';
+  info: {
+    description: 'Optional trust strip after the hero. Renders only when it has at least one logo. Real customers only.';
+    displayName: 'Social proof';
+  };
+  attributes: {
+    count: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+      }>;
+    heading: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 60;
+        minLength: 1;
+      }>;
+    logos: Schema.Attribute.Component<'home.logo', true> &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 12;
+          min: 1;
+        },
+        number
+      >;
   };
 }
 
@@ -484,9 +538,11 @@ declare module '@strapi/strapi' {
       'home.footer': HomeFooter;
       'home.hero': HomeHero;
       'home.how': HomeHow;
+      'home.logo': HomeLogo;
       'home.nav': HomeNav;
       'home.platform': HomePlatform;
       'home.results': HomeResults;
+      'home.social-proof': HomeSocialProof;
       'home.step': HomeStep;
       'home.tile': HomeTile;
       'seo.meta': SeoMeta;

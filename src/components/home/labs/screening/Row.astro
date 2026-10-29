@@ -2,7 +2,7 @@
 import Avatar from '../../../shared/ui/Avatar.astro';
 import Icon from '../../../shared/ui/Icon.astro';
 import { copy } from './copy';
-import { QUALIFIED_AT, breakdown, type Applicant, type ReqId } from './model';
+import { band, breakdown, type Applicant, type ReqId } from './model';
 /** One ranked applicant. The panel holds the matched and missing items and the reason. */
 interface Props { applicant: Applicant; rank: number; score: number; active: ReadonlySet<ReqId>; open?: boolean; hidden?: boolean }
 const { applicant: a, rank, score, active, open = false, hidden = false } = Astro.props;
@@ -28,7 +28,7 @@ const first = a.name.split(' ')[0];
     <span class="flex w-[4.5rem] shrink-0 flex-col items-end gap-1">
       <span class="text-base font-semibold leading-none tabular-nums text-text-primary" data-score>{score}</span>
       <span class="sl-bar" aria-hidden="true"><span class="sl-bar-fill" data-bar style={`transform:scaleX(${score / 100})`}></span></span>
-      <span class="text-[0.6875rem] leading-none text-text-tertiary" data-fitlabel>{score >= QUALIFIED_AT ? copy.qualified : copy.notAFit}</span>
+      <span class="text-[0.6875rem] leading-none text-text-tertiary" data-fitlabel>{copy[band(score)]}</span>
     </span>
     <svg class="sl-chevron text-text-placeholder" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
   </button>

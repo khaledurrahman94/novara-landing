@@ -300,3 +300,11 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Novara shows Job Fit as a percentage; the script writes the bare number. */
+.sl-row [data-score]::after {
+  content: "%";
+  font-size: 0.75em;
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+}

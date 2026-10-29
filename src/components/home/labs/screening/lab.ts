@@ -8,7 +8,7 @@ import { holdToDrag } from '../../motion/util';
 import { InertiaPlugin } from 'gsap/InertiaPlugin';
 import { Flip } from 'gsap/Flip';
 import { copy } from './copy';
-import { APPLICANTS, QUALIFIED_AT, breakdown, rank, score, type Applicant, type Item, type ReqId } from './model';
+import { APPLICANTS, band, breakdown, rank, score, type Applicant, type Item, type ReqId } from './model';
 
 gsap.registerPlugin(Draggable, InertiaPlugin, Flip, ScrollTrigger);
 
@@ -155,7 +155,7 @@ function mount(root: HTMLElement): () => void {
     gsap.killTweensOf(r.n);
     gsap.killTweensOf(r.bar);
     if (from !== undefined) r.n.v = from;
-    r.label.textContent = to >= QUALIFIED_AT ? copy.qualified : copy.notAFit;
+    r.label.textContent = copy[band(to)];
     if (reduced()) {
       r.n.v = to;
       r.scoreEl.textContent = String(to);
@@ -374,7 +374,7 @@ function mount(root: HTMLElement): () => void {
     const finish = (): void => {
       setRing(c, target);
       c.ring?.setAttribute('aria-label', `Job Fit Score ${target} out of 100`);
-      c.status.textContent = `Job Fit ${target}`;
+      c.status.textContent = `Job Fit ${target}%`;
       const leave = (): void => {
         c.state = 'done';
         c.card.dataset['state'] = 'done';
