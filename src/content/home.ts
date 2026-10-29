@@ -20,10 +20,11 @@ export const home = {
       { label: 'FAQ', href: '#faq' },
     ],
     cta: 'Request a demo',
+    getStarted: { label: 'Get started', href: SIGN_IN_HREF },
     /** Rendered now. Later items (Platform, Features, Solutions, ROI Calculator, Resources) join this list when their pages exist. */
     links: [
       { label: 'Home', href: '/' },
-      { label: 'Sign in', href: SIGN_IN_HREF },
+      { label: 'Login', href: SIGN_IN_HREF },
       { label: 'Contact us', href: '/contact' },
       { label: 'About us', href: '/about' },
       { label: 'Pricing', href: '/pricing' },
@@ -44,7 +45,7 @@ export const home = {
     sub: 'Novara scores every resume against the job, runs the first round with an AI interviewer, and shows your team the evidence behind every shortlist.',
     secondary: 'Try the AI interview',
     pricing: { label: 'See pricing', href: '/pricing' },
-    signIn: { label: 'Sign in', href: SIGN_IN_HREF },
+    signIn: { label: 'Login', href: SIGN_IN_HREF },
     shotCaption: 'Novara candidate review: ranked applicants on the left, and Amara Okafor with a Job Fit Score of 92, an AI Interview Score of 88 and one integrity event to review.',
     chips: {
       node: 'Matched: Node.js',
@@ -314,7 +315,7 @@ export const home = {
         ],
       },
     ],
-    terms: { label: 'Terms and conditions', href: '/terms' },
+    terms: { label: 'Terms and policy', href: '/terms' },
     aiSummary: {
       label: 'Get an AI summary of Novara',
       prompt: 'Summarize what Novara (https://novara.my/) does, who it is for and how it works.',

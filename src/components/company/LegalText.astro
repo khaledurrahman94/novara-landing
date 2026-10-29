@@ -1,0 +1,18 @@
+---
+/** Renders legal text with its `{token}` placeholders resolved. `{email}` and `{website}` become links. */
+import { legalTokens } from '../../content/legal';
+
+interface Props { text: string }
+const { text } = Astro.props;
+const link = 'text-primary-700 underline underline-offset-2 hover:text-primary-800';
+const parts = text.split(/(\{[a-z]+\})/).filter(Boolean).map((part): { text: string; href?: string } => {
+  const m = /^\{([a-z]+)\}$/.exec(part);
+  if (!m) return { text: part };
+  const key = m[1] as keyof typeof legalTokens;
+  const value = legalTokens[key] ?? '';
+  if (key === 'email') return { text: value, href: `mailto:${value}` };
+  if (key === 'website') return { text: value, href: value };
+  return { text: value };
+});
+---
+{parts.map((x) => (x.href ? <a href={x.href} class={link}>{x.text}</a> : x.text))}

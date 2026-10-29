@@ -1,0 +1,37 @@
+---
+import { legal, legalTokens, type LegalDocument } from '../../content/legal';
+import LegalText from './LegalText.astro';
+
+interface Props { doc: LegalDocument }
+const { doc } = Astro.props;
+const hasJurisdiction = legalTokens.jurisdiction !== '';
+const shown = (req?: 'jurisdiction') => req === undefined || hasJurisdiction;
+// Parts that need data we don't have yet are left out, and numbering follows what is shown.
+const sections = doc.sections.filter((s) => shown(s.requires)).map((s) => ({
+  ...s,
+  heading: !hasJurisdiction && s.headingWithout ? s.headingWithout : s.heading,
+  blocks: s.blocks.filter((b) => b.kind !== 'p' || shown(b.requires)),
+}));
+---
+<section id={doc.id} aria-labelledby={`${doc.id}-title`} class="border-t border-border-secondary pt-12 first:border-t-0 first:pt-0 [&:not(:first-child)]:mt-16">
+  <h2 id={`${doc.id}-title`} class="m-0 text-[clamp(1.75rem,1.3rem+1.6vw,2.5rem)] font-semibold leading-tight tracking-[-0.02em]">{doc.title}</h2>
+  {(doc.effective || doc.updated) && (
+    <dl class="m-0 mt-4 flex flex-wrap gap-x-6 gap-y-1 text-sm text-text-tertiary">
+      {doc.effective && <div class="flex gap-1.5"><dt>{legal.effectiveLabel}:</dt><dd class="m-0">{doc.effective}</dd></div>}
+      {doc.updated && <div class="flex gap-1.5"><dt>{legal.updatedLabel}:</dt><dd class="m-0">{doc.updated}</dd></div>}
+    </dl>
+  )}
+  <div class="mt-8 max-w-[70ch] text-base leading-[1.7] text-text-secondary">
+    {sections.map((s, i) => (
+      <div class="mt-10 first:mt-0">
+        <h3 class="m-0 text-lg font-semibold leading-snug text-text-primary">{i + 1}. {s.heading}</h3>
+        {s.blocks.map((b) => {
+          if (b.kind === 'p') return <p class="m-0 mt-4"><LegalText text={b.text} /></p>;
+          if (b.kind === 'ul') return <ul class="m-0 mt-4 list-disc space-y-2 pl-6 marker:text-text-placeholder">{b.items.map((it) => <li>{it}</li>)}</ul>;
+          if (b.kind === 'terms') return <div class="mt-4 space-y-3">{b.items.map((it) => <p class="m-0"><strong class="font-semibold text-text-primary">{it.term}:</strong> {it.text}</p>)}</div>;
+          return <div class="mt-4 space-y-1">{b.items.map((it) => <p class="m-0"><strong class="font-semibold text-text-primary">{it.label}:</strong> <LegalText text={it.text} /></p>)}</div>;
+        })}
+      </div>
+    ))}
+  </div>
+</section>

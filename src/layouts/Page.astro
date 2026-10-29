@@ -1,0 +1,22 @@
+---
+/**
+ * Shell for code-owned content pages (About, Contact, Terms and Policy): the home Nav and Footer around a
+ * `<main>`. Nav links are root-relative, so they work from any page. The CTA goes to the home demo form.
+ */
+import Base from './Base.astro';
+import Nav from '../components/home/Nav.astro';
+import Footer from '../components/home/Footer.astro';
+import '../components/home/home.css';
+
+interface Props { title: string; description: string }
+const { title, description } = Astro.props;
+---
+<Base {title} {description} fluid>
+  <div class="home bg-white text-text-primary">
+    <Nav ctaHref="/#demo-close" solid />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </div>
+</Base>

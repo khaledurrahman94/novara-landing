@@ -21,6 +21,9 @@ export const codeRedirects: ReadonlyArray<Pick<RedirectRule, 'from' | 'to' | 'st
   { from: '/v1', to: '/', status: 301 },
   { from: '/v2', to: '/', status: 301 },
   { from: '/v3', to: '/', status: 301 },
+  // Common legal URLs land on their section of the combined Terms and Policy page.
+  { from: '/privacy', to: '/terms#privacy-policy', status: 301 },
+  { from: '/cookies', to: '/terms#cookie-policy', status: 301 },
 ];
 
 export const codeRedirectRules: RedirectRule[] = codeRedirects.map((r) => ({ ...r, source: 'code', where: `code redirect ${r.from}` }));

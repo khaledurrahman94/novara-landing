@@ -4,7 +4,9 @@
  * pages are indexable. A new collection (blog, legal, ...) adds one provider to `pageProviders`.
  */
 import { z } from 'astro/zod';
+import { company } from '../content/company';
 import { home } from '../content/home';
+import { legal } from '../content/legal';
 import { error, fromZod, type Issue } from './issues';
 import { normalizePath } from './paths';
 import { seoMetaSchema, type Media, type Redirect, type SeoMeta, type SiteSettings } from './schemas';
@@ -65,13 +67,32 @@ const homeProvider: PageProvider = {
   pages: () => [{ type: 'home', path: '/', route: 'code', where: 'home', seo: homeSeoMeta(), images: [], links: [] }],
 };
 
+/** Code-owned content pages (About, Contact, Terms and Policy): copy in src/content/company.ts and legal.ts. */
+const companyProvider: PageProvider = {
+  type: 'company',
+  pages: () =>
+    [
+      { path: '/about', label: 'About', seo: company.about.seo },
+      { path: '/contact', label: 'Contact', seo: company.contact.seo },
+      { path: '/terms', label: 'Terms and Policy', seo: legal.seo },
+    ].map((p) => ({
+      type: 'company',
+      path: p.path,
+      route: 'code' as const,
+      where: p.label,
+      seo: seoMetaSchema.parse({ metaTitle: p.seo.title, metaDescription: p.seo.description, breadcrumbLabel: p.label }),
+      images: [],
+      links: [],
+    })),
+};
+
 /** Stand-in pages from `synthetic-pages.json` in a fixtures dir. Exercises the checks; never reaches the site. */
 const fixturePagesProvider: PageProvider = {
   type: 'fixture',
   pages: (data) => data.fixturePages,
 };
 
-export const pageProviders: PageProvider[] = [homeProvider, fixturePagesProvider];
+export const pageProviders: PageProvider[] = [homeProvider, companyProvider, fixturePagesProvider];
 
 // ---- fixture page parsing -------------------------------------------------------------------
 

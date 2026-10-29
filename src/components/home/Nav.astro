@@ -1,9 +1,16 @@
 ---
 import { home } from '../../content/home';
 import Button from './Button.astro';
+interface Props {
+  /** Where the CTA goes. Other pages pass `/#demo-close` so it lands on the home form. */
+  ctaHref?: string;
+  /** Opaque bar from the start. The home page's scroll script does this on scroll; other pages have no script. */
+  solid?: boolean;
+}
+const { ctaHref = '#demo-close', solid = false } = Astro.props;
 const { nav } = home;
 ---
-<header data-nav data-scrolled="false" class="sticky top-0 z-50 border-b border-transparent bg-transparent transition-[background-color,border-color] duration-[var(--duration-slow)] ease-[var(--ease-out-quart)] data-[scrolled=true]:border-border-secondary data-[scrolled=true]:bg-white">
+<header data-nav data-scrolled={solid ? 'true' : 'false'} class="sticky top-0 z-50 border-b border-transparent bg-transparent transition-[background-color,border-color] duration-[var(--duration-slow)] ease-[var(--ease-out-quart)] data-[scrolled=true]:border-border-secondary data-[scrolled=true]:bg-white">
   <div class="mx-auto flex h-16 w-full max-w-[75rem] items-center justify-between gap-6 border-x border-border-secondary px-5 sm:px-8 md:px-12">
     <a href="/" class="shrink-0 rounded-sm" aria-label={nav.home}>
       <img src="/brand/novara-full.svg" width="143" height="41" alt="Novara" class="block h-7 w-auto" />
@@ -15,6 +22,9 @@ const { nav } = home;
         ))}
       </ul>
     </nav>
-    <Button href="#demo-close" data-home-cta data-magnetic>{nav.cta}</Button>
+    <div class="flex shrink-0 items-center gap-2 sm:gap-3">
+      <Button href={nav.getStarted.href} variant="secondary" class="hidden sm:inline-flex">{nav.getStarted.label}</Button>
+      <Button href={ctaHref} data-home-cta data-magnetic>{nav.cta}</Button>
+    </div>
   </div>
 </header>
