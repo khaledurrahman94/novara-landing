@@ -13,9 +13,9 @@ export const SIGN_IN_HREF = 'https://app.novara.com.my/sign-in';
 
 export const home = {
   seo: {
-    title: 'Novara: AI resume screening and AI interviews',
+    title: 'Novara: try AI resume screening and AI interviews',
     description:
-      'Re-rank resumes, watch an AI interview flag cheating and make the shortlist call yourself. Novara shows your hiring team the evidence. Request a demo.',
+      'Re-rank resumes, try to cheat an AI interview and make the shortlist call yourself. Novara shows your hiring team the evidence. Request a demo.',
   },
   nav: {
     label: 'Primary',
@@ -83,6 +83,8 @@ export const home = {
       { key: 'shortlisted', label: 'HR Round', note: 'Moved to the HR round after the AI interview.', callout: '12 of the 600 interviewed', value: 12, suffix: '' },
       { key: 'hired', label: 'Offered', note: 'Offers made after the HR round.', callout: '4 of the 12 in the HR round', value: 4, suffix: '' },
     ],
+    hintFine: 'Hover an applicant. Values are illustrative.',
+    hintTouch: 'Tap an applicant. Values are illustrative.',
     phases: [
       '1,200+ applicants, one dot each.',
       "Screened against the job's requirements.",
@@ -95,11 +97,15 @@ export const home = {
   },
   decide: {
     title: 'You decide who moves on. Novara shows you why.',
-    sub: 'Novara shows the evidence. Moving someone on is your call.',
-    caption: 'A pipeline with two columns. Amara Okafor moves from Completed to HR Round, with each candidate\'s evidence shown beside it in turn.',
+    sub: 'Drag Amara to your HR round. That call is yours.',
+    caption: 'A pipeline with two columns. Drag Amara Okafor from Completed to HR Round, with her evidence shown beside it.',
     from: 'Completed',
     to: 'HR Round',
     stamp: 'Moved on by you',
+    dragHelp: 'Drag this card between the columns. With the keyboard, press the right arrow to move it to HR Round and the left arrow to move it back to Completed.',
+    drop: 'Drop here',
+    movedStatus: 'Amara Okafor moved to HR Round by you.',
+    backStatus: 'Amara Okafor moved back to Completed.',
     evidenceTitle: 'The evidence',
     evaluation: {
       interviewScore: 'AI Interview Score',
@@ -173,6 +179,8 @@ export const home = {
     },
     copyEmbed: 'Copy embed code',
     copied: 'Copied',
+    copyFail: 'Copy failed. Select the code and copy it.',
+    hoverBar: 'Hover a bar for the week.',
     trend: {
       Applications: [4, 9, 16, 31, 38],
       Qualified: [2, 8, 9, 22, 20],
@@ -330,7 +338,7 @@ export const home = {
   },
   notFound: {
     title: "We can't find that page",
-    line: 'The link may be old or mistyped. The home page has the animated demos and the demo request form.',
+    line: 'The link may be old or mistyped. The home page has the live demos and the demo request form.',
     cta: 'Go to the home page',
   },
 } as const;
