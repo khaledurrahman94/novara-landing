@@ -1,11 +1,11 @@
 /**
  * Hero: the candidate-review screen starts exploded into depth layers with evidence chips around it.
  * Scrolling reassembles it (scrubbed, so it explodes again on the way back); the chips dock onto the
- * values they describe and fade into them. The cursor moves every layer by its depth (see interaction.ts).
+ * values they describe and fade into them. The scrub ends where the horizon gradient meets the bottom of the sticky
+ * nav, and a snap resolves every scroll stop in that range to one of two states: top, or settled there.
  */
 import { gsap } from '../../../scripts/motion';
-import { setStrength } from './interaction';
-import { $, EASE, num, one } from './util';
+import { $, EASE, navH, num, one } from './util';
 
 const docTop = (el: HTMLElement): number => {
   let y = 0;
@@ -27,17 +27,23 @@ export function initHero(root: HTMLElement): void {
   const layers = $(stage, '[data-layer]');
   const chips = $(stage, '[data-chip]');
   const edges = $(stage, '[data-edge]');
+  const horizon = one(stage, '.home-horizon');
   const W = (): number => stage.clientWidth;
+  /** Scroll position where the horizon's top edge sits flush under the sticky nav (the settled state). */
+  const settled = (): number => Math.max(200, Math.round(docTop(horizon ?? stage) - navH()));
 
   const tl = gsap.timeline({
     defaults: { ease: 'power2.inOut', duration: 1 },
     scrollTrigger: {
       start: 0,
-      end: () => Math.max(320, docTop(stage) - window.innerHeight * 0.2),
+      end: settled,
       scrub: 0.6,
       invalidateOnRefresh: true,
+      // Magnetic settle between the two resting states (progress 0 = top, 1 = settled). Same setup as How and
+      // Audience: directional so a small scroll still commits, no inertia. Past the end the trigger is inactive,
+      // so scrolling on into the next section is never snapped back.
+      snap: { snapTo: [0, 1], duration: { min: 0.4, max: 0.6 }, delay: 0.08, ease: 'power2.inOut', directional: true, inertia: false },
     },
-    onUpdate: () => setStrength(stage, Math.pow(1 - tl.progress(), 1.4)),
   });
 
   const [ff = 0, fy = 0, fs = 1] = parse(frame);
