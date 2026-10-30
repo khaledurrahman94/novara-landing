@@ -14,9 +14,9 @@
       "id": 2,
       "documentId": "fxredirect00000000002",
       "from": "/landing",
-      "to": "/home",
+      "to": "/",
       "kind": "permanent",
-      "note": "A chain on purpose: the build flattens it to /landing -> / and warns.",
+      "note": "Old landing path.",
       "createdAt": "2026-10-01T09:00:00.000Z",
       "updatedAt": "2026-10-01T09:00:00.000Z"
     },

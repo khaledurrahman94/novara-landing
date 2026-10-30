@@ -43,7 +43,7 @@ New sections or motion are a request to the developer. They become a new block i
 **Single type `site-settings`:**
 - `siteName` (default "Novara")
 - `titleTemplate` (default `%s | Novara`)
-- `defaultOgImage` (media, 1200×630 PNG; optional until the PNG exists. Until then the build warns and falls back to `/brand/novara-full.svg`)
+- `defaultOgImage` (media, 1200×630 PNG; optional. Until one is uploaded, previews fall back to `/brand/og-default.png`, a 1200×630 PNG in the repo)
 - `robotsTxt` (text, required; default = current `public/robots.txt`)
 
 **Collection `redirect`:**

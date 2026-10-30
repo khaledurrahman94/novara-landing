@@ -5,7 +5,7 @@
 import { SITE_ORIGIN, type SiteEnv } from './paths';
 import type { Media, SeoMeta, SiteSettings } from './schemas';
 
-export const FALLBACK_OG_IMAGE = '/brand/novara-full.svg';
+export const FALLBACK_OG_IMAGE = '/brand/og-default.png';
 
 export const DEFAULT_SETTINGS: Pick<SiteSettings, 'siteName' | 'titleTemplate'> = {
   siteName: 'Novara',

@@ -12,8 +12,8 @@ const runs = [
     name: 'good fixtures build',
     env: { ...blank, STRAPI_FIXTURES: GOOD, PUBLIC_SITE_ENV: 'staging' },
     exit: 0,
-    contains: ['[redirect-chain]', '[og-image-missing]', 'Wrote _redirects'],
-    absent: ['content problem'],
+    contains: ['Wrote _redirects'],
+    absent: ['content problem', '[redirect-chain]', '[og-image-missing]'],
   },
   {
     name: 'bad fixtures fail (production checks on)',

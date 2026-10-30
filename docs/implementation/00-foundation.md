@@ -38,7 +38,7 @@ Exports `onReady(cb)`, `prefersReducedMotion()`, `getLenis()`, plus re-exports `
 
 ## SEO
 - Always render through `Base`. CMS pages pass `seo` (the `seo.meta` shape); code pages pass `title` + `description`. Canonical is self by default (`Astro.url` + site), or `canonicalUrl`.
-- Title is `metaTitle`, else `<pageTitle> | Novara` from the `titleTemplate` setting. OG and Twitter fall back to the meta title and description, then to `site-settings.defaultOgImage`, then to `/brand/novara-full.svg` (build warning until a 1200x630 PNG is uploaded).
+- Title is `metaTitle`, else `<pageTitle> | Novara` from the `titleTemplate` setting. OG and Twitter fall back to the meta title and description, then to `site-settings.defaultOgImage`, then to `/brand/og-default.png` (a 1200x630 PNG in the repo).
 - Indexing: `PUBLIC_SITE_ENV=production` is the only environment that renders `index`; anything else is `noindex,nofollow` on every page and `robots.txt` says `Disallow: /`. A page is also noindex if `seo.index` is false or the page passes `noindex`/`forceNoindex` (labs, 404, preview). The sitemap lists only registered indexable pages, in production.
 - `/` takes its SEO from `home.seo` mapped into the `seo.meta` shape (`homeSeoMeta()` in `src/lib/pages.ts`) until home is read from Strapi.
 - JSON-LD in Seo: Organization (Vivasoft, maker) + SoftwareApplication "Novara" (BusinessApplication, no ratings/prices), per-type schemas (`schemas` prop), BreadcrumbList, then `seo.structuredData`. The home FAQPage block stays in `HomePage.astro`.

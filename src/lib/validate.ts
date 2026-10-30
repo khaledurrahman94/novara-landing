@@ -8,7 +8,7 @@
  *
  * Check ids: slug-duplicate, path-collision, meta-title-duplicate, meta-description-duplicate,
  * image-alt, redirect-duplicate, redirect-live-page, redirect-loop, redirect-missing-target,
- * redirect-chain (warn), link-missing, canonical-missing, robots-disallow-all, og-image-missing (warn),
+ * redirect-chain (warn), link-missing, canonical-missing, robots-disallow-all,
  * og-image-spec (warn).
  */
 import { error, warn, type Issue } from './issues';
@@ -16,7 +16,7 @@ import { internalPath, normalizePath, type SiteEnv } from './paths';
 import { mediaToImage, type PageRecord, type SiteData } from './pages';
 import { codeRedirectRules, flatten, type RedirectRule } from './redirects';
 import { isReserved, type CodeRoutes } from './routes-scan';
-import { FALLBACK_OG_IMAGE, resolveTitle } from './seo';
+import { resolveTitle } from './seo';
 
 export interface ValidateInput {
   data: SiteData;
@@ -161,9 +161,8 @@ export function validate(input: ValidateInput): ValidateResult {
     issues.push(error('robots-disallow-all', 'site-settings.robotsTxt', 'production robots.txt disallows "/" for all crawlers, which would remove the site from search. Fix the text in Site settings.'));
   }
   const og = data.settings.defaultOgImage;
-  if (!og) {
-    issues.push(warn('og-image-missing', 'site-settings.defaultOgImage', `not set, so social previews fall back to ${FALLBACK_OG_IMAGE}, an SVG that LinkedIn, X and Facebook don't render. Upload a 1200x630 PNG.`));
-  } else if (og.mime !== 'image/png' || og.width !== 1200 || og.height !== 630) {
+  // Unset is fine: previews fall back to the 1200x630 PNG in public/brand.
+  if (og && (og.mime !== 'image/png' || og.width !== 1200 || og.height !== 630)) {
     issues.push(warn('og-image-spec', 'site-settings.defaultOgImage', `is ${og.mime} ${og.width ?? '?'}x${og.height ?? '?'}; the contract is a 1200x630 PNG.`));
   }
 
