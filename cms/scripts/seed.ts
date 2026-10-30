@@ -53,17 +53,8 @@ const homeData = (copy: Copy) => ({
     faqLabel: anchorLabel(copy, '#faq'),
   },
   hero: { title: copy.hero.title, sub: copy.hero.sub },
-  // Optional: only seeded when real logos exist, so an empty slot stays empty in the CMS too.
-  ...(copy.socialProof.logos.length > 0
-    ? {
-        socialProof: {
-          heading: copy.socialProof.heading,
-          ...(copy.socialProof.count ? { count: copy.socialProof.count } : {}),
-          logos: copy.socialProof.logos.map((l) => ({ name: l.name, src: l.src, ...(l.href ? { href: l.href } : {}) })),
-        },
-      }
-    : {}),
   results: { title: copy.results.title, caption: copy.results.caption },
+  testimonials: { title: copy.testimonials.title, readMore: copy.testimonials.readMore, showLess: copy.testimonials.showLess },
   decide: { title: copy.decide.title, sub: copy.decide.sub },
   how: { title: copy.how.title, intro: copy.how.intro, steps: copy.how.steps.map((s) => ({ title: s.title, text: s.text })) },
   platform: {

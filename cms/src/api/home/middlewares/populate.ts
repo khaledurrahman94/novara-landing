@@ -5,8 +5,8 @@ export default withDefaultPopulate({
   seo: { populate: ['ogImage'] },
   nav: true,
   hero: true,
-  socialProof: { populate: ['logos'] },
   results: true,
+  testimonials: true,
   decide: true,
   how: { populate: ['steps'] },
   platform: { populate: [

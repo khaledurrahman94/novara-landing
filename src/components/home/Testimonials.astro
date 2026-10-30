@@ -1,0 +1,355 @@
+---
+import { home } from '../../content/home';
+import Section from './Section.astro';
+const { testimonials } = home;
+// The first four people are the Offered avatars in Results; on wide screens they fly into their cards (motion/testimonials.ts).
+const FLY = 4;
+---
+<Section id="candidates" labelledby="testimonials-title" tone="white">
+  <div class="flex items-end justify-between gap-6">
+    <div data-reveal>
+      <h2 id="testimonials-title" class="m-0 max-w-[40rem] text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leading-[1.08] tracking-[-0.03em]">{testimonials.title}</h2>
+    </div>
+    <div data-testi-navs class="testi-navs shrink-0 gap-2">
+      <button type="button" data-testi-prev aria-label={testimonials.prev} class="testi-nav">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
+      </button>
+      <button type="button" data-testi-next aria-label={testimonials.next} class="testi-nav">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
+      </button>
+    </div>
+  </div>
+  <div
+    data-testi-scroll
+    role="region"
+    aria-label={testimonials.regionLabel}
+    tabindex="0"
+    class="testi-scroll mt-10 md:mt-14 [--pad:1.25rem] sm:[--pad:2rem] md:[--pad:3rem]"
+  >
+    <ul class="m-0 flex list-none items-start gap-5 p-0">
+      {testimonials.items.map((t, i) => (
+        <li data-key={t.key} class="w-[82vw] max-w-[22.5rem] shrink-0 snap-start">
+          <article data-testi={t.key} data-reveal={i >= FLY ? '' : undefined} class="flex flex-col gap-5 rounded-lg border border-border-secondary bg-bg p-6">
+            <header class="flex h-12 items-center gap-3">
+              <span data-testi-avatar class="block size-12 shrink-0 overflow-hidden rounded-full bg-primary-100">
+                <img src={`/people/${t.key}.webp`} alt="" width="96" height="96" loading="lazy" decoding="async" class="size-full object-cover" />
+              </span>
+              <div data-testi-body class="min-w-0 flex-1">
+                <p class="m-0 truncate text-[0.9375rem] font-semibold leading-tight text-text-primary">{t.name}</p>
+                {t.role && <p title={t.role} class="m-0 mt-0.5 truncate text-sm leading-snug text-text-tertiary">{t.role}</p>}
+              </div>
+              <a data-testi-body href={t.href} target="_blank" rel="noopener noreferrer" aria-label={`${t.name} ${testimonials.linkedinLabel}`} class="grid size-9 shrink-0 place-items-center rounded-md text-text-tertiary transition-colors duration-[var(--duration-fast)] hover:bg-white hover:text-primary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.12 20.45H3.56V9h3.56v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0Z" /></svg>
+              </a>
+            </header>
+            <div data-testi-body class="flex flex-col gap-2">
+              <blockquote data-testi-quote class="m-0 min-h-[9.14rem] text-[0.9375rem] leading-relaxed text-text-secondary">{t.quote}</blockquote>
+              <div class="min-h-7">
+                <button type="button" data-testi-toggle aria-expanded="false" data-more={testimonials.readMore} data-less={testimonials.showLess} hidden class="m-0 cursor-pointer border-0 bg-transparent p-0 text-sm font-medium text-primary-700 transition-colors duration-[var(--duration-fast)] hover:text-primary">{testimonials.readMore}</button>
+              </div>
+            </div>
+          </article>
+        </li>
+      ))}
+    </ul>
+  </div>
+</Section>
+
+<style>
+  .testi-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0.25rem var(--pad);
+    margin-left: calc(var(--pad) * -1);
+    margin-right: calc(var(--pad) * -1);
+    scroll-snap-type: x proximity;
+    scroll-padding-inline: var(--pad);
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 var(--pad), #000 calc(100% - var(--pad)), transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0, #000 var(--pad), #000 calc(100% - var(--pad)), transparent 100%);
+  }
+  .testi-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  .testi-scroll:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+  }
+  .testi-scroll[data-ready] [data-testi-quote] {
+    height: 9.14rem;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 6;
+    line-clamp: 6;
+    overflow: hidden;
+  }
+  /* Expanded: the card grows downward to the full quote (height is animated in script); the rest keep the standard height. */
+  .testi-scroll[data-ready] article[data-open] {
+    height: auto;
+  }
+  .testi-scroll[data-ready] article[data-open] [data-testi-quote] {
+    height: auto;
+    display: block;
+    overflow: visible;
+  }
+  .testi-nav {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 9999px;
+    border: 1px solid var(--color-border-secondary);
+    background: #fff;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: color var(--duration-fast), border-color var(--duration-fast);
+  }
+  .testi-nav:hover {
+    color: var(--color-primary);
+    border-color: var(--color-primary-300);
+  }
+  /* Collapsed, every card has one fixed height (header + six-line quote + toggle row); Read more grows only the opened card, which compacts again on any sideways move. */
+  .testi-scroll[data-ready] article {
+    height: 18.75rem;
+    box-sizing: border-box;
+  }
+  .testi-navs {
+    display: none;
+  }
+  .testi-navs[data-on] {
+    display: flex;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .testi-scroll {
+      scroll-behavior: auto;
+    }
+  }
+</style>
+
+
+<script>
+  import { ScrollTrigger } from '../../scripts/motion';
+
+  const scroller = document.querySelector<HTMLElement>('[data-testi-scroll]');
+  const list = scroller?.querySelector<HTMLElement>('ul');
+  if (scroller && list) {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const prev = document.querySelector<HTMLButtonElement>('[data-testi-prev]');
+    const next = document.querySelector<HTMLButtonElement>('[data-testi-next]');
+    const navs = document.querySelector<HTMLElement>('[data-testi-navs]');
+
+    /*
+     * Endless loop: [duplicates][real][duplicates]. Cards have a fixed width and gap, so one set is exactly W wide and
+     * the content is periodic. The visitor rests on the middle (real) set; whenever the row settles (or gets near
+     * either end) scrollLeft is shifted by exactly W with scroll-snap off for that instant, which is invisible.
+     */
+    let N = 0;
+    let W = 0;
+    let by = 0;
+    const kids = (): HTMLElement[] => Array.from(list.children).filter((el): el is HTMLElement => el instanceof HTMLElement);
+    const leftOf = (el: HTMLElement): number => el.getBoundingClientRect().left - scroller.getBoundingClientRect().left + scroller.scrollLeft;
+    let jumping = false;
+    let collapseHook: () => void = () => undefined;
+    let scrollGuard: () => void = () => undefined;
+    const jump = (left: number): void => {
+      jumping = true;
+      scroller.style.scrollSnapType = 'none';
+      scroller.scrollLeft = left;
+      requestAnimationFrame(() => requestAnimationFrame(() => { scroller.style.scrollSnapType = ''; jumping = false; }));
+    };
+    const measureLoop = (): void => {
+      const all = kids();
+      const a = all[N];
+      const b = all[2 * N];
+      if (!a || !b) return;
+      W = leftOf(b) - leftOf(a);
+      by = W / N;
+    };
+    // A duplicate is aria-hidden and out of the tab order; its Read more mirrors the real card (see the click handler).
+    const mk = (li: HTMLElement): HTMLElement => {
+      const c = li.cloneNode(true) as HTMLElement;
+      c.setAttribute('data-clone', '');
+      c.setAttribute('aria-hidden', 'true');
+      c.removeAttribute('style');
+      c.querySelectorAll<HTMLElement>('*').forEach((el) => {
+        el.removeAttribute('id');
+        el.removeAttribute('style');
+        el.removeAttribute('data-reveal');
+        el.removeAttribute('aria-controls');
+        for (const a of Array.from(el.attributes)) {
+          if (/^data-testi(-avatar|-body)?$/.test(a.name)) el.removeAttribute(a.name);
+        }
+        if (el.matches('a, button')) el.tabIndex = -1;
+      });
+      return c;
+    };
+
+    const quotes = (): HTMLElement[] => Array.from(scroller.querySelectorAll<HTMLElement>('[data-testi-quote]'));
+    // Long quotes clamp to six lines with a toggle; short ones show none.
+    const detect = (): void => {
+      for (const q of quotes()) {
+        if (q.hasAttribute('data-open')) continue;
+        const btn = q.parentElement?.querySelector<HTMLButtonElement>('[data-testi-toggle]');
+        if (btn) btn.hidden = q.scrollHeight <= q.clientHeight + 1;
+      }
+    };
+    const build = (): void => {
+      collapseHook();
+      list.querySelectorAll('[data-clone]').forEach((el) => el.remove());
+      const reals = kids();
+      N = reals.length;
+      if (!N) return;
+      list.prepend(...reals.map(mk));
+      list.append(...reals.map(mk));
+      measureLoop();
+      jump(W);
+      detect();
+    };
+
+    const normalize = (): void => {
+      if (!W) return;
+      const x = scroller.scrollLeft;
+      if (x < W) jump(x + W);
+      else if (x >= 2 * W) jump(x - W);
+    };
+    let idle = 0;
+    scroller.addEventListener('scroll', () => {
+      scrollGuard();
+      if (!W) return;
+      const x = scroller.scrollLeft;
+      // Near either end of the three sets (a long fling): shift now rather than wait for it to settle.
+      if (x < W * 0.4) jump(x + W);
+      else if (x > W * 2.6) jump(x - W);
+      window.clearTimeout(idle);
+      idle = window.setTimeout(normalize, 140);
+    }, { passive: true });
+
+    // Arrows wrap by construction: one card per press from the nearest card position.
+    const step = (dir: 1 | -1): void => {
+      if (!by) return;
+      scroller.scrollTo({ left: (Math.round(scroller.scrollLeft / by) + dir) * by, behavior: reduced.matches ? 'auto' : 'smooth' });
+    };
+    prev?.addEventListener('click', () => step(-1));
+    next?.addEventListener('click', () => step(1));
+
+    // Autoplay: about every 6s, one card, forever, only while the row is on screen and the tab is visible. Any user
+    // action (wheel, touch, pointer, key, arrows, focus, expanding a card) stops it for the rest of the visit.
+    // Never with reduced motion. It uses the row's own scrollTo, so the page never moves.
+    let auto = 0;
+    let io: IntersectionObserver | undefined;
+    let inView = false;
+    let autoOn = !reduced.matches;
+    const stopAuto = (): void => {
+      autoOn = false;
+      window.clearInterval(auto);
+      io?.disconnect();
+    };
+    if (autoOn && 'IntersectionObserver' in window) {
+      const advance = (): void => {
+        if (!autoOn || !inView || document.hidden || !by) return;
+        // Wait until the section has settled into view (the avatars' fly-in ends as it reaches the upper viewport).
+        if (scroller.getBoundingClientRect().top > window.innerHeight * 0.5) return;
+        if (scroller.querySelector("[data-testi-quote][data-open]")) return;
+        step(1);
+      };
+      io = new IntersectionObserver((entries) => {
+        inView = entries.some((e) => e.isIntersecting);
+      }, { threshold: 0.6 });
+      io.observe(scroller);
+      auto = window.setInterval(advance, 6000);
+      for (const ev of ['wheel', 'touchstart', 'pointerdown', 'keydown', 'focusin'] as const) {
+        scroller.addEventListener(ev, stopAuto, { passive: true, once: true });
+      }
+      prev?.addEventListener('click', stopAuto, { once: true });
+      next?.addEventListener('click', stopAuto, { once: true });
+      window.addEventListener('pagehide', stopAuto, { once: true });
+    }
+
+    // Read more grows the card downward (smoothly); the others stay at the standard height, top-aligned. One open at
+    // a time. Any sideways movement of the row (swipe, arrows, autoplay) or Show less compacts it again. Duplicates are
+    // never expanded: their Read more first moves the row, invisibly, to the real copy of that card.
+    let openLi: HTMLElement | null = null;
+    let openAt = 0;
+    const setBtn = (li: HTMLElement, open: boolean): void => {
+      const btn = li.querySelector<HTMLButtonElement>('[data-testi-toggle]');
+      if (!btn) return;
+      btn.setAttribute('aria-expanded', String(open));
+      btn.textContent = (open ? btn.dataset['less'] : btn.dataset['more']) ?? '';
+    };
+    const resize = (li: HTMLElement, opening: boolean): void => {
+      const art = li.querySelector<HTMLElement>('article');
+      if (!art) return;
+      art.getAnimations().forEach((a) => a.cancel());
+      const from = art.offsetHeight;
+      let to: number;
+      if (opening) {
+        art.setAttribute('data-open', '');
+        to = art.offsetHeight;
+      } else {
+        art.removeAttribute('data-open');
+        to = art.offsetHeight;
+        art.setAttribute('data-open', '');
+      }
+      const done = (): void => {
+        art.style.overflow = '';
+        if (!opening) art.removeAttribute('data-open');
+        window.setTimeout(() => ScrollTrigger.refresh(), 50);
+      };
+      if (reduced.matches || from === to) return done();
+      art.style.overflow = 'hidden';
+      const a = art.animate({ height: [`${from}px`, `${to}px`] }, { duration: 380, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' });
+      a.onfinish = done;
+      a.oncancel = () => {
+        art.style.overflow = '';
+      };
+    };
+    const collapse = (): void => {
+      if (!openLi) return;
+      const li = openLi;
+      openLi = null;
+      setBtn(li, false);
+      resize(li, false);
+    };
+    collapseHook = collapse;
+    scrollGuard = (): void => {
+      if (openLi && !jumping && Math.abs(scroller.scrollLeft - openAt) > 6) collapse();
+    };
+    scroller.addEventListener('click', (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-testi-toggle]');
+      const li = btn?.closest<HTMLElement>('li');
+      if (!btn || !li) return;
+      stopAuto();
+      if (li === openLi) return collapse();
+      collapse();
+      let real = li;
+      if (li.hasAttribute('data-clone')) {
+        const twin = kids().find((k) => !k.hasAttribute('data-clone') && k.dataset['key'] === li.dataset['key']);
+        if (!twin) return;
+        real = twin;
+        jump(scroller.scrollLeft + leftOf(twin) - leftOf(li));
+      }
+      openLi = real;
+      openAt = scroller.scrollLeft;
+      setBtn(real, true);
+      resize(real, true);
+    });
+
+    scroller.setAttribute('data-ready', '');
+    navs?.setAttribute('data-on', '');
+    // Motion shuffles the real cards per visit and then asks for the duplicates to be rebuilt.
+    scroller.addEventListener('testi:rebuild', build);
+    build();
+    void document.fonts?.ready.then(detect);
+    let rz = 0;
+    window.addEventListener('resize', () => {
+      cancelAnimationFrame(rz);
+      rz = requestAnimationFrame(() => {
+        const idx = by ? Math.round(scroller.scrollLeft / by) % N : 0;
+        measureLoop();
+        jump((N + idx) * by);
+        detect();
+      });
+    });
+  }
+</script>

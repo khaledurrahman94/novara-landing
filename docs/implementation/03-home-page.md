@@ -56,6 +56,8 @@ Copy lives in `src/content/home.ts`. The labs keep their own copy files.
    - **Hover:** on the dots it shows an illustrative tooltip ("Applicant · Job Fit 41 · Missing: Node.js").
    - **The caption** "One real hiring round for engineering roles, run on Novara." stays visible.
    - **Reduced motion and no JS** show an annotated funnel list.
+   - **Photo beat and fly-in (2026-10-30):** after Offered lands the four avatars crossfade to candidate photos and, once the pin releases, travel into their cards in the Testimonials section that follows. See `06-dm-feedback.md`.
+3a. **Testimonials:** seven candidate quotes in a horizontal scroll-snap row (photo, name, role, LinkedIn link; order shuffled per visit, see 06-dm-feedback.md). Replaces the social-proof strip.
 4. **Screen: `ScreeningLab`, `#screen`:**
    - **Title:** "Every resume, read against the job." **Sub:** "Toggle what the job needs and watch the ranking change."
    - **Requirement chips** (toggle buttons with `aria-pressed`): Node.js, TypeScript, PostgreSQL, API design, Kubernetes, Remote-friendly time zone.

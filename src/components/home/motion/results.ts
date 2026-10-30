@@ -8,6 +8,7 @@ import { gsap, ScrollTrigger } from '../../../scripts/motion';
 import { $, EASE, navH, clamp, cssVar, lerp, num, one, rng, seg, smooth } from './util';
 import { home } from '../../../content/home';
 import { byId, recruiter } from '../../../data/demo';
+import { cast, OFFERED } from './cast';
 
 const N = 1200;
 const SURVIVORS = 600;
@@ -15,8 +16,27 @@ const SHORTLIST = 12;
 const HIRED = 4;
 const SKILLS = ['Node.js', 'TypeScript', 'PostgreSQL', 'API design', 'Kubernetes'];
 /** Hired first (rank 0..3), then the rest of the shortlist: the demo cast leads, the last initials are filler. */
-const INITIALS = [...['amara', 'ines', 'kenji', 'leo', 'marcus'].map((id) => byId(id).initials), recruiter.initials, 'RM', 'HS', 'DK', 'TN', 'AB'];
 const TAU = Math.PI * 2;
+/** The four Offered avatars: a per-load random pick of the testimonial people (cast.ts), shown by real initials, then their photo. */
+const PHOTO_CAST = cast.slice(0, OFFERED);
+const TAKEN = new Set(cast.map((p) => p.initials));
+/** Hired first (rank 0..3, the cast), then the rest of the shortlist; filler never repeats a testimonial person's initials. */
+const INITIALS = [
+  ...PHOTO_CAST.map((p) => p.initials),
+  ...[...['marcus'].map((id) => byId(id).initials), recruiter.initials, 'RM', 'HS', 'DK', 'TN', 'AB', 'JT', 'NB', 'CV'].filter((s) => !TAKEN.has(s)),
+];
+
+/** What the testimonials fly-in needs from the pinned canvas. Set while the pin exists, null otherwise. */
+export interface ResultsBridge {
+  /** Scroll position where the Results pin releases. */
+  end: () => number;
+  /** The four Offered avatars as they sit at that moment, in document coordinates (centre x, y and diameter). */
+  avatars: () => { key: string; x: number; y: number; d: number }[];
+  /** While true the canvas leaves the four avatars' seats empty: the DOM clones carry the photos. */
+  setLifted: (v: boolean) => void;
+}
+let bridge: ResultsBridge | null = null;
+export const getResultsBridge = (): ResultsBridge | null => bridge;
 
 interface Dot {
   /** 0 screened out, 1 took the AI interview, 2 shortlisted, 3 hired. */
@@ -34,6 +54,8 @@ interface Dot {
   skill: string;
   ai: number;
   initials: string;
+  /** Index into PHOTO_CAST for the four Offered dots, else -1. */
+  pi: number;
   x: number;
   y: number;
   r: number;
@@ -77,7 +99,7 @@ function buildDots(): Dot[] {
     perm[j] = a;
   }
   const dots: Dot[] = Array.from({ length: N }, () => ({
-    tier: 0, ax: 0, ay: 0, bx: 0, by: 0, cx: 0, cy: 0, s1: 0, s2: 0, fit: 0, skill: '', ai: 0, initials: '', x: 0, y: 0, r: 0, a: 0,
+    tier: 0, ax: 0, ay: 0, bx: 0, by: 0, cx: 0, cy: 0, s1: 0, s2: 0, fit: 0, skill: '', ai: 0, initials: '', pi: -1, x: 0, y: 0, r: 0, a: 0,
   }));
   perm.forEach((slot, rank) => {
     const d = dots[slot];
@@ -88,6 +110,7 @@ function buildDots(): Dot[] {
     d.skill = SKILLS[Math.floor(rand() * SKILLS.length)] ?? 'Node.js';
     d.ai = Math.round(80 + rand() * 15);
     d.initials = INITIALS[rank] ?? '';
+    if (d.tier === 3) d.pi = PHOTO_CAST.findIndex((c) => c.initials === d.initials);
   });
   return dots;
 }
@@ -111,7 +134,8 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
   const survivors = dots.filter((d) => d.tier >= 1);
   // The 12 sit in two rows of six, with the four hired in the middle of the top row.
   const t2 = dots.filter((d) => d.tier === 2);
-  const t3 = dots.filter((d) => d.tier === 3);
+  // The four seat left to right in cast order (their pi), so the cards below can follow the same order.
+  const t3 = dots.filter((d) => d.tier === 3).sort((a, b) => a.pi - b.pi);
   const shortlisted = [t2[0], t3[0], t3[1], t3[2], t3[3], t2[1], ...t2.slice(2)].filter((d): d is Dot => !!d);
   const col = {
     gray: cssVar('--color-gray-400'),
@@ -134,6 +158,9 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
   let cellL2 = 0;
   let cell0 = 1;
   let cell1 = 1;
+  let rAvNow = 20;
+  let lifted = false;
+  const photos = new Map<string, HTMLImageElement>();
   /** Root-size scale (1 at 16px): canvas pixel constants follow the fluid root like rem does. */
   let u = 1;
 
@@ -206,6 +233,8 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
     const r0 = Math.max(2 * u, cell0 * 0.42);
     const r1 = Math.max(3 * u, Math.min(cell1 * 0.42, 20 * u));
     const rAv = clamp(cellL2 * 0.26, 12 * u, 27 * u);
+    rAvNow = rAv;
+    const aPhoto = seg(t, 0.94, 1);
 
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, w, h);
@@ -262,20 +291,30 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
 
       if (top && a4 > 0.02) {
         // The icon becomes an initials avatar; the hired ones get a badge.
+        const seat = lifted && d.pi >= 0;
         ctx.globalAlpha = a4;
-        ctx.fillStyle = d.tier === 3 ? col.primary : col.p100;
+        ctx.fillStyle = d.tier === 3 && !seat ? col.primary : col.p100;
         ctx.beginPath();
         ctx.arc(x, y, rAv, 0, TAU);
         ctx.fill();
+        // Photo beat: initials crossfade to the photo, one avatar after another. Once lifted the DOM clones carry the photo.
+        const pk = d.pi >= 0 && !seat ? smooth(clamp((aPhoto - d.pi * 0.12) / 0.64, 0, 1)) : 0;
+        const img = d.pi >= 0 ? photos.get(PHOTO_CAST[d.pi]?.key ?? '') : undefined;
+        const showPhoto = pk > 0 && !!img && img.complete && img.naturalWidth > 0;
         if (a4 > 0.35) {
           const k = seg(a4, 0.35, 1);
-          ctx.globalAlpha = k;
-          ctx.fillStyle = d.tier === 3 ? col.white : col.p800;
-          ctx.font = `600 ${Math.round(rAv * 0.62)}px "Inter Variable", system-ui, sans-serif`;
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText(d.initials, x, y + 0.5);
+          if (!seat) {
+            ctx.globalAlpha = k * (showPhoto ? 1 - pk : 1);
+            ctx.fillStyle = d.tier === 3 ? col.white : col.p800;
+            ctx.font = `600 ${Math.round(rAv * 0.62)}px "Inter Variable", system-ui, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(d.initials, x, y + 0.5);
+          }
           if (d.tier === 3) {
+            ctx.globalAlpha = k;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
             const label = home.results.hired;
             const fs = clamp(Math.round(rAv * 0.38), 10 * u, 13 * u);
             ctx.font = `600 ${fs}px "Inter Variable", system-ui, sans-serif`;
@@ -291,6 +330,15 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
             ctx.fillStyle = col.p700;
             ctx.fillText(label, x, by + bh / 2 + 0.5);
           }
+        }
+        if (showPhoto && img) {
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(x, y, rAv, 0, TAU);
+          ctx.clip();
+          ctx.globalAlpha = pk;
+          ctx.drawImage(img, x - rAv, y - rAv, rAv * 2, rAv * 2);
+          ctx.restore();
         }
       }
     }
@@ -332,9 +380,12 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
 
   const tipText = (d: Dot): string => {
     const t = state.t;
-    if (d.tier === 3 && t >= 0.8) return `${home.results.hired} · ${home.results.phases[4]?.replace(/\.$/, '')}`;
-    if (d.tier >= 2 && t >= 0.54) return `Shortlisted · Job Fit ${d.fit} · AI Interview ${d.ai}`;
-    if (d.tier >= 1 && t >= 0.3) return `Took the AI interview · Job Fit ${d.fit}`;
+    if (d.tier === 3 && t >= 0.9) {
+      const who = PHOTO_CAST[d.pi]?.name;
+      return who ? `${who} · ${home.results.hired}` : home.results.hired;
+    }
+    if (d.tier >= 2 && t >= 0.7) return `Shortlisted · Job Fit ${d.fit} · AI Interview ${d.ai}`;
+    if (d.tier >= 1 && t >= 0.27) return `Took the AI interview · Job Fit ${d.fit}`;
     return d.tier === 0 ? `Applicant · Job Fit ${d.fit} · Missing: ${d.skill}` : `Applicant · Job Fit ${d.fit} · Matched: ${d.skill}`;
   };
   const showTip = (best: Dot | null, text?: string): void => {
@@ -418,6 +469,13 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
     hint.textContent = window.matchMedia('(pointer: fine)').matches ? home.results.hintFine : home.results.hintTouch;
     hint.hidden = false;
   }
+  PHOTO_CAST.forEach((c) => {
+    const img = new Image();
+    img.decoding = 'async';
+    img.onload = draw;
+    img.src = `/people/${c.key}.webp`;
+    photos.set(c.key, img);
+  });
   layout();
   draw();
   void document.fonts.load('600 12px "Inter Variable"').then(draw);
@@ -428,31 +486,98 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
   });
   ro.observe(wrap);
 
-  // About two viewports in all (one to arrive, one of scroll), with short holds at 0.12 and 0.79.
-  const tween = gsap
-    .timeline({
-      defaults: { ease: 'none' },
-      scrollTrigger: {
-        trigger: root,
-        start: () => `top ${navH()}px`,
-        end: '+=100%',
-        pin: true,
-        scrub: 0.6,
-        anticipatePin: 1,
-        refreshPriority: 3,
-        invalidateOnRefresh: true,
-      },
+  /*
+   * Discrete steps. The pin holds the section while scroll snaps between six states (the canvas value t at each):
+   * 0 applied, 1 screened, 2 AI interviews, 3 HR round, 4 offered, 5 photos. Changing step plays one short time-based
+   * tween to that step's exact t (a new tween replaces a running one, so nothing is ever left half-way), and the
+   * state is re-applied outright on every refresh. The flight into the cards is the next step, played by
+   * motion/testimonials.ts once the pin has released and the cards come into view.
+   */
+  const STEP_T = [0, 0.28, 0.52, 0.78, 0.94, 1];
+  const M = STEP_T.length - 1;
+  const stepPx = (): number => Math.max(260, window.innerHeight * 0.42);
+  let cur = -1;
+  let settled = 0;
+  let anim: gsap.core.Tween | null = null;
+  const goTo = (i: number, instant = false): void => {
+    const target = STEP_T[i] ?? 0;
+    if (!instant && i === cur) return;
+    anim?.kill();
+    anim = null;
+    cur = i;
+    if (instant) {
+      state.t = target;
+      draw();
+      return;
+    }
+    anim = gsap.to(state, {
+      t: target,
+      duration: i === M || i === M - 1 ? 1.4 : 1.1,
+      ease: 'power2.inOut',
       onUpdate: draw,
-    })
-    .to(state, { t: 0.12, duration: 1 })
-    .to(state, { t: 0.12, duration: 1.6 })
-    .to(state, { t: 0.79, duration: 5.4 })
-    .to(state, { t: 0.79, duration: 1.6 })
-    .to(state, { t: 1, duration: 1.4 });
+      onComplete: () => {
+        state.t = target;
+        draw();
+        anim = null;
+      },
+    });
+  };
+  const stepOf = (p: number): number => clamp(Math.round(p * M), 0, M);
+
+  const st = ScrollTrigger.create({
+    trigger: root,
+    start: () => `top ${navH()}px`,
+    end: () => `+=${Math.round(M * stepPx())}`,
+    pin: true,
+    anticipatePin: 1,
+    refreshPriority: 3,
+    invalidateOnRefresh: true,
+    // One gesture moves exactly one step: past a small threshold from the settled step it goes to the next, else it returns.
+    snap: {
+      snapTo: (p: number) => {
+        const d = p * M - settled;
+        const target = clamp(settled + (d > 0.15 ? 1 : d < -0.15 ? -1 : 0), 0, M);
+        return target / M;
+      },
+      duration: { min: 0.35, max: 0.7 },
+      delay: 0.1,
+      ease: 'power2.inOut',
+      onComplete: (self) => {
+        settled = stepOf(self.progress);
+      },
+    },
+    onUpdate: (self) => goTo(stepOf(self.progress)),
+    onRefresh: (self) => {
+      settled = stepOf(self.progress);
+      goTo(settled, true);
+    },
+  });
+
+  bridge = {
+    end: () => st.end,
+    avatars: () => {
+      const cr = canvas.getBoundingClientRect();
+      const rr = root.getBoundingClientRect();
+      // At the pin's end the root sits navH below the viewport top; the canvas keeps its offset inside it.
+      const top = st.end + navH() + (cr.top - rr.top);
+      const left = cr.left + window.scrollX;
+      return t3.flatMap((d) => {
+        const key = PHOTO_CAST[d.pi]?.key;
+        return key ? [{ key, x: left + d.cx, y: top + d.cy, d: rAvNow * 2 }] : [];
+      });
+    },
+    setLifted: (v) => {
+      if (lifted === v) return;
+      lifted = v;
+      draw();
+    },
+  };
 
   return () => {
-    tween.scrollTrigger?.kill();
-    tween.kill();
+    bridge = null;
+    lifted = false;
+    anim?.kill();
+    st.kill();
     ro.disconnect();
     canvas.removeEventListener('pointermove', onMove);
     canvas.removeEventListener('pointerleave', onLeave);

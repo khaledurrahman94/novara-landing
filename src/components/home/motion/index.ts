@@ -9,6 +9,7 @@ import { initScrollDepth } from './depth';
 import { initHero } from './hero';
 import { initResultsPinned, initResultsSimple } from './results';
 import { initHowPinned, initHowSimple, initHowSteps, replayStep } from './how';
+import { initTestimonialsFly, initTestimonialsSimple, shuffleTestimonials } from './testimonials';
 import { initFit } from './fit';
 import { initDecide } from './decide';
 import { initAudience } from './audience';
@@ -103,6 +104,9 @@ export function initHome(): void {
 
     const mm = gsap.matchMedia();
     const ctx = gsap.context(() => {
+      // Per-load shuffle of the testimonial cards (before reveals and the fly bind to them).
+      const testiRoot = one(document, '[data-testi-scroll]')?.closest<HTMLElement>('section') ?? null;
+      if (testiRoot) safe('testimonials-order', () => shuffleTestimonials(testiRoot));
       const hero = one(document, '[data-hero]');
       if (hero) safe('hero', () => initHero(hero));
       safe('reveals', initReveals);
@@ -111,13 +115,17 @@ export function initHome(): void {
 
       const results = one(document, '[data-results]');
       const how = one(document, '[data-how]');
+      const testi = one(document, '[data-testi-scroll]')?.closest<HTMLElement>('section') ?? null;
       mm.add('(min-width: 768px)', () => {
         safe('depth', initScrollDepth);
       });
       mm.add('(min-width: 768px) and (min-height: 620px)', () => {
         const c1 = results ? safe('results', () => initResultsPinned(results)) : undefined;
+        // After Results: its Offered avatars fly into their testimonial cards once the pin releases.
+        const c3 = testi ? safe('testimonials', () => initTestimonialsFly(testi)) : undefined;
         const c2 = how ? safe('how', () => initHowPinned(how)) : undefined;
         return () => {
+          if (typeof c3 === 'function') c3();
           if (typeof c1 === 'function') c1();
           if (typeof c2 === 'function') c2();
         };
@@ -131,6 +139,7 @@ export function initHome(): void {
       });
       mm.add('(max-width: 767.98px), (max-height: 619.98px)', () => {
         if (results) safe('results-simple', () => initResultsSimple(results));
+        if (testi) safe('testimonials-simple', () => initTestimonialsSimple(testi));
         const c = how ? safe('how-simple', () => initHowSimple(how)) : undefined;
         return () => {
           if (typeof c === 'function') c();

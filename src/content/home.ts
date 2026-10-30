@@ -65,15 +65,6 @@ export const home = {
       rank: 'Ranked 1 of 6',
     },
   },
-  /**
-   * Trust strip after the hero. Renders only when `logos` has real entries, so it ships empty.
-   * Add only confirmed customers: no invented names, counts or quotes. `src` is a path under /public or an https URL.
-   */
-  socialProof: {
-    heading: 'Trusted by hiring teams at',
-    count: '',
-    logos: [] as { name: string; src: string; href?: string }[],
-  },
   results: {
     title: 'From 1,200+ applicants to 4 offers.',
     caption: 'Illustrative funnel for an engineering hire. Not a customer result.',
@@ -94,6 +85,28 @@ export const home = {
     ],
     legend: ['Applied', 'AI interviews', 'HR Round', 'Offered'],
     hired: 'Offered',
+  },
+  /**
+   * Real candidates who took the Novara AI interview, quoted verbatim with their permission to link their LinkedIn.
+   * `title`, `readMore` and `showLess` are CMS fields; people, quotes and order stay in code (the first four, Mukul, Hridaya, Utsav and Aayush, are the batch that went from 1,200 applicants to 4 offers and are the Offered avatars in Results; the last three are never in the funnel. Code order is the no-JS order only: on each load motion/cast.ts shuffles the four among the Offered seats and the three among themselves, so nobody is prioritised. `key` is the photo file under /public/people).
+   */
+  testimonials: {
+    title: 'What candidates say about the Novara interview.',
+    items: [
+      { key: 'mukul', name: 'Mukul Aryal', role: 'L1 Software Engineer - AI/ML', href: 'https://www.linkedin.com/in/aryalmukul/', quote: "I wasn't sure an AI could properly assess technical depth, but Novara surprised me. It asked me to walk through how I'd approach a problem, then followed up on my choices, like how I'd evaluate the model and handle trade-offs between accuracy and latency. Whenever my answer was vague, it gently pushed for specifics, which helped me show my thinking more clearly." },
+      { key: 'hridaya', name: 'Hridaya Giri', role: 'L1 Software Engineer - AI/ML', href: 'https://www.linkedin.com/in/hridayagiri/', quote: "I could take the interview on my own schedule, late one night after work, without juggling calendars with a recruiter. The voice was clear, the pacing felt comfortable, and the instructions at the start made it obvious what to expect. Honestly, it ran more smoothly than most interviews I've had with people." },
+      { key: 'utsav', name: 'Utsav Manandhar', role: 'L1 Software Engineer - AI/ML', href: 'https://www.linkedin.com/in/utsav-manandhar/', quote: "I was nervous about being interviewed by an AI, but Novara felt surprisingly natural. The questions followed on from what I actually said, and it never felt like I was racing a timer. When I paused to think, it gave me room instead of cutting me off. I came out feeling I'd shown what I can really do." },
+      { key: 'ayush', name: 'Aayush Dangol', role: 'L1 Software Engineer - AI/ML', href: 'https://www.linkedin.com/in/aayush-dangol-294b0a228/', quote: "I expected generic, scripted questions, but the follow-ups really dug into the projects I'd mentioned: why I chose a particular model architecture, and how I dealt with data drift in production. It felt like talking to a sharp senior engineer. I could tell it was actually listening." },
+      { key: 'mandira', name: 'Mandira Sharma', role: '', href: 'https://www.linkedin.com/in/mandira-sharma-bba254276/', quote: 'My experience with the AI Interview feature in the Novara app was really great. The questions were relevant to my work experience, skills, and the requirements of the job position I was applying for. What I particularly appreciated was that it not only simulated a realistic interview but also provided helpful evaluations, constructive feedback, and guidance on areas where I could improve. Overall, it was a valuable experience that helped me better understand my strengths and identify areas for further development.' },
+      { key: 'shristee', name: 'Shristee Maharjan', role: 'Associate Software Engineer - AI/ML', href: 'https://www.linkedin.com/in/shristee-maharjan/', quote: 'From resume screening right through to the AI interview, Novara handled every step of the hiring process seamlessly. The interview questions were clear and well-structured, and the conversation flowed naturally instead of feeling scripted. I was especially impressed by the transcription, which captured everything I said accurately. The whole process felt efficient and thoughtfully designed, and it made applying feel much less stressful.' },
+      { key: 'pragyan', name: 'Pragyan Shrestha', role: '', href: 'https://www.linkedin.com/in/pragyan-shrestha-2151b8254/', quote: 'I really appreciate the idea behind Novara Interview Engine. It brings a modern approach to the interview process and demonstrates how technology can make recruitment smarter and more efficient.' },
+    ],
+    linkedinLabel: 'on LinkedIn',
+    regionLabel: 'Candidate testimonials, scroll sideways',
+    prev: 'Previous testimonials',
+    next: 'Next testimonials',
+    readMore: 'Read more',
+    showLess: 'Show less',
   },
   decide: {
     title: 'You decide who moves on. Novara shows you why.',
@@ -254,6 +267,10 @@ export const home = {
   faq: {
     title: 'Frequently asked questions',
     items: [
+      {
+        q: 'How long does it take to set up?',
+        a: 'Setting up Novara takes approximately 5 to 10 minutes for the initial setup, depending on the hiring requirements and the number of hiring stages to be configured. You can start by creating a job or uploading a job description, and Novara automatically fills in the relevant fields. After you review the job requirements and configure your hiring stages, you are ready to publish the vacancy.',
+      },
       {
         q: 'Does Novara decide who gets hired?',
         a: 'No. Novara scores resumes and interviews and shows its reasons. Your team decides who moves on, who gets an HR round and who gets an offer.',

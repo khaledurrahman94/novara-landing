@@ -180,7 +180,7 @@ export interface HomeFaqItem extends Struct.ComponentSchema {
     answer: Schema.Attribute.Text &
       Schema.Attribute.Required &
       Schema.Attribute.SetMinMaxLength<{
-        maxLength: 285;
+        maxLength: 420;
         minLength: 1;
       }>;
     question: Schema.Attribute.String &
@@ -285,31 +285,6 @@ export interface HomeHow extends Struct.ComponentSchema {
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 16;
         minLength: 1;
-      }>;
-  };
-}
-
-export interface HomeLogo extends Struct.ComponentSchema {
-  collectionName: 'components_home_logos';
-  info: {
-    description: 'One customer logo for the social proof strip.';
-    displayName: 'Customer logo';
-  };
-  attributes: {
-    href: Schema.Attribute.String &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 200;
-      }>;
-    name: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 60;
-        minLength: 1;
-      }>;
-    src: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 300;
       }>;
   };
 }
@@ -420,35 +395,6 @@ export interface HomeResults extends Struct.ComponentSchema {
   };
 }
 
-export interface HomeSocialProof extends Struct.ComponentSchema {
-  collectionName: 'components_home_social_proofs';
-  info: {
-    description: 'Optional trust strip after the hero. Renders only when it has at least one logo. Real customers only.';
-    displayName: 'Social proof';
-  };
-  attributes: {
-    count: Schema.Attribute.String &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 60;
-      }>;
-    heading: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 60;
-        minLength: 1;
-      }>;
-    logos: Schema.Attribute.Component<'home.logo', true> &
-      Schema.Attribute.Required &
-      Schema.Attribute.SetMinMax<
-        {
-          max: 12;
-          min: 1;
-        },
-        number
-      >;
-  };
-}
-
 export interface HomeStep extends Struct.ComponentSchema {
   collectionName: 'components_home_steps';
   info: {
@@ -471,7 +417,31 @@ export interface HomeStep extends Struct.ComponentSchema {
   };
 }
 
-export interface HomeTile extends Struct.ComponentSchema {
+export interface HomeTestimonials extends Struct.ComponentSchema {
+  collectionName: 'components_home_testimonials';
+  info: {
+    description: 'Heading of the candidate testimonials section after Results. The quotes, names, photos and order stay in code. Optional: the code default shows when unset.';
+    displayName: 'Testimonials';
+  };
+  attributes: {
+    readMore: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 24;
+      }>;
+    showLess: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 24;
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 70;
+        minLength: 1;
+      }>;
+  };
+}
+
+export interface HomeTileextends Struct.ComponentSchema {
   collectionName: 'components_home_tiles';
   info: {
     description: 'Title and line of one platform tile.';
@@ -554,12 +524,11 @@ declare module '@strapi/strapi' {
       'home.footer': HomeFooter;
       'home.hero': HomeHero;
       'home.how': HomeHow;
-      'home.logo': HomeLogo;
       'home.nav': HomeNav;
       'home.platform': HomePlatform;
       'home.results': HomeResults;
-      'home.social-proof': HomeSocialProof;
       'home.step': HomeStep;
+      'home.testimonials': HomeTestimonials;
       'home.tile': HomeTile;
       'seo.meta': SeoMeta;
     }

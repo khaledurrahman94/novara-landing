@@ -16,7 +16,7 @@
       "type": "text",
       "required": true,
       "minLength": 1,
-      "maxLength": 285
+      "maxLength": 420
     }
   }
 }
