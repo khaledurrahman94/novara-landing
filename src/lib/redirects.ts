@@ -17,7 +17,7 @@ export interface RedirectRule {
  * adapter writes them into `_redirects`. They take part in loop, chain and live-page checks.
  */
 export const codeRedirects: ReadonlyArray<Pick<RedirectRule, 'from' | 'to' | 'status'>> = [
-  // Common legal URLs land on their section of the combined Terms and Policy page.
+  // Common legal URLs land on their section of the combined Terms and policies page.
   { from: '/privacy', to: '/terms#privacy-policy', status: 301 },
   { from: '/cookies', to: '/terms#cookie-policy', status: 301 },
 ];

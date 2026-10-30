@@ -510,11 +510,11 @@ const cookies: LegalDocument = {
 /** Order matches the draft and the table of contents. */
 export const legal = {
   seo: {
-    title: 'Terms and Policy | Novara',
+    title: 'Terms and policies | Novara',
     description: 'Novara Privacy Policy, Terms of Service, Terms and Conditions and Cookie Policy, on one page.',
   },
   eyebrow: 'Legal',
-  title: 'Terms and Policy',
+  title: 'Terms and policies',
   tocLabel: 'On this page',
   effectiveLabel: 'Effective date',
   updatedLabel: 'Last updated',
