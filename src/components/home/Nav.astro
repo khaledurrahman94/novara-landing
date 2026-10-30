@@ -3,12 +3,10 @@ import { home } from '../../content/home';
 import Button from './Button.astro';
 import { HOME_PATH, homeHref } from '../../lib/home-path';
 interface Props {
-  /** Where the CTA goes. Other pages pass `HOME_DEMO_HREF` so it lands on the home form. */
-  ctaHref?: string;
   /** Opaque bar from the start. The home page's scroll script does this on scroll; other pages have no script. */
   solid?: boolean;
 }
-const { ctaHref = '#demo-close', solid = false } = Astro.props;
+const { solid = false } = Astro.props;
 const { nav } = home;
 /** Only links whose page exists (`live` in home.ts). */
 const links = nav.links.filter((l) => l.live);
@@ -28,8 +26,8 @@ const links = nav.links.filter((l) => l.live);
       </nav>
     )}
     <div class="flex items-center gap-2 justify-self-end sm:gap-3 md:col-start-3">
-      <Button href={nav.getStarted.href} variant="secondary" class="hidden lg:inline-flex">{nav.getStarted.label}</Button>
-      <Button href={ctaHref} data-home-cta>{nav.cta}</Button>
+      <Button href={nav.signIn.href} variant="secondary" class="hidden lg:inline-flex">{nav.signIn.label}</Button>
+      <Button href={nav.getStarted.href}>{nav.getStarted.label}</Button>
     </div>
   </div>
 </header>
