@@ -1,10 +1,9 @@
 /**
  * ScreeningLab scoring model. Pure and deterministic, shared by the build-time
- * markup and the browser script so both always agree. The script replays it: it lights
- * requirements one by one and the real scores and ranking follow.
+ * markup and the browser script so both always agree.
  *
  * Job Fit Score = round(100 * sum(weight * strength) / sum(weight)) over the
- * requirements that are lit. Strength is 0 to 1 per resume and requirement.
+ * requirements that are checked. Strength is 0 to 1 per resume and requirement.
  * A requirement counts as matched from 0.6, otherwise it is missing.
  * Illustrative demo data. Novara reports a Job Fit Score out of 100 with matching and
  * missing criteria and AI reasoning, but does not publish its weights, so the weights and
@@ -16,7 +15,7 @@ export interface Requirement {
   id: ReqId;
   label: string;
   weight: number;
-  /** Counted when the animation starts. The others are lit one after another. */
+  /** Checked when the demo loads. */
   on: boolean;
 }
 
@@ -43,8 +42,10 @@ export interface Applicant {
   s: Six<number>;
   /** Short evidence per requirement, same order as REQS. */
   ev: Six<string>;
-  /** A new application: hidden at first, it arrives in the ranking during the animation. */
+  /** New applications start in the tray, not the ranking. */
   fresh?: boolean;
+  /** Two lines shown on the tray's resume card. */
+  snippet?: readonly [string, string];
 }
 
 export const APPLICANTS: readonly Applicant[] = [
@@ -82,6 +83,13 @@ export const APPLICANTS: readonly Applicant[] = [
     id: 'hana', name: 'Hana Fischer', initials: 'HF', fresh: true,
     s: [0.9, 0.85, 0.8, 0.9, 0.7, 0.6],
     ev: ['7 yrs, high-traffic services', 'Shared type libraries', 'Production, with migrations', 'Versioned public API', 'Some cluster work', '7 yrs, matches Senior'],
+    snippet: ['Senior backend engineer, 7 yrs', 'Node.js, TypeScript, PostgreSQL'],
+  },
+  {
+    id: 'tomas', name: 'Tomas Reyes', initials: 'TR', fresh: true,
+    s: [0.3, 0.5, 0.9, 0.4, 0.9, 0.8],
+    ev: ['Only in side projects', 'Little TypeScript', 'Database admin background', 'No API design shown', 'Runs clusters daily', '6 yrs, matches Senior'],
+    snippet: ['Platform engineer, 6 yrs', 'PostgreSQL, Kubernetes, Go'],
   },
 ];
 
