@@ -227,7 +227,9 @@
 }
 .sl-card[data-grabbed='true'] {
   cursor: grabbing;
-  box-shadow: var(--shadow-xl);
+  box-shadow: var(--shadow-md);
+  will-change: transform;
+  transition: none;
   z-index: 30;
 }
 .sl-card[data-state='screening'],

@@ -26,7 +26,7 @@ const panel = 'rounded-lg border border-border-secondary bg-white shadow-md';
 
   <Figure caption={copy.caption} tone={tone === 'plate' ? 'white' : 'plate'} class="mt-12">
     <div class="sl" data-screening-lab data-active={[...active].join(',')}>
-      <div class="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:grid-rows-[auto_1fr]">
+      <div class="grid items-start gap-4 lg:items-stretch lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:grid-rows-[auto_1fr]">
         <!-- The job and its requirements -->
         <div class:list={[panel, 'p-4 sm:p-5 lg:col-start-1 lg:row-start-1']}>
           <p class="m-0 text-xs font-medium text-text-tertiary">Job</p>
@@ -54,18 +54,18 @@ const panel = 'rounded-lg border border-border-secondary bg-white shadow-md';
         </div>
 
         <!-- New applications: JS only, the static list above already shows every applicant -->
-        <div class:list={[panel, 'p-4 sm:p-5 lg:col-start-1 lg:row-start-2']} data-tray hidden>
+        <div class:list={[panel, 'flex flex-col p-3 lg:col-start-1 lg:row-start-2']} data-tray hidden>
           <div class="flex items-baseline justify-between gap-3">
             <p class="m-0 text-sm font-semibold text-text-primary">{copy.trayTitle}</p>
             <p class="m-0 text-xs tabular-nums text-text-tertiary" data-tray-count>{fresh.length}</p>
           </div>
           <p class="m-0 mt-0.5 text-xs text-text-tertiary" data-tray-hint>{copy.trayHint}</p>
-          <div class="@container mt-4">
+          <div class="@container mt-3">
             <div class="relative grid grid-cols-1 gap-3 @md:grid-cols-2" data-tray-cards>
               {fresh.map((a) => <ResumeCard applicant={a} />)}
             </div>
           </div>
-          <div class="mt-4 flex items-center justify-between gap-3" data-tray-done hidden>
+          <div class="mt-auto flex items-center justify-between gap-3 pt-4" data-tray-done hidden>
             <p class="m-0 text-[0.8125rem] text-text-secondary">{copy.trayDone}</p>
             <button type="button" class="sl-link" data-reset>{copy.reset}</button>
           </div>

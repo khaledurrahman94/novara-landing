@@ -164,7 +164,7 @@ function mount(root: HTMLElement): () => void {
     }
     gsap.to(r.n, {
       v: to,
-      duration: 0.8,
+      duration: 0.5,
       ease: 'power3.out',
       onUpdate: () => {
         r.scoreEl.textContent = String(Math.round(r.n.v));
@@ -173,7 +173,7 @@ function mount(root: HTMLElement): () => void {
         r.scoreEl.textContent = String(to);
       },
     });
-    gsap.fromTo(r.bar, { scaleX: from === undefined ? gsap.getProperty(r.bar, 'scaleX') : from / 100 }, { scaleX: to / 100, duration: 0.8, ease: 'power3.out' });
+    gsap.fromTo(r.bar, { scaleX: from === undefined ? gsap.getProperty(r.bar, 'scaleX') : from / 100 }, { scaleX: to / 100, duration: 0.5, ease: 'power3.out' });
   };
 
   const visibleIds = (): string[] => [...inRanking];
@@ -218,9 +218,8 @@ function mount(root: HTMLElement): () => void {
     const moved = order.some((id, i) => before[i] !== rows.get(id)?.li);
     if (moved || enteringLi) {
       Flip.from(state, {
-        duration: reduced() ? 0 : 0.7,
+        duration: reduced() ? 0 : 0.45,
         ease: 'power3.out',
-        stagger: reduced() ? 0 : 0.025,
         absolute: false,
         onEnter: (els: Element[]) =>
           gsap.fromTo(els, { opacity: 0, y: -14, scale: 0.98 }, { opacity: 1, y: 0, scale: 1, duration: reduced() ? 0 : 0.55, ease: 'expo.out', clearProps: 'transform,opacity' }),
@@ -353,14 +352,14 @@ function mount(root: HTMLElement): () => void {
     setOpen(r, true);
     refresh({ roll: true, entering: c.a.id });
     // A soft wash on the new row, so the eye finds it.
-    const wash = getComputedStyle(root).getPropertyValue('--color-primary-50').trim() || '#F5F1FF';
-    if (!reduced()) gsap.fromTo(r.btn, { backgroundColor: wash }, { backgroundColor: 'rgba(255,255,255,0)', duration: 1.6, ease: 'power2.out', clearProps: 'backgroundColor' });
+    const wash = getComputedStyle(root).getPropertyValue('--color-primary-100').trim() || '#EBE4FF';
+    if (!reduced()) gsap.fromTo(r.btn, { backgroundColor: wash }, { backgroundColor: 'rgba(255,255,255,0)', duration: 1.2, ease: 'power2.in', clearProps: 'backgroundColor' });
     const place = [...rank(visibleIds(), active)].indexOf(c.a.id) + 1;
     announce(`${c.a.name} screened. Job Fit ${score(c.a, active)}, ranked ${ordinal(place)}.`);
     settleScroll();
   };
 
-  const screen = (id: string): void => {
+  const screen = (id: string, instant = false): void => {
     const c = cards.get(id);
     if (!c || c.state !== 'idle') return;
     c.state = 'screening';
@@ -383,11 +382,11 @@ function mount(root: HTMLElement): () => void {
         updateTray();
         addToRanking(c);
       };
-      if (reduced()) return leave();
-      later(() => gsap.to(c.card, { opacity: 0, y: -10, scale: 0.97, duration: 0.3, ease: 'power2.in', onComplete: leave }), 380);
+      if (reduced() || instant) return leave();
+      later(() => gsap.to(c.card, { opacity: 0, y: -10, scale: 0.97, duration: 0.2, ease: 'power2.in', onComplete: leave }), 120);
     };
-    if (reduced()) return finish();
-    gsap.to(o, { p: target, duration: 1.1, delay: 0.15, ease: 'power2.out', onUpdate: () => setRing(c, o.p), onComplete: finish });
+    if (reduced() || instant) return finish();
+    gsap.to(o, { p: target, duration: 0.6, ease: 'power2.out', onUpdate: () => setRing(c, o.p), onComplete: finish });
   };
 
   cards.forEach((c) => {
@@ -446,14 +445,13 @@ function mount(root: HTMLElement): () => void {
       delete ranking.dataset['over'];
       c.card.dataset['grabbed'] = 'false';
       delete c.slot.dataset['lifted'];
-      if (hit && c.state === 'idle') screen(c.a.id);
+      if (hit && c.state === 'idle') screen(c.a.id, true);
       else spring(c);
     };
     const d = Draggable.create(c.card, {
       type: 'x,y',
       bounds: figure,
       edgeResistance: 0.7,
-      inertia: !reduced(),
       dragClickables: false,
       zIndexBoost: false,
       onPress() {
@@ -470,11 +468,8 @@ function mount(root: HTMLElement): () => void {
         ranking.dataset['over'] = this.hitTest(ranking, '40%') ? 'true' : 'false';
       },
       onRelease() {
-        if (!reduced()) gsap.to(c.card, { scale: 1, duration: 0.4, ease: 'expo.out' });
-        
-        window.setTimeout(() => {
-          if (!c.drag?.isThrowing) settle();
-        }, 0);
+        if (!reduced()) gsap.to(c.card, { scale: 1, duration: 0.3, ease: 'expo.out' });
+        settle();
       },
       onThrowComplete() {
         settle();
