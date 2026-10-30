@@ -9,16 +9,18 @@ export interface KindMeta {
   /** Event title in the timeline and toast. */
   title: string;
   icon: string;
+  /** One line under the event in the team timeline: what was seen. */
+  why: string;
 }
 
 export const kinds: readonly KindMeta[] = [
-  { key: 'tab', label: 'Tab switches', title: 'Tab switched', icon: 'window' },
-  { key: 'focus', label: 'Focus lost', title: 'Focus lost', icon: 'scan' },
-  { key: 'copy', label: 'Copy / paste', title: 'Copied the question', icon: 'copy' },
-  { key: 'fullscreen', label: 'Left full screen', title: 'Left full screen', icon: 'maximize' },
-  { key: 'away', label: 'Looking away', title: 'Looking away', icon: 'eye-off' },
-  { key: 'camera', label: 'Camera off', title: 'Camera off', icon: 'video-off' },
-  { key: 'faces', label: 'Second face', title: 'Second face', icon: 'users' },
+  { key: 'tab', label: 'Tab switches', title: 'Tab switched', icon: 'window', why: 'The candidate left the interview tab.' },
+  { key: 'focus', label: 'Focus lost', title: 'Focus lost', icon: 'scan', why: 'The interview window lost focus.' },
+  { key: 'copy', label: 'Copy / paste', title: 'Copied the question', icon: 'copy', why: 'Text was copied from the question.' },
+  { key: 'fullscreen', label: 'Left full screen', title: 'Left full screen', icon: 'maximize', why: 'The interview stopped being full screen.' },
+  { key: 'away', label: 'Looking away', title: 'Looking away', icon: 'eye-off', why: 'Gaze left the screen (your cursor, here).' },
+  { key: 'camera', label: 'Camera off', title: 'Camera off', icon: 'video-off', why: 'No camera feed or no face in view.' },
+  { key: 'faces', label: 'Second face', title: 'Second face', icon: 'users', why: 'More than one face was in view.' },
 ] as const;
 
 export const lab = {
@@ -55,7 +57,7 @@ export const lab = {
     note: 'Only your hiring team sees this',
     app: 'Novara',
     live: 'Live',
-    hint: 'Try it: switch tabs or copy the question.',
+    caption: 'Try it: switch tabs, copy the question or move your cursor out. Those are detected in your browser; the switches below are demo-only (no camera opens).',
   },
   answers: [
     "I'd start with the seams: parts that change independently, like billing or notifications. Pull one out behind an API, keep the database shared at first, and move its data last.",
@@ -65,14 +67,14 @@ export const lab = {
   panelTitle: 'Integrity monitor',
   review: (n: number): string => (n === 1 ? '1 event to review' : `${n} events to review`),
   simulateTitle: 'Simulate',
-  simulateNote: 'No camera is used. These are switches, not detection.',
   simCamera: 'Camera off',
   simFaces: 'Second face',
   simFullscreen: 'Left full screen',
   simTag: 'Simulated',
   cursorTag: 'Cursor stand-in',
   empty: 'Nothing flagged yet.',
-  eyes: 'In this demo your cursor stands in for your eyes. Keep it inside the window.',
+  pastedWhy: 'Text was pasted into the interview window.',
+  eventsLabel: 'Integrity events, newest first',
   earlier: (n: number): string => (n === 1 ? '1 earlier event, in your report' : `${n} earlier events, in your report`),
   started: 'Interview started',
   ended: 'Interview ended',
