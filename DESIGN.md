@@ -292,6 +292,7 @@ The page structure is square, made of straight hairlines and square section edge
 
 ### Cards / Containers
 - **Figure plate:** 24px radius, hairline border, 12px padding (24px from sm), Plate Gray on white bands or white on plate bands. It always holds product UI and has a screen-reader caption.
+- **Fit-to-frame:** a product visual in a fixed frame (how-it-works steps) is measured and scaled down (never up) with a CSS transform so it is always fully visible and centred; frames share one height, `min(60vh, 34rem)`, a hairline border and the Plate Gray ground. A violet border is reserved for real active states, not the frame. Cards in auto-height plates (Platform tiles, Decide board, hero card) never sit inside a clipping container.
 - **Bento tile:** white, 24px padding (32px from sm), separated by 1px hairline gaps, not borders or shadows. Each holds a title, a line and a 16px-radius Plate Gray inset with one product view. Each tile has one micro-interaction on hover or focus (on scroll entry for touch devices).
 
 ### Navigation

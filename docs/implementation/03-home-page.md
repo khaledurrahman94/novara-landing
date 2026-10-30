@@ -56,6 +56,7 @@ Copy lives in `src/content/home.ts`. The labs keep their own copy files.
    - **Background:** the gradient horizon, once, behind the shot.
    - **Touch:** gentle idle drift, and the scrub still works.
 3. **Results:**
+   - **Final stages:** the 12 shortlisted sit in a capped 6 x 2 grid (cell at most 104px, avatar radius at most 27px), the four offers on a Violet Wash band with their Offered chip. The tooltip is centred over the hovered person with an arrow, flips below at the top edge and is clamped inside the canvas. The hover ring is a 2px primary-300 circle, never black.
    - **Title:** "From 1,200+ applicants to 4 hires."
    - **Pinned scrubbed canvas:** 1,200 dots, one per applicant.
      - **Phase 1:** 600 fade back, captioned "Screened against the job's requirements."
@@ -107,6 +108,7 @@ Copy lives in `src/content/home.ts`. The labs keep their own copy files.
    - **Evidence panel:** hovering or focusing a card zooms in its evidence (the ScoreTriplet).
    - **No JS:** all three evidence panels stay readable. **Reduced motion:** every interaction works; the drag lands without springs.
 7. **How it works:** a pinned horizontal scrubbed track of nine steps that snaps step by step (ScrollTrigger `snap` on the pin, directional, 0.4-0.6s, about 0.9 viewport heights per step): each step settles with its vignette finished and holds before the next. The nine-dot rail fills at the settled step. Each step's vignette animates in proportion to scroll; for example, the job description lines write in as you scroll, and a ghost pointer drags Amara's card in step 8. Each step title is a button: in the pinned track it scrolls to that step's settled point (so the snap and the buttons agree); in the vertical list on phones it replays that step's vignette. Focusing a title scrolls to it too.
+   - **Fit-to-frame:** every step visual sits in one `[data-fit]` frame (same height, `min(60vh, 34rem)`, 1px hairline, Plate Gray ground, `lg` radius). `motion/fit.ts` measures the visual's natural size and applies a `transform: scale()` of at most 1 (ResizeObserver, re-run on fonts) so the whole visual shows, centred and never cropped. Without JS the frame is an auto-height box. The ghost pointer in step 8 divides by the fit scale. No purple border: the step numeral and rail mark the active step.
 8. **Platform:** a bento of nine product views with cursor tilt, and every tile genuinely interactive. The Roles and permissions tile was removed by the DM team and stays removed:
    - **Dashboard:** hover or focus a bar of the jobs chart for its stage counts.
    - **Pipeline:** cards lift on hover or focus.
