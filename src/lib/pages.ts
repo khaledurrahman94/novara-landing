@@ -68,7 +68,6 @@ const homeLiveLinks = (): string[] => {
   const all: readonly { href: string; live: boolean }[] = [
     ...home.nav.links,
     home.hero.pricing,
-    home.hero.signIn,
     ...home.footer.columns.flatMap((c): readonly { href: string; live: boolean }[] => c.links),
   ];
   return all.filter((l) => l.live).map((l) => homeHref(l.href));
@@ -79,7 +78,7 @@ const homeProvider: PageProvider = {
   pages: () => [{ type: 'home', path: HOME_PATH, route: 'code', where: 'home', seo: homeSeoMeta(), images: [], links: homeLiveLinks() }],
 };
 
-/** Code-owned content pages (About, Contact, Pricing, Terms and Policy): copy in src/content/company.ts and legal.ts. */
+/** Code-owned content pages (About, Contact, Pricing, Terms and policies): copy in src/content/company.ts and legal.ts. */
 const companyProvider: PageProvider = {
   type: 'company',
   pages: () =>
@@ -87,7 +86,7 @@ const companyProvider: PageProvider = {
       { path: '/about', label: 'About', seo: company.about.seo },
       { path: '/contact', label: 'Contact', seo: company.contact.seo },
       { path: '/pricing', label: 'Pricing', seo: company.pricing.seo },
-      { path: '/terms', label: 'Terms and Policy', seo: legal.seo },
+      { path: '/terms', label: 'Terms and policies', seo: legal.seo },
     ].map((p) => ({
       type: 'company',
       path: p.path,

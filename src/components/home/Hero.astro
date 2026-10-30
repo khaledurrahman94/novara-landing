@@ -22,14 +22,8 @@ const edge = 'pointer-events-none absolute -inset-px -z-10 rounded-lg border bor
       <p data-rise class="m-0 mt-5 max-w-[34rem] text-lg leading-relaxed text-text-secondary">{hero.sub}</p>
       <div data-rise class="mt-7 flex flex-wrap items-center gap-3">
         {hero.pricing.live && <Button href={hero.pricing.href}>{hero.pricing.label}</Button>}
-        {hero.signIn.live && <Button href={hero.signIn.href} variant={hero.pricing.live ? 'secondary' : 'primary'}>{hero.signIn.label}</Button>}
+        <Button href="#demo-close" variant={hero.pricing.live ? 'secondary' : 'primary'} data-home-cta>{home.nav.cta}</Button>
       </div>
-      <p data-rise class="m-0 mt-6">
-        <a href="#interview-lab" class="group inline-flex items-center gap-1.5 rounded-md text-base font-medium text-primary no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary">
-          {hero.secondary}
-          <Icon name="arrow-right" size={16} class="rotate-90 transition-transform duration-200 ease-out group-hover:translate-y-0.5" />
-        </a>
-      </p>
     </div>
     <div data-hero-card aria-hidden="true" class="hidden self-center justify-self-end lg:block">
       <div data-hero-float>

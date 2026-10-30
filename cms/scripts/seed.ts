@@ -38,7 +38,6 @@ const tileKeys = [
   'scheduling',
   'interviews',
   'career',
-  'roles',
   'analytics',
 ] as const;
 
@@ -53,7 +52,7 @@ const homeData = (copy: Copy) => ({
     howLabel: anchorLabel(copy, '#how'),
     faqLabel: anchorLabel(copy, '#faq'),
   },
-  hero: { title: copy.hero.title, sub: copy.hero.sub, secondary: copy.hero.secondary },
+  hero: { title: copy.hero.title, sub: copy.hero.sub },
   // Optional: only seeded when real logos exist, so an empty slot stays empty in the CMS too.
   ...(copy.socialProof.logos.length > 0
     ? {
