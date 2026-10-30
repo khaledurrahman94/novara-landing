@@ -77,7 +77,7 @@ Copy lives in `src/content/home.ts`. The labs keep their own copy files.
    - **Title:** "You decide who moves on. Novara shows you why." **Sub:** "Novara shows the evidence. Moving someone on is your call."
    - **The sequence** (once, when the board scrolls in): the evidence panel spotlights Ines, Kenji and Amara in turn; Amara's card moves from Completed to HR Round; a "Moved on by you" stamp lands with a spring; her score is revealed again.
    - **No JS:** all three evidence panels stay readable. **Reduced motion:** Amara is already in HR Round, stamped.
-7. **How it works:** a pinned horizontal scrubbed track of nine steps. Each step's vignette animates in proportion to scroll; for example, the job description lines write in as you scroll. On mobile it is a vertical list with the same vignettes, played on entry. Steps are plain headings, not buttons.
+7. **How it works:** a pinned horizontal scrubbed track of nine steps that snaps step by step (ScrollTrigger `snap` on the pin, directional, 0.4-0.6s, about 0.9 viewport heights per step): each step settles with its vignette finished and holds before the next. The nine-dot rail fills at the settled step. Each step's vignette animates in proportion to scroll; for example, the job description lines write in as you scroll. On mobile it is a vertical list with the same vignettes, played on entry. Steps are plain headings, not buttons.
 8. **Platform:** a bento of nine product views; the six that move each play their own loop while on screen:
    - **Dashboard:** a callout with the stage counts moves over each bar of the jobs chart in turn.
    - **Pipeline:** a card moves on to the next stage.
@@ -85,6 +85,7 @@ Copy lives in `src/content/home.ts`. The labs keep their own copy files.
    - **Career page:** Layout (List/Grid) and Theme (Auto/Light/Dark) switch by themselves, and the embed code is "copied" (the button shows "Copied"; the clipboard is never touched).
    - **Roles:** the selected role changes and its permissions follow.
    - **Analytics:** the view switches between stages, the bars morph and each bar is highlighted in turn with its week.
+8b. **Audience:** a pinned stepped section (from 1024x800): the four groups (For Company, By Role, Industry, Agencies) each get a stop, with the same snap behaviour as How it works (about 0.8 viewport heights per group), the active tab, a crossfading detail card (opacity and transform) and a thin progress line. The tabs stay real buttons; clicking one scrolls to its stop. Below that size it is the plain tablist (a horizontal scroller on small screens, no pin); with no JS or under reduced motion all four panels are visible stacked.
 9. **FAQ, close, footer:** the FAQ is native `details`. The close uses DemoForm. The footer shows only links whose pages exist.
 
 ## Links to pages that do not exist

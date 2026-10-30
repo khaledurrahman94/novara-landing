@@ -191,3 +191,42 @@ html {
 .home-how [data-step][data-active='true'] [data-vignette] {
   border-color: var(--color-primary-300);
 }
+
+/* Audience: pinned, the four panels share one grid cell and crossfade; stacked (reduced motion) shows all four. */
+.home-aud [data-aud-tab] {
+  white-space: nowrap;
+}
+@media (min-width: 1024px) {
+  .home-aud [data-aud-tab] {
+    white-space: normal;
+  }
+}
+.home-aud[data-aud-mode='stacked'] [data-aud-panels] {
+  display: grid;
+  gap: 1.5rem;
+}
+.home-aud[data-aud-mode='stacked'] .home-aud-grid {
+  display: block;
+}
+.home-aud.is-pinned .home-aud-grid {
+  margin-top: 2rem;
+}
+.home-aud.is-pinned [data-aud-panels] {
+  display: grid;
+}
+.home-aud.is-pinned [data-aud-panel] {
+  grid-area: 1 / 1;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(16px);
+  transition:
+    opacity var(--duration-base) var(--ease-out-quart),
+    transform var(--duration-slow) var(--ease-out-quart),
+    visibility 0s var(--duration-base);
+}
+.home-aud.is-pinned [data-aud-panel][data-active='true'] {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition-delay: 0s;
+}

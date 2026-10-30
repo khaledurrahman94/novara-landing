@@ -325,7 +325,9 @@ Under reduced motion nothing loops or scrubs: every section shows its end state 
 Performance: canvases cap device pixel ratio at 2 and redraw on scroll, not on a loop. The interview lab, the screening lab and the bento loops watch visibility with IntersectionObserver and do no work off screen. Each section's init is isolated, so one failure never takes the page down.
 
 ### Pinned scenes
-Results, the interview lab and How It Works pin on large screens (see Motion). The interview lab pins at `(min-width: 1024px) and (min-height: 680px)`, with `not all and (...)` giving a short scrub elsewhere. Results and How pin from 768x620 and scrub without step snapping. Every pin carries `refreshPriority` in DOM order, and `ScrollTrigger.sort()` runs on `refreshInit`.
+Results, the interview lab and How It Works pin on large screens (see Motion). The interview lab pins at `(min-width: 1024px) and (min-height: 680px)`, with `not all and (...)` giving a short scrub elsewhere. Results pins from 768x620 and scrubs without step snapping. Every pin carries `refreshPriority` in DOM order, and `ScrollTrigger.sort()` runs on `refreshInit`.
+
+**Snap per step.** How It Works (9 steps) and the Audience section (4 groups) use ScrollTrigger `snap` on their pin: `snapTo` is the list of settled-step progress values plus both ends (so the visitor can always scroll out), `directional: true`, `duration` 0.4-0.6, `delay` 0.08, `power2.inOut`, `inertia: false`. Each slot holds still after its transition, and the step's vignette finishes before it settles. How scrolls about 0.9 viewport heights per step (0.7 below 1024px wide), Audience 0.8 per group and pins only from 1024x800 (below that, or without JS, it is the plain tablist; under reduced motion all four panels are stacked). Audience tabs stay real buttons: clicking one scrolls to that group's stop. The snap starts only after Lenis has stopped easing, so the two do not fight.
 
 **The Header-in-Pin Rule.** A pinned scene pins its heading with its steps. The visitor never scrubs through a step without the line that names it.
 
