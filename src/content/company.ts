@@ -77,6 +77,21 @@ export const company = {
     line: 'Reach us by email or phone, or book a demo.',
     labels: { email: 'Email', phone: 'Phone', address: 'Address', website: 'Website' },
     demo: { label: 'Book a demo', href: HOME_DEMO_HREF },
+    form: {
+      title: 'Send us a message',
+      name: 'Name',
+      email: 'Work email',
+      company: 'Company (optional)',
+      message: 'Message',
+      submit: 'Send message',
+      sending: 'Sending',
+      errorName: 'Enter your name.',
+      errorEmail: 'Enter a work email, like name@company.com.',
+      errorMessage: 'Enter a message.',
+      sendError: 'Something went wrong. Please try again.',
+      success: 'Thanks. We will reply within one working day.',
+      fallback: 'The contact form is not connected yet. Please email us instead.',
+    },
   },
   /** PENDING DM TEAM: the pricing content (plans, prices, trial) is still owed. Until then this page only routes to a demo or the contact page. Invent nothing here. */
   pricing: {

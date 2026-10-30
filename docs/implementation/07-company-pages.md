@@ -13,6 +13,7 @@ Removed as drafting notes: Privacy section 7 "Specific retention periods ... sho
 - Effective / last updated dates of Terms of Service and Terms and Conditions: the date lines render only when set (Privacy and Cookie: 29 October 2026).
 - `/pricing` is a minimal placeholder (heading, one sentence, Request a demo and Contact us buttons; copy in `company.pricing`). Open item: the DM team still owes the pricing content (plans, prices, trial).
 - Contact details (email, phone, address, website) come from novara.my, pending DM team confirmation.
+- `/contact` has a message form (`src/components/shared/ContactForm.astro`: name, work email, optional company, message, hidden honeypot). Copy is in `company.contact.form`. Its endpoint is pending: with no `action` prop, dev shows success and production logs a warning and shows a fallback line. Pass `action` in `contact.astro` once the endpoint exists.
 
 ## Links to pages that are not built yet
 These pages do not exist yet, so nothing links to them: /security, /resources, /ats, /ai-interview, /features, /solutions, /roi-calculator, /integrations.

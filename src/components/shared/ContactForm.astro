@@ -1,0 +1,171 @@
+---
+/**
+ * Contact form: name, work email, company (optional), message, plus a hidden honeypot.
+ * TODO: pass `action` (the contact endpoint) once it exists; it is not set yet. Without one, a valid
+ * submit shows the success state in dev only; a production build logs a warning and shows a neutral fallback line.
+ */
+import { company } from '../../content/company';
+const f = company.contact.form;
+interface Props {
+  id: string;
+  action?: string;
+  name?: string;
+  email?: string;
+  companyLabel?: string;
+  message?: string;
+  submit?: string;
+  sending?: string;
+  errorName?: string;
+  errorEmail?: string;
+  errorMessage?: string;
+  sendError?: string;
+  success?: string;
+  fallback?: string;
+  class?: string;
+}
+const {
+  id,
+  action,
+  name = f.name,
+  email = f.email,
+  companyLabel = f.company,
+  message = f.message,
+  submit = f.submit,
+  sending = f.sending,
+  errorName = f.errorName,
+  errorEmail = f.errorEmail,
+  errorMessage = f.errorMessage,
+  sendError = f.sendError,
+  success = f.success,
+  fallback = f.fallback,
+  class: cls = '',
+} = Astro.props;
+const input =
+  'h-11 w-full min-w-0 rounded-md border border-border-primary bg-white px-3.5 font-[inherit] text-[0.9375rem] text-text-primary shadow-xs transition-[border-color,box-shadow] duration-[var(--duration-fast)] focus:border-primary focus:outline-2 focus:outline-offset-0 focus:outline-primary-200 aria-[invalid=true]:border-warning';
+const labelCls = 'text-sm font-medium text-text-primary';
+---
+<form
+  id={id}
+  data-contact-form
+  data-error-name={errorName}
+  data-error-email={errorEmail}
+  data-error-message={errorMessage}
+  data-send-error={sendError}
+  data-sending={sending}
+  data-fallback={fallback}
+  action={action}
+  method="post"
+  class:list={['w-full', cls]}
+>
+  <div data-fields class="flex flex-col gap-5">
+    <div class="flex flex-col gap-1.5">
+      <label for={`${id}-name`} class={labelCls}>{name}</label>
+      <input id={`${id}-name`} name="name" type="text" required autocomplete="name" aria-describedby={`${id}-name-err`} class={input} />
+      <p id={`${id}-name-err`} data-err="name" role="alert" class="m-0 min-h-5 text-sm text-text-secondary"></p>
+    </div>
+    <div class="flex flex-col gap-1.5">
+      <label for={`${id}-email`} class={labelCls}>{email}</label>
+      <input id={`${id}-email`} name="email" type="email" required autocomplete="email" inputmode="email" aria-describedby={`${id}-email-err`} class={input} />
+      <p id={`${id}-email-err`} data-err="email" role="alert" class="m-0 min-h-5 text-sm text-text-secondary"></p>
+    </div>
+    <div class="flex flex-col gap-1.5">
+      <label for={`${id}-company`} class={labelCls}>{companyLabel}</label>
+      <input id={`${id}-company`} name="company" type="text" autocomplete="organization" class={input} />
+    </div>
+    <div class="flex flex-col gap-1.5">
+      <label for={`${id}-message`} class={labelCls}>{message}</label>
+      <textarea id={`${id}-message`} name="message" required rows="5" aria-describedby={`${id}-message-err`} class:list={[input, 'h-auto min-h-32 resize-y py-2.5']}></textarea>
+      <p id={`${id}-message-err`} data-err="message" role="alert" class="m-0 min-h-5 text-sm text-text-secondary"></p>
+    </div>
+    <div aria-hidden="true" class="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+      <label for={`${id}-website`}>Leave this field empty</label>
+      <input id={`${id}-website`} name="website" type="text" tabindex="-1" autocomplete="off" />
+    </div>
+    <div>
+      <button
+        type="submit"
+        class="h-11 whitespace-nowrap rounded-md bg-primary px-5 text-[0.9375rem] font-medium text-white shadow-xs transition-[background-color] duration-[var(--duration-fast)] hover:bg-primary-600 disabled:cursor-progress disabled:bg-primary-400"
+      >{submit}</button>
+      <p data-msg role="alert" class="m-0 mt-2 min-h-5 text-sm text-text-secondary"></p>
+    </div>
+  </div>
+  <p data-success role="status" hidden class="m-0 flex items-center gap-2.5 rounded-md border border-border-secondary bg-bg px-4 py-3 text-[0.9375rem] text-text-primary">
+    <span class="grid size-5 shrink-0 place-items-center rounded-full bg-success/10 text-success" aria-hidden="true">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+    </span>
+    <span>{success}</span>
+  </p>
+</form>
+
+<script>
+  const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  document.querySelectorAll<HTMLFormElement>('form[data-contact-form]').forEach((form) => {
+    form.noValidate = true;
+    const btn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+    const msg = form.querySelector<HTMLElement>('[data-msg]');
+    const fields = form.querySelector<HTMLElement>('[data-fields]');
+    const ok = form.querySelector<HTMLElement>('[data-success]');
+    const honey = form.querySelector<HTMLInputElement>('input[name="website"]');
+    if (!btn || !msg || !fields || !ok) return;
+    type El = HTMLInputElement | HTMLTextAreaElement;
+    const checks: { key: string; el: El | null; ok: (v: string) => boolean; text: string }[] = [
+      { key: 'name', el: form.querySelector<El>('[name="name"]'), ok: (v) => v.length > 0, text: form.dataset['errorName'] ?? '' },
+      { key: 'email', el: form.querySelector<El>('[name="email"]'), ok: (v) => EMAIL.test(v), text: form.dataset['errorEmail'] ?? '' },
+      { key: 'message', el: form.querySelector<El>('[name="message"]'), ok: (v) => v.length > 0, text: form.dataset['errorMessage'] ?? '' },
+    ];
+    const setError = (key: string, el: El, text: string): void => {
+      const out = form.querySelector<HTMLElement>(`[data-err="${key}"]`);
+      if (out) out.textContent = text;
+      el.setAttribute('aria-invalid', text ? 'true' : 'false');
+    };
+    checks.forEach((c) => {
+      c.el?.addEventListener('input', () => {
+        if (c.el?.getAttribute('aria-invalid') === 'true') setError(c.key, c.el, '');
+      });
+    });
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      msg.textContent = '';
+      let first: El | null = null;
+      for (const c of checks) {
+        if (!c.el) continue;
+        const bad = !c.ok(c.el.value.trim());
+        setError(c.key, c.el, bad ? c.text : '');
+        if (bad && !first) first = c.el;
+      }
+      if (first) {
+        first.focus();
+        return;
+      }
+      // Honeypot filled: pretend success, send nothing.
+      if (honey && honey.value) {
+        fields.hidden = true;
+        ok.hidden = false;
+        return;
+      }
+      const action = form.getAttribute('action');
+      if (!action && !import.meta.env.DEV) {
+        // TODO: remove once the contact endpoint is set as `action` (not set yet).
+        console.warn('ContactForm: no action configured, the message was not sent.');
+        msg.textContent = form.dataset['fallback'] ?? '';
+        return;
+      }
+      if (action) {
+        const label = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = form.dataset['sending'] ?? '';
+        try {
+          const res = await fetch(action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } });
+          if (!res.ok) throw new Error(String(res.status));
+        } catch {
+          btn.disabled = false;
+          btn.textContent = label;
+          msg.textContent = form.dataset['sendError'] ?? '';
+          return;
+        }
+      }
+      fields.hidden = true;
+      ok.hidden = false;
+    });
+  });
+</script>
