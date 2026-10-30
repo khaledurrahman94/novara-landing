@@ -2,14 +2,14 @@
  * Testimonials. The cards are reordered per visit to the shuffled cast (cast.ts), so which four people are the
  * Offered avatars in Results, and which cards come first, change on every load and nobody is prioritised.
  *
- * Wide screens (the query that pins Results): after the stepped Results pin releases the photos sit still, then once the cards show they shrink to
+ * Wide screens (the query that pins Results): when the Results pin releases the photos sit still for the first fifth of the range, then shrink to
  * small primary dots and travel, scrubbed with scroll, along gentle curves toward their cards, each trailing a soft
  * tapered fade; at its slot the dot grows back into the photo and the card's name and quote come in. Everything is
  * drawn on one fixed full-viewport canvas that is shown only while the fly is active. Position, trail and morph are
  * pure functions of the scrubbed progress (the trail samples earlier moments of the same path), so scrolling back
  * retracts them exactly. Cards whose avatar slot is outside the scroller at rest are not flown into: their dot
  * fades out at the scroller's right edge and the card is simply there. Phones, reduced motion and no JS: nothing
- * is hidden, no canvas.
+ * is hidden, no canvas. Each flown card shell fades in as its dot lands; the other cards and the duplicates wait (class testi-hold) until about 85% of the range.
  */
 import { gsap, ScrollTrigger } from '../../../scripts/motion';
 import { $, clamp, lerp, one } from './util';
@@ -66,6 +66,7 @@ interface Pt {
 }
 interface Flyer {
   key: string;
+  li: HTMLElement | null;
   img: HTMLElement | null;
   slot: HTMLElement;
   body: HTMLElement[];
@@ -138,6 +139,7 @@ export function initTestimonialsFly(root: HTMLElement): (() => void) | void {
     photo.src = `/people/${key}.webp`;
     flyers.push({
       key,
+      li: card.closest<HTMLElement>('li'),
       img: one(slot, 'img'),
       slot,
       body: $(card, '[data-testi-body]'),
@@ -185,14 +187,14 @@ export function initTestimonialsFly(root: HTMLElement): (() => void) | void {
   };
   measure();
 
-  const hidden = flyers.filter((f) => f.vis);
-  const bodies = hidden.flatMap((f) => f.body);
-  gsap.set(
-    hidden.map((f) => f.img),
-    { opacity: 0 },
-  );
-  gsap.set(bodies, { autoAlpha: 0, y: 12 });
-
+  /** The first fifth of the range after the pin releases is a dead zone: the four photos just sit there. */
+  const HOLD = 0.2;
+  /** The cards that are not flown into, and the duplicates, stay hidden until the fly is nearly done. */
+  const SHOW_REST = 0.85;
+  /** Mark the cards a dot actually lands in (their shell is revealed by the dot); the others wait for SHOW_REST. */
+  const markFly = (): void => flyers.forEach((f) => f.li?.classList.toggle('testi-fly', f.vis));
+  markFly();
+  scroller.classList.add('testi-hold');
   const moveEase = gsap.parseEase('power3.inOut');
   const outEase = gsap.parseEase('power2.out');
   const inEase = gsap.parseEase('power2.in');
@@ -218,16 +220,32 @@ export function initTestimonialsFly(root: HTMLElement): (() => void) | void {
    */
   const draw = (): void => {
     const P = state.p;
+    const Q = clamp((P - HOLD) / (1 - HOLD), 0, 1);
     bridge.setLifted(held || P > 0);
     const sx = window.scrollX;
     const sy = window.scrollY;
     const dpr = canvas.width / (vw || 1);
     const active = (held || P > 0) && P < 1;
 
+    // Per card, from this one value: the shell fades in as its dot approaches (55 to 75% of its flight), the name and
+    // quote at 80 to 95%, the card's own photo once landed. Before the flight they are fully hidden.
     flyers.forEach((f) => {
-      const u = clamp((P - f.start) / DUR, 0, 1);
+      const u = clamp((Q - f.start) / DUR, 0, 1);
       if (f.img) f.img.style.opacity = u >= 1 || !f.vis ? '1' : '0';
+      if (!f.vis) return;
+      const shell = clamp((u - 0.55) / 0.2, 0, 1);
+      const body = clamp((u - 0.8) / 0.15, 0, 1);
+      if (f.li) {
+        f.li.style.opacity = String(shell);
+        f.li.style.visibility = shell > 0 ? '' : 'hidden';
+      }
+      f.body.forEach((el) => {
+        el.style.opacity = String(body);
+        el.style.visibility = body > 0 ? '' : 'hidden';
+        el.style.transform = body < 1 ? `translateY(${(1 - body) * 12}px)` : '';
+      });
     });
+    scroller.classList.toggle('testi-hold', P < SHOW_REST);
 
     if (!active) {
       if (shown) {
@@ -246,7 +264,7 @@ export function initTestimonialsFly(root: HTMLElement): (() => void) | void {
     g.clearRect(0, 0, vw, vh);
 
     flyers.forEach((f) => {
-      const u = clamp((P - f.start) / DUR, 0, 1);
+      const u = clamp((Q - f.start) / DUR, 0, 1);
       if (u >= 1) return;
       const head = posAt(f, u);
       const hx = head.x - sx;
@@ -329,70 +347,46 @@ export function initTestimonialsFly(root: HTMLElement): (() => void) | void {
   };
   flyers.forEach((f) => (f.photo.onload = draw));
 
-  // Time-based: the flight plays (or reverses) in about 2s however fast the visitor scrolls. The whole fly is a pure
-  // function of state.p; the card bodies sit on the same timeline, so its end states are exact at p = 0 and p = 1.
-  const T = 2.1;
-  const tl = gsap.timeline({ paused: true, onUpdate: draw, onComplete: draw, onReverseComplete: draw });
-  tl.to(state, { p: 1, duration: T, ease: 'none' }, 0);
-  hidden.forEach((f) => {
-    tl.to(f.body, { autoAlpha: 1, y: 0, duration: 0.3, ease: 'power3.out', stagger: 0.03 }, (f.start + DUR * 0.8) * T);
-  });
-
-  // Scroll only decides when the avatars have left the pin (held) and when to play or reverse the flight.
-  // Step 6: after the pin releases the photos sit still while the page scrolls; once the cards come into view the flight plays.
-  let forward = false;
-  let first = true;
+  // Scroll-scrubbed: the scroll position across the range (pin release to the row's top reaching 30% of the viewport)
+  // gives a target progress; `state.p` follows it with a little smoothing. Position, trail and morph are pure
+  // functions of state.p, so scrolling back retracts them exactly. On refresh the progress is set outright.
+  const toP = gsap.quickTo(state, 'p', { duration: 0.6, ease: 'power3.out', onUpdate: draw });
   const st = ScrollTrigger.create({
     trigger: scroller,
     start: () => {
       measure();
+      markFly();
       return bridge.end();
     },
     endTrigger: scroller,
-    end: 'top 75%',
+    end: 'top 30%',
     invalidateOnRefresh: true,
     onUpdate: (self) => {
       held = self.progress > 0;
-      const want = self.progress >= 0.999;
-      if (first) {
-        first = false;
-        // Loaded or restored already past the fly: land everything at once.
-        if (self.progress >= 1) tl.progress(1);
-        forward = want;
-        if (want && tl.progress() < 1) tl.play();
-      } else if (want !== forward) {
-        forward = want;
-        if (want) tl.play();
-        else tl.reverse();
-      }
+      toP(self.progress);
+      draw();
+    },
+    onRefresh: (self) => {
+      gsap.killTweensOf(state);
+      state.p = self.progress;
+      held = self.progress > 0;
+      sizeCanvas();
       draw();
     },
   });
-
-  // Refresh (resize, anchor jump, scroll restoration): re-derive the exact end states from the scroll position.
-  const onRefresh = (): void => {
-    sizeCanvas();
-    held = st.progress > 0;
-    if (st.progress >= 1) {
-      forward = true;
-      tl.pause().progress(1);
-    } else if (st.progress <= 0) {
-      forward = false;
-      tl.pause().progress(0);
-    }
-    draw();
-  };
-  ScrollTrigger.addEventListener('refresh', onRefresh);
   draw();
 
   return () => {
-    ScrollTrigger.removeEventListener('refresh', onRefresh);
     st.kill();
-    tl.kill();
+    gsap.killTweensOf(state);
     state.p = 0;
     held = false;
     bridge.setLifted(false);
     canvas.remove();
-    gsap.set([...hidden.map((f) => f.img), ...bodies], { clearProps: 'all' });
+    scroller.classList.remove('testi-hold');
+    flyers.forEach((f) => {
+      f.li?.classList.remove('testi-fly');
+      [f.li, f.img, ...f.body].forEach((el) => el?.removeAttribute('style'));
+    });
   };
 }

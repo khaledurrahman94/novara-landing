@@ -114,6 +114,18 @@ const FLY = 4;
     height: 18.75rem;
     box-sizing: border-box;
   }
+  /* Set only by the pinned-stage fly: until it is nearly done, only the cards a dot flies into (driven from script) are shown. */
+  .testi-scroll li {
+    transition: opacity 0.5s var(--ease-out-quart);
+  }
+  .testi-scroll li.testi-fly {
+    transition: none;
+  }
+  .testi-scroll.testi-hold li:not(.testi-fly),
+  .testi-scroll.testi-hold li[aria-hidden='true'] {
+    opacity: 0;
+    visibility: hidden;
+  }
   .testi-navs {
     display: none;
   }
@@ -172,6 +184,7 @@ const FLY = 4;
       c.setAttribute('data-clone', '');
       c.setAttribute('aria-hidden', 'true');
       c.removeAttribute('style');
+      c.classList.remove('testi-fly');
       c.querySelectorAll<HTMLElement>('*').forEach((el) => {
         el.removeAttribute('id');
         el.removeAttribute('style');

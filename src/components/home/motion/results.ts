@@ -380,12 +380,12 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
 
   const tipText = (d: Dot): string => {
     const t = state.t;
-    if (d.tier === 3 && t >= 0.9) {
+    if (d.tier === 3 && t >= 0.8) {
       const who = PHOTO_CAST[d.pi]?.name;
       return who ? `${who} · ${home.results.hired}` : home.results.hired;
     }
-    if (d.tier >= 2 && t >= 0.7) return `Shortlisted · Job Fit ${d.fit} · AI Interview ${d.ai}`;
-    if (d.tier >= 1 && t >= 0.27) return `Took the AI interview · Job Fit ${d.fit}`;
+    if (d.tier >= 2 && t >= 0.54) return `Shortlisted · Job Fit ${d.fit} · AI Interview ${d.ai}`;
+    if (d.tier >= 1 && t >= 0.3) return `Took the AI interview · Job Fit ${d.fit}`;
     return d.tier === 0 ? `Applicant · Job Fit ${d.fit} · Missing: ${d.skill}` : `Applicant · Job Fit ${d.fit} · Matched: ${d.skill}`;
   };
   const showTip = (best: Dot | null, text?: string): void => {
@@ -486,72 +486,32 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
   });
   ro.observe(wrap);
 
-  /*
-   * Discrete steps. The pin holds the section while scroll snaps between six states (the canvas value t at each):
-   * 0 applied, 1 screened, 2 AI interviews, 3 HR round, 4 offered, 5 photos. Changing step plays one short time-based
-   * tween to that step's exact t (a new tween replaces a running one, so nothing is ever left half-way), and the
-   * state is re-applied outright on every refresh. The flight into the cards is the next step, played by
-   * motion/testimonials.ts once the pin has released and the cards come into view.
-   */
-  const STEP_T = [0, 0.28, 0.52, 0.78, 0.94, 1];
-  const M = STEP_T.length - 1;
-  const stepPx = (): number => Math.max(260, window.innerHeight * 0.42);
-  let cur = -1;
-  let settled = 0;
-  let anim: gsap.core.Tween | null = null;
-  const goTo = (i: number, instant = false): void => {
-    const target = STEP_T[i] ?? 0;
-    if (!instant && i === cur) return;
-    anim?.kill();
-    anim = null;
-    cur = i;
-    if (instant) {
-      state.t = target;
-      draw();
-      return;
-    }
-    anim = gsap.to(state, {
-      t: target,
-      duration: i === M || i === M - 1 ? 1.4 : 1.1,
-      ease: 'power2.inOut',
+  // Continuous: scroll scrubs t directly across the pin (no snapping). About two viewports in all, with short holds at
+  // 0.12 and 0.79, then the photo beat (0.94 to 1) and a last hold. Everything on the canvas is a pure function of t.
+  const tween = gsap
+    .timeline({
+      defaults: { ease: 'none' },
+      scrollTrigger: {
+        trigger: root,
+        start: () => `top ${navH()}px`,
+        end: '+=100%',
+        pin: true,
+        scrub: 0.5,
+        anticipatePin: 1,
+        refreshPriority: 3,
+        invalidateOnRefresh: true,
+        onRefresh: draw,
+      },
       onUpdate: draw,
-      onComplete: () => {
-        state.t = target;
-        draw();
-        anim = null;
-      },
-    });
-  };
-  const stepOf = (p: number): number => clamp(Math.round(p * M), 0, M);
-
-  const st = ScrollTrigger.create({
-    trigger: root,
-    start: () => `top ${navH()}px`,
-    end: () => `+=${Math.round(M * stepPx())}`,
-    pin: true,
-    anticipatePin: 1,
-    refreshPriority: 3,
-    invalidateOnRefresh: true,
-    // One gesture moves exactly one step: past a small threshold from the settled step it goes to the next, else it returns.
-    snap: {
-      snapTo: (p: number) => {
-        const d = p * M - settled;
-        const target = clamp(settled + (d > 0.15 ? 1 : d < -0.15 ? -1 : 0), 0, M);
-        return target / M;
-      },
-      duration: { min: 0.35, max: 0.7 },
-      delay: 0.1,
-      ease: 'power2.inOut',
-      onComplete: (self) => {
-        settled = stepOf(self.progress);
-      },
-    },
-    onUpdate: (self) => goTo(stepOf(self.progress)),
-    onRefresh: (self) => {
-      settled = stepOf(self.progress);
-      goTo(settled, true);
-    },
-  });
+    })
+    .to(state, { t: 0.12, duration: 1 })
+    .to(state, { t: 0.12, duration: 1.6 })
+    .to(state, { t: 0.79, duration: 5.4 })
+    .to(state, { t: 0.79, duration: 1.6 })
+    .to(state, { t: 0.94, duration: 0.93 })
+    .to(state, { t: 1, duration: 0.9 })
+    .to(state, { t: 1, duration: 0.8 });
+  const st = tween.scrollTrigger as ScrollTrigger;
 
   bridge = {
     end: () => st.end,
@@ -576,8 +536,8 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
   return () => {
     bridge = null;
     lifted = false;
-    anim?.kill();
     st.kill();
+    tween.kill();
     ro.disconnect();
     canvas.removeEventListener('pointermove', onMove);
     canvas.removeEventListener('pointerleave', onLeave);
