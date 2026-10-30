@@ -1,0 +1,67 @@
+---
+import { lead } from '../../../../data/demo';
+import Ico from './Ico.astro';
+import InterviewerPortrait from './InterviewerPortrait.astro';
+import { lab } from './copy';
+/**
+ * The candidate's video screen, after the product: the interviewer full-bleed, REC and timer on top, a self-view
+ * bottom-left, the current question as a caption bubble bottom-centre and a frosted transcript panel bottom-right
+ * (below the video, collapsed, in a narrow container). Hooks for interview.ts: data-il-vframe, -caption, -timer,
+ * -portrait, -ring, -vwave / -vbar, -selfchip, -selftile, -log, -tp-toggle.
+ */
+const vbars = [38, 62, 90, 54, 78, 46, 70, 34, 58];
+---
+<div data-il-frame class="il-scr">
+  <div data-il-vframe data-card="interview-frame" class="il-vf relative isolate overflow-hidden rounded-lg bg-gray-950 text-white">
+    <div class="il-stage relative overflow-hidden">
+      <div data-il-portrait class="il-breathe absolute inset-0"><InterviewerPortrait /></div>
+      <span data-il-ring data-on="false" class="il-ring pointer-events-none absolute left-1/2 top-[44%] aspect-square w-[34%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-primary-300" aria-hidden="true"></span>
+
+      <div class="absolute inset-x-3 top-3 flex items-center justify-between text-[0.6875rem] font-medium" aria-hidden="true">
+        <span class="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-gray-950/55 px-2 py-0.5 tracking-wide backdrop-blur-sm">
+          <span class="size-1.5 rounded-full bg-warning"></span>{lab.candidate.rec}
+        </span>
+        <span class="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-gray-950/55 px-2 py-0.5 tabular-nums backdrop-blur-sm">
+          <Ico name="clock" size={12} /><span data-il-timer>00:00</span>
+        </span>
+      </div>
+
+      <div class="il-self absolute bottom-3 left-3 flex flex-col items-start gap-1.5">
+        <span data-il-selfchip data-state="listening" class="il-selfchip pointer-events-none inline-flex items-center gap-1.5 rounded-full bg-gray-950/70 px-2 py-0.5 text-[0.625rem] font-medium text-white" aria-hidden="true">
+          <span class="il-selfdot size-1.5 rounded-full bg-white/60"></span><span data-il-selfchip-text>{lab.candidate.listening}</span>
+        </span>
+        <div data-il-selftile class="relative h-14 w-[5rem] overflow-hidden rounded-md border border-white/20 bg-gray-800 text-white/80" aria-hidden="true">
+          <svg viewBox="0 0 80 56" class="absolute inset-0 size-full" preserveAspectRatio="xMidYMax slice"><circle cx="40" cy="22" r="10" class="fill-gray-950/60" /><path d="M16 56c2-14 12-20 24-20s22 6 24 20z" class="fill-gray-950/60" /></svg>
+          <span class="absolute inset-x-0 top-2 text-center text-xs font-semibold">{lead.initials}</span>
+          <span class="absolute inset-x-0 bottom-1.5 flex h-3.5 items-end justify-center gap-[0.1875rem]">
+            {[0, 1, 2, 3, 4, 5, 6].map(() => <span data-il-selfbar class="h-full w-[0.1875rem] origin-bottom rounded-full bg-primary-300"></span>)}
+          </span>
+          <span class="absolute left-1 top-1 rounded-sm bg-gray-950/60 px-1 text-[0.5625rem] font-medium leading-tight">{lab.candidate.you}</span>
+          <span data-il-self class="il-ov absolute inset-0 grid place-items-center bg-gray-800">
+            <span data-il-self-cam class="flex flex-col items-center gap-0.5 text-[0.625rem] font-medium" hidden><Ico name="video-off" size={16} />{lab.overlay.cameraSelf}</span>
+            <span data-il-self-faces class="flex flex-col items-center gap-0.5 text-[0.625rem] font-medium" hidden>
+              <span class="flex items-center"><Ico name="user" size={16} /><Ico name="user" size={16} class="-ml-1 text-primary-300" /></span>2 faces
+            </span>
+          </span>
+        </div>
+      </div>
+
+      <div class="il-cap absolute bottom-3 flex flex-col items-center gap-2">
+        <span data-il-vwave data-on="false" class="il-vwave inline-flex h-5 items-center gap-[0.1875rem] rounded-full bg-gray-950/60 px-2.5 backdrop-blur-sm" aria-hidden="true">
+          {vbars.map((h) => <span data-il-vbar class="w-[0.1875rem] origin-center rounded-full bg-primary-300" style={`height:${h}%`}></span>)}
+        </span>
+        <p class="il-bubble m-0 max-w-full rounded-2xl border border-white/20 bg-gray-950/60 px-4 py-2 text-center text-[0.8125rem] leading-snug backdrop-blur-md">
+          <span data-il-caption class="block">{lab.intro}</span>
+        </p>
+      </div>
+    </div>
+
+    <section data-il-tpanel data-open="false" class="il-tp" aria-label={lab.candidate.transcript}>
+      <div class="il-tp-head flex items-center justify-between gap-2 border-b border-dashed border-white/20 px-3 py-2 text-[0.75rem] font-medium">
+        <span>{lab.candidate.transcript}</span>
+        <button type="button" data-il-tp-toggle aria-expanded="false" aria-controls="il-log" class="il-tp-toggle rounded-sm px-1 text-[0.6875rem] text-white/80 underline underline-offset-4 hover:text-white">{lab.candidate.showTranscript}</button>
+      </div>
+      <ol id="il-log" data-il-log class="il-log m-0 flex list-none flex-col gap-2 overflow-y-auto p-3"></ol>
+    </section>
+  </div>
+</div>
