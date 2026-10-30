@@ -117,7 +117,9 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
   const col = {
     gray: cssVar('--color-gray-400'),
     primary: cssVar('--color-primary'),
+    p50: cssVar('--color-primary-50'),
     p100: cssVar('--color-primary-100'),
+    p300: cssVar('--color-primary-300'),
     p700: cssVar('--color-primary-700'),
     p800: cssVar('--color-primary-800'),
     white: cssVar('--color-white'),
@@ -154,7 +156,8 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
     canvas.height = Math.round(h * dpr);
     const l0 = grid(N, w, h);
     const l1 = grid(SURVIVORS, w, h, 46 * u);
-    const l2 = grid(SHORTLIST, w, h, 170 * u, 6);
+    // A tidy 6 x 2 block: the cell is capped so the twelve stay a compact, centred group, never spread to fill the canvas.
+    const l2 = grid(SHORTLIST, w, h, 104 * u, 6);
     cellL2 = l2.cell;
     dots.forEach((d, i) => {
       [d.ax, d.ay] = l0.pos(i);
@@ -191,9 +194,15 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
     if (!hover || tip.hidden) return;
     const tw = tip.offsetWidth;
     const th = tip.offsetHeight;
-    const tx = clamp(hover.x + 14 * u, 0, Math.max(0, w - tw));
-    const above = hover.y - hover.r - th - 8 * u;
-    const ty = above < 0 ? hover.y + hover.r + 10 * u : above;
+    // Centred over the person, clamped inside the canvas, with the arrow kept pointing at them.
+    const tx = clamp(hover.x - tw / 2, 0, Math.max(0, w - tw));
+    const gap = 12 * u;
+    const above = hover.y - hover.r - 3 - th - gap;
+    const badge = hover.tier === 3 && state.t >= 0.86 ? 30 * u : 0;
+    const flip = above < 0;
+    const ty = clamp(flip ? hover.y + hover.r + 3 + badge + gap : above, 0, Math.max(0, h - th));
+    tip.dataset['side'] = flip ? 'bottom' : 'top';
+    tip.style.setProperty('--tip-x', `${clamp(hover.x - tx, 12, Math.max(12, tw - 12))}px`);
     tip.style.transform = `translate(${tx}px, ${ty}px)`;
   };
 
@@ -206,10 +215,26 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
     const a4 = smooth(seg(t, 0.8, 0.94));
     const r0 = Math.max(2 * u, cell0 * 0.42);
     const r1 = Math.max(3 * u, Math.min(cell1 * 0.42, 20 * u));
-    const rAv = clamp(cellL2 * 0.3, 14 * u, 40 * u);
+    const rAv = clamp(cellL2 * 0.26, 12 * u, 27 * u);
 
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, w, h);
+
+    if (a4 > 0.02 && t3.length === HIRED) {
+      // A soft band behind the four offers in the top row.
+      const first = t3[0];
+      const last = t3[HIRED - 1];
+      if (first && last) {
+        const pad = cellL2 * 0.5;
+        ctx.globalAlpha = a4;
+        ctx.fillStyle = col.p50;
+        ctx.strokeStyle = col.p100;
+        ctx.lineWidth = 1;
+        rounded(first.cx - pad, first.cy - pad, last.cx - first.cx + pad * 2, pad * 2 + 18 * u, 12 * u);
+        ctx.fill();
+        ctx.stroke();
+      }
+    }
 
     for (const d of order) {
       let x = d.ax;
@@ -281,8 +306,8 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
     }
     ctx.globalAlpha = 1;
     if (hover && hover.a > 0.25) {
-      ctx.strokeStyle = col.ink;
-      ctx.lineWidth = 1.5 * u;
+      ctx.strokeStyle = col.p300;
+      ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.arc(hover.x, hover.y, hover.r + 3 * u, 0, TAU);
       ctx.stroke();
