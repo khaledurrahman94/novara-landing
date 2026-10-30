@@ -1,6 +1,6 @@
 ---
 import { home } from '../../content/home';
-import { slots, hiringTrend } from '../../data/demo';
+import { slots, hiringTrend, embed } from '../../data/demo';
 import Section from './Section.astro';
 import DashboardOverview from '../shared/ui/DashboardOverview.astro';
 import JobsOverview from '../shared/ui/JobsOverview.astro';
@@ -17,7 +17,7 @@ const tile = 'group relative flex min-w-0 flex-col bg-white p-6 sm:p-8';
 const tileTitle = 'm-0 text-[1.0625rem] font-semibold tracking-[-0.01em]';
 const tileLine = 'm-0 mt-1.5 max-w-[34rem] text-[0.9375rem] leading-snug text-text-secondary';
 const plate = 'relative m-0 mt-6 flex flex-1 items-center justify-center rounded-lg bg-bg-tertiary p-3 sm:p-5';
-const btn = 'inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-md border border-border-primary bg-white px-3 text-[0.8125rem] font-medium text-text-secondary shadow-xs';
+const btn = 'inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-md border border-border-primary bg-white px-3 text-[0.8125rem] font-medium text-text-secondary shadow-xs transition-[background-color] duration-[var(--duration-fast)] hover:bg-bg';
 const selectedTime = slots.selected.time;
 const selIdx = slots.times.indexOf(selectedTime);
 const trendTabs = hiringTrend.tabs;
@@ -40,7 +40,7 @@ const trendJson = JSON.stringify({ tabs: trendTabs, data: platform.trend, weeks:
         <p class={tileLine}>{t.dashboard.line}</p>
         <figure class={plate}>
           <DashboardOverview />
-          <figcaption class="sr-only">Novara dashboard with active jobs, things to do, a jobs overview chart and recent activity. A callout moves over each bar in turn with its stage counts.</figcaption>
+          <figcaption class="sr-only">Novara dashboard with active jobs, things to do, a jobs overview chart and recent activity. Hover or focus a bar for its stage counts.</figcaption>
         </figure>
       </article>
 
@@ -67,7 +67,7 @@ const trendJson = JSON.stringify({ tabs: trendTabs, data: platform.trend, weeks:
         <p class={tileLine}>{t.pipeline.line}</p>
         <figure class={plate}>
           <div class="w-full"><PipelineBoard class="max-w-none!" /></div>
-          <figcaption class="sr-only">Pipeline board with stage columns. A card moves on to the next stage.</figcaption>
+          <figcaption class="sr-only">Pipeline board with stage columns. Cards lift when you hover or focus them.</figcaption>
         </figure>
       </article>
 
@@ -75,9 +75,9 @@ const trendJson = JSON.stringify({ tabs: trendTabs, data: platform.trend, weeks:
         <h3 id="t-sched" class={tileTitle}>{t.scheduling.title}</h3>
         <p class={tileLine}>{t.scheduling.line}</p>
         <figure class={plate}>
-          <div data-sched data-day="Wed 21 Oct" class="relative w-full max-w-[20rem] rounded-lg border border-border-secondary bg-white p-3.5 font-ui text-text-primary shadow-xs">
+          <div data-sched data-day="Wed 21 Oct" data-toast-text={slots.toast} class="relative w-full max-w-[20rem] rounded-lg border border-border-secondary bg-white p-3.5 font-ui text-text-primary shadow-xs">
             <p class="m-0 text-xs font-semibold">Wed 21 Oct</p>
-            <div class="relative mt-2.5 grid grid-cols-2 gap-2">
+            <div data-slot-grid role="radiogroup" aria-label="Interview slots" data-cursor="Try it" class="relative mt-2.5 grid grid-cols-2 gap-2">
               <span
                 data-pick
                 aria-hidden="true"
@@ -85,11 +85,13 @@ const trendJson = JSON.stringify({ tabs: trendTabs, data: platform.trend, weeks:
                 style={`width:calc((100% - 0.5rem) / 2);left:calc(${selIdx % 2} * ((100% - 0.5rem) / 2 + 0.5rem));top:calc(${Math.floor(selIdx / 2)} * 2.75rem)`}
               ></span>
               {slots.times.map((time) => (
-                <span
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={time === selectedTime ? 'true' : 'false'}
                   data-time={time}
-                  data-selected={time === selectedTime ? 'true' : 'false'}
-                  class="relative z-10 grid h-9 place-items-center rounded-md border border-border-secondary text-center text-[0.8125rem] font-medium tabular-nums text-text-secondary transition-[color,border-color] duration-[var(--duration-base)] data-[selected=true]:border-primary data-[selected=true]:text-white"
-                >{time}</span>
+                  class="relative z-10 h-9 rounded-md border border-border-secondary text-center text-[0.8125rem] font-medium tabular-nums text-text-secondary transition-[color,border-color] duration-[var(--duration-fast)] hover:border-primary-300 aria-checked:border-primary aria-checked:text-white"
+                >{time}</button>
               ))}
             </div>
             <ul class="m-0 mt-3 flex list-none flex-col gap-1.5 border-t border-border-secondary p-0 pt-3 text-xs">
@@ -97,8 +99,8 @@ const trendJson = JSON.stringify({ tabs: trendTabs, data: platform.trend, weeks:
               <li class="flex items-center justify-between gap-2"><span data-previous class="tabular-nums text-text-tertiary">Tue 20 Oct, 09:30</span><Chip tone="gray">Previous booking</Chip></li>
             </ul>
           </div>
-          <p data-toast aria-hidden="true" class="pointer-events-none absolute inset-x-5 bottom-5 m-0 rounded-md border border-border-secondary bg-white px-3 py-2 font-ui text-xs font-medium text-text-primary opacity-0 shadow-lg"></p>
-          <figcaption class="sr-only">Slot picker. A time is booked, then another. The earlier booking stays on record.</figcaption>
+          <p data-toast role="status" class="pointer-events-none absolute inset-x-5 bottom-5 m-0 rounded-md border border-border-secondary bg-white px-3 py-2 font-ui text-xs font-medium text-text-primary opacity-0 shadow-lg"></p>
+          <figcaption class="sr-only">Slot picker. Pick a time to book it. The earlier booking stays on record.</figcaption>
         </figure>
       </article>
 
@@ -117,11 +119,12 @@ const trendJson = JSON.stringify({ tabs: trendTabs, data: platform.trend, weeks:
         <figure class:list={[plate, 'flex-col gap-3!']}>
           <div class="w-full"><CareerSetup /></div>
           <div class="self-start">
-            <span data-copy class={btn}>
+            <button type="button" data-copy data-embed={JSON.stringify(embed)} data-cursor="Copy" class={btn}>
               <Icon name="copy" size={14} /><span data-copy-label>{platform.copyEmbed}</span>
-            </span>
+            </button>
           </div>
-          <figcaption class="sr-only">Career page setup with a live preview. The layout and theme options switch, and the embed code is copied.</figcaption>
+          <p data-copy-status role="status" class="sr-only"></p>
+          <figcaption class="sr-only">Career page setup with a live preview. Choose a layout and theme, and copy the embed code.</figcaption>
         </figure>
       </article>
 
@@ -129,8 +132,8 @@ const trendJson = JSON.stringify({ tabs: trendTabs, data: platform.trend, weeks:
         <h3 id="t-analytics" class={tileTitle}>{t.analytics.title}</h3>
         <p class={tileLine}>{t.analytics.line}</p>
         <figure class={plate}>
-          <AnalyticsView trendJson={trendJson} first={trendFirst} />
-          <figcaption class="sr-only">Analytics with a weekly hiring trend. The view changes between stages and each bar is highlighted in turn.</figcaption>
+          <AnalyticsView trendJson={trendJson} first={trendFirst} readout={platform.hoverBar} />
+          <figcaption class="sr-only">Analytics with a weekly hiring trend. Switch the view with the tabs and hover a bar for its value.</figcaption>
         </figure>
       </article>
     </div>

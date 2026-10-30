@@ -4,19 +4,15 @@ import Icon from './Icon.astro';
 import { careerWidget } from '../../../data/platform';
 /**
  * Career Page Setup: a live preview of the branded career page next to the widget options. The Layout (List or
- * Grid) and Theme (Auto, Light or Dark) options change the preview, as in the real settings; on the home page the
- * options switch by themselves. Hooks: [data-career-setup] with data-layout and data-theme, [data-opt="layout:list"] etc.
+ * Grid) and Theme (Auto, Light or Dark) radios change the preview right away, as in the real settings.
  * Illustrative recreation; the company and jobs are fictional.
  */
 interface Props { class?: string }
 const { class: cls = '' } = Astro.props;
-const opts = {
-  layout: [['list', 'List', true], ['grid', 'Grid', false]],
-  theme: [['auto', 'Auto', true], ['light', 'Light', false], ['dark', 'Dark', false]],
-} as const;
+const radio = 'size-3 shrink-0 accent-[var(--color-primary)]';
 ---
 <AppFrame title="Career Page Setup" active="career" class={cls}>
-  <div data-career-setup data-layout="list" data-theme="auto" class="cs flex flex-col gap-3 @2xl:flex-row">
+  <div class="cs flex flex-col gap-3 @2xl:flex-row">
     <section aria-label="Live preview" class="min-w-0 flex-1 overflow-hidden rounded-lg border border-border-secondary bg-white">
       <div class="flex items-center justify-between gap-2 border-b border-border-secondary px-3 py-2">
         <p class="m-0 flex items-center gap-2 text-[0.6875rem] font-semibold">Live preview<span class="rounded-sm bg-success/10 px-1.5 py-0.5 text-[0.5625rem] font-medium text-text-secondary">Updates as you edit</span></p>
@@ -45,40 +41,37 @@ const opts = {
     <section aria-label="Widget options" class="shrink-0 rounded-lg border border-border-secondary bg-white p-3 @2xl:w-44">
       <p class="m-0 text-xs font-semibold">Widget options</p>
       <p class="m-0 text-[0.625rem] text-text-tertiary">Changes show in the preview right away.</p>
-      <div class="m-0 mt-3">
-        <p class="m-0 text-[0.6875rem] font-medium">Layout</p>
+      <fieldset class="m-0 mt-3 border-0 p-0">
+        <legend class="p-0 text-[0.6875rem] font-medium">Layout</legend>
         <div class="mt-1 flex gap-3 text-[0.6875rem] text-text-secondary">
-          {opts.layout.map(([v, label, on]) => <span class="flex items-center gap-1.5"><span data-opt={`layout:${v}`} data-on={on ? 'true' : 'false'} class="cs-radio" aria-hidden="true"></span>{label}</span>)}
+          <label class="flex items-center gap-1.5"><input type="radio" name="cs-layout" value="list" checked class={radio} data-cursor="Try it" />List</label>
+          <label class="flex items-center gap-1.5"><input type="radio" name="cs-layout" value="grid" class={radio} data-cursor="Try it" />Grid</label>
         </div>
-      </div>
-      <div class="m-0 mt-3">
-        <p class="m-0 text-[0.6875rem] font-medium">Theme</p>
+      </fieldset>
+      <fieldset class="m-0 mt-3 border-0 p-0">
+        <legend class="p-0 text-[0.6875rem] font-medium">Theme</legend>
         <div class="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-[0.6875rem] text-text-secondary">
-          {opts.theme.map(([v, label, on]) => <span class="flex items-center gap-1.5"><span data-opt={`theme:${v}`} data-on={on ? 'true' : 'false'} class="cs-radio" aria-hidden="true"></span>{label}</span>)}
+          <label class="flex items-center gap-1.5"><input type="radio" name="cs-theme" value="auto" checked class={radio} data-cursor="Try it" />Auto</label>
+          <label class="flex items-center gap-1.5"><input type="radio" name="cs-theme" value="light" class={radio} data-cursor="Try it" />Light</label>
+          <label class="flex items-center gap-1.5"><input type="radio" name="cs-theme" value="dark" class={radio} data-cursor="Try it" />Dark</label>
         </div>
-      </div>
+      </fieldset>
       <p class="m-0 mt-3 text-[0.625rem] leading-snug text-text-tertiary">Name, logo and slug come from your company profile. Jobs you publish or close appear or disappear automatically.</p>
     </section>
   </div>
 </AppFrame>
 
 <style is:global>
-  .cs-stage { background: var(--color-gray-950); transition: background-color var(--duration-slower) var(--ease-out-quart); }
-  .cs-card { background: var(--color-gray-800); border-color: var(--color-gray-800); color: #fff; transition: background-color var(--duration-slower) var(--ease-out-quart), border-color var(--duration-slower) var(--ease-out-quart), color var(--duration-slower) var(--ease-out-quart); }
+  .cs-stage { background: var(--color-gray-950); }
+  .cs-card { background: var(--color-gray-800); border-color: var(--color-gray-800); color: #fff; }
   .cs-pill { background: color-mix(in srgb, var(--color-primary) 22%, transparent); color: var(--color-primary-200); }
   .cs-tag { background: color-mix(in srgb, var(--color-primary) 22%, transparent); color: var(--color-primary-200); }
   .cs-meta { color: var(--color-gray-400); }
-  .cs[data-layout='grid'] .cs-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .cs[data-layout='grid'] .cs-card { flex-direction: column; align-items: stretch; }
-  .cs[data-theme='light'] .cs-stage { background: var(--color-bg); }
-  .cs[data-theme='light'] .cs-card { background: #fff; border-color: var(--color-border-secondary); color: var(--color-text-primary); }
-  .cs[data-theme='light'] .cs-pill,
-  .cs[data-theme='light'] .cs-tag { background: var(--color-primary-50); color: var(--color-primary-700); }
-  .cs[data-theme='light'] .cs-meta { color: var(--color-text-tertiary); }
-  /* The option indicators: a radio that fills as the home page switches the setting. */
-  .cs-radio { display: inline-block; width: 0.75rem; height: 0.75rem; flex-shrink: 0; border: 1.5px solid var(--color-border-primary); border-radius: 9999px; background: var(--color-white); transition: border-color var(--duration-base) var(--ease-out-quart), box-shadow var(--duration-base) var(--ease-out-quart); }
-  .cs-radio[data-on='true'] { border-color: var(--color-primary); box-shadow: inset 0 0 0 2px var(--color-white), inset 0 0 0 6px var(--color-primary); }
-  @media (prefers-reduced-motion: reduce) {
-    .cs-stage, .cs-card, .cs-radio { transition: none; }
-  }
+  .cs:has(input[value='grid']:checked) .cs-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cs:has(input[value='grid']:checked) .cs-card { flex-direction: column; align-items: stretch; }
+  .cs:has(input[value='light']:checked) .cs-stage { background: var(--color-bg); }
+  .cs:has(input[value='light']:checked) .cs-card { background: #fff; border-color: var(--color-border-secondary); color: var(--color-text-primary); }
+  .cs:has(input[value='light']:checked) .cs-pill,
+  .cs:has(input[value='light']:checked) .cs-tag { background: var(--color-primary-50); color: var(--color-primary-700); }
+  .cs:has(input[value='light']:checked) .cs-meta { color: var(--color-text-tertiary); }
 </style>
