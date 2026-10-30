@@ -67,3 +67,9 @@ Unchanged.
 - 2026-10-30: the DM team changed their mind, and the demos are interactive again: the screening lab (requirement toggles, drag a resume into the ranking), the interview lab (live "try to cheat" detection and simulate switches), Decide (drag Amara), the Platform tiles, the Results tooltips and the cursor layer (pill, magnetic buttons, tilt, ghost pointer). Restored from the `interactive` branch, then merged by hand with everything that landed since (new Nav, Hero buttons, Footer, the AI interviewer avatar, the How it works and Audience snap, the `live` link guard, the removed Roles tile).
 - The animation-only variant is kept on the `animated-only` branch (tip `d29f182`) in case it is wanted again.
 - Not restored: the How it works snap is kept, so its step buttons scroll to the step's settled snap point instead of the old even spacing.
+
+## 2026-10-30 follow-ups
+- How it works: an `intro` paragraph sits right of the heading on md+ (stacked on mobile).
+- Audience: an `intro` paragraph right of the heading, and a one-line `tagline` under each tab label (shown from lg, hidden in the mobile tab strip).
+- Footer: the faded "Novara" wordmark is back below the bordered container; contact email, phone and address sit under the social icons (`footer.contact`).
+- CMS fields added (all optional): `home.how.intro`, `home.audience.intro`, `home.audience-group.tagline`, `home.footer.email`, `phone`, `address`. Restart Strapi and re-seed to fill them.

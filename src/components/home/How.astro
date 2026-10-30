@@ -20,8 +20,9 @@ const row = 'flex items-center gap-2 rounded-md border border-border-secondary b
 <Section id="how" labelledby="how-title" tone="plate">
   <div data-how class="home-how">
     <div data-how-pin class="home-how-pin">
-      <div data-reveal>
+      <div data-reveal class="grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,24rem)] md:items-end md:gap-12">
         <h2 id="how-title" class="m-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leading-[1.08] tracking-[-0.03em]">{how.title}</h2>
+        <p class="m-0 text-[0.9375rem] leading-snug text-text-secondary">{how.intro}</p>
       </div>
       <div data-how-progress hidden class="relative mt-8 h-px w-full bg-border-secondary" aria-hidden="true">
         <div data-how-line class="h-full origin-left bg-border-primary"></div>

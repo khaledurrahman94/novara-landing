@@ -3,6 +3,7 @@ import { home } from '../../content/home';
 import BrandIcon from './BrandIcon.astro';
 import { homeHref } from '../../lib/home-path';
 const { footer } = home;
+const contact = footer.contact;
 const social = footer.social.filter((s) => s.href);
 const ai = footer.aiSummary;
 /** Only links whose page exists (`live` in home.ts); a column with no live link is dropped. */
@@ -28,6 +29,13 @@ const iconLink = 'grid size-9 place-items-center rounded-md border border-border
               ))}
             </ul>
           </div>
+        )}
+        {contact && (
+          <address class="m-0 mt-6 flex flex-col gap-1.5 text-sm not-italic text-text-secondary">
+            <a href={`mailto:${contact.email}`} class="w-fit text-text-secondary no-underline hover:text-text-primary hover:underline">{contact.email}</a>
+            <a href={`tel:${contact.phone.replace(/[^+\d]/g, '')}`} class="w-fit text-text-secondary no-underline hover:text-text-primary hover:underline">{contact.phone}</a>
+            <span class="max-w-[22rem]">{contact.address}</span>
+          </address>
         )}
         <p class="m-0 mt-6">
           <a href={footer.makerHref} class="text-sm text-text-secondary no-underline hover:text-text-primary hover:underline" rel="noopener">{footer.maker}</a>
@@ -61,5 +69,9 @@ const iconLink = 'grid size-9 place-items-center rounded-md border border-border
       </p>
     </div>
 
+  </div>
+
+  <div aria-hidden="true" class="pointer-events-none select-none overflow-hidden [mask-image:linear-gradient(to_bottom,black_15%,transparent_92%)]">
+    <p class="m-0 text-center font-display text-[clamp(6rem,25vw,24rem)] font-bold leading-[0.8] tracking-[-0.05em] text-primary-200">Novara</p>
   </div>
 </footer>

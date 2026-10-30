@@ -33,6 +33,10 @@
       "min": 3,
       "max": 5,
       "required": true
+    },
+    "tagline": {
+      "type": "string",
+      "maxLength": 40
     }
   }
 }

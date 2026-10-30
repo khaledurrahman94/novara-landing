@@ -22,6 +22,10 @@ export interface HomeAudience extends Struct.ComponentSchema {
         },
         number
       >;
+    intro: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
     title: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.SetMinMaxLength<{
@@ -52,6 +56,10 @@ export interface HomeAudienceGroup extends Struct.ComponentSchema {
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 130;
         minLength: 1;
+      }>;
+    tagline: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 40;
       }>;
     label: Schema.Attribute.String &
       Schema.Attribute.Required &
@@ -197,6 +205,18 @@ export interface HomeFooter extends Struct.ComponentSchema {
         maxLength: 17;
         minLength: 1;
       }>;
+    address: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 120;
+      }>;
+    email: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 80;
+      }>;
+    phone: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 30;
+      }>;
     line: Schema.Attribute.Text &
       Schema.Attribute.Required &
       Schema.Attribute.SetMinMaxLength<{
@@ -247,6 +267,10 @@ export interface HomeHow extends Struct.ComponentSchema {
     displayName: 'How';
   };
   attributes: {
+    intro: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 160;
+      }>;
     steps: Schema.Attribute.Component<'home.step', true> &
       Schema.Attribute.Required &
       Schema.Attribute.SetMinMax<

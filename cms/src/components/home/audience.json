@@ -25,6 +25,10 @@
       "min": 4,
       "max": 4,
       "required": true
+    },
+    "intro": {
+      "type": "text",
+      "maxLength": 120
     }
   }
 }

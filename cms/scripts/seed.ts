@@ -65,7 +65,7 @@ const homeData = (copy: Copy) => ({
     : {}),
   results: { title: copy.results.title, caption: copy.results.caption },
   decide: { title: copy.decide.title, sub: copy.decide.sub },
-  how: { title: copy.how.title, steps: copy.how.steps.map((s) => ({ title: s.title, text: s.text })) },
+  how: { title: copy.how.title, intro: copy.how.intro, steps: copy.how.steps.map((s) => ({ title: s.title, text: s.text })) },
   platform: {
     title: copy.platform.title,
     intro: copy.platform.intro,
@@ -73,9 +73,11 @@ const homeData = (copy: Copy) => ({
   },
   audience: {
     title: copy.audience.title,
+    intro: copy.audience.intro,
     cta: copy.audience.cta,
     groups: copy.audience.groups.map((g) => ({
       label: g.label,
+      tagline: g.tagline,
       description: g.description,
       built: g.built.map((text) => ({ text })),
       points: g.points.map((text) => ({ text })),
@@ -88,6 +90,9 @@ const homeData = (copy: Copy) => ({
     maker: copy.footer.maker,
     makerHref: copy.footer.makerHref,
     copyright: copy.footer.copyright,
+    email: copy.footer.contact.email,
+    phone: copy.footer.contact.phone,
+    address: copy.footer.contact.address,
   },
 });
 

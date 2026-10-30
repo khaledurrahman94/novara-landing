@@ -151,6 +151,7 @@ export const home = {
   },
   how: {
     title: 'How it works',
+    intro: 'Nine steps from a new job to a hiring decision. Novara does the reading and scoring, your team makes every call.',
     steps: [
       { title: 'Create a Job', text: 'Enter the role, level and key skills. Novara drafts the description and requirements.' },
       { title: 'Publish the Job', text: 'Go live on your branded career page and as a shareable link, with embed code for your own site.' },
@@ -191,6 +192,7 @@ export const home = {
   },
   audience: {
     title: 'Recruitment Platform for Every Team, Role and Industry',
+    intro: 'Pick the seat you sit in. Each view shows what Novara does for that team.',
     tabsLabel: 'Who Novara is for',
     builtFor: 'Built for',
     cta: 'Book a demo',
@@ -198,6 +200,7 @@ export const home = {
       {
         key: 'company',
         label: 'For Company',
+        tagline: 'Hiring for your own business',
         description: 'Post jobs, screen resumes and run first-round interviews from one workspace, whatever your size.',
         built: ['Small and medium businesses', 'Startups and growing companies', 'Enterprise hiring', 'BPO'],
         points: [
@@ -210,6 +213,7 @@ export const home = {
       {
         key: 'role',
         label: 'By Role',
+        tagline: 'The people on the hiring team',
         description: 'Give each person on the hiring team the access and the evidence their part of the process needs.',
         built: ['HR teams', 'Hiring managers', 'IT', 'Finance'],
         points: [
@@ -222,6 +226,7 @@ export const home = {
       {
         key: 'industry',
         label: 'Industry',
+        tagline: 'Any field you hire in',
         description: 'Set the requirements, skills and experience for any role, then screen and interview against them.',
         built: ['Healthcare', 'Manufacturing', 'Insurance', 'Transportation', 'Accounting', 'Information technology'],
         points: [
@@ -234,6 +239,7 @@ export const home = {
       {
         key: 'agency',
         label: 'Recruitment & Staffing Agencies',
+        tagline: 'Running searches for clients',
         description: 'Run several searches at once with a shared pipeline, a branded career page and templated emails.',
         built: ['In-house recruitment', 'Corporate recruiting', 'Executive search firms', 'Direct hire agencies', 'Consulting and staffing firms'],
         points: [
@@ -291,6 +297,11 @@ export const home = {
     copyright: '© 2026 Novara',
     rights: 'All rights reserved.',
     followLabel: 'Follow us',
+    contact: {
+      email: 'dinno@novara.my',
+      phone: '+60 11 6267 7447',
+      address: 'A-26-30, Neu Suites, 3rd Avenue, Kuala Lumpur 55000, Malaysia.',
+    },
     /** Real profile URLs are not known yet. An empty href hides that icon. */
     social: [
       { key: 'linkedin', label: 'LinkedIn', href: '' },

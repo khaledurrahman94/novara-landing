@@ -9,7 +9,10 @@ const icons: Record<string, string> = { company: 'briefcase', role: 'user', indu
 <Section id="audience" labelledby="audience-title" tone="plate">
   <div data-audience class="home-aud">
    <div data-aud-stage class="home-aud-stage">
-    <h2 id="audience-title" class="m-0 max-w-[48rem] text-[clamp(1.625rem,1.1rem+1.5vw,2.5rem)] font-semibold leading-[1.1] tracking-[-0.03em]">{audience.title}</h2>
+    <div class="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] lg:items-end lg:gap-12">
+      <h2 id="audience-title" class="m-0 max-w-[48rem] text-[clamp(1.625rem,1.1rem+1.5vw,2.5rem)] font-semibold leading-[1.1] tracking-[-0.03em]">{audience.title}</h2>
+      <p class="m-0 text-[0.9375rem] leading-snug text-text-secondary">{audience.intro}</p>
+    </div>
     <div data-aud-progress hidden class="relative mt-5 h-px lg:mt-4 w-full bg-border-secondary" aria-hidden="true">
       <div data-aud-line class="h-full origin-left bg-border-primary"></div>
     </div>
@@ -27,7 +30,10 @@ const icons: Record<string, string> = { company: 'briefcase', role: 'user', indu
             class="flex shrink-0 items-center gap-3 rounded-lg border border-transparent px-4 py-3.5 text-left text-[1.0625rem] lg:py-2.5 lg:text-base font-medium tracking-[-0.01em] text-text-secondary transition-[background-color,border-color,color,box-shadow] duration-[var(--duration-fast)] hover:text-text-primary aria-selected:border-border-secondary aria-selected:bg-white aria-selected:text-text-primary aria-selected:shadow-xs"
           >
             <span class="grid size-9 shrink-0 place-items-center rounded-md bg-primary-50 lg:size-8 text-primary-700"><Icon name={icons[g.key] ?? 'briefcase'} size={18} /></span>
-            <span>{g.label}</span>
+            <span class="flex flex-col">
+              <span>{g.label}</span>
+              <span class="mt-0.5 hidden text-[0.8125rem] font-normal tracking-normal text-text-tertiary lg:block">{g.tagline}</span>
+            </span>
           </button>
         ))}
       </div>

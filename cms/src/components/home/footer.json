@@ -30,6 +30,18 @@
       "required": true,
       "minLength": 1,
       "maxLength": 17
+    },
+    "email": {
+      "type": "string",
+      "maxLength": 80
+    },
+    "phone": {
+      "type": "string",
+      "maxLength": 30
+    },
+    "address": {
+      "type": "text",
+      "maxLength": 120
     }
   }
 }
