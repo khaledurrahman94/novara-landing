@@ -1,10 +1,9 @@
 /**
  * Hero: the candidate-review screen starts exploded into depth layers with evidence chips around it.
  * Scrolling reassembles it (scrubbed, so it explodes again on the way back); the chips dock onto the
- * values they describe and fade into them. The cursor moves every layer by its depth (see interaction.ts).
+ * values they describe and fade into them.
  */
 import { gsap } from '../../../scripts/motion';
-import { setStrength } from './interaction';
 import { $, EASE, num, one } from './util';
 
 const docTop = (el: HTMLElement): number => {
@@ -37,7 +36,6 @@ export function initHero(root: HTMLElement): void {
       scrub: 0.6,
       invalidateOnRefresh: true,
     },
-    onUpdate: () => setStrength(stage, Math.pow(1 - tl.progress(), 1.4)),
   });
 
   const [ff = 0, fy = 0, fs = 1] = parse(frame);

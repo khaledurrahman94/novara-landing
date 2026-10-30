@@ -8,7 +8,6 @@ import { gsap, ScrollTrigger } from '../../../scripts/motion';
 import { $, EASE, navH, clamp, cssVar, lerp, num, one, rng, seg, smooth } from './util';
 import { v3 } from '../../../content/v3';
 import { byId, recruiter } from '../../../data/demo';
-import { createGhost } from './ghost';
 
 const N = 1200;
 const SURVIVORS = 600;
@@ -137,15 +136,6 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
   let cell1 = 1;
   /** Root-size scale (1 at 16px): canvas pixel constants follow the fluid root like rem does. */
   let u = 1;
-
-  // Fixed demo applicants for the auto hint, so the copy matches the spec exactly.
-  const demoA = dots.find((d) => d.tier === 0);
-  const demoB = t2[2];
-  if (demoA) {
-    demoA.skill = 'Node.js';
-    demoA.fit = 41;
-  }
-  if (demoB) demoB.fit = 88;
 
   const layout = (): void => {
     w = wrap.clientWidth;
@@ -336,7 +326,6 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
       phaseEl.textContent = v3.results.phases[p] ?? '';
       gsap.fromTo(phaseEl, { autoAlpha: 0, y: 6 }, { autoAlpha: 1, y: 0, duration: 0.35, ease: EASE, overwrite: 'auto' });
     }
-    maybeDemo();
   };
 
   /* ---------- hover tooltips ---------- */
@@ -378,67 +367,9 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
     return best;
   };
 
-  /* ---------- auto hint: a ghost pointer shows what hovering does ---------- */
-
-  const ghost = createGhost(wrap);
-  let demo: gsap.core.Timeline | null = null;
-  let demoKind: 'a' | 'b' | null = null;
-  let retired = false;
-  const done = { a: false, b: false };
-
-  const stopDemo = (): void => {
-    if (!demo) return;
-    demo.kill();
-    demo = null;
-    const was = demoKind;
-    demoKind = null;
-    ghost.vanish();
-    if (was && hover) showTip(null);
-  };
-  const playDemo = (kind: 'a' | 'b'): void => {
-    const d = kind === 'a' ? demoA : demoB;
-    if (!d || w < 120) return;
-    const tx = kind === 'a' ? d.ax : d.cx;
-    const ty = kind === 'a' ? d.ay : d.cy;
-    const text = kind === 'a' ? `Applicant · Job Fit ${d.fit} · Missing: ${d.skill}` : `Shortlisted · Job Fit ${d.fit} · AI Interview ${d.ai}`;
-    demoKind = kind;
-    ghost.place(clamp(tx + w * 0.14, 12, w - 12), clamp(ty + h * 0.22, 12, h - 12));
-    const tl = gsap.timeline({
-      onComplete: () => {
-        done[kind] = true;
-        demo = null;
-        demoKind = null;
-      },
-    });
-    demo = tl;
-    ghost.show(tl, 0);
-    ghost.glide(tl, tx, ty, 1.1, 0);
-    ghost.press(tl, 1.0);
-    tl.call(() => showTip(d, text), undefined, 1.1);
-    tl.to({}, { duration: 2.2 });
-    tl.call(() => showTip(null));
-    ghost.hide(tl, '>');
-  };
-  function maybeDemo(): void {
-    if (retired) return;
-    const t = state.t;
-    if (demoKind === 'a' && (t < 0.04 || t > 0.3)) stopDemo();
-    else if (demoKind === 'b' && t < 0.7) stopDemo();
-    if (demo) return;
-    if (!done.a && t >= 0.1 && t <= 0.2) playDemo('a');
-    else if (!done.b && t >= 0.76 && t <= 0.92) playDemo('b');
-  }
-  // Any real pointer use ends the demos for good.
-  const retire = (): void => {
-    retired = true;
-    stopDemo();
-  };
-
   const onMove = (e: PointerEvent): void => {
     if (e.pointerType === 'touch') return;
-    // A cursor resting on the canvas must not cancel the demos; only real movement does.
-    if (Math.hypot(e.movementX, e.movementY) > 2) retire();
-    if (!demo) showTip(nearest(e, 0));
+    showTip(nearest(e, 0));
   };
   const onLeave = (e: PointerEvent): void => {
     if (e.pointerType === 'touch') return;
@@ -447,7 +378,6 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
   // Touch: tap a dot to read it, tap elsewhere to clear.
   const onTap = (e: PointerEvent): void => {
     if (e.pointerType !== 'touch') return;
-    retire();
     const d = nearest(e, 10);
     showTip(d);
     if (live) live.textContent = d ? tipText(d) : '';
@@ -466,7 +396,6 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
     const list = samples();
     if (!list.length) return;
     e.preventDefault();
-    retire();
     const dir = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : -1;
     step = (step + dir + list.length * 2) % list.length;
     const d = list[step];
@@ -523,8 +452,6 @@ export function initResultsPinned(root: HTMLElement): (() => void) | void {
     .to(state, { t: 1, duration: 1.4 });
 
   return () => {
-    stopDemo();
-    ghost.destroy();
     tween.scrollTrigger?.kill();
     tween.kill();
     ro.disconnect();

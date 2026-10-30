@@ -50,7 +50,7 @@ const trendJson = JSON.stringify({ tabs: trendTabs, data: platform.trend, weeks:
         <figure class:list={[plate, 'flex-col gap-3!']}>
           <div class="w-full"><CareerPage class="max-w-none!" /></div>
           <div class="self-start">
-            <button type="button" data-copy data-embed={JSON.stringify(embed)} data-cursor="Copy" class={btn}>
+            <button type="button" data-copy data-embed={JSON.stringify(embed)} class={btn}>
               <Icon name="copy" size={14} /><span data-copy-label>{platform.copyEmbed}</span>
             </button>
           </div>
@@ -65,7 +65,7 @@ const trendJson = JSON.stringify({ tabs: trendTabs, data: platform.trend, weeks:
         <figure class={plate}>
           <div data-sched data-day="Wed 21 Oct" data-toast-text={slots.toast} class="relative w-full max-w-[20rem] rounded-lg border border-border-secondary bg-white p-3.5 font-ui text-text-primary shadow-xs">
             <p class="m-0 text-xs font-semibold">Wed 21 Oct</p>
-            <div data-slot-grid role="radiogroup" aria-label="Interview slots" data-cursor="Try it" class="relative mt-2.5 grid grid-cols-2 gap-2">
+            <div data-slot-grid role="radiogroup" aria-label="Interview slots" class="relative mt-2.5 grid grid-cols-2 gap-2">
               <span
                 data-pick
                 aria-hidden="true"
@@ -110,7 +110,7 @@ const trendJson = JSON.stringify({ tabs: trendTabs, data: platform.trend, weeks:
                       role="switch"
                       aria-checked={on ? 'true' : 'false'}
                       aria-label={`${r.name} can open ${modules[i]}`}
-                      data-cursor="Toggle"
+                     
                       class="group/sw relative h-5 w-9 rounded-full bg-gray-200 transition-[background-color] duration-[var(--duration-base)] before:absolute before:-inset-2 before:content-[''] aria-checked:bg-primary"
                     >
                       <span aria-hidden="true" class="absolute left-0.5 top-0.5 size-4 rounded-full bg-white shadow-xs transition-transform duration-[var(--duration-slow)] ease-[var(--ease-out-expo)] group-aria-checked/sw:translate-x-4"></span>
@@ -130,7 +130,7 @@ const trendJson = JSON.stringify({ tabs: trendTabs, data: platform.trend, weeks:
         <figure class={plate}>
           <div data-email class="w-full max-w-[26rem] rounded-lg border border-border-secondary bg-white p-4 font-ui text-text-primary shadow-xs">
             <label for="v3-candidate-name" class="block text-xs font-medium text-text-tertiary">{platform.candidateName}</label>
-            <input id="v3-candidate-name" data-name-input type="text" autocomplete="off" maxlength="40" placeholder={platform.candidateNamePlaceholder} data-cursor="Try it" class={`${field} mt-1.5`} />
+            <input id="v3-candidate-name" data-name-input type="text" autocomplete="off" maxlength="40" placeholder={platform.candidateNamePlaceholder} class={`${field} mt-1.5`} />
             <p class="m-0 mt-4 text-[0.8125rem] font-semibold">Interview booked</p>
             <p class="m-0 mt-2 text-[0.8125rem] leading-[2] text-text-secondary">
               Hi <span data-name-chip data-default="{{candidate_name}}" class={varCls}>{'{{candidate_name}}'}</span>, your interview for
@@ -162,7 +162,7 @@ const trendJson = JSON.stringify({ tabs: trendTabs, data: platform.trend, weeks:
             </ul>
             <div class="mt-4 flex flex-wrap items-center justify-between gap-2">
               <p class="m-0 text-[0.8125rem] font-semibold">Hiring trend</p>
-              <div role="tablist" aria-label="Hiring trend view" data-cursor="Toggle" class="flex flex-wrap gap-0.5 rounded-md bg-bg-tertiary p-0.5 text-[0.6875rem] font-medium">
+              <div role="tablist" aria-label="Hiring trend view" class="flex flex-wrap gap-0.5 rounded-md bg-bg-tertiary p-0.5 text-[0.6875rem] font-medium">
                 {trendTabs.map((tab, i) => (
                   <button type="button" role="tab" data-tab={tab} aria-selected={i === 0 ? 'true' : 'false'} class="rounded-sm px-2 py-1 text-text-tertiary transition-[color,background-color] duration-[var(--duration-fast)] hover:text-text-primary aria-selected:bg-white aria-selected:text-text-primary aria-selected:shadow-xs">{tab}</button>
                 ))}

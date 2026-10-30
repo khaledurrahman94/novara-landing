@@ -25,7 +25,7 @@ const { fit, interviews } = analyticsView;
           <p class="m-0 text-[0.8125rem] font-semibold leading-tight">Hiring Trend</p>
           <p class="m-0 hidden text-[0.6875rem] text-text-tertiary @lg:block">Track how candidate numbers change across each stage over time.</p>
         </div>
-        <div role="tablist" aria-label="Hiring trend view" data-cursor="Toggle" class="flex flex-wrap gap-0.5 rounded-md border border-border-secondary p-0.5 text-[0.625rem] font-medium">
+        <div role="tablist" aria-label="Hiring trend view" class="flex flex-wrap gap-0.5 rounded-md border border-border-secondary p-0.5 text-[0.625rem] font-medium">
           {tabs.map((tab, i) => (
             <button type="button" role="tab" data-tab={tab} aria-selected={i === 0 ? 'true' : 'false'} class="rounded-sm px-2 py-1 text-text-tertiary transition-[color,background-color] duration-[var(--duration-fast)] hover:text-text-primary aria-selected:bg-bg-tertiary aria-selected:text-text-primary">{tab}</button>
           ))}

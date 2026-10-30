@@ -5,22 +5,6 @@
   font-family: var(--font-ui);
 }
 
-/* The ghost pointer of the auto demo: 1.25rem, white ring, soft shadow. Moves by transform and opacity only. */
-.sl-pointer {
-  position: absolute;
-  left: -0.625rem;
-  top: -0.625rem;
-  z-index: 50;
-  width: 1.25rem;
-  height: 1.25rem;
-  box-sizing: border-box;
-  border: 2px solid var(--color-white);
-  border-radius: 9999px;
-  background: var(--color-text-primary);
-  box-shadow: var(--shadow-sm);
-  opacity: 0;
-  pointer-events: none;
-}
 .sl :focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
@@ -291,9 +275,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sl-pointer {
-    display: none;
-  }
   .sl *,
   .sl *::before,
   .sl *::after {

@@ -3,14 +3,13 @@
  * board's edge; on release, InertiaPlugin carries the card's own velocity to whichever column
  * it was heading for, and a stamp lands with a spring. The card moves both ways. The arrow keys
  * do the same move for keyboard users, and touch uses press-and-hold to drag. Hovering or focusing
- * a card shows its evidence. On first view a ghost pointer demonstrates the drag once.
+ * a card shows its evidence.
  */
-import { gsap, ScrollTrigger } from '../../../scripts/motion';
+import { gsap } from '../../../scripts/motion';
 import { Draggable } from 'gsap/Draggable';
 import { InertiaPlugin } from 'gsap/InertiaPlugin';
 import { v3 } from '../../../content/v3';
 import { $, EASE, holdToDrag, num, one } from './util';
-import { createGhost } from './ghost';
 
 gsap.registerPlugin(Draggable, InertiaPlugin);
 
@@ -121,7 +120,6 @@ export function initDecide(root: HTMLElement, reduced: boolean): () => void {
     edgeResistance: 0.8,
     zIndexBoost: true,
     onPress: () => {
-      take();
       // Disabling the Draggable (hold-to-drag on touch) untracks velocity; track again on every press.
       if (!reduced) InertiaPlugin.track(card, 'x,y');
       gsap.killTweensOf(card, 'x,y,scale');
@@ -164,77 +162,8 @@ export function initDecide(root: HTMLElement, reduced: boolean): () => void {
     },
   })[0];
 
-  /* ---------- the first-view demo: a pointer pointer drags Amara to HR Round once ---------- */
-
-  let demo: gsap.core.Timeline | null = null;
-  let demoTrigger: ScrollTrigger | undefined;
-  let demoTimer: ReturnType<typeof setTimeout> | undefined;
-  let acted = false;
-  /** The user touched the card: the demo ends and never returns. */
-  const take = (): void => {
-    acted = true;
-    stopDemo();
-  };
-  const pointer = reduced ? null : createGhost(board);
-  const stopDemo = (): void => {
-    if (!demo) return;
-    demo.kill();
-    demo = null;
-    pointer?.vanish();
-    card.classList.remove('is-dragging');
-    card.style.zIndex = '';
-    // Leave a consistent state wherever the carry was cut off.
-    gsap.killTweensOf([card, stamp, ghost, drop]);
-    const t = targets()[at];
-    gsap.set(card, { x: t.x, y: t.y, scale: 1 });
-    drop.dataset['hot'] = 'false';
-    const away = at === 'away';
-    gsap.set(stamp, { opacity: away ? 1 : 0, scale: 1, rotation: 0 });
-    gsap.set(ghost, { opacity: away ? 1 : 0 });
-    gsap.set(drop, { opacity: away ? 0 : 1 });
-    drag?.update();
-  };
-  const playDemo = (): void => {
-    if (!pointer || acted || demo || at !== 'home' || drag?.isDragging) return;
-    const b = board.getBoundingClientRect();
-    const c = card.getBoundingClientRect();
-    const t = targets().away;
-    const sx = c.left - b.left + c.width / 2;
-    const sy = c.top - b.top + c.height / 2;
-    pointer.place(Math.min(sx + 90, b.width - 12), Math.min(sy + 70, b.height - 12));
-    card.style.zIndex = '20';
-    const tl = gsap.timeline({
-      onComplete: () => {
-        demo = null;
-        card.style.zIndex = '';
-      },
-    });
-    demo = tl;
-    pointer.show(tl, 0);
-    pointer.glide(tl, sx, sy, 0.9, 0);
-    pointer.press(tl, 0.9);
-    tl.call(() => card.classList.add('is-dragging'), undefined, 1.0);
-    // Carry: the card and the pointer travel the same distance.
-    tl.to(card, { x: t.x, y: t.y, duration: 1.1, ease: 'power3.inOut' }, 1.15);
-    tl.to(pointer.el, { x: sx + t.x, y: sy + t.y, duration: 1.1, ease: 'power3.inOut' }, 1.15);
-    tl.call(() => void (drop.dataset['hot'] = 'true'), undefined, 1.9);
-    tl.call(() => {
-      card.classList.remove('is-dragging');
-      land('away', false);
-    }, undefined, 2.25);
-    tl.to(pointer.el, { scale: 0.85, duration: 0.12, ease: 'power2.out' }, 2.25).to(pointer.el, { scale: 1, duration: 0.25, ease: EASE });
-    pointer.hide(tl, '+=0.6');
-  };
-  if (pointer) {
-    // Any touch of the card hands control to the user at once.
-    card.addEventListener('pointerdown', take, true);
-    card.addEventListener('focusin', take);
-    demoTrigger = ScrollTrigger.create({ trigger: board, start: 'top 65%', once: true, onEnter: () => void (demoTimer = setTimeout(playDemo, 500)) });
-  }
-
   const unhold = drag ? holdToDrag(card, drag) : () => undefined;
   const onKey = (e: KeyboardEvent): void => {
-    if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') take();
     if (e.key === 'ArrowRight') {
       e.preventDefault();
       moveTo('away');
@@ -245,7 +174,6 @@ export function initDecide(root: HTMLElement, reduced: boolean): () => void {
   };
   card.addEventListener('keydown', onKey);
   const onResize = (): void => {
-    stopDemo();
     gsap.killTweensOf(card, 'x,y');
     const t = targets()[at];
     gsap.set(card, { x: t.x, y: t.y });
@@ -255,12 +183,6 @@ export function initDecide(root: HTMLElement, reduced: boolean): () => void {
 
   return () => {
     window.removeEventListener('resize', onResize);
-    demoTrigger?.kill();
-    clearTimeout(demoTimer);
-    card.removeEventListener('pointerdown', take, true);
-    card.removeEventListener('focusin', take);
-    stopDemo();
-    pointer?.destroy();
     card.removeEventListener('keydown', onKey);
     evCleanups.forEach((c) => c());
     unhold();

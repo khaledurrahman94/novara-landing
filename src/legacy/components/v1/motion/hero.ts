@@ -2,7 +2,7 @@ import { gsap, ScrollTrigger, prefersReducedMotion } from '../../../scripts/moti
 import { SplitText } from 'gsap/SplitText';
 import { $$, EASE, T, countTween, primeMockup, playMockup, waveWhileVisible } from './anim';
 
-/** Hero: masked headline lines, layered composition entering with depth, pointer and scroll parallax, stats count once. */
+/** Hero: masked headline lines, layered composition entering with depth, scroll parallax, stats count once. */
 export function initHero(root: HTMLElement): () => void {
   if (prefersReducedMotion()) return () => {};
 
@@ -65,35 +65,6 @@ export function initHero(root: HTMLElement): () => void {
         scrollTrigger: { trigger: root, start: 'top top', end: 'bottom top', scrub: 0.6 },
       });
     });
-
-    // Pointer parallax on desktop, 8px max.
-    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches && window.innerWidth >= 1024) {
-      const movers = $$(root, '[data-px]').map((el) => ({
-        k: Number(el.dataset['px']),
-        x: gsap.quickTo(el, 'x', { duration: 0.8, ease: 'power3.out' }),
-        y: gsap.quickTo(el, 'y', { duration: 0.8, ease: 'power3.out' }),
-      }));
-      const move = (e: PointerEvent): void => {
-        const r = root.getBoundingClientRect();
-        const nx = ((e.clientX - r.left) / r.width - 0.5) * 2;
-        const ny = ((e.clientY - r.top) / r.height - 0.5) * 2;
-        movers.forEach((m) => {
-          m.x(nx * 8 * m.k);
-          m.y(ny * 8 * m.k);
-        });
-      };
-      const leave = (): void =>
-        movers.forEach((m) => {
-          m.x(0);
-          m.y(0);
-        });
-      root.addEventListener('pointermove', move);
-      root.addEventListener('pointerleave', leave);
-      removers.push(() => {
-        root.removeEventListener('pointermove', move);
-        root.removeEventListener('pointerleave', leave);
-      });
-    }
   });
 
   return () => {

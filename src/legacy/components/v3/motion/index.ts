@@ -1,11 +1,11 @@
 /**
  * V3 motion orchestrator. Three kinds of motion: scrubbed (hero, results, how, depth), triggered
- * (reveals, bento entrances) and interactive (cursor layer, drag, bento tiles).
+ * (reveals, bento entrances) and interactive (drag, bento tiles).
  * Pins only from 768px wide and 620px tall. Reduced motion keeps every interaction but drops
- * parallax, tilt, follow, scrub and pins, and shows end states.
+ * parallax, scrub and pins, and shows end states.
  */
 import { gsap, ScrollTrigger, onReady, prefersReducedMotion, getLenis } from '../../../scripts/motion';
-import { initInteraction, initScrollDepth } from './interaction';
+import { initScrollDepth } from './interaction';
 import { initHero } from './hero';
 import { initResultsPinned, initResultsSimple } from './results';
 import { initHowPinned, initHowSimple, initHowSteps, replayStep } from './how';
@@ -99,7 +99,6 @@ export function initV3(): void {
 
     const mm = gsap.matchMedia();
     const ctx = gsap.context(() => {
-      add(safe('interaction', initInteraction));
       const hero = one(document, '[data-hero]');
       if (hero) safe('hero', () => initHero(hero));
       safe('reveals', initReveals);

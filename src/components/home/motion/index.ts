@@ -1,11 +1,10 @@
 /**
  * Home page motion orchestrator. Three kinds of motion: scrubbed (hero, results, how, depth), triggered
- * (reveals, bento entrances) and interactive (cursor layer, drag, bento tiles, the labs).
+ * (reveals, bento entrances) and interactive (drag, bento tiles, the labs). Nothing follows the pointer.
  * Pins only from 768px wide and 620px tall (the Audience pin from 1024x800). Reduced motion keeps every
- * interaction but drops parallax, tilt, follow, scrub, pins and loops, and shows end states.
+ * interaction but drops parallax, scrub, pins and loops, and shows end states.
  */
 import { gsap, ScrollTrigger, onReady, prefersReducedMotion, getLenis } from '../../../scripts/motion';
-import { initInteraction } from './interaction';
 import { initScrollDepth } from './depth';
 import { initHero } from './hero';
 import { initResultsPinned, initResultsSimple } from './results';
@@ -104,7 +103,6 @@ export function initHome(): void {
 
     const mm = gsap.matchMedia();
     const ctx = gsap.context(() => {
-      add(safe('interaction', initInteraction));
       const hero = one(document, '[data-hero]');
       if (hero) safe('hero', () => initHero(hero));
       safe('reveals', initReveals);

@@ -10,7 +10,6 @@ export const num = (v: string | undefined, fallback = 0): number => {
   return Number.isFinite(n) ? n : fallback;
 };
 export const cssVar = (name: string): string => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-export const finePointer = (): boolean => window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 export const clamp = (v: number, a: number, b: number): number => Math.min(b, Math.max(a, v));
 export const lerp = (a: number, b: number, t: number): number => a + (b - a) * t;
 /** 0 before a, 1 after b, linear between. */

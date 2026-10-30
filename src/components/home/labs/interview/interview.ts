@@ -12,7 +12,6 @@
  *  - tab switch (visibilitychange), focus lost (window blur/focus), copy of the question and paste (copy / paste),
  *    looking away (pointer outside the window for 2s, fine pointers only).
  *  - simulated switches: camera off, second face, left full screen (no camera access).
- * Once, after ~3s without interaction, a ghost pointer flips "Second face" to show the loop. Any input cancels it.
  * No network, no storage. Every listener, tween and timer is cleaned up.
  */
 import { gsap, ScrollTrigger, onReady, prefersReducedMotion, getLenis } from '../../../../scripts/motion';
@@ -24,8 +23,6 @@ interface Ev {
   kind: Kind;
   /** Overrides the kind's title (paste vs copy). */
   title?: string;
-  /** Added by the auto-showcase: removed again, never in the report. */
-  demo?: boolean;
   /** Demo clock (ms) when it happened. */
   at: number;
   detail: string;
@@ -43,7 +40,6 @@ const tagOf = (e: Ev): string => (e.simulated ? lab.simTag : e.kind === 'away' ?
 const titleOf = (e: Ev): string => `${e.title ?? meta(e.kind)?.title ?? e.kind}${e.detail ? `, ${e.detail}` : ''}`;
 type SimKey = 'camera' | 'faces' | 'fullscreen';
 const WORD_S = 0.17;
-const IDLE_BEFORE_SHOWCASE_MS = 3000;
 
 function mount(root: HTMLElement): () => void {
   const rm = prefersReducedMotion();
@@ -82,7 +78,6 @@ function mount(root: HTMLElement): () => void {
   const selfBars = qa('[data-il-selfbar]');
   const link = q('[data-il-link]');
   const pulse = q('[data-il-pulse]');
-  const ghost = q('[data-il-ghost]');
   const nextBtn = q<HTMLButtonElement>('[data-il-next]');
   const finishBtn = q<HTMLButtonElement>('[data-il-finish]');
   const chip = q('[data-il-chip]');
@@ -128,10 +123,6 @@ function mount(root: HTMLElement): () => void {
   let userPaused = false;
   let seq: gsap.core.Timeline | null = null;
   let inflight: { tl: gsap.core.Timeline; arrive: () => void } | null = null;
-  let scState: 'wait' | 'run' | 'done' = rm ? 'done' : 'wait';
-  let scTimer: ReturnType<typeof setTimeout> | undefined;
-  let scTl: gsap.core.Timeline | null = null;
-  let scFaces = false;
   // detection trackers
   let hidden: Mark | null = null;
   let blurred: Mark | null = null;
@@ -342,7 +333,7 @@ function mount(root: HTMLElement): () => void {
   const startRow = (): HTMLLIElement => liveRow(-1, clock(0), lab.started, false, '', '');
   const evRow = (e: Ev): HTMLLIElement => liveRow(e.at, clock(e.at), titleOf(e), true, tagOf(e), whyOf(e));
 
-  /** Runs a timeline change without the polite live region reading it (rebuilds, and the auto-showcase's demo event). */
+  /** Runs a timeline change without the polite live region reading it (rebuilds). */
   let quietTimer: ReturnType<typeof setTimeout> | undefined;
   const quiet = (fn: () => void): void => {
     timeline.setAttribute('aria-live', 'off');
@@ -369,8 +360,7 @@ function mount(root: HTMLElement): () => void {
       empty.hidden = true;
       tlBox.scrollTop = 0;
     };
-    if (ev.demo) quiet(place);
-    else place();
+    place();
     if (!rm) gsap.from(row, { y: -14, opacity: 0, duration: 0.5, ease: EASE });
   };
 
@@ -449,11 +439,10 @@ function mount(root: HTMLElement): () => void {
   };
 
   /* ---------- the one event pipeline ---------- */
-  const emit = (kind: Kind, detail = '', simulated = false, at?: number, opts: { title?: string; demo?: boolean } = {}): void => {
+  const emit = (kind: Kind, detail = '', simulated = false, at?: number, opts: { title?: string } = {}): void => {
     if (!isLive()) return;
     const ev: Ev = { kind, at: at ?? now(), detail, simulated };
     if (opts.title) ev.title = opts.title;
-    if (opts.demo) ev.demo = true;
     events.push(ev);
     const n = (counts.get(kind) ?? 0) + 1;
     counts.set(kind, n);
@@ -485,26 +474,6 @@ function mount(root: HTMLElement): () => void {
     });
   };
 
-  /** Drops the showcase's event again, so the visitor starts from zero. */
-  const purgeDemo = (): void => {
-    if (!events.some((e) => e.demo)) return;
-    events = events.filter((e) => !e.demo);
-    counts = new Map();
-    events.forEach((e) => counts.set(e.kind, (counts.get(e.kind) ?? 0) + 1));
-    kinds.forEach((k) => {
-      const c = counters.get(k.key);
-      const t = tiles.get(k.key);
-      const n = counts.get(k.key) ?? 0;
-      if (c && c.textContent !== String(n)) flip(c, n);
-      if (t) t.dataset['hit'] = n > 0 ? 'true' : 'false';
-    });
-    renderChip();
-    renderTimeline();
-    clearTimeout(toastTimer);
-    gsap.killTweensOf(toast);
-    gsap.to(toast, { opacity: 0, duration: rm ? 0 : 0.2, ease: 'power2.in' });
-  };
-
   /* ---------- clock and liveness ---------- */
   const resetTrackers = (): void => {
     hidden = null;
@@ -534,14 +503,6 @@ function mount(root: HTMLElement): () => void {
       resetTrackers();
     }
     seq?.paused(!live || userPaused);
-    if (live && scState === 'wait' && scTimer === undefined) scTimer = setTimeout(startShowcase, IDLE_BEFORE_SHOWCASE_MS);
-    if (!live) {
-      if (scState === 'run') cancelShowcase();
-      else if (scTimer !== undefined) {
-        clearTimeout(scTimer);
-        scTimer = undefined;
-      }
-    }
   };
 
   /* ---------- the interview ---------- */
@@ -644,7 +605,6 @@ function mount(root: HTMLElement): () => void {
     if (phase !== 'running') return;
     // Close out anything still open, then stop the clock.
     const end = now();
-    cancelShowcase();
     seq?.kill();
     seq = null;
     typeTween?.kill();
@@ -812,93 +772,14 @@ function mount(root: HTMLElement): () => void {
   });
 
   // Simulated checks: switches only. The camera is never accessed.
-  const toggleSim = (key: SimKey, demo = false): void => {
+  const toggleSim = (key: SimKey): void => {
     if (!isLive()) return;
     const next = !sim[key];
     sim[key] = next;
     renderSim();
-    if (next) emit(key, '', true, undefined, demo ? { demo: true } : {});
+    if (next) emit(key, '', true);
   };
   sims.forEach((s) => on(s, 'click', () => toggleSim(s.dataset['ilSim'] as SimKey)));
-
-  /* ---------- auto-showcase: a ghost pointer flips "Second face" once ---------- */
-  const center = (el: HTMLElement): { x: number; y: number } => {
-    const w = win.getBoundingClientRect();
-    const r = el.getBoundingClientRect();
-    return { x: r.left - w.left - win.clientLeft + r.width / 2, y: r.top - w.top - win.clientTop + r.height / 2 };
-  };
-  function cancelShowcase(): void {
-    clearTimeout(scTimer);
-    scTimer = undefined;
-    if (scState === 'done') return;
-    const wasRunning = scState === 'run';
-    scState = 'done';
-    scTl?.kill();
-    scTl = null;
-    gsap.killTweensOf(ghost);
-    gsap.set(ghost, { opacity: 0 });
-    if (wasRunning) {
-      if (scFaces) {
-        sim.faces = false;
-        scFaces = false;
-        renderSim();
-      }
-      purgeDemo();
-    }
-  }
-  function startShowcase(): void {
-    scTimer = undefined;
-    if (scState !== 'wait' || !isLive() || events.length > 0) return;
-    const btn = sims.find((s) => s.dataset['ilSim'] === 'faces');
-    const knob = btn?.querySelector<HTMLElement>('.il-switch');
-    if (!btn || !knob) return;
-    scState = 'run';
-    const t = center(knob);
-    gsap.set(ghost, { x: t.x + 90, y: t.y + 56, scale: 1, opacity: 0 });
-    const flipFaces = (): void => {
-      if (!isLive()) return;
-      scFaces = !scFaces;
-      sim.faces = scFaces;
-      renderSim();
-      if (scFaces) emit('faces', '', true, undefined, { demo: true });
-    };
-    const tl = gsap.timeline({ onComplete: () => void (scTl = null) });
-    scTl = tl;
-    tl.to(ghost, { opacity: 0.85, duration: 0.25, ease: 'power2.out' }, 0)
-      .to(ghost, { x: t.x, y: t.y, duration: 1.1, ease: EASE }, 0)
-      .to(ghost, { scale: 0.85, duration: 0.12, ease: 'power2.out' }, 1.2)
-      .call(flipFaces)
-      .to(ghost, { scale: 1, duration: 0.25, ease: EASE })
-      .to(ghost, { scale: 0.85, duration: 0.12, ease: 'power2.out' }, 3.9)
-      .call(flipFaces)
-      .to(ghost, { scale: 1, duration: 0.25, ease: EASE })
-      .to(ghost, { opacity: 0, duration: 0.35, ease: 'power2.in' }, '>+0.3')
-      .call(
-        () => {
-          scState = 'done';
-          purgeDemo();
-        },
-        undefined,
-        '>+0.8',
-      );
-  }
-  if (!rm) {
-    // Any input from the visitor ends the showcase for good.
-    const stop = (): void => cancelShowcase();
-    const move = (e: PointerEvent): void => {
-      if (Math.abs(e.movementX) + Math.abs(e.movementY) > 0) cancelShowcase();
-    };
-    win.addEventListener('pointerdown', stop);
-    win.addEventListener('pointermove', move);
-    win.addEventListener('touchstart', stop, { passive: true });
-    root.addEventListener('keydown', stop);
-    cleanups.push(() => {
-      win.removeEventListener('pointerdown', stop);
-      win.removeEventListener('pointermove', move);
-      win.removeEventListener('touchstart', stop);
-      root.removeEventListener('keydown', stop);
-    });
-  }
 
   /* ---------- visibility of the lab ---------- */
   const io = new IntersectionObserver(
@@ -1028,15 +909,13 @@ function mount(root: HTMLElement): () => void {
     clearTimeout(quietTimer);
     clearTimeout(awayTimer);
     clearInterval(tick);
-    clearTimeout(scTimer);
-    scTl?.kill();
     seq?.kill();
     inflight?.tl.kill();
     typeTween?.kill();
     waves.forEach((w) => w.kill());
     avatarTweens.forEach((w) => w.kill());
     selfWaves.forEach((w) => w.kill());
-    gsap.killTweensOf([toast, pulse, ghost, selfBars, liveView, ...counters.values(), ...tiles.values()]);
+    gsap.killTweensOf([toast, pulse, selfBars, liveView, ...counters.values(), ...tiles.values()]);
     delete root.dataset['intro'];
   };
 }
