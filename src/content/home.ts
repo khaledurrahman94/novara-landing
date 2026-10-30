@@ -6,6 +6,8 @@
  * internal link is also checked against the site's pages at build time (see homeProvider in src/lib/pages.ts).
  */
 
+import { HOME_PATH } from '../lib/home-path';
+
 /** PLACEHOLDER: the real app sign-in URL is not known yet. Replace before launch. */
 export const SIGN_IN_HREF = 'https://app.novara.com.my/sign-in';
 
@@ -25,12 +27,13 @@ export const home = {
       { label: 'How it works', href: '#how' },
       { label: 'FAQ', href: '#faq' },
     ],
+    /** Label of the hero's demo button (CMS field `nav.cta`); the header has no demo button. */
     cta: 'Request a demo',
+    signIn: { label: 'Sign in', href: SIGN_IN_HREF },
     getStarted: { label: 'Get started', href: SIGN_IN_HREF },
     /** Rendered when `live`. Later items (Platform, Features, Solutions, ROI Calculator, Resources) join this list when their pages exist. */
     links: [
       { label: 'Home', href: '/', live: true },
-      { label: 'Sign in', href: SIGN_IN_HREF, live: true },
       { label: 'Contact us', href: '/contact', live: true },
       { label: 'About us', href: '/about', live: true },
       { label: 'Pricing', href: '/pricing', live: true },
@@ -49,9 +52,7 @@ export const home = {
   hero: {
     title: 'Hire the person, not the pile.',
     sub: 'Novara scores every resume against the job, runs the first round with an AI interviewer, and shows your team the evidence behind every shortlist.',
-    secondary: 'See the AI interview',
     pricing: { label: 'See pricing', href: '/pricing', live: true },
-    signIn: { label: 'Sign in', href: SIGN_IN_HREF, live: true },
     shotCaption: 'Novara candidate review: ranked applicants on the left, and Amara Okafor with a Job Fit Score of 92, an AI Interview Score of 88 and one integrity event to review.',
     chips: {
       node: 'Matched: Node.js',
@@ -159,7 +160,7 @@ export const home = {
   platform: {
     title: 'Everything between apply and offer.',
     intro:
-      'The dashboard, jobs, candidates, pipeline, interviews, career page, roles and analytics sit in one workspace. Each view below is an illustrative recreation of the Novara dashboard.',
+      'The dashboard, jobs, candidates, pipeline, interviews, career page and analytics sit in one workspace. Each view below is an illustrative recreation of the Novara dashboard.',
     tiles: {
       dashboard: { title: 'Dashboard', line: 'Active jobs, your to-dos, a jobs overview and recent activity in one view.' },
       jobs: { title: 'Jobs', line: 'Every job with its applicants, hiring summary and status.' },
@@ -168,7 +169,6 @@ export const home = {
       scheduling: { title: 'Interview scheduling', line: 'Recruiters set the slots. A reschedule keeps the old booking on record.' },
       interviews: { title: 'Interviews', line: 'Scheduled interviews across all jobs, filtered by job, date and status.' },
       career: { title: 'Career page', line: 'Branded, with embed code for your site and a link for every job.' },
-      roles: { title: 'Roles and permissions', line: 'Admin, HR Manager and Recruiter, with role-based access.' },
       analytics: { title: 'Analytics', line: 'Track how candidate numbers change across each stage over time.' },
     },
     copyEmbed: 'Copy embed code',
@@ -310,7 +310,7 @@ export const home = {
           { label: 'Contact us', href: '/contact', live: true },
           { label: 'About us', href: '/about', live: true },
           { label: 'Pricing', href: '/pricing', live: true },
-          { label: 'Terms and conditions', href: '/terms', live: true },
+          { label: 'Terms and policies', href: '/terms', live: true },
           { label: 'Resources', href: '/resources', live: false },
           { label: 'Security', href: '/security', live: false },
         ],
@@ -318,7 +318,8 @@ export const home = {
     ],
     aiSummary: {
       label: 'Get an AI summary of Novara',
-      prompt: 'Summarize what Novara (https://novara.my/) does, who it is for and how it works.',
+      /** Sent to each assistant in a `?q=` link, so keep it short: the encoded URL must stay well under ~4000 characters. */
+      prompt: `Read https://novara.my/ and https://novara.my${HOME_PATH} (the home page). Explain Novara in plain language to a client: what it is (an AI recruitment platform and ATS by Vivasoft), who it is for, and how it works step by step (create and publish a job, receive applications, resume analysis with explained Job Fit Scores, AI interviews for chosen candidates, interview evaluation, shortlisting, final decision by the hiring team). Say what differs from a normal ATS (explained scores, AI first-round interviews with integrity monitoring, humans make every decision). Give one concrete example, such as a backend engineer role with hundreds of applicants. Keep to what the pages say, say what is unclear instead of guessing, and avoid marketing language. End with three questions a buyer should ask in a demo.`,
       assistants: [
         { key: 'chatgpt', label: 'ChatGPT', url: 'https://chatgpt.com/?q=' },
         { key: 'claude', label: 'Claude', url: 'https://claude.ai/new?q=' },
