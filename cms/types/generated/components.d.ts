@@ -221,16 +221,10 @@ export interface HomeFooter extends Struct.ComponentSchema {
 export interface HomeHero extends Struct.ComponentSchema {
   collectionName: 'components_home_heros';
   info: {
-    description: 'Hero headline, sub and secondary link label.';
+    description: 'Hero headline and sub.';
     displayName: 'Hero';
   };
   attributes: {
-    secondary: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 45;
-        minLength: 1;
-      }>;
     sub: Schema.Attribute.Text &
       Schema.Attribute.Required &
       Schema.Attribute.SetMinMaxLength<{
@@ -362,8 +356,6 @@ export interface HomePlatform extends Struct.ComponentSchema {
     jobs: Schema.Attribute.Component<'home.tile', false> &
       Schema.Attribute.Required;
     pipeline: Schema.Attribute.Component<'home.tile', false> &
-      Schema.Attribute.Required;
-    roles: Schema.Attribute.Component<'home.tile', false> &
       Schema.Attribute.Required;
     scheduling: Schema.Attribute.Component<'home.tile', false> &
       Schema.Attribute.Required;

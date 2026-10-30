@@ -234,47 +234,6 @@ function career(root: HTMLElement): Tile {
   };
 }
 
-/** Roles: the selection moves to the next role and the permissions below follow. */
-function roles(root: HTMLElement): Tile {
-  const card = one(root, '[data-roles-card]');
-  if (!card) return NOOP;
-  const items = $(card, '[data-role]');
-  const perms = $(card, '[data-perm]');
-  const groups = $(card, '[data-group]');
-  const title = one(card, '[data-role-title]');
-  const users = one(card, '[data-role-users]');
-  const total = one(card, '[data-role-perms]');
-  let counts: Record<string, number> = {};
-  try {
-    counts = JSON.parse(card.dataset['rolePermsMap'] ?? '{}') as Record<string, number>;
-  } catch {
-    counts = {};
-  }
-  const show = (el: HTMLElement): void => {
-    const key = el.dataset['role'] ?? '';
-    items.forEach((b) => void (b.dataset['selected'] = b === el ? 'true' : 'false'));
-    perms.forEach((x) => x.setAttribute('aria-checked', (x.dataset['roles'] ?? '').split(' ').includes(key) ? 'true' : 'false'));
-    groups.forEach((g) => {
-      const count = one(g, '[data-group-count]');
-      const boxes = $(g, '[data-perm]');
-      if (count) count.textContent = `${boxes.filter((i) => i.getAttribute('aria-checked') === 'true').length}/${boxes.length} selected`;
-    });
-    if (title) title.textContent = el.dataset['name'] ?? '';
-    if (users) users.textContent = el.dataset['users'] ?? '';
-    if (total) total.textContent = String(counts[key] ?? '');
-  };
-  return {
-    step: () =>
-      step((tl) => {
-        const i = items.findIndex((b) => b.dataset['selected'] === 'true');
-        const next = items[(i + 1) % Math.max(1, items.length)];
-        if (next) show(next);
-        tl.to({}, { duration: 1.6 });
-      }),
-    cleanup: () => undefined,
-  };
-}
-
 interface Trend {
   tabs: string[];
   data: Record<string, number[]>;
@@ -344,7 +303,6 @@ export function initPlatform(root: HTMLElement, reduced: boolean): () => void {
     ['pipeline', pipeline(root), 0.8],
     ['scheduling', scheduling(root), 1.8],
     ['career', career(root), 2.8],
-    ['roles', roles(root), 3.6],
     ['analytics', analytics(root), 4.4],
   ];
   const cleanups = tiles.map(([, t]) => t.cleanup);

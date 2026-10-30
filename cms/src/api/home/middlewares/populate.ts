@@ -17,7 +17,6 @@ export default withDefaultPopulate({
       'scheduling',
       'interviews',
       'career',
-      'roles',
       'analytics',
     ] },
   faq: { populate: ['items'] },

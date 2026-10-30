@@ -60,12 +60,6 @@
       "component": "home.tile",
       "required": true
     },
-    "roles": {
-      "type": "component",
-      "repeatable": false,
-      "component": "home.tile",
-      "required": true
-    },
     "analytics": {
       "type": "component",
       "repeatable": false,

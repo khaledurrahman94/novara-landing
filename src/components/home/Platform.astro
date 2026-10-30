@@ -8,7 +8,6 @@ import CandidateProfile from '../shared/ui/CandidateProfile.astro';
 import PipelineBoard from '../shared/ui/PipelineBoard.astro';
 import InterviewSchedule from '../shared/ui/InterviewSchedule.astro';
 import CareerSetup from '../shared/ui/CareerSetup.astro';
-import RolesPermissions from '../shared/ui/RolesPermissions.astro';
 import AnalyticsView from '../shared/ui/AnalyticsView.astro';
 import Chip from '../shared/ui/Chip.astro';
 import Icon from '../shared/ui/Icon.astro';
@@ -126,16 +125,7 @@ const trendJson = JSON.stringify({ tabs: trendTabs, data: platform.trend, weeks:
         </figure>
       </article>
 
-      <article data-tile="roles" aria-labelledby="t-roles" class:list={[tile, 'xl:col-span-3']}>
-        <h3 id="t-roles" class={tileTitle}>{t.roles.title}</h3>
-        <p class={tileLine}>{t.roles.line}</p>
-        <figure class={plate}>
-          <RolesPermissions />
-          <figcaption class="sr-only">Roles and permissions. Admin, HR Manager and Recruiter are shown in turn with what each role can do.</figcaption>
-        </figure>
-      </article>
-
-      <article data-tile="analytics" aria-labelledby="t-analytics" class:list={[tile, 'xl:col-span-3']}>
+      <article data-tile="analytics" aria-labelledby="t-analytics" class:list={[tile, 'md:col-span-2 xl:col-span-6']}>
         <h3 id="t-analytics" class={tileTitle}>{t.analytics.title}</h3>
         <p class={tileLine}>{t.analytics.line}</p>
         <figure class={plate}>

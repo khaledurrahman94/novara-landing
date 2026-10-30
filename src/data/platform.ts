@@ -106,38 +106,6 @@ export const careerWidget = {
   ],
 } as const;
 
-/** Role names are the feature overview's (Admin, HR Manager, Recruiter). Permission labels are the dashboard's; which role holds which is illustrative. */
-export const rolesData = {
-  roles: [
-    { key: 'admin', name: 'Admin', users: 2 },
-    { key: 'hr', name: 'HR Manager', users: 3 },
-    { key: 'recruiter', name: 'Recruiter', users: 5 },
-  ],
-  groups: [
-    {
-      name: 'Job Management',
-      items: [
-        { label: 'Job Analytics & Insights', on: ['admin', 'hr'] },
-        { label: 'Create Job', on: ['admin', 'hr'] },
-        { label: 'Edit Job', on: ['admin', 'hr', 'recruiter'] },
-        { label: 'Generate Job Description', on: ['admin', 'hr', 'recruiter'] },
-        { label: 'Manage Job Pipeline', on: ['admin', 'hr', 'recruiter'] },
-        { label: 'Publish Job', on: ['admin', 'hr'] },
-        { label: 'View Jobs', on: ['admin', 'hr', 'recruiter'] },
-      ],
-    },
-    {
-      name: 'Candidate Management',
-      items: [
-        { label: 'Manage Candidate Blacklist', on: ['admin'] },
-        { label: 'Send Candidate Emails', on: ['admin', 'hr', 'recruiter'] },
-        { label: 'Talent Pool / Search', on: ['admin', 'hr'] },
-        { label: 'View Candidates', on: ['admin', 'hr', 'recruiter'] },
-      ],
-    },
-  ],
-} as const;
-
 export const analyticsView = {
   stats: [
     { label: 'Active Jobs', value: '6' },
