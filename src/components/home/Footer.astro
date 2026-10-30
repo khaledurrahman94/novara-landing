@@ -41,21 +41,19 @@ const iconLink = 'grid size-9 place-items-center rounded-md border border-border
       ))}
     </div>
 
-    <div class="mt-12 flex flex-col gap-3 border-t border-border-secondary pt-6 sm:flex-row sm:items-center sm:gap-4">
+    <div class="mt-12 flex flex-col gap-4 border-t border-border-secondary pt-6 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
       <p id="ai-summary-label" class="m-0 text-sm text-text-secondary">{ai.label}</p>
       <ul aria-labelledby="ai-summary-label" class="m-0 flex list-none gap-2 p-0">
         {ai.assistants.map((a) => (
           <li><a href={`${a.url}${encodeURIComponent(ai.prompt)}`} class={iconLink} target="_blank" rel="noopener noreferrer" aria-label={`${a.label}: ${ai.label}`}><BrandIcon name={a.key} /></a></li>
         ))}
       </ul>
+      </div>
+      <p class="m-0 text-xs text-text-tertiary sm:text-right">
+        <a href={homeHref('/terms')} class="text-text-tertiary no-underline hover:text-text-primary hover:underline">{footer.copyright}. {footer.rights}</a>
+      </p>
     </div>
 
-    <div class="mt-6 flex flex-col gap-2 border-t border-border-secondary pt-6 text-xs text-text-tertiary sm:flex-row sm:items-start sm:justify-between sm:gap-8">
-      <p class="m-0">{footer.copyright}. {footer.rights}</p>
-    </div>
-  </div>
-
-  <div aria-hidden="true" class="pointer-events-none select-none overflow-hidden [mask-image:linear-gradient(to_bottom,black_15%,transparent_92%)]">
-    <p class="m-0 text-center font-display text-[clamp(6rem,25vw,24rem)] font-bold leading-[0.8] tracking-[-0.05em] text-primary-200">Novara</p>
   </div>
 </footer>
