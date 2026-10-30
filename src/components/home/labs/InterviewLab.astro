@@ -6,10 +6,10 @@ import Report from './interview/Report.astro';
 import { lab, kinds } from './interview/copy';
 import { lead, role } from '../../../data/demo';
 /**
- * InterviewLab: two surfaces, played as a scripted walkthrough. Left, what the candidate sees (a spoken, transcribed AI
- * interview, no integrity UI). Right, what only the hiring team sees (the integrity monitor), whose events tick up on a
- * timeline from the script in interview/copy.ts, then the report appears. Nothing is detected from the visitor and
- * nothing is recorded, stored or sent. Without JS, or under reduced motion, a static sample report is shown.
+ * InterviewLab: two surfaces. Left, what the candidate sees (a spoken, transcribed AI interview, no integrity UI).
+ * Right, what only the hiring team sees (the integrity monitor). Real detections: tab, focus, copy / paste and
+ * looking away. Simulated switches: camera off, second face, left full screen. Nothing is recorded, stored or sent.
+ * Detections run only while the demo is live and on screen. Without JS, a static sample report is shown.
  */
 interface Props { tone?: 'white' | 'plate' }
 const { tone = 'white' } = Astro.props;
@@ -89,6 +89,11 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
                           <p data-il-transcript class="col-start-1 row-start-1 m-0 text-text-primary"></p>
                         </div>
                       </div>
+                      <div class="flex flex-wrap items-center gap-2">
+                        <button type="button" data-il-next data-cursor="Next" class="il-btn il-btn-secondary">{lab.next}</button>
+                        <button type="button" data-il-finish data-cursor="Finish" class="il-btn il-btn-primary">{lab.finish}</button>
+                        <button type="button" data-il-pause data-cursor="Pause" class="ml-auto rounded-sm px-1 py-2 text-xs font-medium text-text-tertiary underline underline-offset-4 hover:text-text-primary">{lab.pause}</button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -136,7 +141,7 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
 
                     <ul class="m-0 mt-3 grid list-none grid-cols-2 gap-1.5 p-0">
                       {kinds.map((k) => (
-                        <li data-il-tile={k.key} data-hit="false" class="group flex items-center gap-2 rounded-md border border-border-secondary bg-white px-2 py-1.5">
+                        <li data-il-tile={k.key} data-hit="false" class:list={['group flex items-center gap-2 rounded-md border border-border-secondary bg-white px-2 py-1.5', k.key === 'away' && 'il-fine']}>
                           <span class="grid size-6 shrink-0 place-items-center rounded-md bg-gray-100 text-text-tertiary group-data-[hit=true]:bg-warning/10 group-data-[hit=true]:text-warning">
                             <Ico name={k.icon} size={13} />
                           </span>
@@ -149,8 +154,25 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
                     </ul>
 
                     <div class="mt-3 border-t border-border-secondary pt-3">
+                      <p class="m-0 text-xs font-medium text-text-tertiary">{lab.simulateTitle}</p>
+                      <div class="mt-1.5 flex flex-col">
+                        <button type="button" role="switch" aria-checked="false" data-il-sim="camera" data-cursor="Toggle" class="il-sim">
+                          <span class="il-switch" aria-hidden="true"></span>{lab.simCamera}
+                        </button>
+                        <button type="button" role="switch" aria-checked="false" data-il-sim="faces" data-cursor="Toggle" class="il-sim">
+                          <span class="il-switch" aria-hidden="true"></span>{lab.simFaces}
+                        </button>
+                        <button type="button" role="switch" aria-checked="false" data-il-sim="fullscreen" data-cursor="Toggle" class="il-sim">
+                          <span class="il-switch" aria-hidden="true"></span>{lab.simFullscreen}
+                        </button>
+                      </div>
+                      <p class="m-0 mt-1 text-[0.6875rem] leading-snug text-text-tertiary">{lab.simulateNote}</p>
+                    </div>
+
+                    <div class="mt-3 border-t border-border-secondary pt-3">
                       <ol data-il-timeline class="m-0 list-none p-0"></ol>
                       <p data-il-empty class="m-0 mt-2 text-xs leading-snug text-text-tertiary">{lab.empty}</p>
+                      <p class="il-fine m-0 mt-2 text-[0.6875rem] leading-snug text-text-tertiary">{lab.eyes}</p>
                     </div>
                   </div>
                 </div>
@@ -159,6 +181,7 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
 
             <Report />
           </div>
+          <span data-il-ghost class="il-ghost" aria-hidden="true"></span>
         </div>
         <p data-il-cue class="m-0 mt-4 flex items-center justify-center gap-1.5 text-xs text-text-tertiary" aria-hidden="true">
           {lab.cue}<Ico name="chevron-down" size={14} />
@@ -183,6 +206,104 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
     .il [data-il-frame] [data-card='interview-frame'] {
       max-height: max(11rem, calc(100svh - 28.5rem));
     }
+  }
+  .il[data-intro] [data-il-fade] {
+    pointer-events: none;
+  }
+  .il :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+  .il [data-il-frame] [data-anim='caption'] {
+    user-select: text;
+    cursor: text;
+  }
+
+  /* Buttons: the product's primary and secondary, at 40px. */
+  .il-btn {
+    display: inline-flex;
+    height: 2.5rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    padding: 0 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: var(--shadow-xs);
+    transition:
+      background-color var(--duration-fast) var(--ease-out-quart),
+      transform var(--duration-fast) var(--ease-out-quart);
+  }
+  .il-btn:active {
+    transform: scale(0.97);
+  }
+  .il-btn-primary {
+    background: var(--color-primary);
+    color: var(--color-white);
+  }
+  .il-btn-primary:hover {
+    background: var(--color-primary-600);
+  }
+  .il-btn-secondary {
+    background: var(--color-white);
+    border-color: var(--color-border-primary);
+    color: var(--color-text-secondary);
+  }
+  .il-btn-secondary:hover {
+    background: var(--color-bg);
+  }
+  .il-btn[disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  /* Simulate switches: whole row is the hit area. */
+  .il-sim {
+    display: flex;
+    min-height: 2.25rem;
+    align-items: center;
+    gap: 0.625rem;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    padding: 0;
+    font: inherit;
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    text-align: left;
+    cursor: pointer;
+  }
+  .il-switch {
+    position: relative;
+    width: 2rem;
+    height: 1.125rem;
+    flex-shrink: 0;
+    border-radius: 9999px;
+    background: var(--color-gray-200);
+    transition: background-color var(--duration-base) var(--ease-out-quart);
+  }
+  .il-switch::after {
+    content: '';
+    position: absolute;
+    top: 0.125rem;
+    left: 0.125rem;
+    width: 0.875rem;
+    height: 0.875rem;
+    border-radius: 9999px;
+    background: var(--color-white);
+    box-shadow: var(--shadow-xs);
+    transition: transform var(--duration-base) var(--ease-out-quart);
+  }
+  .il-sim[aria-checked='true'] .il-switch {
+    background: var(--color-primary);
+  }
+  .il-sim[aria-checked='true'] .il-switch::after {
+    transform: translateX(0.875rem);
   }
 
   /* Self-view overlay (camera off, second face) fades with a plain opacity transition. */
@@ -263,23 +384,46 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
     }
   }
 
-  /* Reduced motion: no walkthrough, the static sample report stands in for it. */
+  /* The ghost pointer: a 20px circle, white ring, soft shadow. Motion is all transform and opacity. */
+  .il-ghost {
+    position: absolute;
+    left: -0.625rem;
+    top: -0.625rem;
+    z-index: 50;
+    width: 1.25rem;
+    height: 1.25rem;
+    box-sizing: border-box;
+    border: 2px solid var(--color-white);
+    border-radius: 9999px;
+    background: var(--color-text-primary);
+    box-shadow: var(--shadow-sm);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Looking away is a mouse idea. */
+  @media (pointer: coarse) {
+    .il-fine {
+      display: none;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .il [data-il-pin] {
-      display: none;
-    }
-    .il[data-js] [data-il-static] {
-      display: grid;
-    }
-    .il [data-il-status] {
-      display: none;
-    }
-    .il-ov {
+    .il-btn,
+    .il-ov,
+    .il-switch,
+    .il-switch::after {
       transition: none;
+    }
+    .il-btn:active {
+      transform: none;
     }
     .il-tbox[data-state='speaking'] .il-tdot,
     .il-livedot {
       animation: none;
+    }
+    .il-ghost {
+      display: none;
     }
   }
 </style>
