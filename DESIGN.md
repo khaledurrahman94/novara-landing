@@ -211,7 +211,7 @@ The palette comes from the product's Untitled UI–based design system and is bi
 **Character:** Geist is neutral and engineered. Semibold weight and -0.03em tracking make its large sizes feel dense and confident, not loud. Inter sits inside the product screens at small sizes, so the shots read as the real app, not as marketing type.
 
 ### Hierarchy
-- **Display** (600, clamp 44–72px, 1.02): the hero H1 only, max 46rem wide.
+- **Display** (600, clamp 44–72px, 1.02): the hero H1 only, in a left-aligned text block 48rem wide with the exploded product screen full width below (there is no card to the right of the headline).
 - **Headline** (600, clamp 32–56px, 1.05): the big section statements (Results, Platform, Close).
 - **Headline Small** (600, clamp 30–44px, 1.08): feature sections, How and FAQ.
 - **Title** (600, 17px, -0.01em): bento tile titles and step titles. FAQ questions use the same size at 500.

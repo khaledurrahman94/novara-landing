@@ -5,7 +5,6 @@ import Avatar from '../shared/ui/Avatar.astro';
 import Chip from '../shared/ui/Chip.astro';
 import Icon from '../shared/ui/Icon.astro';
 import ScoreRing from '../shared/ui/ScoreRing.astro';
-import JobFitCard from '../shared/ui/JobFitCard.astro';
 import Button from './Button.astro';
 import HeroChip from './HeroChip.astro';
 const { hero } = home;
@@ -16,20 +15,13 @@ const edge = 'pointer-events-none absolute -inset-px -z-10 rounded-lg border bor
 ---
 <section data-hero id="top" aria-labelledby="hero-title" class="relative bg-white">
   <div class="mx-auto w-full max-w-[75rem] border-x border-border-secondary px-5 pb-20 pt-16 sm:px-8 md:px-12 md:pb-28 md:pt-24">
-    <div class="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_24rem] lg:gap-10 xl:grid-cols-[minmax(0,1fr)_25rem]">
-    <div class="max-w-[46rem]">
+    <div class="max-w-[48rem]">
       <h1 id="hero-title" class="m-0 text-[clamp(2.75rem,1.2rem+5.2vw,4.5rem)] font-semibold leading-[1.02] tracking-[-0.03em]">{hero.title}</h1>
       <p data-rise class="m-0 mt-5 max-w-[34rem] text-lg leading-relaxed text-text-secondary">{hero.sub}</p>
       <div data-rise class="mt-7 flex flex-wrap items-center gap-3">
         {hero.pricing.live && <Button href={hero.pricing.href}>{hero.pricing.label}</Button>}
         <Button href="#demo-close" variant={hero.pricing.live ? 'secondary' : 'primary'} data-home-cta data-magnetic>{home.nav.cta}</Button>
       </div>
-    </div>
-    <div data-hero-card aria-hidden="true" class="hidden self-center justify-self-end lg:block">
-      <div data-hero-float>
-        <JobFitCard variant="full" compact />
-      </div>
-    </div>
     </div>
 
     <div data-shot data-hero-stage data-tilt="viewport" data-tilt-max="4" data-idle class="relative mt-8 py-10 md:mt-10 md:py-14">
