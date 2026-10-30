@@ -49,7 +49,7 @@ Copy lives in `src/content/home.ts`. The labs keep their own copy files.
 
 1. **Nav:** the wordmark, anchor links and a "Request a demo" button.
 2. **Hero:**
-   - **Text:** the H1 "Hire the person, not the pile." and the sub-line, plus a link "Try the AI interview" with ↓, pointing to `#interview-lab`. No form. The text block is left-aligned (48rem max) with nothing to its right; the full-width exploded product view sits below it.
+   - **Text:** the H1 "Hire the person, not the pile." and the sub-line, plus a link "Try the AI interview" with ↓, pointing to `#interview-lab`. No form. The text block is centred (headline balanced at about 16ch, sub-line 36rem, buttons centred and wrap-safe, also on mobile) with nothing beside it; the full-width exploded product view sits centred below it.
    - **The exploded product view:** below the text, the CandidateReview screen split into 4–6 depth layers (the app frame, the applicant list, the profile card, the score ring, the integrity chip). Six to eight evidence chips float at different depths around it: "Matched: Node.js", "Missing: Kubernetes", "Job Fit 92", "Focus lost 0:42", "AI Interview 88", "Moved by Priya".
    - **The cursor parallaxes** every layer and chip by depth.
    - **Scrolled:** the layers converge and the chips dock into their places in the flat screen. Scrolling back explodes it again.

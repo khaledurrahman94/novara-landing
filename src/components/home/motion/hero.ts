@@ -3,7 +3,7 @@
  * Scrolling reassembles it (scrubbed, so it explodes again on the way back); the chips dock onto the
  * values they describe and fade into them. The cursor moves every layer by its depth (see interaction.ts).
  */
-import { gsap, ScrollTrigger } from '../../../scripts/motion';
+import { gsap } from '../../../scripts/motion';
 import { setStrength } from './interaction';
 import { $, EASE, num, one } from './util';
 
