@@ -102,6 +102,7 @@ Brand line: "Hire the person, not the pile."
 - **Voice:** concrete, plain and short, in sentence case.
 - **Lines the user chose:** "Hire the person, not the pile." and "You decide who moves on. Novara shows you why."
 - **Standing preference: the demos are interactive (2026-10-30, DM team, reversing their 2026-10-29 request for animations only).** Visitors can drag, toggle, hover and try the demos (including trying to cheat the AI interview). The animation-only variant is kept on the `animated-only` branch.
+- **Standing preference: no cursor-following effects (2026-10-30, user).** Nothing may follow or react to the pointer position: no cursor pill or label, magnetic buttons, tilt, pointer parallax or ghost-cursor demos, on any version. Drag, toggles, hover tooltips and readouts, and scroll-driven motion are fine.
 - **Standing preference: a standard landing page.** It should plainly convey the product, with no narrative, metaphor or "out of this world" concepts (2026-10-16). The craft bar sits between Linear and Stripe, with Attio's look: light, every section visually distinct, and product UI that comes alive on scroll. Not Ashby.
 
 ## Evidence on Hand

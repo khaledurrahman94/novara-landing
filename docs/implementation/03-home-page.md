@@ -1,6 +1,6 @@
 # 03 Home page: the hands-on landing page
 
-The home page lives at `/`. It follows the world in `DESIGN.md` and a standard landing-page structure. It stands out through **interaction, depth, cursor and scroll**, not through new colours, fonts or metaphors.
+The home page lives at `/`. It follows the world in `DESIGN.md` and a standard landing-page structure. It stands out through **interaction, depth and scroll**, not through new colours, fonts or metaphors.
 
 Every interaction must demonstrate a real Novara feature, and it must be fun to play with. This is not a story page: no narrative, no characters.
 
@@ -26,22 +26,13 @@ Every interaction must demonstrate a real Novara feature, and it must be fun to 
   - section-heading depth parallax.
 - **Triggered:** plays once on entry. Used for section reveals, bento tile entrances and the FAQ.
 - **Interactive:** driven by the user. Covers:
-  - the cursor pill;
-  - magnetic primary buttons;
-  - cursor tilt;
-  - toggles, drag, the cheat detection, and the bento interactions.
+  - drag, toggles, the cheat detection, and the bento interactions. Nothing follows the pointer: no cursor pill, magnetic buttons, tilt or pointer parallax, and no ghost-cursor demos.
 
 **Pins** only from 768px. Below that, a scrubbed sequence plays as the section passes, without a pin, or simplifies.
 
 **Physics** follow apple-design: springs and momentum (GSAP `Draggable` plus `InertiaPlugin`, both free in the `gsap` package), rubber-banding at the bounds, and interruptible animations.
 
 ## Global interaction layer
-- **Contextual cursor pill:**
-  - It shows only when `(pointer: fine)`, and the native cursor stays.
-  - It follows with a slight lag (`gsap.quickTo`). Over any `[data-cursor="Label"]` element it shows the label ("Drag", "Try it", "Toggle", "Copy").
-  - It is off for touch and for reduced motion.
-- **Magnetic buttons:** primary buttons pull up to 6px toward the cursor.
-- **Cursor tilt:** `[data-tilt]` frames tilt up to 6° toward the cursor, and children with `[data-depth="n"]` parallax in Z.
 - **Scroll depth:** `[data-speed]` elements drift at their own speed (scrubbed).
 
 ## Sections and owners
@@ -51,10 +42,8 @@ Copy lives in `src/content/home.ts`. The labs keep their own copy files.
 2. **Hero:**
    - **Text:** the H1 "Hire the person, not the pile." and the sub-line, plus a link "Try the AI interview" with ↓, pointing to `#interview-lab`. No form. The text block is centred (headline balanced at about 16ch, sub-line 36rem, buttons centred and wrap-safe, also on mobile) with nothing beside it; the full-width exploded product view sits centred below it.
    - **The exploded product view:** below the text, the CandidateReview screen split into 4–6 depth layers (the app frame, the applicant list, the profile card, the score ring, the integrity chip). Six to eight evidence chips float at different depths around it: "Matched: Node.js", "Missing: Kubernetes", "Job Fit 92", "Focus lost 0:42", "AI Interview 88", "Moved by Priya".
-   - **The cursor parallaxes** every layer and chip by depth.
-   - **Scrolled:** the layers converge and the chips dock into their places in the flat screen. Scrolling back explodes it again.
+   - **Scrolled:** the layers converge and the chips dock into their places in the flat screen. Scrolling back explodes it again. The scrub ends where the horizon gradient's top edge sits flush under the sticky nav, and ScrollTrigger `snap` (`[0, 1]`, directional, 0.4-0.6s, `power2.inOut`, no inertia) settles every stop to the top or to that position; scrolling on past it continues normally.
    - **Background:** the gradient horizon, once, behind the shot.
-   - **Touch:** gentle idle drift, and the scrub still works.
 3. **Results:**
    - **Final stages:** the 12 shortlisted sit in a capped 6 x 2 grid (cell at most 104px, avatar radius at most 27px), the four offers on a Violet Wash band with their Offered chip. The tooltip is centred over the hovered person with an arrow, flips below at the top edge and is clamped inside the canvas. The hover ring is a 2px primary-300 circle, never black.
    - **Title:** "From 1,200+ applicants to 4 hires."
@@ -86,7 +75,7 @@ Copy lives in `src/content/home.ts`. The labs keep their own copy files.
      - **Copied the question:** `copy` inside the lab.
      - **Pasted into the answer:** `paste` in the answer box.
      - **Left full screen:** a "Full screen" button using the Fullscreen API on the lab; exiting is flagged.
-     - **Looking away:** the pointer leaves the interview frame for more than 2s. Desktop only, labelled "In this demo your cursor stands in for your eyes".
+     - **Looking away:** the pointer leaves the interview frame for more than 2s. Fine pointers only, labelled "In this demo your cursor stands in for your eyes". This reads a real window event; it is a signal, not a cursor effect.
      - **"Simulate: camera off" and "Simulate: second face"** toggles. The page never touches the camera. They show an overlay on the interviewer and self-view tiles, and their events are tagged "simulated".
    - **Candidate screen (V4):** modelled on the product's interview screen. The AI interviewer is a full-bleed portrait (`labs/interview/InterviewerPortrait.astro`: a vector head-and-shoulders with a headset, palette tokens only; it renders `public/brand/interviewer.webp` instead when that file exists at build time, so a generated portrait drops in with no code change). REC pill top-left, running timer top-right, a "You" self-view (AO tile) bottom-left, the current question in a rounded caption bubble bottom-centre, and a frosted "Interview transcript" panel (Q1.. and "You" turns) over the bottom-right, collapsed behind a toggle below the video in a narrow container. While the interviewer speaks, a waveform pill, a ring around the headset area and a gentle breathing scale run (transform and opacity only; static under reduced motion).
    - **Integrity monitor (V4 and V3, compact):** a header row (title, Live, status pill "N events to review"), a two-line caption that separates what the browser detects from the demo-only switches, seven counter chips (4 columns wide, 3 medium, 2 small, container-query driven), the three Simulate switches as one row of pills, and a fixed-height event list (about 4 rows, scrolls inside, newest on top) with `aria-live="polite"`. The team panel never changes height; the candidate and team halves stretch to one height on desktop.
@@ -109,9 +98,9 @@ Copy lives in `src/content/home.ts`. The labs keep their own copy files.
    - **Alternatives:** keyboard (right arrow moves her to HR Round, left arrow moves her back) and touch (hold to drag), with the status line announcing the move.
    - **Evidence panel:** hovering or focusing a card zooms in its evidence (the ScoreTriplet).
    - **No JS:** all three evidence panels stay readable. **Reduced motion:** every interaction works; the drag lands without springs.
-7. **How it works:** a pinned horizontal scrubbed track of nine steps that snaps step by step (ScrollTrigger `snap` on the pin, directional, 0.4-0.6s, about 0.9 viewport heights per step): each step settles with its vignette finished and holds before the next. The nine-dot rail fills at the settled step. Each step's vignette animates in proportion to scroll; for example, the job description lines write in as you scroll, and a ghost pointer drags Amara's card in step 8. Each step title is a button: in the pinned track it scrolls to that step's settled point (so the snap and the buttons agree); in the vertical list on phones it replays that step's vignette. Focusing a title scrolls to it too.
-   - **Fit-to-frame:** every step visual sits in one `[data-fit]` frame (same height, `min(60vh, 34rem)`, 1px hairline, Plate Gray ground, `lg` radius). `motion/fit.ts` measures the visual's natural size and applies a `transform: scale()` of at most 1 (ResizeObserver, re-run on fonts) so the whole visual shows, centred and never cropped. Without JS the frame is an auto-height box. The ghost pointer in step 8 divides by the fit scale. No purple border: the step numeral and rail mark the active step.
-8. **Platform:** a bento of nine product views with cursor tilt, and every tile genuinely interactive. The Roles and permissions tile was removed by the DM team and stays removed:
+7. **How it works:** a pinned horizontal scrubbed track of nine steps that snaps step by step (ScrollTrigger `snap` on the pin, directional, 0.4-0.6s, about 0.9 viewport heights per step): each step settles with its vignette finished and holds before the next. The nine-dot rail fills at the settled step. Each step's vignette animates in proportion to scroll; for example, the job description lines write in as you scroll, and Amara's card slides into HR Round in step 8. Each step title is a button: in the pinned track it scrolls to that step's settled point (so the snap and the buttons agree); in the vertical list on phones it replays that step's vignette. Focusing a title scrolls to it too.
+   - **Fit-to-frame:** every step visual sits in one `[data-fit]` frame (same height, `min(60vh, 34rem)`, 1px hairline, Plate Gray ground, `lg` radius). `motion/fit.ts` measures the visual's natural size and applies a `transform: scale()` of at most 1 (ResizeObserver, re-run on fonts) so the whole visual shows, centred and never cropped. Without JS the frame is an auto-height box. The card slide in step 8 divides by the fit scale. No purple border: the step numeral and rail mark the active step.
+8. **Platform:** a bento of nine product views, and every tile genuinely interactive. The Roles and permissions tile was removed by the DM team and stays removed:
    - **Dashboard:** hover or focus a bar of the jobs chart for its stage counts.
    - **Pipeline:** cards lift on hover or focus.
    - **Scheduling:** pick a slot (radio group) and a booked toast appears; the earlier booking stays on record.
@@ -119,7 +108,7 @@ Copy lives in `src/content/home.ts`. The labs keep their own copy files.
    - **Analytics:** tabs switch the view, and hovering a bar shows its week and value.
    - Tiles also run a presence-aware ambient loop while idle; it finishes its step and yields when a pointer or focus arrives, and does not run under reduced motion.
 8b. **Audience:** a pinned stepped section (from 1024x600, fitted to one viewport under the nav; a small ResizeObserver scales the stage down, never up, when the tallest panel exceeds it): the four groups (For Company, By Role, Industry, Agencies) each get a stop, with the same snap behaviour as How it works (about 0.8 viewport heights per group), the active tab, a crossfading detail card (opacity and transform) and a thin progress line. The tabs stay real buttons; clicking one scrolls to its stop. Below that size it is the plain tablist (a horizontal scroller on small screens, no pin); with no JS or under reduced motion all four panels are visible stacked.
-9. **FAQ, close, footer:** the FAQ is native `details`. The close uses DemoForm with a magnetic submit button. The FAQ heading is left-aligned over two columns. The footer is a 12-column grid: brand left (cols 1-6), live link columns (up to 3) filling the right half evenly, a lone column against the right edge; it shows only links whose pages exist.
+9. **FAQ, close, footer:** the FAQ is native `details`. The close uses DemoForm. The FAQ heading is left-aligned over two columns. The footer is a 12-column grid: brand left (cols 1-6), live link columns (up to 3) filling the right half evenly, a lone column against the right edge; it shows only links whose pages exist.
 
 ## Links to pages that do not exist
 The nav, hero and footer link to pages that are not built yet. Each link in `home.ts` has `live: boolean`; only `live: true` links render, and a footer column with no live link is dropped. Enabling a page later is a one-word change (`live: true`). Every live internal link is also listed on the home page record in `src/lib/pages.ts`, so the build fails with `link-missing` if a link is marked live for a page that does not exist. See `07-company-pages.md`.
@@ -133,7 +122,7 @@ The nav, hero and footer link to pages that are not built yet. Each link in `hom
   - Pick no new libraries beyond `gsap` and its plugins.
 - **Accessibility and input:**
   - Every interaction works by keyboard and touch.
-  - Reduced motion: no parallax, tilt, follow, scrub or pins, but every interaction still works with instant state changes.
+  - Reduced motion: no scroll parallax, scrub, snap or pins, but every interaction still works with instant state changes.
   - With no JS, all content is readable.
 - **Truth:** PRODUCT.md claims only. Demo data is labelled illustrative. Palette tokens only. No glows behind text. No invented logos or stats.
 - **SEO:** `noindex` for now. One H1, H2 per section, `<figure>` around mockups.
@@ -144,6 +133,5 @@ The nav, hero and footer link to pages that are not built yet. Each link in `hom
   - Self-contained. Each lab has its own copy file and script in its folder under `src/components/home/labs/`.
   - It renders its own section through `Section.astro` with a `tone` prop ('white' | 'plate').
   - It boots via `onReady` from `src/scripts/motion.ts`, scopes everything to its root, and cleans up.
-  - It uses `data-cursor` labels.
   - Its test page (`src/pages/lab-screening.astro`, `src/pages/lab-interview.astro`, noindex) imports `src/components/home/home.css`.
 - `pnpm check` and `pnpm build` must pass. Run `.claude/skills/impeccable/scripts/impeccable detect --json` on files you change. No browser automation, no screenshots.
