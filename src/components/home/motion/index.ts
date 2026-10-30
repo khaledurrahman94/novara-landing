@@ -1,7 +1,7 @@
 /**
  * Home page motion orchestrator. Two kinds of motion: scrubbed (hero, results, how, depth) and self-playing
  * (reveals, bento loops, the Decide animation). Nothing reacts to the pointer.
- * Pins only from 768px wide and 620px tall. Reduced motion drops scrub, pins and loops and shows end states.
+ * Pins only from 768px wide and 620px tall (the Audience pin from 1024x800). Reduced motion drops scrub, pins and loops and shows end states.
  */
 import { gsap, ScrollTrigger, onReady, prefersReducedMotion, getLenis } from '../../../scripts/motion';
 import { initScrollDepth } from './depth';
@@ -9,6 +9,7 @@ import { initHero } from './hero';
 import { initResultsPinned, initResultsSimple } from './results';
 import { initHowPinned, initHowSimple } from './how';
 import { initDecide } from './decide';
+import { initAudience } from './audience';
 import { initBentoReveal, initPlatform } from './platform';
 import { EASE, $, one, safe, scrollToEl } from './util';
 
@@ -89,6 +90,10 @@ export function initHome(): void {
     const platform = one(document, '[data-platform]');
     if (platform) add(safe('platform', () => initPlatform(platform, reduced)));
 
+    const audienceRoot = one(document, '[data-audience]');
+    const audience = audienceRoot ? safe('audience', () => initAudience(audienceRoot, reduced)) : undefined;
+    if (audience) add(audience.destroy);
+
     if (reduced) return () => cleanups.forEach((c) => c());
 
     const mm = gsap.matchMedia();
@@ -110,6 +115,13 @@ export function initHome(): void {
         return () => {
           if (typeof c1 === 'function') c1();
           if (typeof c2 === 'function') c2();
+        };
+      });
+      // The Audience pin needs room for the title and the tallest panel; shorter screens keep the plain tabs.
+      mm.add('(min-width: 1024px) and (min-height: 800px)', () => {
+        const c = audience ? safe('audience-pin', () => audience.pin()) : undefined;
+        return () => {
+          if (typeof c === 'function') c();
         };
       });
       mm.add('(max-width: 767.98px), (max-height: 619.98px)', () => {

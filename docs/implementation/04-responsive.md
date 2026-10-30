@@ -15,5 +15,5 @@ Mockups are authored in rem, so they follow the fluid root and nothing else scal
 ## Home page and the labs
 - Every page passes `fluid` to `Base`; px layout values are rem (columns 75rem, type 0.8125rem etc.). Canvas pixel constants multiply by `u = rootFont / 16` (results), parallax by `remScale()`; pin offsets use `navH()` (rem nav), never 64px.
 - Mockups reflow with container queries instead of being scaled down, so phones never get shrunk text. Bento is 6 columns from 1280 (2 below), Decide stacks until 1024.
-- Pins need room: Results and How pin from 768x620; the interview lab pins from 1024x680 (frame height capped in rem, `100svh - 28.5rem`), else it does a short scrub.
+- Pins need room: Results and How pin from 768x620 (How snaps per step); Audience pins from 1024x800 and is a plain tablist below; the interview lab pins from 1024x680 (frame height capped in rem, `100svh - 28.5rem`), else it does a short scrub.
 - Check at 1280x720, 1366x768, 1536x864, 1920x1080, 2560x1440 and 360, 390, 768, 1024.
