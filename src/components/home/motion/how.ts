@@ -1,7 +1,8 @@
 /**
  * How it works. Desktop: the section pins and the nine steps slide past on a horizontal track,
- * scrubbed to scroll; each step's vignette is a slice of that same timeline, so it plays in
- * proportion to scroll and reverses with it. Phones: a vertical list whose vignettes play once on entry.
+ * scrubbed to scroll and snapped step by step: each step settles on screen with its vignette finished and holds
+ * before the next one moves in. Each vignette is a slice of that same timeline, so it reverses with scroll.
+ * Phones: a vertical list whose vignettes play once on entry.
  * Nothing here reacts to the pointer or keyboard.
  */
 import { gsap, ScrollTrigger } from '../../../scripts/motion';
@@ -82,39 +83,52 @@ export function initHowPinned(root: HTMLElement): (() => void) | void {
   root.classList.add('is-h');
   setActive(root, 0);
   progress.hidden = false;
-  const dist = (): number => (n - 1) * viewport.clientWidth;
+  const width = (): number => viewport.clientWidth;
+
+  // Timeline units: step i settles at HOLD + i, with HOLD of rest at each end. Each slot is one unit long:
+  // the track moves and the vignette plays in its last ~0.6, then the step holds still so it can be read.
+  const HOLD = 0.5;
+  const total = n - 1 + 2 * HOLD;
+  const settle = (i: number): number => HOLD + i;
+  // Snap points are the nine settled steps, plus both ends so the visitor can always scroll out of the pin.
+  const points = [0, ...steps.map((_, i) => settle(i) / total), 1];
+  // Roughly one screen of scroll per step on desktop, a little less on tablets.
+  const perUnit = (): number => window.innerHeight * (window.innerWidth >= 1024 ? 0.9 : 0.7);
 
   const master = gsap.timeline({
     defaults: { ease: 'none' },
     scrollTrigger: {
       trigger: root,
       start: () => `top ${navH()}px`,
-      // About a third of a screen of scroll per step, so nine steps stay under four screens.
-      end: () => `+=${Math.round(Math.min(n * window.innerHeight * 0.36, window.innerHeight * 3.6))}`,
+      end: () => `+=${Math.round(total * perUnit())}`,
       pin: true,
-      scrub: 0.7,
+      scrub: 0.5,
       anticipatePin: 1,
       refreshPriority: 1,
       invalidateOnRefresh: true,
+      // Settle on a step after the wheel or touch stops. Directional, so a small scroll moves to the next step
+      // instead of falling back. Runs after Lenis has finished easing: ScrollTrigger only starts the snap once
+      // scroll updates (fed from Lenis' scroll event) stop, and Lenis re-syncs to the native position then.
+      snap: { snapTo: points, duration: { min: 0.4, max: 0.6 }, delay: 0.08, ease: 'power2.inOut', directional: true, inertia: false },
     },
     onUpdate: () => {
-      setActive(root, Math.min(n - 1, Math.max(0, Math.round(master.time() - 0.5))));
+      setActive(root, Math.min(n - 1, Math.max(0, Math.round(master.time() - HOLD))));
     },
   });
-  // Slide i is centred at time HOLD + i. A short hold at each end lets the first and last steps rest.
-  const HOLD = 0.5;
-  master.to(track, { x: () => -dist(), duration: n - 1 }, HOLD);
-  master.fromTo(line, { scaleX: 0 }, { scaleX: 1, duration: n - 1 }, HOLD);
   steps.forEach((step, i) => {
     const v = one(step, '[data-vignette]');
-    if (!v) return;
-    const vt = vignette(i, v, false);
-    const len = i === 0 ? 0.45 : 0.7;
-    const at = i === 0 ? 0 : Math.max(0, HOLD + i - 0.85);
-    vt.duration(len);
-    master.add(vt, at);
+    if (v) {
+      const vt = vignette(i, v, false);
+      // Step 0 plays in the lead-in; the others finish just before their step settles.
+      vt.duration(i === 0 ? 0.4 : 0.5);
+      master.add(vt, i === 0 ? 0.05 : settle(i) - 0.55);
+    }
+    if (i === 0) return;
+    const at = settle(i) - 0.6;
+    master.fromTo(track, { x: () => -(i - 1) * width() }, { x: () => -i * width(), duration: 0.45, ease: 'power2.inOut', immediateRender: i === 1 }, at);
+    master.fromTo(line, { scaleX: (i - 1) / (n - 1) }, { scaleX: i / (n - 1), duration: 0.45, ease: 'power2.inOut', immediateRender: i === 1 }, at);
   });
-  master.to({}, { duration: HOLD }, HOLD + n - 1);
+  master.to({}, { duration: HOLD }, settle(n - 1));
 
   return () => {
     root.classList.remove('is-h');
