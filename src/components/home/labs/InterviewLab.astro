@@ -1,10 +1,9 @@
 ---
 import Section from '../Section.astro';
-import InterviewFrame from '../../shared/ui/InterviewFrame.astro';
+import CandidateStage from './interview/CandidateStage.astro';
 import Ico from './interview/Ico.astro';
 import Report from './interview/Report.astro';
 import { lab, kinds } from './interview/copy';
-import { lead, role } from '../../../data/demo';
 /**
  * InterviewLab: two surfaces. Left, what the candidate sees (a spoken, transcribed AI interview, no integrity UI).
  * Right, what only the hiring team sees (the integrity monitor). Real detections: tab, focus, copy / paste and
@@ -24,7 +23,7 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
       <p class="m-0 mt-5 max-w-[40rem] text-lg leading-relaxed text-text-secondary">{lab.sub}</p>
     </header>
 
-    <figure class="m-0 mt-10 md:mt-14">
+    <figure class="m-0 mt-8 md:mt-10">
       <figcaption class="sr-only">{lab.frameLabel}</figcaption>
 
       <!-- No JS: a static sample report. -->
@@ -35,69 +34,40 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
           data-il-window
           role="group"
           aria-label={lab.frameLabel}
-          class:list={['il-window relative overflow-clip rounded-xl border border-border-secondary p-3 font-ui text-text-primary shadow-lg sm:p-5', tone === 'white' ? 'bg-bg' : 'bg-white']}
+          class:list={['il-window relative overflow-clip rounded-xl border border-border-secondary p-2.5 font-ui text-text-primary shadow-lg sm:p-4', tone === 'white' ? 'bg-bg' : 'bg-white']}
         >
           <div data-il-zoom class="il-zoom relative">
-            <div data-il-live class="grid items-start lg:grid-cols-[minmax(0,1.5fr)_3.5rem_minmax(0,1fr)]">
+            <div data-il-live class="grid items-stretch lg:grid-cols-[minmax(0,1.5fr)_2.5rem_minmax(0,1fr)]">
               <!-- Surface 1: the candidate's browser. No integrity UI here. -->
-              <div class="flex min-w-0 flex-col gap-2">
+              <div class="flex min-w-0 flex-col gap-1.5">
                 <p data-il-fade class="m-0 flex flex-wrap items-baseline gap-x-2 text-[0.8125rem]">
                   <span class="font-semibold text-text-primary">{lab.candidate.label}</span>
                   <span class="text-text-tertiary">{lab.candidate.note}</span>
                 </p>
-                <div class="relative overflow-hidden rounded-xl border border-border-primary bg-white shadow-md">
-                  <div data-il-fade class="flex h-8 items-center gap-3 border-b border-border-secondary bg-gray-100 px-3" aria-hidden="true">
+                <div class="relative flex flex-1 flex-col overflow-hidden rounded-xl border border-border-primary bg-white shadow-md">
+                  <div data-il-fade class="flex h-7 items-center gap-3 border-b border-border-secondary bg-gray-100 px-3" aria-hidden="true">
                     <span class="flex gap-1.5"><span class="size-2.5 rounded-full bg-gray-300"></span><span class="size-2.5 rounded-full bg-gray-300"></span><span class="size-2.5 rounded-full bg-gray-300"></span></span>
                     <span class="mr-9 min-w-0 flex-1 truncate rounded-md bg-white px-3 py-0.5 text-center text-[0.6875rem] text-text-tertiary">{lab.candidate.tab}</span>
                   </div>
-                  <div class="flex flex-col gap-3 p-3">
-                    <div data-il-frame class="relative overflow-hidden rounded-lg">
-                      <InterviewFrame avatar markSrc="/brand/novara-mark.svg" timer="00:00" caption={lab.intro} class="max-w-none! shadow-none!" />
-                      <div class="pointer-events-none absolute bottom-3 right-3 flex flex-col items-end gap-1.5">
-                        <span data-il-selfchip data-state="listening" class="il-selfchip inline-flex items-center gap-1.5 rounded-full bg-gray-950/80 px-2 py-0.5 text-[0.6875rem] font-medium text-white" aria-hidden="true">
-                          <span class="il-selfdot size-1.5 rounded-full bg-white/60"></span><span data-il-selfchip-text>{lab.candidate.listening}</span>
-                        </span>
-                        <div data-il-selftile class="relative grid h-14 w-20 place-items-center overflow-hidden rounded-md border border-white/15 bg-gray-800 text-white/80" aria-hidden="true">
-                          <span class="text-xs font-semibold">{lead.initials}</span>
-                          <span class="absolute inset-x-0 bottom-1.5 flex h-4 items-end justify-center gap-[0.1875rem]">
-                            {[0, 1, 2, 3, 4, 5, 6].map(() => <span data-il-selfbar class="h-full w-[0.1875rem] origin-bottom rounded-full bg-primary-300"></span>)}
-                          </span>
-                          <span data-il-self class="il-ov absolute inset-0 grid place-items-center bg-gray-800">
-                            <span data-il-self-cam class="flex flex-col items-center gap-0.5 text-[0.625rem] font-medium" hidden><Ico name="video-off" size={16} />{lab.overlay.cameraSelf}</span>
-                            <span data-il-self-faces class="flex flex-col items-center gap-0.5 text-[0.625rem] font-medium" hidden>
-                              <span class="flex items-center"><Ico name="user" size={16} /><Ico name="user" size={16} class="-ml-1 text-primary-300" /></span>2 faces
-                            </span>
-                          </span>
-                        </div>
-                      </div>
-                    </div>
+                  <div class="flex flex-1 flex-col gap-2.5 p-2.5">
+                    <CandidateStage />
 
-                    <div data-il-fade class="flex flex-col gap-3">
+                    <div data-il-fade class="flex flex-col gap-2">
                       <div class="flex items-center justify-between gap-3">
                         <p data-il-step class="m-0 text-[0.8125rem] font-medium text-text-secondary">{lab.step(1, lab.questions.length)}</p>
                         <span class="flex gap-1" aria-hidden="true">
                           {lab.questions.map(() => <span data-il-dot class="h-1 w-6 rounded-full bg-gray-200 transition-colors duration-[var(--duration-base)] data-[on=true]:bg-primary"></span>)}
                         </span>
                       </div>
-                      <div data-il-tbox data-state="asking" class="il-tbox rounded-md border border-border-secondary bg-bg-secondary px-3 py-2.5">
-                        <p class="m-0 flex items-center gap-2 text-xs font-medium text-text-tertiary">
-                          <span class="il-tdot size-1.5 rounded-full bg-gray-400" aria-hidden="true"></span>
-                          <span data-il-tlabel>{lab.candidate.waiting}</span>
-                        </p>
-                        <div class="mt-1.5 grid text-[0.875rem] leading-snug">
-                          <p data-il-tghost class="invisible col-start-1 row-start-1 m-0" aria-hidden="true">{lab.answers[0]}</p>
-                          <p data-il-transcript class="col-start-1 row-start-1 m-0 text-text-primary"></p>
-                        </div>
-                      </div>
                       <div class="flex flex-wrap items-center gap-2">
                         <button type="button" data-il-next data-cursor="Next" class="il-btn il-btn-secondary">{lab.next}</button>
                         <button type="button" data-il-finish data-cursor="Finish" class="il-btn il-btn-primary">{lab.finish}</button>
                         <button type="button" data-il-pause data-cursor="Pause" class="ml-auto rounded-sm px-1 py-2 text-xs font-medium text-text-tertiary underline underline-offset-4 hover:text-text-primary">{lab.pause}</button>
                       </div>
+                      <p class="m-0 text-[0.6875rem] leading-snug text-text-tertiary">{lab.candidate.illustrative}</p>
                     </div>
                   </div>
                 </div>
-                <p data-il-fade class="m-0 text-[0.6875rem] leading-snug text-text-tertiary">{lab.candidate.illustrative}</p>
               </div>
 
               <!-- The link: an event on the candidate side travels to the team view. -->
@@ -107,72 +77,56 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
               </div>
 
               <!-- Surface 2: the recruiter app. The candidate never sees this. -->
-              <div data-il-fade class="flex min-w-0 flex-col gap-2">
+              <div data-il-fade class="flex min-w-0 flex-col gap-1.5">
                 <p class="m-0 flex flex-wrap items-baseline gap-x-2 text-[0.8125rem]">
                   <span class="font-semibold text-text-primary">{lab.team.label}</span>
                   <span class="text-text-tertiary">{lab.team.note}</span>
                 </p>
-                <div data-card="integrity" class="relative min-w-0 overflow-hidden rounded-lg border border-border-primary bg-bg-secondary shadow-md">
-                  <div class="flex items-center gap-2.5 border-b border-border-secondary bg-white px-3 py-2.5">
-                    <img src="/brand/novara-mark.svg" alt="" width="22" height="22" class="size-[1.375rem] shrink-0" />
-                    <span class="text-[0.8125rem] font-semibold text-text-primary">{lab.team.app}</span>
-                    <span class="inline-flex items-center gap-1.5 rounded-full bg-success/10 px-2 py-0.5 text-[0.6875rem] font-medium text-text-secondary">
-                      <span class="il-livedot size-1.5 rounded-full bg-success" aria-hidden="true"></span>{lab.team.live}
+                <div data-card="integrity" class="il-team relative flex min-w-0 flex-1 flex-col overflow-hidden rounded-lg border border-border-primary bg-bg-secondary shadow-md">
+                  <div class="flex items-center gap-2 border-b border-border-secondary bg-white px-3 py-2">
+                    <img src="/brand/novara-mark.svg" alt="" width="18" height="18" class="size-[1.125rem] shrink-0" />
+                    <span class="text-[0.8125rem] font-semibold text-text-primary">{lab.panelTitle}</span>
+                    <span class="inline-flex items-center gap-1 text-[0.6875rem] font-medium text-text-tertiary"><span class="il-livedot size-1.5 rounded-full bg-success" aria-hidden="true"></span>{lab.team.live}</span>
+                    <span data-il-chip data-n="0" class="group ml-auto inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-gray-100 px-2 py-0.5 text-[0.6875rem] font-medium text-text-secondary data-[n=hit]:bg-warning/10">
+                      <span class="size-1.5 rounded-full bg-gray-400 group-data-[n=hit]:bg-warning" aria-hidden="true"></span>
+                      <span data-il-chip-text>{lab.review(0)}</span>
                     </span>
-                    <span class="ml-auto min-w-0 truncate text-right text-xs text-text-tertiary"><span class="font-medium text-text-secondary">{lead.name}</span><span class="max-sm:hidden"> · {role.short}</span></span>
                   </div>
 
-                  <div class="relative p-4">
-                    <div class="pointer-events-none absolute inset-x-3 top-2 z-10 flex justify-center" aria-hidden="true">
+                  <div class="relative flex min-h-0 flex-1 flex-col gap-2 p-3">
+                    <div class="pointer-events-none absolute inset-x-3 top-1 z-10 flex justify-center" aria-hidden="true">
                       <p data-il-toast class="m-0 flex max-w-full items-center gap-2 rounded-md bg-white px-3 py-2 text-[0.8125rem] font-medium text-text-primary opacity-0 shadow-lg">
                         <Ico name="alert" size={15} class="text-warning" /><span data-il-toast-text class="min-w-0"></span>
                       </p>
                     </div>
 
-                    <div class="flex items-center justify-between gap-3">
-                      <p class="m-0 text-sm font-semibold">{lab.panelTitle}</p>
-                      <span data-il-chip data-n="0" class="group inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-text-secondary data-[n=hit]:bg-warning/10">
-                        <span class="size-1.5 rounded-full bg-gray-400 group-data-[n=hit]:bg-warning" aria-hidden="true"></span>
-                        <span data-il-chip-text>{lab.review(0)}</span>
-                      </span>
-                    </div>
-                    <p class="m-0 mt-1.5 text-xs leading-snug text-text-secondary">{lab.team.hint}</p>
-                    <p class="m-0 mt-1 text-[0.6875rem] leading-snug text-text-tertiary">{lab.team.real}</p>
+                    <p class="m-0 text-[0.6875rem] leading-snug text-text-secondary">{lab.team.caption}</p>
 
-                    <ul class="m-0 mt-3 grid list-none grid-cols-2 gap-1.5 p-0">
+                    <ul class="il-chips m-0 grid list-none gap-1.5 p-0">
                       {kinds.map((k) => (
-                        <li data-il-tile={k.key} data-hit="false" class:list={['group flex items-center gap-2 rounded-md border border-border-secondary bg-white px-2 py-1.5', k.key === 'away' && 'il-fine']}>
-                          <span class="grid size-6 shrink-0 place-items-center rounded-md bg-gray-100 text-text-tertiary group-data-[hit=true]:bg-warning/10 group-data-[hit=true]:text-warning">
-                            <Ico name={k.icon} size={13} />
+                        <li data-il-tile={k.key} data-hit="false" class:list={['il-chip group relative flex min-h-11 items-center gap-1.5 overflow-hidden rounded-md border border-border-secondary bg-white px-1.5 py-1', k.key === 'away' && 'il-fine']}>
+                          <span data-il-flash class="il-flash pointer-events-none absolute inset-0 bg-warning/20 opacity-0" aria-hidden="true"></span>
+                          <span class="relative grid size-5 shrink-0 place-items-center rounded-sm bg-gray-100 text-text-tertiary group-data-[hit=true]:bg-warning/10 group-data-[hit=true]:text-warning">
+                            <Ico name={k.icon} size={12} />
                           </span>
-                          <span class="min-w-0">
-                            <span data-il-count={k.key} class="block text-[0.9375rem] font-semibold leading-none tabular-nums">0</span>
-                            <span class="mt-0.5 block truncate text-[0.6875rem] leading-tight text-text-tertiary">{k.label}</span>
+                          <span class="relative min-w-0 leading-none">
+                            <span data-il-count={k.key} class="block text-sm font-semibold tabular-nums">0</span>
+                            <span class="mt-0.5 block truncate text-[0.625rem] leading-tight text-text-tertiary">{k.label}</span>
                           </span>
                         </li>
                       ))}
                     </ul>
 
-                    <div class="mt-3 border-t border-border-secondary pt-3">
-                      <p class="m-0 text-xs font-medium text-text-tertiary">{lab.simulateTitle}</p>
-                      <div class="mt-1.5 flex flex-col">
-                        <button type="button" role="switch" aria-checked="false" data-il-sim="camera" data-cursor="Toggle" class="il-sim">
-                          <span class="il-switch" aria-hidden="true"></span>{lab.simCamera}
-                        </button>
-                        <button type="button" role="switch" aria-checked="false" data-il-sim="faces" data-cursor="Toggle" class="il-sim">
-                          <span class="il-switch" aria-hidden="true"></span>{lab.simFaces}
-                        </button>
-                        <button type="button" role="switch" aria-checked="false" data-il-sim="fullscreen" data-cursor="Toggle" class="il-sim">
-                          <span class="il-switch" aria-hidden="true"></span>{lab.simFullscreen}
-                        </button>
-                      </div>
-                      <p class="m-0 mt-1 text-[0.6875rem] leading-snug text-text-tertiary">{lab.simulateNote}</p>
+                    <div class="flex flex-wrap items-center gap-1.5">
+                      <span class="text-[0.6875rem] font-medium text-text-tertiary">{lab.simulateTitle}</span>
+                      <button type="button" role="switch" aria-checked="false" data-il-sim="camera" data-cursor="Toggle" class="il-sim"><span class="il-switch" aria-hidden="true"></span>{lab.simCamera}</button>
+                      <button type="button" role="switch" aria-checked="false" data-il-sim="faces" data-cursor="Toggle" class="il-sim"><span class="il-switch" aria-hidden="true"></span>{lab.simFaces}</button>
+                      <button type="button" role="switch" aria-checked="false" data-il-sim="fullscreen" data-cursor="Toggle" class="il-sim"><span class="il-switch" aria-hidden="true"></span>{lab.simFullscreen}</button>
                     </div>
 
-                    <div class="mt-3 border-t border-border-secondary pt-3">
-                      <ol data-il-timeline class="m-0 list-none p-0"></ol>
-                      <p data-il-empty class="m-0 mt-2 text-xs leading-snug text-text-tertiary">{lab.empty}</p>
-                      <p class="il-fine m-0 mt-2 text-[0.6875rem] leading-snug text-text-tertiary">{lab.eyes}</p>
+                    <div data-il-tl class="il-tl min-h-0 overflow-y-auto rounded-md border border-border-secondary bg-white px-2.5 py-1.5">
+                      <ol data-il-timeline aria-live="polite" aria-relevant="additions" aria-label={lab.eventsLabel} class="m-0 flex list-none flex-col p-0"></ol>
+                      <p data-il-empty class="m-0 py-1 text-[0.6875rem] leading-snug text-text-tertiary">{lab.empty}</p>
                     </div>
                   </div>
                 </div>
@@ -201,11 +155,116 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
   .il[data-js] [data-il-static] {
     display: none;
   }
-  /* Pinned layout: cap the interviewer frame so the whole scene fits under the nav (rem, so it tracks the fluid root). */
+  /* Pinned layout: cap the video stage so the whole scene fits under the nav (rem, so it tracks the fluid root). */
+  .il-stage {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    max-height: 20rem;
+  }
   @media (min-width: 1024px) and (min-height: 680px) {
-    .il [data-il-frame] [data-card='interview-frame'] {
-      max-height: max(11rem, calc(100svh - 28.5rem));
+    .il-stage {
+      max-height: max(11rem, min(22rem, calc(100svh - 25rem)));
     }
+  }
+  .il-scr {
+    container: ilscr / inline-size;
+  }
+  .il-breathe {
+    transform-origin: 50% 70%;
+  }
+  .il-ring {
+    border-width: 2px;
+  }
+  .il-ring[data-on='false'] {
+    visibility: hidden;
+  }
+  .il-ring[data-on='true'] {
+    opacity: 0.55;
+  }
+  .il-vwave {
+    transition: opacity var(--duration-base) var(--ease-out-quart);
+  }
+  .il-vwave[data-on='false'] {
+    opacity: 0.55;
+  }
+  .il-cap {
+    left: 6.25rem;
+    right: 0.75rem;
+  }
+  .il-bubble {
+    user-select: text;
+    cursor: text;
+    max-width: 22rem;
+    font-size: 0.75rem;
+  }
+  /* Transcript panel: narrow container, collapsed below the video; wide, frosted over the video's bottom-right. */
+  .il-tp {
+    background: var(--color-gray-950);
+    border-top: 1px solid color-mix(in srgb, var(--color-white) 15%, transparent);
+  }
+  .il-tp .il-log {
+    display: none;
+    max-height: 9rem;
+  }
+  .il-tp[data-open='true'] .il-log {
+    display: flex;
+  }
+  .il-tp-toggle {
+    cursor: pointer;
+  }
+  @container ilscr (min-width: 30rem) {
+    .il-cap {
+      right: 16.25rem;
+    }
+    .il-bubble {
+      font-size: 0.8125rem;
+    }
+    .il-tp {
+      position: absolute;
+      right: 0.75rem;
+      bottom: 0.75rem;
+      display: flex;
+      width: min(15rem, 40%);
+      height: min(70%, 15rem);
+      flex-direction: column;
+      border: 1px solid color-mix(in srgb, var(--color-white) 20%, transparent);
+      border-radius: var(--radius-lg);
+      background: color-mix(in srgb, var(--color-gray-950) 58%, transparent);
+      backdrop-filter: blur(12px);
+    }
+    .il-tp .il-log,
+    .il-tp[data-open='false'] .il-log {
+      display: flex;
+      min-height: 0;
+      max-height: none;
+      flex: 1;
+    }
+    .il-tp-toggle {
+      display: none;
+    }
+  }
+  .il-log .il-turn {
+    max-width: 100%;
+    font-size: 0.6875rem;
+    line-height: 1.35;
+  }
+  .il-log .il-pill {
+    display: inline-block;
+    border-radius: 9999px;
+    background: color-mix(in srgb, var(--color-white) 18%, transparent);
+    padding: 0.0625rem 0.5rem;
+    font-size: 0.625rem;
+    font-weight: 500;
+  }
+  .il-log .il-txt {
+    margin: 0.25rem 0 0;
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--color-gray-950) 55%, transparent);
+    padding: 0.375rem 0.5rem;
+    color: color-mix(in srgb, var(--color-white) 90%, transparent);
+  }
+  .il-log .il-turn[data-who='you'] {
+    text-align: right;
   }
   .il[data-intro] [data-il-fade] {
     pointer-events: none;
@@ -214,11 +273,6 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
   }
-  .il [data-il-frame] [data-anim='caption'] {
-    user-select: text;
-    cursor: text;
-  }
-
   /* Buttons: the product's primary and secondary, at 40px. */
   .il-btn {
     display: inline-flex;
@@ -262,26 +316,32 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
     opacity: 0.5;
   }
 
-  /* Simulate switches: whole row is the hit area. */
+  /* Simulate: compact switch pills in one row. */
   .il-sim {
-    display: flex;
-    min-height: 2.25rem;
+    display: inline-flex;
+    min-height: 1.75rem;
     align-items: center;
-    gap: 0.625rem;
-    border: 0;
-    border-radius: var(--radius-sm);
-    background: transparent;
-    padding: 0;
+    gap: 0.375rem;
+    border: 1px solid var(--color-border-secondary);
+    border-radius: 9999px;
+    background: var(--color-white);
+    padding: 0 0.5rem 0 0.375rem;
     font: inherit;
-    font-size: 0.8125rem;
+    font-size: 0.6875rem;
+    font-weight: 500;
     color: var(--color-text-secondary);
-    text-align: left;
+    white-space: nowrap;
     cursor: pointer;
+    transition: background-color var(--duration-base) var(--ease-out-quart);
+  }
+  .il-sim[aria-checked='true'] {
+    border-color: var(--color-primary-300);
+    background: var(--color-primary-50);
   }
   .il-switch {
     position: relative;
-    width: 2rem;
-    height: 1.125rem;
+    width: 1.5rem;
+    height: 0.875rem;
     flex-shrink: 0;
     border-radius: 9999px;
     background: var(--color-gray-200);
@@ -292,8 +352,8 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
     position: absolute;
     top: 0.125rem;
     left: 0.125rem;
-    width: 0.875rem;
-    height: 0.875rem;
+    width: 0.625rem;
+    height: 0.625rem;
     border-radius: 9999px;
     background: var(--color-white);
     box-shadow: var(--shadow-xs);
@@ -303,7 +363,59 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
     background: var(--color-primary);
   }
   .il-sim[aria-checked='true'] .il-switch::after {
-    transform: translateX(0.875rem);
+    transform: translateX(0.625rem);
+  }
+
+  /* Integrity monitor: chip grid by container width, fixed-height event list (internal scroll, no layout jump). */
+  .il-team {
+    container: ilteam / inline-size;
+  }
+  .il-chips {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  @container ilteam (min-width: 17rem) {
+    .il-chips {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  @container ilteam (min-width: 25rem) {
+    .il-chips {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+  .il-tl {
+    height: 9.25rem;
+    flex: none;
+  }
+  @media (min-width: 1024px) {
+    .il-tl {
+      height: auto;
+      min-height: 9.25rem;
+      flex: 1 1 0;
+    }
+  }
+  .il-ev {
+    display: flex;
+    gap: 0.5rem;
+    border-bottom: 1px solid var(--color-border-secondary);
+    padding: 0.3125rem 0;
+    font-size: 0.75rem;
+    line-height: 1.3;
+  }
+  .il-ev:last-child {
+    border-bottom: 0;
+  }
+  .il-ev-dot {
+    margin-top: 0.1875rem;
+    width: 0.625rem;
+    height: 0.625rem;
+    flex-shrink: 0;
+    border-radius: 9999px;
+    border: 2px solid var(--color-border-primary);
+    box-sizing: border-box;
+  }
+  .il-ev[data-flagged='true'] .il-ev-dot {
+    border-color: var(--color-warning);
   }
 
   /* Self-view overlay (camera off, second face) fades with a plain opacity transition. */
@@ -315,26 +427,14 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
     opacity: 1;
   }
 
-  /* Candidate self-view: the speaking chip and the transcript state. */
+  /* Candidate self-view: the speaking chip. */
   .il-selfchip[data-state='speaking'] {
     background: var(--color-primary-700);
   }
   .il-selfchip[data-state='speaking'] .il-selfdot {
     background: var(--color-white);
   }
-  .il-tbox[data-state='speaking'] .il-tdot {
-    background: var(--color-primary);
-  }
-  .il-tbox[data-state='received'] .il-tdot {
-    background: var(--color-success);
-  }
-  .il-tbox[data-state='speaking'] [data-il-tlabel] {
-    color: var(--color-primary-700);
-  }
-  .il-tbox[data-state='received'] [data-il-tlabel] {
-    color: var(--color-text-secondary);
-  }
-  .il-tbox[data-state='speaking'] .il-tdot,
+  .il-selfchip[data-state='speaking'] .il-selfdot,
   .il-livedot {
     animation: il-blink 1.6s ease-in-out infinite;
   }
@@ -418,7 +518,7 @@ const h2 = 'm-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leadin
     .il-btn:active {
       transform: none;
     }
-    .il-tbox[data-state='speaking'] .il-tdot,
+    .il-selfchip[data-state='speaking'] .il-selfdot,
     .il-livedot {
       animation: none;
     }

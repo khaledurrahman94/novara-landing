@@ -9,16 +9,18 @@ export interface KindMeta {
   /** Event title in the timeline and toast. */
   title: string;
   icon: string;
+  /** One line under the event in the team timeline: what was seen. */
+  why: string;
 }
 
 export const kinds: readonly KindMeta[] = [
-  { key: 'tab', label: 'Tab switches', title: 'Tab switched', icon: 'window' },
-  { key: 'focus', label: 'Focus lost', title: 'Focus lost', icon: 'scan' },
-  { key: 'copy', label: 'Copy / paste', title: 'Copied the question', icon: 'copy' },
-  { key: 'fullscreen', label: 'Left full screen', title: 'Left full screen', icon: 'maximize' },
-  { key: 'away', label: 'Looking away', title: 'Looking away', icon: 'eye-off' },
-  { key: 'camera', label: 'Camera off', title: 'Camera off or no face', icon: 'video-off' },
-  { key: 'faces', label: 'Multiple faces', title: 'Multiple faces detected', icon: 'users' },
+  { key: 'tab', label: 'Tab switches', title: 'Tab switched', icon: 'window', why: 'The candidate left the interview tab.' },
+  { key: 'focus', label: 'Focus lost', title: 'Focus lost', icon: 'scan', why: 'The interview window lost focus.' },
+  { key: 'copy', label: 'Copy / paste', title: 'Copied the question', icon: 'copy', why: 'Text was copied from the question.' },
+  { key: 'fullscreen', label: 'Left full screen', title: 'Left full screen', icon: 'maximize', why: 'The interview stopped being full screen.' },
+  { key: 'away', label: 'Looking away', title: 'Looking away', icon: 'eye-off', why: 'Gaze left the screen (your cursor, here).' },
+  { key: 'camera', label: 'Camera off', title: 'Camera off or no face', icon: 'video-off', why: 'No camera feed or no face in view.' },
+  { key: 'faces', label: 'Multiple faces', title: 'Multiple faces detected', icon: 'users', why: 'More than one face was in view.' },
 ] as const;
 
 export const lab = {
@@ -46,6 +48,13 @@ export const lab = {
     speaking: 'Speaking',
     transcribing: 'Transcribing',
     received: 'Answer received',
+    interviewer: 'Novara interviewer',
+    portraitAlt: 'Novara AI interviewer, shown as an illustrated person wearing a headset',
+    rec: 'REC',
+    transcript: 'Interview transcript',
+    you: 'You',
+    showTranscript: 'Show transcript',
+    hideTranscript: 'Hide transcript',
     waiting: 'Listening to the question',
     illustrative: 'Candidate answers in this demo are illustrative.',
     receivedAnnounce: (n: number): string => `Answer ${n} received and transcribed.`,
@@ -55,8 +64,7 @@ export const lab = {
     note: 'Only your hiring team sees this',
     app: 'Novara',
     live: 'Live',
-    hint: 'Try it: switch tabs or copy the question.',
-    real: 'Detected in your browser here: tab switches, focus lost, copy and paste. Novara also checks these in a real interview.',
+    caption: 'Try it: switch tabs, copy the question or move your cursor out. Those are detected in your browser; the switches below are demo-only (no camera opens).',
   },
   answers: [
     "I'd start with the seams: parts that change independently, like billing or notifications. Pull one out behind an API, keep the database shared at first, and move its data last.",
@@ -66,14 +74,14 @@ export const lab = {
   panelTitle: 'Integrity monitor',
   review: (n: number): string => (n === 1 ? '1 event to review' : `${n} events to review`),
   simulateTitle: 'Simulate',
-  simulateNote: 'Switches, not detection: this demo never opens your camera. In a real interview Novara checks camera status, faces in view and full screen.',
   simCamera: 'Camera off',
   simFaces: 'Multiple faces',
   simFullscreen: 'Left full screen',
   simTag: 'Simulated',
   cursorTag: 'Cursor stand-in',
   empty: 'Nothing flagged yet.',
-  eyes: 'Looking away is a camera check in a real interview. Here your cursor stands in for your eyes: keep it inside the window.',
+  pastedWhy: 'Text was pasted into the interview window.',
+  eventsLabel: 'Integrity events, newest first',
   earlier: (n: number): string => (n === 1 ? '1 earlier event, in your report' : `${n} earlier events, in your report`),
   started: 'Interview started',
   ended: 'Interview ended',

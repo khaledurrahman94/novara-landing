@@ -86,6 +86,7 @@ function mount(root: HTMLElement): () => void {
   const finishBtn = q<HTMLButtonElement>('[data-il-finish]');
   const chip = q('[data-il-chip]');
   const chipText = q('[data-il-chip-text]');
+  const tlBox = q('[data-il-tl]');
   const timeline = q('[data-il-timeline]');
   const empty = q('[data-il-empty]');
   const status = q('[data-il-status]');
@@ -206,7 +207,7 @@ function mount(root: HTMLElement): () => void {
       .fromTo(el, { yPercent: 60 }, { yPercent: 0, opacity: 1, duration: 0.25, ease: EASE });
   };
 
-  const rowEl = (time: string, label: string, flagged: boolean, tag: string, last: boolean): HTMLLIElement => {
+  const rowEl = (time: string, label: string, flagged: boolean, tag: string, last: boolean, why?: string): HTMLLIElement => {
     const li = document.createElement('li');
     li.className = 'relative flex gap-2.5 pb-3 last:pb-0';
     if (!last) {
@@ -237,7 +238,7 @@ function mount(root: HTMLElement): () => void {
     if (flagged) {
       const f = document.createElement('span');
       f.className = 'mt-0.5 block text-xs text-text-tertiary';
-      f.textContent = lab.flagged;
+      f.textContent = why ?? lab.flagged;
       body.append(f);
     }
     li.append(dot, body);
@@ -245,38 +246,83 @@ function mount(root: HTMLElement): () => void {
   };
 
   const sorted = (): Ev[] => [...events].sort((a, b) => a.at - b.at);
+  const whyOf = (e: Ev): string => (e.title === lab.pasted ? lab.pastedWhy : (meta(e.kind)?.why ?? ''));
 
-  const renderTimeline = (animateLast: boolean): void => {
-    const list = sorted();
-    const shown = list.slice(-3);
-    const hiddenCount = list.length - shown.length;
-    timeline.replaceChildren();
-    const items: HTMLLIElement[] = [];
-    const rows: { time: string; label: string; flagged: boolean; tag: string }[] = [{ time: clock(0), label: lab.started, flagged: false, tag: '' }];
-    shown.forEach((e) => rows.push({ time: clock(e.at), label: titleOf(e), flagged: true, tag: tagOf(e) }));
-    rows.forEach((r, i) => {
-      const li = rowEl(r.time, r.label, r.flagged, r.tag, i === rows.length - 1 && hiddenCount === 0);
-      items.push(li);
-      timeline.append(li);
-      if (i === 0 && hiddenCount > 0) {
-        const more = document.createElement('li');
-        more.className = 'mb-2 pl-[1.3125rem] text-xs text-text-tertiary';
-        more.textContent = lab.earlier(hiddenCount);
-        timeline.append(more);
-      }
-    });
-    empty.hidden = list.length > 0;
-    const last = items[items.length - 1];
-    if (animateLast && last && !rm) {
-      gsap.from(last, { y: 10, opacity: 0, duration: 0.6, ease: EASE });
-      const dot = last.querySelector<HTMLElement>('[data-dot]');
-      if (dot) gsap.from(dot, { scale: 0, duration: 0.5, ease: 'back.out(2.4)' });
+  /** One live timeline row: time, title (and tag), one line of explanation. */
+  const liveRow = (at: number, time: string, label: string, flagged: boolean, tag: string, why: string): HTMLLIElement => {
+    const li = document.createElement('li');
+    li.className = 'il-ev';
+    li.dataset['at'] = String(at);
+    if (flagged) li.dataset['flagged'] = 'true';
+    const dot = document.createElement('span');
+    dot.className = 'il-ev-dot';
+    dot.setAttribute('aria-hidden', 'true');
+    const body = document.createElement('span');
+    body.className = 'min-w-0 flex-1';
+    const head = document.createElement('span');
+    head.className = 'block truncate';
+    const t = document.createElement('span');
+    t.className = 'mr-2 tabular-nums text-text-tertiary';
+    t.textContent = time;
+    const l = document.createElement('span');
+    l.className = flagged ? 'font-semibold text-text-primary' : 'text-text-secondary';
+    l.textContent = label;
+    head.append(t, l);
+    if (tag) {
+      const g = document.createElement('span');
+      g.className = 'ml-2 rounded-full bg-gray-100 px-1.5 py-0.5 text-[0.625rem] font-medium text-text-secondary';
+      g.textContent = tag;
+      head.append(g);
     }
+    body.append(head);
+    if (why) {
+      const w = document.createElement('span');
+      w.className = 'block truncate text-[0.6875rem] text-text-tertiary';
+      w.textContent = why;
+      body.append(w);
+    }
+    li.append(dot, body);
+    return li;
+  };
+  const startRow = (): HTMLLIElement => liveRow(-1, clock(0), lab.started, false, '', '');
+  const evRow = (e: Ev): HTMLLIElement => liveRow(e.at, clock(e.at), titleOf(e), true, tagOf(e), whyOf(e));
+
+  /** Runs a timeline change without the polite live region reading it (rebuilds, and the auto-showcase's demo event). */
+  let quietTimer: ReturnType<typeof setTimeout> | undefined;
+  const quiet = (fn: () => void): void => {
+    timeline.setAttribute('aria-live', 'off');
+    fn();
+    clearTimeout(quietTimer);
+    quietTimer = setTimeout(() => timeline.setAttribute('aria-live', 'polite'), 300);
   };
 
-  const renderChip = (): void => {
+  /** Full rebuild, newest on top, "Interview started" last. */
+  const renderTimeline = (): void => {
+    quiet(() => {
+      timeline.replaceChildren(...sorted().reverse().map(evRow), startRow());
+      empty.hidden = events.length > 0;
+      tlBox.scrollTop = 0;
+    });
+  };
+
+  /** One new event: slides in at its place (newest on top) without rebuilding the list. */
+  const addEventRow = (ev: Ev): void => {
+    const row = evRow(ev);
+    const place = (): void => {
+      const before = Array.from(timeline.children).find((c) => Number((c as HTMLElement).dataset['at'] ?? -1) < ev.at);
+      timeline.insertBefore(row, before ?? null);
+      empty.hidden = true;
+      tlBox.scrollTop = 0;
+    };
+    if (ev.demo) quiet(place);
+    else place();
+    if (!rm) gsap.from(row, { y: -14, opacity: 0, duration: 0.5, ease: EASE });
+  };
+
+  const renderChip = (pulseIt = false): void => {
     chipText.textContent = lab.review(total());
     chip.dataset['n'] = total() > 0 ? 'hit' : '0';
+    if (pulseIt && !rm) gsap.fromTo(chip, { scale: 1.1 }, { scale: 1, duration: 0.55, ease: EASE });
   };
 
   const renderSim = (): void => {
@@ -306,10 +352,14 @@ function mount(root: HTMLElement): () => void {
         gsap.set(c, { clearProps: 'transform,opacity' });
         c.textContent = '0';
       }
-      if (t) t.dataset['hit'] = 'false';
+      if (t) {
+        t.dataset['hit'] = 'false';
+        const f = t.querySelector<HTMLElement>('[data-il-flash]');
+        if (f) gsap.set(f, { opacity: 0 });
+      }
     });
     renderChip();
-    renderTimeline(false);
+    renderTimeline();
     renderSim();
     clearTimeout(toastTimer);
     gsap.killTweensOf(toast);
@@ -362,10 +412,14 @@ function mount(root: HTMLElement): () => void {
       if (c) flip(c, counts.get(kind) ?? n);
       if (tile) {
         tile.dataset['hit'] = 'true';
-        if (!rm) gsap.fromTo(tile, { scale: 1.05 }, { scale: 1, duration: 0.55, ease: EASE });
+        const f = tile.querySelector<HTMLElement>('[data-il-flash]');
+        if (!rm) {
+          gsap.fromTo(tile, { scale: 1.08 }, { scale: 1, duration: 0.6, ease: EASE });
+          if (f) gsap.fromTo(f, { opacity: 1 }, { opacity: 0, duration: 0.9, ease: 'power2.out' });
+        }
       }
-      renderChip();
-      renderTimeline(true);
+      renderChip(true);
+      addEventRow(ev);
 
       toastText.textContent = `${lab.toast}: ${text}`;
       clearTimeout(toastTimer);
@@ -373,7 +427,6 @@ function mount(root: HTMLElement): () => void {
       if (rm) gsap.set(toast, { opacity: 1, y: 0 });
       else gsap.fromTo(toast, { opacity: 0, y: -12 }, { opacity: 1, y: 0, duration: 0.5, ease: 'back.out(1.5)' });
       toastTimer = setTimeout(() => gsap.to(toast, { opacity: 0, y: -6, duration: rm ? 0 : 0.3, ease: 'power2.in' }), 3200);
-      if (!ev.demo) status.textContent = lab.announce(text, total());
     });
   };
 
@@ -391,7 +444,7 @@ function mount(root: HTMLElement): () => void {
       if (t) t.dataset['hit'] = n > 0 ? 'true' : 'false';
     });
     renderChip();
-    renderTimeline(false);
+    renderTimeline();
     clearTimeout(toastTimer);
     gsap.killTweensOf(toast);
     gsap.to(toast, { opacity: 0, duration: rm ? 0 : 0.2, ease: 'power2.in' });
@@ -557,11 +610,11 @@ function mount(root: HTMLElement): () => void {
     dot.className = `size-1.5 rounded-full ${n > 0 ? 'bg-warning' : 'bg-gray-400'}`;
     rTimeline.replaceChildren();
     const rows = [
-      { time: clock(0), label: lab.started, flagged: false, tag: '' },
-      ...list.map((e) => ({ time: clock(e.at), label: titleOf(e), flagged: true, tag: tagOf(e) })),
-      { time: clock(end), label: lab.ended, flagged: false, tag: '' },
+      { time: clock(0), label: lab.started, flagged: false, tag: '', why: '' },
+      ...list.map((e) => ({ time: clock(e.at), label: titleOf(e), flagged: true, tag: tagOf(e), why: whyOf(e) })),
+      { time: clock(end), label: lab.ended, flagged: false, tag: '', why: '' },
     ];
-    rows.forEach((r, i) => rTimeline.append(rowEl(r.time, r.label, r.flagged, r.tag, i === rows.length - 1)));
+    rows.forEach((r, i) => rTimeline.append(rowEl(r.time, r.label, r.flagged, r.tag, i === rows.length - 1, r.why)));
 
     reportView.style.minHeight = `${liveView.offsetHeight}px`;
     liveView.hidden = true;
@@ -913,6 +966,7 @@ function mount(root: HTMLElement): () => void {
     cleanups.forEach((c) => c());
     mm.revert();
     clearTimeout(toastTimer);
+    clearTimeout(quietTimer);
     clearTimeout(awayTimer);
     clearInterval(tick);
     clearTimeout(scTimer);

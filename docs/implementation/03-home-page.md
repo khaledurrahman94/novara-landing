@@ -88,9 +88,11 @@ Copy lives in `src/content/home.ts`. The labs keep their own copy files.
      - **Left full screen:** a "Full screen" button using the Fullscreen API on the lab; exiting is flagged.
      - **Looking away:** the pointer leaves the interview frame for more than 2s. Desktop only, labelled "In this demo your cursor stands in for your eyes".
      - **"Simulate: camera off" and "Simulate: second face"** toggles. The page never touches the camera. They show an overlay on the interviewer and self-view tiles, and their events are tagged "simulated".
+   - **Candidate screen (V4):** modelled on the product's interview screen. The AI interviewer is a full-bleed portrait (`labs/interview/InterviewerPortrait.astro`: a vector head-and-shoulders with a headset, palette tokens only; it renders `public/brand/interviewer.webp` instead when that file exists at build time, so a generated portrait drops in with no code change). REC pill top-left, running timer top-right, a "You" self-view (AO tile) bottom-left, the current question in a rounded caption bubble bottom-centre, and a frosted "Interview transcript" panel (Q1.. and "You" turns) over the bottom-right, collapsed behind a toggle below the video in a narrow container. While the interviewer speaks, a waveform pill, a ring around the headset area and a gentle breathing scale run (transform and opacity only; static under reduced motion).
+   - **Integrity monitor (V4 and V3, compact):** a header row (title, Live, status pill "N events to review"), a two-line caption that separates what the browser detects from the demo-only switches, seven counter chips (4 columns wide, 3 medium, 2 small, container-query driven), the three Simulate switches as one row of pills, and a fixed-height event list (about 4 rows, scrolls inside, newest on top) with `aria-live="polite"`. The team panel never changes height; the candidate and team halves stretch to one height on desktop.
    - **Each event:**
-     - the matching counter flips;
-     - a timeline row appears with an mm:ss timestamp from the demo's start;
+     - the matching counter chip flips and pulses (scale and a warning flash);
+     - a timeline row slides in on top with an mm:ss timestamp and a one-line explanation, and the status pill flips and pulses;
      - a toast appears in the frame ("Flagged for review: Tab switched, 4s");
      - the frame briefly takes a warning-tone border;
      - the event is announced to screen readers (`aria-live="polite"`).
