@@ -10,7 +10,6 @@ const amara = byId('amara');
 const rank = [...candidates].sort((a, b) => b.fit - a.fit).slice(0, 3);
 const wave = [0.4, 0.75, 0.55, 1, 0.65, 0.9, 0.5, 0.8, 0.45];
 const applied = [byId('leo'), byId('marcus'), byId('nadia')];
-const box = 'relative h-[24rem] overflow-hidden rounded-lg border border-border-secondary bg-white p-4 font-ui text-text-primary shadow-md sm:p-5';
 const row = 'flex items-center gap-2 rounded-md border border-border-secondary bg-white p-2.5';
 ---
 <Section id="how" labelledby="how-title" tone="plate">
@@ -31,7 +30,8 @@ const row = 'flex items-center gap-2 rounded-md border border-border-secondary b
                 <h3 class="m-0 mt-5 text-[clamp(1.5rem,1.2rem+1vw,2rem)] font-semibold leading-tight tracking-[-0.02em]"><button type="button" data-step-btn data-cursor="Show" class="cursor-pointer rounded-sm p-0 text-left font-[inherit] text-inherit">{s.title}</button></h3>
                 <p class="m-0 mt-2 max-w-[22rem] text-[0.9375rem] leading-snug text-text-secondary">{s.text}</p>
               </div>
-              <div data-vignette={i} class={box} aria-hidden="true">
+              <div data-vignette={i} data-fit class="v3-fit font-ui text-text-primary" aria-hidden="true">
+                <div data-fit-inner class="v3-fit-inner">
                 {i === 0 && (
                   <>
                     <div class="flex items-center justify-between"><span class="text-sm font-semibold">New job</span><span data-v="chip"><Chip tone="primary"><Icon name="sparkles" size={11} />AI draft</Chip></span></div>
@@ -114,6 +114,7 @@ const row = 'flex items-center gap-2 rounded-md border border-border-secondary b
                     </div>
                   </div>
                 )}
+                </div>
               </div>
             </li>
           ))}

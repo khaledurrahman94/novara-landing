@@ -6,6 +6,7 @@
 import { gsap, ScrollTrigger, getLenis } from '../../../scripts/motion';
 import { $, EASE, navH, num, one } from './util';
 import { createGhost, type Ghost } from './ghost';
+import { fitScale } from './fit';
 
 /** Loops that run only while their step is active and on screen (the interview waveform). */
 const loops = new Map<number, gsap.core.Animation>();
@@ -59,6 +60,8 @@ function vignette(i: number, el: HTMLElement, paused: boolean): gsap.core.Timeli
     const to = first('to');
     const stamp = first('stamp');
     if (card && from && to) {
+      // The visual is scaled to fit its frame: screen distances are divided by the scale to get the card's own units.
+      const k = (): number => fitScale(el);
       const dist = (): number => to.getBoundingClientRect().left - from.getBoundingClientRect().left;
       const g = createGhost(el);
       pointers.push(g);
@@ -66,13 +69,13 @@ function vignette(i: number, el: HTMLElement, paused: boolean): gsap.core.Timeli
       const rest = (): { x: number; y: number } => {
         const r = card.getBoundingClientRect();
         const b = el.getBoundingClientRect();
-        return { x: r.left - b.left + r.width / 2 - num(String(gsap.getProperty(card, 'x'))), y: r.top - b.top + r.height / 2 };
+        return { x: r.left - b.left + r.width / 2 - num(String(gsap.getProperty(card, 'x'))) * k(), y: r.top - b.top + r.height / 2 };
       };
       const sx = (): number => rest().x - dist();
       const sy = (): number => rest().y;
       tl.fromTo(g.el, { x: () => sx() + 56, y: () => sy() + 44, opacity: 0 }, { x: sx, y: sy, opacity: 0.85, duration: 0.22, ease: 'power3.out' }, 0);
       tl.to(g.el, { scale: 0.85, duration: 0.06 }, 0.24);
-      tl.fromTo(card, { x: () => -dist() }, { x: 0, duration: 0.4, ease: 'power3.inOut', immediateRender: true }, 0.3);
+      tl.fromTo(card, { x: () => -dist() / k() }, { x: 0, duration: 0.4, ease: 'power3.inOut', immediateRender: true }, 0.3);
       tl.fromTo(g.el, { x: sx }, { x: () => rest().x, duration: 0.4, ease: 'power3.inOut', immediateRender: false }, 0.3);
       tl.to(g.el, { scale: 1, duration: 0.06 }, 0.72);
       tl.to(g.el, { opacity: 0, duration: 0.15 }, 0.82);
