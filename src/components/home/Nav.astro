@@ -27,7 +27,7 @@ const links = nav.links.filter((l) => l.live);
     )}
     <div class="flex items-center gap-2 justify-self-end sm:gap-3 md:col-start-3">
       <Button href={nav.signIn.href} variant="secondary" class="hidden lg:inline-flex">{nav.signIn.label}</Button>
-      <Button href={nav.getStarted.href}>{nav.getStarted.label}</Button>
+      <Button href={nav.getStarted.href} data-magnetic>{nav.getStarted.label}</Button>
     </div>
   </div>
 </header>

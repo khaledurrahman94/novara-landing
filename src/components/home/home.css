@@ -92,7 +92,31 @@ html {
   }
 }
 
-/* Home page layer: pinned layouts and the states the scripts rely on. */
+/* Home page layer: cursor pill, pinned layouts and the small hover states the scripts rely on. */
+
+.home-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 60;
+  pointer-events: none;
+  border-radius: 9999px;
+  background: var(--color-text-primary);
+  color: var(--color-white);
+  padding: 0.25rem 0.625rem;
+  font-family: var(--font-geist);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  opacity: 0;
+  will-change: transform;
+}
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .home-cursor {
+    display: none;
+  }
+}
 
 .home button {
   font-family: inherit;
@@ -102,6 +126,20 @@ html {
 /* Decide: one evidence panel at a time once scripts run. Without them, all three stay readable. */
 .js .home-decide [data-evidence][data-active='false'] {
   display: none;
+}
+.home-decide [data-evidence-for] {
+  transition: scale var(--duration-base) var(--ease-out-quart);
+}
+.home-decide [data-evidence-for]:hover,
+.home-decide [data-evidence-for]:focus-visible {
+  scale: 1.03;
+}
+.home-decide [data-card='amara'] {
+  cursor: grab;
+}
+.home-decide [data-card='amara'].is-dragging {
+  cursor: grabbing;
+  scale: 1.04;
 }
 
 /* Results: the pinned canvas replaces the funnel list only when the page can pin and animate.
@@ -142,6 +180,29 @@ html {
   white-space: nowrap;
 }
 
+/* Ghost pointer for auto demos: 1.25rem, text-primary at 85%, 2px white ring, soft shadow. */
+.home-ghost {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 30;
+  box-sizing: border-box;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid var(--color-white);
+  border-radius: 9999px;
+  background: var(--color-text-primary);
+  box-shadow: var(--shadow-sm);
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-ghost {
+    display: none;
+  }
+}
+
 /* How it works: a horizontal track when pinned, a plain list otherwise. */
 .home-how.is-h .home-how-pin {
   padding-top: 1rem;
@@ -168,6 +229,31 @@ html {
   flex: 0 0 100%;
   min-width: 0;
   padding-right: 1rem;
+}
+
+/* Platform: pipeline cards lift. Individual translate and scale properties, so they never fight the Flip transforms. */
+.home-platform [data-card='pipeline'] [data-anim='board-card'],
+.home-platform [data-card='pipeline'] [data-anim='moved-card'] {
+  position: relative;
+  transition:
+    translate var(--duration-base) var(--ease-out-quart),
+    scale var(--duration-base) var(--ease-out-quart),
+    border-color var(--duration-fast) var(--ease-out-quart);
+}
+.home-platform [data-card='pipeline'] [data-anim='board-card']:hover,
+.home-platform [data-card='pipeline'] [data-anim='moved-card']:hover,
+.home-platform [data-card='pipeline'] [data-anim='board-card']:focus-visible,
+.home-platform [data-card='pipeline'] [data-anim='moved-card']:focus-visible {
+  translate: 0 -0.25rem;
+  scale: 1.03;
+  border-color: var(--color-primary-300);
+  z-index: 2;
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-decide [data-evidence-for],
+  .home-platform [data-card='pipeline'] [data-anim] {
+    transition: none;
+  }
 }
 
 /* How it works: the active step. */

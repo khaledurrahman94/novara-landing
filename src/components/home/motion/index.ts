@@ -1,13 +1,15 @@
 /**
- * Home page motion orchestrator. Two kinds of motion: scrubbed (hero, results, how, depth) and self-playing
- * (reveals, bento loops, the Decide animation). Nothing reacts to the pointer.
- * Pins only from 768px wide and 620px tall (the Audience pin from 1024x800). Reduced motion drops scrub, pins and loops and shows end states.
+ * Home page motion orchestrator. Three kinds of motion: scrubbed (hero, results, how, depth), triggered
+ * (reveals, bento entrances) and interactive (cursor layer, drag, bento tiles, the labs).
+ * Pins only from 768px wide and 620px tall (the Audience pin from 1024x800). Reduced motion keeps every
+ * interaction but drops parallax, tilt, follow, scrub, pins and loops, and shows end states.
  */
 import { gsap, ScrollTrigger, onReady, prefersReducedMotion, getLenis } from '../../../scripts/motion';
+import { initInteraction } from './interaction';
 import { initScrollDepth } from './depth';
 import { initHero } from './hero';
 import { initResultsPinned, initResultsSimple } from './results';
-import { initHowPinned, initHowSimple } from './how';
+import { initHowPinned, initHowSimple, initHowSteps, replayStep } from './how';
 import { initDecide } from './decide';
 import { initAudience } from './audience';
 import { initBentoReveal, initPlatform } from './platform';
@@ -93,11 +95,14 @@ export function initHome(): void {
     const audienceRoot = one(document, '[data-audience]');
     const audience = audienceRoot ? safe('audience', () => initAudience(audienceRoot, reduced)) : undefined;
     if (audience) add(audience.destroy);
+    const howRoot = one(document, '[data-how]');
+    if (howRoot) add(safe('how-steps', () => initHowSteps(howRoot, reduced ? undefined : (i) => { if (!howRoot.classList.contains('is-h')) replayStep(i); })));
 
     if (reduced) return () => cleanups.forEach((c) => c());
 
     const mm = gsap.matchMedia();
     const ctx = gsap.context(() => {
+      add(safe('interaction', initInteraction));
       const hero = one(document, '[data-hero]');
       if (hero) safe('hero', () => initHero(hero));
       safe('reveals', initReveals);

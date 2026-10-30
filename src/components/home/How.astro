@@ -34,7 +34,7 @@ const row = 'flex items-center gap-2 rounded-md border border-border-secondary b
             <li data-step class="grid items-center gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)] md:gap-12">
               <div>
                 <span data-num class="grid size-7 place-items-center rounded-full border border-border-primary bg-white text-xs font-medium tabular-nums text-text-secondary transition-[background-color,color,border-color] duration-[var(--duration-base)]">{i + 1}</span>
-                <h3 class="m-0 mt-5 text-[clamp(1.5rem,1.2rem+1vw,2rem)] font-semibold leading-tight tracking-[-0.02em]">{s.title}</h3>
+                <h3 class="m-0 mt-5 text-[clamp(1.5rem,1.2rem+1vw,2rem)] font-semibold leading-tight tracking-[-0.02em]"><button type="button" data-step-btn data-cursor="Show" class="cursor-pointer rounded-sm p-0 text-left font-[inherit] text-inherit">{s.title}</button></h3>
                 <p class="m-0 mt-2 max-w-[22rem] text-[0.9375rem] leading-snug text-text-secondary">{s.text}</p>
               </div>
               <div data-vignette={i} class={box} aria-hidden="true">
