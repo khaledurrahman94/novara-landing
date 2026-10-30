@@ -343,6 +343,10 @@ Results, the interview lab and How It Works pin on large screens (see Motion). T
 ### Interview lab (two surfaces)
 The interview lab shows two surfaces side by side. The candidate's screen is a spoken, transcribed AI interview with no integrity UI at all. The hiring team's view carries the integrity monitor (event tiles, counters, the report). A pulse travels between the two whenever a detection lands, linking cause to record. Detections are real browser events (tab, focus, copy and paste), counted only while the lab is live and on screen.
 
+The candidate's screen follows the product: a full-bleed illustrated portrait of the interviewer (night ground, palette-token skin and shirt, headset), REC and timer pills on top, a self-view tile, the current question in a rounded caption bubble and a frosted transcript panel overlaying the bottom-right (collapsed below the video on narrow containers). Speaking shows as a waveform pill, a ring and a gentle breathing scale, transform and opacity only. A file at `public/brand/interviewer.webp` replaces the vector portrait.
+
+The integrity monitor is compact: one header row with a status pill, a two-line caption, seven counter chips in a container-query grid (4, 3 or 2 columns, min height 44px), the Simulate switches as one row of pills, and a fixed-height event list that scrolls inside with the newest event on top. A new event pulses its chip (scale and a warning flash), flips the pill and slides a row in; the panel height never changes.
+
 **The Two-Surface Rule.** Integrity UI never appears on the candidate's surface. It lives only in the team's view, and a pulse is the only thing that crosses between them.
 
 ### Slot picker
