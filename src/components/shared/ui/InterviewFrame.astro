@@ -4,10 +4,12 @@ import { interview, lead } from '../../../data/demo';
  * Neutral stand-in for the AI interviewer: no faces, no stock media.
  * Dark video tile, soft violet-tinted field, voice waveform, live captions, REC chip, timer, self-view.
  */
-interface Props { size?: 'md' | 'sm'; fill?: boolean; caption?: string; timer?: string; markSrc?: string; class?: string }
-const { size = 'md', fill = false, caption = interview.captions[0], timer = interview.liveTimer, markSrc, class: cls = '' } = Astro.props;
+interface Props { size?: 'md' | 'sm'; fill?: boolean; caption?: string; timer?: string; markSrc?: string; avatar?: boolean; class?: string }
+const { size = 'md', fill = false, caption = interview.captions[0], timer = interview.liveTimer, markSrc, avatar = false, class: cls = '' } = Astro.props;
 const bars = Array.from({ length: 26 }, (_, i) => Math.round(24 + Math.abs(Math.sin(i * 1.27)) * 56 + (i % 3) * 6));
 const sm = size === 'sm';
+/** With `avatar`, the waveform flanks a small illustrated interviewer (hooks: [data-il-mouth], [data-il-ring]). */
+const half = Math.floor(bars.length / 2);
 ---
 <div
   class:list={['relative isolate w-full overflow-hidden rounded-lg border border-gray-800 bg-gray-950 font-ui text-white shadow-lg', sm ? 'max-w-[17rem] aspect-[4/3]' : fill ? 'min-h-[16rem] max-w-none aspect-[16/10] lg:aspect-auto lg:h-full' : 'max-w-[30rem] aspect-[16/10]', cls]}
@@ -29,8 +31,23 @@ const sm = size === 'sm';
   </div>
 
   <div data-anim="wave" class:list={['absolute inset-x-0 flex items-center justify-center gap-[0.1875rem]', sm ? 'top-[34%] h-12' : 'top-[30%] h-20']} aria-hidden="true">
-    {bars.map((h) => (
-      <span data-anim="wave-bar" class="w-[0.1875rem] origin-center rounded-full bg-primary-300" style={`height:${h}%`}></span>
+    {bars.map((h, i) => (
+      <>
+        {avatar && i === half && (
+          <span data-anim="avatar" class="relative mx-2 grid size-14 shrink-0 place-items-center self-center">
+            <span data-il-ring data-on="false" class="il-ring absolute inset-0 rounded-full border border-primary-300"></span>
+            <svg viewBox="0 0 64 64" class="relative size-full" role="img" aria-label="Novara AI interviewer avatar">
+              <circle cx="32" cy="32" r="31" class="fill-primary-900 stroke-primary-300" stroke-width="1" />
+              <path d="M14 56c3-9 9-14 18-14s15 5 18 14a31 31 0 0 1-36 0z" class="fill-primary-700" />
+              <circle cx="32" cy="26" r="11" class="fill-primary-200" />
+              <circle cx="28" cy="25" r="1.4" class="fill-primary-900" />
+              <circle cx="36" cy="25" r="1.4" class="fill-primary-900" />
+              <ellipse data-il-mouth cx="32" cy="31" rx="3.2" ry="1.6" class="il-mouth fill-primary-900" />
+            </svg>
+          </span>
+        )}
+        <span data-anim="wave-bar" class="w-[0.1875rem] origin-center rounded-full bg-primary-300" style={`height:${h}%`}></span>
+      </>
     ))}
   </div>
 
@@ -45,3 +62,14 @@ const sm = size === 'sm';
     <span class="font-semibold">{lead.initials}</span>
   </div>
 </div>
+
+<style is:global>
+  .il-mouth {
+    transform-box: fill-box;
+    transform-origin: center;
+    transform: scaleY(0.4);
+  }
+  .il-ring[data-on='false'] {
+    visibility: hidden;
+  }
+</style>

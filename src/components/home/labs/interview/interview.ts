@@ -40,6 +40,8 @@ function mount(root: HTMLElement): () => void {
   const frame = q('[data-card="interview-frame"]', frameWrap);
   const caption = q('[data-anim="caption"]', frame);
   const bars = qa('[data-anim="wave-bar"]', frame);
+  const mouth = frame.querySelector<HTMLElement>('[data-il-mouth]');
+  const ring = frame.querySelector<HTMLElement>('[data-il-ring]');
   const timerHost = frame.querySelector('.tabular-nums');
   const timerNode = timerHost?.lastChild ?? null;
   const toast = q('[data-il-toast]');
@@ -104,6 +106,27 @@ function mount(root: HTMLElement): () => void {
       paused: true,
     }),
   );
+  /* The interviewer avatar: the mouth moves and a ring pulses while the interviewer speaks. Still when idle. */
+  const avatarTweens: gsap.core.Tween[] = [];
+  if (mouth) {
+    gsap.set(mouth, { transformOrigin: '50% 50%', scaleY: 0.4 });
+    avatarTweens.push(
+      gsap.to(mouth, {
+        scaleY: () => (speaking ? gsap.utils.random(0.5, 1.9) : 0.4),
+        duration: () => gsap.utils.random(0.1, 0.22),
+        ease: 'sine.inOut',
+        repeat: -1,
+        yoyo: true,
+        repeatRefresh: true,
+        paused: true,
+      }),
+    );
+  }
+  if (ring) avatarTweens.push(gsap.fromTo(ring, { scale: 1, opacity: 0.8 }, { scale: 1.3, opacity: 0, duration: 1.1, ease: 'sine.out', repeat: -1, paused: true }));
+  const setSpeaking = (on: boolean): void => {
+    speaking = on;
+    if (ring) ring.dataset['on'] = on ? 'true' : 'false';
+  };
   const selfWaves = selfBars.map((b) =>
     gsap.to(b, {
       scaleY: () => (candSpeaking ? gsap.utils.random(0.3, 1) : gsap.utils.random(0.08, 0.2)),
@@ -287,9 +310,9 @@ function mount(root: HTMLElement): () => void {
           n: text.length,
           duration: capDur,
           ease: 'none',
-          onStart: () => void (speaking = true),
+          onStart: () => setSpeaking(true),
           onUpdate: () => void (caption.textContent = text.slice(0, Math.round(o.n))),
-          onComplete: () => void (speaking = false),
+          onComplete: () => setSpeaking(false),
         },
         at,
       );
@@ -324,7 +347,7 @@ function mount(root: HTMLElement): () => void {
 
   function finish(): void {
     if (phase !== 'running') return;
-    speaking = false;
+    setSpeaking(false);
     candSpeaking = false;
     inflight?.tl.kill();
     inflight = null;
@@ -352,9 +375,11 @@ function mount(root: HTMLElement): () => void {
     master?.paused(!live);
     if (live) {
       waves.forEach((w) => w.play());
+      avatarTweens.forEach((w) => w.play());
       selfWaves.forEach((w) => w.play());
     } else {
       waves.forEach((w) => w.pause());
+      avatarTweens.forEach((w) => w.pause());
       selfWaves.forEach((w) => w.pause());
     }
   }
@@ -455,6 +480,7 @@ function mount(root: HTMLElement): () => void {
     master?.kill();
     inflight?.tl.kill();
     waves.forEach((w) => w.kill());
+    avatarTweens.forEach((w) => w.kill());
     selfWaves.forEach((w) => w.kill());
     gsap.killTweensOf([toast, pulse, selfBars, liveView, ...counters.values(), ...tiles.values()]);
   };
