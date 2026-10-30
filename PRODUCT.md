@@ -101,7 +101,7 @@ Brand line: "Hire the person, not the pile."
 - **Palette:** the product design system's palette is binding: Untitled UI grays, primary #7237FB and the brand gradient #8C75FB→#421DF8.
 - **Voice:** concrete, plain and short, in sentence case.
 - **Lines the user chose:** "Hire the person, not the pile." and "You decide who moves on. Novara shows you why."
-- **Standing preference: animations only, no interactivity (2026-10-29, DM team).** Every demo on the home page plays by itself and shows the same thing a visitor used to operate. No drag, toggles, hover reveals, cursor effects or typed input in demos. Links, navigation buttons, the demo-request form, the FAQ and the Audience tabs stay.
+- **Standing preference: the demos are interactive (2026-10-30, DM team, reversing their 2026-10-29 request for animations only).** Visitors can drag, toggle, hover and try the demos (including trying to cheat the AI interview). The animation-only variant is kept on the `animated-only` branch.
 - **Standing preference: a standard landing page.** It should plainly convey the product, with no narrative, metaphor or "out of this world" concepts (2026-10-16). The craft bar sits between Linear and Stripe, with Attio's look: light, every section visually distinct, and product UI that comes alive on scroll. Not Ashby.
 
 ## Evidence on Hand

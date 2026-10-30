@@ -61,3 +61,9 @@ Unchanged.
 - Column 3: About us, Contact us, Pricing, Resources, Security.
 - Last row: "Get an AI summary of Novara" with ChatGPT, Claude, Gemini, Grok icons (each opens that assistant with a prefilled prompt about novara.my); "© 2026 Novara. All rights reserved." and a Terms and policies link.
 - Until the destination pages exist, link only to routes that exist and render the rest as plain unlinked text, or point them at the planned routes (`/about`, `/contact`, `/pricing`, `/terms`, `/security`) and list them in the report so none ships as a 404 unnoticed.
+
+## Interactive or animated (decided twice)
+- 2026-10-29: the DM team asked for animations only, so every demo became a self-playing animation (commits `1e96b17` to `62e8494`).
+- 2026-10-30: the DM team changed their mind, and the demos are interactive again: the screening lab (requirement toggles, drag a resume into the ranking), the interview lab (live "try to cheat" detection and simulate switches), Decide (drag Amara), the Platform tiles, the Results tooltips and the cursor layer (pill, magnetic buttons, tilt, ghost pointer). Restored from the `interactive` branch, then merged by hand with everything that landed since (new Nav, Hero buttons, Footer, the AI interviewer avatar, the How it works and Audience snap, the `live` link guard, the removed Roles tile).
+- The animation-only variant is kept on the `animated-only` branch (tip `d29f182`) in case it is wanted again.
+- Not restored: the How it works snap is kept, so its step buttons scroll to the step's settled snap point instead of the old even spacing.

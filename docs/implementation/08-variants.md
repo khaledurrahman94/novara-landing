@@ -39,3 +39,7 @@ Legacy CSS is imported only by the legacy pages. V4 classes are `home*`, legacy 
 ## Deleting the legacy later
 
 Remove `src/legacy/` and `src/pages/v1`, `v2`, `v3`; drop the `/v1`..`/v3` header rules in `src/integrations/novara-site.ts`; remove the showcase if V4 takes `/`. If old links should survive, add `/v1`, `/v2`, `/v3` to `codeRedirects` in `src/lib/redirects.ts` (target the home page) and update `astro.config.mjs` comments.
+
+## V4 is interactive again
+
+V4 was briefly animation-only (the DM team's request of 2026-10-29) and is interactive again since 2026-10-30. The animation-only variant lives on the `animated-only` branch. The interaction code is the one from the `interactive` branch, merged with the later changes (new Nav, Hero, Footer, AI interviewer avatar, the How it works and Audience snap, `live` link guard, no Roles tile). See `06-dm-feedback.md` and `03-home-page.md`.

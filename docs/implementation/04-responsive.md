@@ -10,7 +10,7 @@ Goal: the page looks the same in proportion on a 1366 laptop and a 1920 or 2560 
 - Media queries stay in px/rem breakpoints (they ignore the root size). `vw` clamps are only for the below-1280 range.
 
 ## 2. Scaling happens once
-Mockups are authored in rem, so they follow the fluid root and nothing else scales them. Do not add px sizes inside mockups (they drift against rem text), and never zoom a Flip scene. Keep `refreshPriority` order and the `ScrollTrigger.sort()` on `refreshInit`; `scripts/motion.ts` refreshes ScrollTrigger on resize and orientationchange.
+Mockups are authored in rem, so they follow the fluid root and nothing else scales them. Do not add px sizes inside mockups (they drift against rem text), and never zoom a Draggable or Flip scene. Keep `refreshPriority` order and the `ScrollTrigger.sort()` on `refreshInit`; `scripts/motion.ts` refreshes ScrollTrigger on resize and orientationchange.
 
 ## Home page and the labs
 - Every page passes `fluid` to `Base`; px layout values are rem (columns 75rem, type 0.8125rem etc.). Canvas pixel constants multiply by `u = rootFont / 16` (results), parallax by `remScale()`; pin offsets use `navH()` (rem nav), never 64px.
