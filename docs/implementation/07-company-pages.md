@@ -17,10 +17,10 @@ Removed as drafting notes: Privacy section 7 "Specific retention periods ... sho
 ## Links to pages that are not built yet
 These pages do not exist yet, so nothing links to them: /security, /resources, /ats, /ai-interview, /features, /solutions, /roi-calculator, /integrations.
 
-How it works: every link in `src/content/home.ts` that the Nav, the Hero and the Footer render has a `live: boolean` (`nav.links[]`, `hero.pricing`, `hero.signIn`, `footer.columns[].links[]`). The components render only `live: true` links:
+How it works: every link in `src/content/home.ts` that the Nav, the Hero and the Footer render has a `live: boolean` (`nav.links[]`, `hero.pricing`, `footer.columns[].links[]`). The components render only `live: true` links:
 - `Nav.astro` filters `nav.links`; with none live the link list is not rendered at all.
-- `Hero.astro` renders "See pricing" (primary) and "Sign in" (secondary), each only when its `live` is true; Sign in becomes primary if pricing is hidden.
-- `Footer.astro` filters each column's links and drops a column with no live link (the Product column is hidden today; Company shows Home, Contact us, About us, Pricing and Terms and conditions, the PDF's "for now" list). There is no separate Terms link: it lives in the Company column.
+- `Hero.astro` renders "See pricing" (primary, only when `live`) and "Request a demo" (secondary, scrolls to the demo form; primary if pricing is hidden). The header (`Nav.astro`) has Sign in (secondary, hidden below lg) and Get started (primary) buttons and no demo button.
+- `Footer.astro` filters each column's links and drops a column with no live link (the Product column is hidden today; Company shows Home, Contact us, About us, Pricing and Terms and policies, the PDF's "for now" list). There is no separate Terms link: it lives in the Company column.
 
 The data stays in `home.ts` so enabling a page is a one-word change: when `/pricing` ships, add the page and set `live: true` on the entries (Pricing is now live). Register the new page in `src/lib/pages.ts` as for the pages above.
 

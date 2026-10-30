@@ -278,7 +278,7 @@ The page structure is square, made of straight hairlines and square section edge
 - **Primary:** Novara Violet ground, white 14px/500 label, 40px tall with 16px padding, hairline-lift shadow.
 - **Hover / Focus:** the ground darkens to Pressed Violet over 150ms (ease-out-quart). Focus is a 2px violet outline offset 2px.
 - **Secondary:** white ground, Field Line border, Slate label, and the ground shifts to Plate Gray on hover.
-- Nav and page CTAs labelled "Request a demo" scroll to the close form. There is no hero form.
+- Hero "Request a demo" (secondary, beside "See pricing") scrolls to the close form. There is no hero form. The header has Sign in and Get started buttons and no demo button.
 
 ### Inputs / Fields
 - **Style:** the demo form is a work-email field plus a submit button on one row (stacked on phones), 44px tall, 10px radius, Field Line border, white ground, 15px text, max width 30rem.
@@ -294,10 +294,10 @@ The page structure is square, made of straight hairlines and square section edge
 - **Bento tile:** white, 24px padding (32px from sm), separated by 1px hairline gaps, not borders or shadows. Each holds a title, a line and a 16px-radius Plate Gray inset with one product view. Each tile plays one small loop of its own while it is on screen. Tiles have no hover or focus states.
 
 ### Navigation
-- **Style:** a sticky 64px bar inside the column frame, with the wordmark at 28px tall, 14px/500 anchor links in Muted Slate that turn Ink on hover, and the primary button on the right. Links hide below md, leaving the logo and the CTA.
+- **Style:** a sticky 64px bar inside the column frame, with the wordmark at 28px tall, 14px/500 anchor links in Muted Slate that turn Ink on hover, and Sign in (secondary, hidden below lg) and Get started (primary) buttons on the right. Links hide below md.
 
 ### Ruled Rows (signature)
-Results and the FAQ are lists ruled by hairlines, top and bottom. Funnel rows pair a 44px tabular figure, a label and a note with a 36px bar on white. The bar's width is proportional to the figure, Soft Violet for each stage and Novara Violet for the last. FAQ rows are native `details` elements with a 17px question and a plus icon that rotates 45° when open. They expand smoothly where supported.
+Results and the FAQ are lists ruled by hairlines, top and bottom. Funnel rows pair a 44px tabular figure, a label and a note with a 36px bar on white. The bar's width is proportional to the figure, Soft Violet for each stage and Novara Violet for the last. The FAQ is a centred heading over two balanced columns from md up (one column below). Rows are native `details` elements with a plus icon on the left in the brand primary colour that becomes a minus when open, and a 17px question. They expand smoothly where supported.
 
 ### Animation layer
 The page shows the product working; the visitor does not operate it. Nothing below follows the pointer.

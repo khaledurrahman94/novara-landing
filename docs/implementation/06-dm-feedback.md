@@ -59,5 +59,5 @@ Unchanged.
 - Brand column: logo and description; "Follow us" with LinkedIn, X, YouTube, Instagram icons; below it "A product of Vivasoft" (link: https://vivasoftltd.com/products/).
 - Column 2: ATS, AI interview, Features, Solutions, ROI Calculator, Integration.
 - Column 3: About us, Contact us, Pricing, Resources, Security.
-- Last row: "Get an AI summary of Novara" with ChatGPT, Claude, Gemini, Grok icons (each opens that assistant with a prefilled prompt about novara.my); "© 2026 Novara. All rights reserved." and a Terms and conditions link.
+- Last row: "Get an AI summary of Novara" with ChatGPT, Claude, Gemini, Grok icons (each opens that assistant with a prefilled prompt about novara.my); "© 2026 Novara. All rights reserved." and a Terms and policies link.
 - Until the destination pages exist, link only to routes that exist and render the rest as plain unlinked text, or point them at the planned routes (`/about`, `/contact`, `/pricing`, `/terms`, `/security`) and list them in the report so none ships as a 404 unnoticed.
