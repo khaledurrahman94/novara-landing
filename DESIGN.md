@@ -211,7 +211,7 @@ The palette comes from the product's Untitled UI–based design system and is bi
 **Character:** Geist is neutral and engineered. Semibold weight and -0.03em tracking make its large sizes feel dense and confident, not loud. Inter sits inside the product screens at small sizes, so the shots read as the real app, not as marketing type.
 
 ### Hierarchy
-- **Display** (600, clamp 44–72px, 1.02): the hero H1 only, max 46rem wide.
+- **Display** (600, clamp 44–72px, 1.02): the hero H1 only, in a centred text block (48rem max; the H1 balanced at about 16 characters per line, the sub-line 36rem, buttons centred)  with the exploded product screen full width below (there is no card to the right of the headline).
 - **Headline** (600, clamp 32–56px, 1.05): the big section statements (Results, Platform, Close).
 - **Headline Small** (600, clamp 30–44px, 1.08): feature sections, How and FAQ.
 - **Title** (600, 17px, -0.01em): bento tile titles and step titles. FAQ questions use the same size at 500.
@@ -299,7 +299,7 @@ The page structure is square, made of straight hairlines and square section edge
 - **Style:** a sticky 64px bar inside the column frame, with the wordmark at 28px tall, 14px/500 anchor links in Muted Slate that turn Ink on hover, and Sign in (secondary, hidden below lg) and Get started (primary) buttons on the right. Links hide below md.
 
 ### Ruled Rows (signature)
-Results and the FAQ are lists ruled by hairlines, top and bottom. Funnel rows pair a 44px tabular figure, a label and a note with a 36px bar on white. The bar's width is proportional to the figure, Soft Violet for each stage and Novara Violet for the last. The FAQ is a centred heading over two balanced columns from md up (one column below). Rows are native `details` elements with a plus icon on the left in the brand primary colour that becomes a minus when open, and a 17px question. They expand smoothly where supported.
+Results and the FAQ are lists ruled by hairlines, top and bottom. Funnel rows pair a 44px tabular figure, a label and a note with a 36px bar on white. The bar's width is proportional to the figure, Soft Violet for each stage and Novara Violet for the last. The FAQ is a left-aligned heading (same Headline Small scale, on the container edge) over two balanced columns from md up, on the same left edge and width (one column below). Rows are native `details` elements with a plus icon on the left in the brand primary colour that becomes a minus when open, and a 17px question. They expand smoothly where supported.
 
 ### Interaction layer
 The page makes the product shots touchable. Everything below is driven by data attributes on the markup, so a new surface opts in without new script.
@@ -337,7 +337,7 @@ Performance: canvases cap device pixel ratio at 2 and redraw on demand (resize, 
 ### Pinned scenes
 Results, the interview lab and How It Works pin on large screens (see Motion). The interview lab pins at `(min-width: 1024px) and (min-height: 680px)`, with `not all and (...)` giving a short scrub elsewhere. Results pins from 768x620 and scrubs without step snapping. Every pin carries `refreshPriority` in DOM order, and `ScrollTrigger.sort()` runs on `refreshInit`.
 
-**Snap per step.** How It Works (9 steps) and the Audience section (4 groups) use ScrollTrigger `snap` on their pin: `snapTo` is the list of settled-step progress values plus both ends (so the visitor can always scroll out), `directional: true`, `duration` 0.4-0.6, `delay` 0.08, `power2.inOut`, `inertia: false`. Each slot holds still after its transition, and the step's vignette finishes before it settles. How scrolls about 0.9 viewport heights per step (0.7 below 1024px wide), Audience 0.8 per group and pins only from 1024x800 (below that, or without JS, it is the plain tablist; under reduced motion all four panels are stacked). Audience tabs stay real buttons: clicking one scrolls to that group's stop. The snap starts only after Lenis has stopped easing, so the two do not fight.
+**Snap per step.** How It Works (9 steps) and the Audience section (4 groups) use ScrollTrigger `snap` on their pin: `snapTo` is the list of settled-step progress values plus both ends (so the visitor can always scroll out), `directional: true`, `duration` 0.4-0.6, `delay` 0.08, `power2.inOut`, `inertia: false`. Each slot holds still after its transition, and the step's vignette finishes before it settles. How scrolls about 0.9 viewport heights per step (0.7 below 1024px wide), Audience 0.8 per group and pins from 1024x600, sized to exactly one viewport under the nav (100svh minus nav height minus 2rem), with the inner stage scaled down (never up) by a ResizeObserver when the tallest panel still would not fit, so the Book a demo button is never cut off (below 600px tall or 1024px wide, or without JS, it is the plain tablist; under reduced motion all four panels are stacked). Audience tabs stay real buttons: clicking one scrolls to that group's stop. The snap starts only after Lenis has stopped easing, so the two do not fight.
 
 **The Header-in-Pin Rule.** A pinned scene pins its heading with its steps. The visitor never scrubs through a step without the line that names it.
 

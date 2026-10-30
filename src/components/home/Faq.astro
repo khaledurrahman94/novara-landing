@@ -7,7 +7,7 @@ const half = Math.ceil(faq.items.length / 2);
 const columns = [faq.items.slice(0, half), faq.items.slice(half)];
 ---
 <Section id="faq" labelledby="faq-title" tone="plate">
-  <h2 id="faq-title" class="m-0 text-center text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leading-[1.08] tracking-[-0.03em]">{faq.title}</h2>
+  <h2 id="faq-title" class="m-0 text-left text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leading-[1.08] tracking-[-0.03em]">{faq.title}</h2>
   <div class="home-faq mt-10 grid items-start gap-x-12 md:mt-14 md:grid-cols-2 lg:gap-x-16">
     {columns.map((items) => (
       <div class="border-t border-border-secondary max-md:[&:not(:first-child)]:border-t-0">

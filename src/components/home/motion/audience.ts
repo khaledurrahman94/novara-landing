@@ -19,6 +19,7 @@ export function initAudience(root: HTMLElement, reduced: boolean): AudienceContr
   const progress = one(root, '[data-aud-progress]');
   const line = one(root, '[data-aud-line]');
   const tablist = one(root, '[role="tablist"]');
+  const stage = one(root, '[data-aud-stage]');
   if (!tabs.length || tabs.length !== panels.length) return;
 
   const n = tabs.length;
@@ -86,6 +87,22 @@ export function initAudience(root: HTMLElement, reduced: boolean): AudienceContr
     panels.forEach((p) => void (p.hidden = false));
     mark(current);
 
+    // Scale-to-fit: if the stage (heading, tabs, tallest panel) is taller than the pinned box, shrink it (never grow).
+    const fit = (): void => {
+      if (!stage) return;
+      stage.style.transform = '';
+      stage.style.width = '';
+      const scale = Math.min(1, root.clientHeight / Math.max(1, stage.offsetHeight));
+      if (scale < 1) {
+        stage.style.width = `${100 / scale}%`;
+        stage.style.transform = `scale(${scale})`;
+      }
+    };
+    fit();
+    const ro = new ResizeObserver(fit);
+    ro.observe(root);
+    if (stage) ro.observe(stage);
+
     // Stop i sits at HOLD + i of (n - 1 + 2 * HOLD) timeline units, with a little rest at both ends.
     const HOLD = 0.35;
     const total = n - 1 + 2 * HOLD;
@@ -117,6 +134,11 @@ export function initAudience(root: HTMLElement, reduced: boolean): AudienceContr
     };
     return () => {
       stopTo = null;
+      ro.disconnect();
+      if (stage) {
+        stage.style.transform = '';
+        stage.style.width = '';
+      }
       st.kill();
       root.classList.remove('is-pinned');
       progress.hidden = true;

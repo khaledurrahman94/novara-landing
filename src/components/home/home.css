@@ -338,8 +338,14 @@ html {
 .home-aud[data-aud-mode='stacked'] .home-aud-grid {
   display: block;
 }
-.home-aud.is-pinned .home-aud-grid {
-  margin-top: 2rem;
+/* Pinned: exactly one viewport under the nav (16px above and below). The stage inside is scaled down by
+   motion/audience.ts when the tallest panel still would not fit, so the card and its button are never cut off. */
+.home-aud.is-pinned {
+  height: calc(100svh - var(--nav-h, 4rem) - 2rem);
+  overflow: hidden;
+}
+.home-aud.is-pinned .home-aud-stage {
+  transform-origin: top left;
 }
 .home-aud.is-pinned [data-aud-panels] {
   display: grid;
