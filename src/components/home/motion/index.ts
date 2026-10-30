@@ -122,8 +122,8 @@ export function initHome(): void {
           if (typeof c2 === 'function') c2();
         };
       });
-      // The Audience pin needs room for the title and the tallest panel; shorter screens keep the plain tabs.
-      mm.add('(min-width: 1024px) and (min-height: 800px)', () => {
+      // The Audience pin fits one viewport and scales its stage down on shorter screens; below 600px tall it keeps the plain tabs.
+      mm.add('(min-width: 1024px) and (min-height: 600px)', () => {
         const c = audience ? safe('audience-pin', () => audience.pin()) : undefined;
         return () => {
           if (typeof c === 'function') c();
