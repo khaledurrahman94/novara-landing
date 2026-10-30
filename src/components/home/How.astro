@@ -14,7 +14,6 @@ const { how } = home;
 const amara = byId('amara');
 const ranked = [...candidates].sort((a, b) => b.fit - a.fit).filter((c) => ['amara', 'ines', 'leo', 'nadia'].includes(c.id));
 const applied = [byId('leo'), byId('marcus'), byId('nadia')];
-const box = 'relative flex h-[27rem] items-center justify-center overflow-hidden rounded-lg border border-border-secondary bg-bg-tertiary p-4 sm:p-5';
 const card = 'w-full max-w-[26rem] rounded-lg border border-border-secondary bg-bg-secondary p-4 font-ui text-text-primary shadow-md';
 const row = 'flex items-center gap-2 rounded-md border border-border-secondary bg-white p-2.5';
 ---
@@ -37,7 +36,8 @@ const row = 'flex items-center gap-2 rounded-md border border-border-secondary b
                 <h3 class="m-0 mt-5 text-[clamp(1.5rem,1.2rem+1vw,2rem)] font-semibold leading-tight tracking-[-0.02em]"><button type="button" data-step-btn data-cursor="Show" class="cursor-pointer rounded-sm p-0 text-left font-[inherit] text-inherit">{s.title}</button></h3>
                 <p class="m-0 mt-2 max-w-[22rem] text-[0.9375rem] leading-snug text-text-secondary">{s.text}</p>
               </div>
-              <div data-vignette={i} class={box} aria-hidden="true">
+              <div data-vignette={i} data-fit class="home-fit" aria-hidden="true">
+                <div data-fit-inner class="home-fit-inner">
                 {i === 0 && <JobDraft />}
                 {i === 1 && <CareerPage />}
                 {i === 2 && (
@@ -102,6 +102,7 @@ const row = 'flex items-center gap-2 rounded-md border border-border-secondary b
                     <p data-v="stamp" class="m-0 mt-4 flex items-center gap-1.5 rounded-md bg-bg-tertiary px-3 py-2 text-xs text-text-secondary"><Avatar initials={recruiter.initials} size="xs" />Moved to Offered by {recruiter.first}</p>
                   </div>
                 )}
+                </div>
               </div>
             </li>
           ))}

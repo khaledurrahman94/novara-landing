@@ -10,6 +10,7 @@ import { initScrollDepth } from './depth';
 import { initHero } from './hero';
 import { initResultsPinned, initResultsSimple } from './results';
 import { initHowPinned, initHowSimple, initHowSteps, replayStep } from './how';
+import { initFit } from './fit';
 import { initDecide } from './decide';
 import { initAudience } from './audience';
 import { initBentoReveal, initPlatform } from './platform';
@@ -96,6 +97,7 @@ export function initHome(): void {
     const audience = audienceRoot ? safe('audience', () => initAudience(audienceRoot, reduced)) : undefined;
     if (audience) add(audience.destroy);
     const howRoot = one(document, '[data-how]');
+    if (howRoot) add(safe('how-fit', () => initFit(howRoot)));
     if (howRoot) add(safe('how-steps', () => initHowSteps(howRoot, reduced ? undefined : (i) => { if (!howRoot.classList.contains('is-h')) replayStep(i); })));
 
     if (reduced) return () => cleanups.forEach((c) => c());
