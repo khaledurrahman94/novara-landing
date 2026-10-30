@@ -61,13 +61,17 @@ html {
 }
 .home-faq summary:focus-visible {
   outline: 2px solid var(--color-primary);
-  outline-offset: -2px;
+  outline-offset: 2px;
+  border-radius: var(--radius-sm, 0.25rem);
 }
-.home-faq summary .home-plus {
+/* The plus turns into a minus: the vertical stroke lies down onto the horizontal one. */
+.home-faq .home-plus-v {
+  transform-box: fill-box;
+  transform-origin: center;
   transition: transform var(--duration-base) var(--ease-out-quart);
 }
-.home-faq details[open] summary .home-plus {
-  transform: rotate(45deg);
+.home-faq details[open] .home-plus-v {
+  transform: rotate(90deg);
 }
 @media (prefers-reduced-motion: no-preference) {
   .home-faq details {
