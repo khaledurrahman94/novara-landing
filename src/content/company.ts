@@ -82,6 +82,7 @@ export const company = {
       name: 'Name',
       email: 'Work email',
       company: 'Company (optional)',
+      requestDemo: 'Request a demo',
       message: 'Message',
       submit: 'Send message',
       sending: 'Sending',
@@ -101,8 +102,7 @@ export const company = {
     },
     title: 'Pricing',
     heading: 'Talk to us about pricing',
-    line: 'Request a demo or contact us and we will share pricing details for your team.',
-    primary: { label: 'Request a demo', href: HOME_DEMO_HREF },
+    line: 'Contact us and we will share pricing details for your team.',
     secondary: { label: 'Contact us', href: '/contact' },
   },
 } as const;

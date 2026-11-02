@@ -1,8 +1,8 @@
 /** ScreeningLab copy. Kept apart from the markup so marketing can edit it. */
 export const copy = {
   id: 'screen',
-  title: 'Every resume, read against the job.',
-  sub: 'Toggle what the job needs and watch the ranking change.',
+  title: 'Automate Resume Screening with AI',
+  sub: 'Novara combines AI resume screening and candidate ranking within its applicant tracking system and automatically matches CVs to job requirements.',
   caption:
     'An interactive Job Fit Score demo. Toggle requirements to re-rank six applicants, open a row for its matched and missing criteria, and screen two new resumes.',
   jobMeta: 'Remote · Senior · Full time',

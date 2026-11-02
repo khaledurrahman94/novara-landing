@@ -1,4 +1,0 @@
-/* The V1 content width. It lived in src/styles/fluid.css until V4 dropped it; only the V1 page imports this file. */
-html[data-fluid] {
-  --v1-max: 76rem;
-}
