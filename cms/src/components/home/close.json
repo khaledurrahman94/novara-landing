@@ -10,13 +10,13 @@
       "type": "string",
       "required": true,
       "minLength": 1,
-      "maxLength": 46
+      "maxLength": 60
     },
     "line": {
       "type": "text",
       "required": true,
       "minLength": 1,
-      "maxLength": 77
+      "maxLength": 100
     },
     "cta": {
       "type": "string",

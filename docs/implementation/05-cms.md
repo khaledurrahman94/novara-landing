@@ -1,6 +1,6 @@
 # 05 CMS (Strapi 5) and SEO
 
-The DM team edits words, images and SEO in Strapi. Code owns structure, components and motion. The home page lives at `HOME_PATH` (`/v4` while the variants are compared, `/` at launch; see 08-variants.md). Read 00-foundation and DESIGN.md first.
+The DM team edits words, images and SEO in Strapi. Code owns structure, components and motion. The home page lives at `HOME_PATH` (`/`, in `src/lib/home-path.ts`). Read 00-foundation and DESIGN.md first.
 
 ## Decisions
 - **Strapi 5** (latest stable, TypeScript) lives in `cms/`, in this repo. It is its own package with its own lockfile, not a pnpm workspace. If Strapi's admin build fails under pnpm's strict linking, add `cms/.npmrc` with `node-linker=hoisted`.
@@ -9,7 +9,7 @@ The DM team edits words, images and SEO in Strapi. Code owns structure, componen
 - **Rebuild on publish:** Strapi server code, not a raw webhook. After a publish, unpublish or delete on any content type, or a media change, wait 60s for things to settle, then POST to `DEPLOY_HOOK_URL` (body and headers configurable by env). It must work with a Cloudflare deploy hook, or with GitHub `repository_dispatch` and an Actions build. Document whichever path you choose.
 - **Build input:** Astro reads Strapi at build time with a read-only API token (`STRAPI_URL`, `STRAPI_TOKEN`). Strapi is the source of truth. A production build without Strapi fails with a clear message. Staging builds with no content source fall back to `fixtures/strapi/good` with a loud warning (noindex), so deploys pass while the CMS is not connected.
 - **Environments:** `PUBLIC_SITE_ENV=production|staging`. Anything but production renders `noindex,nofollow` on every page, and robots.txt says `Disallow: /`.
-- **Variant and lab routes:** `/` (showcase), `/v1`, `/v2`, `/v3` and `/lab*` are code pages, noindex and out of the sitemap; V4 is the only indexable page (see 08-variants.md).
+- **Lab routes:** `/lab*` are code pages, noindex and out of the sitemap; the home page at `/` is indexable.
 
 ## Lock-down: the DM team can't touch components or motion
 These layers are enforced. Every agent must keep them true.
@@ -71,7 +71,7 @@ All page types have Draft & publish on. Slugs are `uid` fields, lowercase and hy
 
 ## Validation (build fails with a readable list)
 - A zod mismatch, a required field missing, or a value over its length cap.
-- Duplicate slugs within a type, or a path that collides across types or with code routes (`/`, `/v1`…`/v4`, `/lab*`, `/preview`, `/404`).
+- Duplicate slugs within a type, or a path that collides across types or with code routes (`/`, `/lab*`, `/preview`, `/404`).
 - Duplicate `metaTitle` or `metaDescription` across indexable pages.
 - An image without alt text.
 - Redirects:

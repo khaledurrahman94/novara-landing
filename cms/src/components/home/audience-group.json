@@ -31,7 +31,7 @@
       "repeatable": true,
       "component": "home.audience-point",
       "min": 3,
-      "max": 5,
+      "max": 9,
       "required": true
     },
     "tagline": {

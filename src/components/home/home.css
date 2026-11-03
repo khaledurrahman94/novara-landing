@@ -304,6 +304,8 @@ html {
 }
 .home-aud.is-pinned [data-aud-panel] {
   grid-area: 1 / 1;
+  /* Each card keeps its own height; the shared cell only reserves room for the tallest one. */
+  align-self: start;
   opacity: 0;
   visibility: hidden;
   transform: translateY(16px);

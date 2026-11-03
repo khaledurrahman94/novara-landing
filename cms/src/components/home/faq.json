@@ -10,7 +10,7 @@
       "type": "string",
       "required": true,
       "minLength": 1,
-      "maxLength": 34
+      "maxLength": 45
     },
     "items": {
       "type": "component",

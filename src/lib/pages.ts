@@ -7,7 +7,7 @@ import { z } from 'astro/zod';
 import { company } from '../content/company';
 import { home } from '../content/home';
 import { legal } from '../content/legal';
-import { HOME_PATH, homeHref } from './home-path';
+import { HOME_PATH } from './home-path';
 import { error, fromZod, type Issue } from './issues';
 import { normalizePath } from './paths';
 import { seoMetaSchema, type Media, type Redirect, type SeoMeta, type SiteSettings } from './schemas';
@@ -70,7 +70,7 @@ const homeLiveLinks = (): string[] => {
     home.hero.pricing,
     ...home.footer.columns.flatMap((c): readonly { href: string; live: boolean }[] => c.links),
   ];
-  return all.filter((l) => l.live).map((l) => homeHref(l.href));
+  return all.filter((l) => l.live).map((l) => l.href);
 };
 
 const homeProvider: PageProvider = {
