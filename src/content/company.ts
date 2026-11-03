@@ -102,7 +102,7 @@ export const company = {
     },
     title: 'Pricing',
     heading: 'Talk to us about pricing',
-    line: 'Contact us and we will share pricing details for your team.',
+    line: 'Please contact us and we will be happy to share pricing details for your team.',
     secondary: { label: 'Contact us', href: '/contact' },
   },
 } as const;

@@ -1,7 +1,8 @@
 /**
  * Home page motion orchestrator. Three kinds of motion: scrubbed (hero, results, how, depth), triggered
  * (reveals, bento entrances) and interactive (drag, bento tiles, the labs). Nothing follows the pointer.
- * Pins only from 768px wide and 620px tall (the Audience pin from 1024x800). Reduced motion keeps every
+ * Pins on desktop, laptop and tablet whatever the window height (the page scales to fit, see styles/fluid.css);
+ * phones get the reduced in-flow motion (see FULL_MQ in util.ts). Reduced motion keeps every
  * interaction but drops parallax, scrub, pins and loops, and shows end states.
  */
 import { gsap, ScrollTrigger, onReady, prefersReducedMotion, getLenis } from '../../../scripts/motion';
@@ -14,7 +15,7 @@ import { initFit } from './fit';
 import { initDecide } from './decide';
 import { initAudience } from './audience';
 import { initBentoReveal, initPlatform } from './platform';
-import { EASE, $, one, safe, scrollToEl } from './util';
+import { EASE, $, one, safe, scrollToEl, FULL_MQ, PHONE_MQ } from './util';
 
 /* ---------- chrome: nav state, anchors, demo button (also under reduced motion) ---------- */
 
@@ -116,10 +117,10 @@ export function initHome(): void {
       const results = one(document, '[data-results]');
       const how = one(document, '[data-how]');
       const testi = one(document, '[data-testi-scroll]')?.closest<HTMLElement>('section') ?? null;
-      mm.add('(min-width: 768px)', () => {
+      mm.add(FULL_MQ, () => {
         safe('depth', initScrollDepth);
       });
-      mm.add('(min-width: 768px) and (min-height: 620px)', () => {
+      mm.add(FULL_MQ, () => {
         const c1 = results ? safe('results', () => initResultsPinned(results)) : undefined;
         // After Results: its Offered avatars fly into their testimonial cards once the pin releases.
         const c3 = testi ? safe('testimonials', () => initTestimonialsFly(testi)) : undefined;
@@ -130,14 +131,14 @@ export function initHome(): void {
           if (typeof c2 === 'function') c2();
         };
       });
-      // The Audience pin fits one viewport and scales its stage down on shorter screens; below 600px tall it keeps the plain tabs.
-      mm.add('(min-width: 1024px) and (min-height: 600px)', () => {
+      // The Audience pin fits one viewport and scales its stage down when the content is taller than it.
+      mm.add(FULL_MQ, () => {
         const c = audience ? safe('audience-pin', () => audience.pin()) : undefined;
         return () => {
           if (typeof c === 'function') c();
         };
       });
-      mm.add('(max-width: 767.98px), (max-height: 619.98px)', () => {
+      mm.add(PHONE_MQ, () => {
         if (results) safe('results-simple', () => initResultsSimple(results));
         if (testi) safe('testimonials-simple', () => initTestimonialsSimple(testi));
         const c = how ? safe('how-simple', () => initHowSimple(how)) : undefined;
