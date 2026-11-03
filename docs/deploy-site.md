@@ -49,7 +49,7 @@ Add `novara.my` to the Worker: Settings, Domains and routes, Add, Custom domain 
 
 - `robots.txt`: Strapi `site-settings.robotsTxt` in production, `Disallow: /` otherwise.
 - `sitemap-index.xml`, `sitemap-0.xml`: registered, indexable pages only, production only. `lastmod` comes from the entry's `updatedAt`.
-- `_redirects`: the `redirect` collection plus code redirects (`/privacy` and `/cookies` to their sections of `/terms`), chains flattened. Cloudflare allows 2,000 static rules.
+- `_redirects`: the `redirect` collection plus code redirects (`/privacy` and `/cookies` to their sections of `/terms-policies`), chains flattened. Cloudflare allows 2,000 static rules.
 - `_headers`: `X-Robots-Tag: noindex, nofollow` on `/preview/*` (staging: every path), and the adapter's immutable cache for `/_astro/*`. `_headers` does not apply to Worker responses, so the preview route sets its own headers too.
 - `404.html`.
 

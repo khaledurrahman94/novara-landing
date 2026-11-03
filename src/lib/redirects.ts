@@ -18,8 +18,10 @@ export interface RedirectRule {
  */
 export const codeRedirects: ReadonlyArray<Pick<RedirectRule, 'from' | 'to' | 'status'>> = [
   // Common legal URLs land on their section of the combined Terms and policies page.
-  { from: '/privacy', to: '/terms#privacy-policy', status: 301 },
-  { from: '/cookies', to: '/terms#cookie-policy', status: 301 },
+  // The first page address was /terms; keep it working.
+  { from: '/terms', to: '/terms-policies', status: 301 },
+  { from: '/privacy', to: '/terms-policies#privacy-policy', status: 301 },
+  { from: '/cookies', to: '/terms-policies#cookie-policy', status: 301 },
 ];
 
 export const codeRedirectRules: RedirectRule[] = codeRedirects.map((r) => ({ ...r, source: 'code', where: `code redirect ${r.from}` }));

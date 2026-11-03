@@ -351,7 +351,7 @@ export const home = {
           { label: 'Contact us', href: '/contact', live: true },
           { label: 'About us', href: '/about', live: true },
           { label: 'Pricing', href: '/pricing', live: true },
-          { label: 'Terms and policies', href: '/terms', live: true },
+          { label: 'Terms and policies', href: '/terms-policies', live: true },
           { label: 'Resources', href: '/resources', live: false },
           { label: 'Security', href: '/security', live: false },
         ],

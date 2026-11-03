@@ -84,4 +84,4 @@ Rule 4 of 05-cms: if changing it can break an animation or the product truth, it
 ## V4 content update (DM feedback, round 3)
 - Removed from the CMS schema, seed and generated types: `hero.secondary` (the "See the AI interview" link is gone) and `platform.roles` (the Roles and permissions tile is gone). Re-run the seed, and delete the two values from existing Strapi entries if the admin still shows them.
 - The header now has Sign in and Get started buttons and no demo button. The hero's two buttons are See pricing and Request a demo (label from `nav.cta`).
-- Footer: the faded wordmark is gone; the copyright line sits beside "Get an AI summary of Novara" and links to /terms. The Terms page is titled "Terms and policies".
+- Footer: the faded wordmark is gone; the copyright line sits beside "Get an AI summary of Novara" and links to /terms-policies. The Terms page is titled "Terms and policies".
