@@ -7,8 +7,10 @@
  */
 
 
-/** PLACEHOLDER: the real app sign-in URL is not known yet. Replace before launch. */
+/** Where "Sign in" sends existing customers. */
 export const SIGN_IN_HREF = 'https://app.novara.com.my/sign-in';
+/** Where "Get started" sends new customers. */
+export const ONBOARDING_HREF = 'https://app.novara.com.my/onboarding';
 
 export const home = {
   seo: {
@@ -29,7 +31,7 @@ export const home = {
     /** Label of the hero's demo button (CMS field `nav.cta`); the header has no demo button. */
     cta: 'Request a demo',
     signIn: { label: 'Sign in', href: SIGN_IN_HREF },
-    getStarted: { label: 'Get started', href: SIGN_IN_HREF },
+    getStarted: { label: 'Get started', href: ONBOARDING_HREF },
     /** Rendered when `live`. Later items (Platform, Features, Solutions, ROI Calculator, Resources) join this list when their pages exist. */
     links: [
       { label: 'Home', href: '/', live: true },
