@@ -1,5 +1,5 @@
 /**
- * Legal copy for /terms: Privacy Policy, Terms of Service, Terms and Conditions, Cookie Policy.
+ * Legal copy for /terms-policies: Privacy Policy, Terms of Service, Terms and Conditions, Cookie Policy.
  * Code-owned for now (no CMS). The text is the DM team's draft, cleaned of drafting notes.
  *
  * Text tokens, resolved at render time by LegalText.astro:

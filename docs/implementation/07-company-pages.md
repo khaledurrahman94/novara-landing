@@ -1,8 +1,8 @@
-# Company pages: /about, /contact, /pricing, /terms
+# Company pages: /about, /contact, /pricing, /terms-policies
 
 Code-owned for now, no CMS wiring. Copy lives in `src/content/company.ts` (About, Contact, shared contact details) and `src/content/legal.ts` (the four legal documents as documents -> sections -> blocks). Pages: `src/pages/about.astro`, `contact.astro`, `terms.astro`, on the shared `src/layouts/Page.astro` (home Nav + Footer). They are registered in `src/lib/pages.ts` (`companyProvider`) so the sitemap and validation know them.
 
-`/terms` holds Privacy Policy, Terms of Service, Terms and Conditions and Cookie Policy as sections with ids `privacy-policy`, `terms-of-service`, `terms-and-conditions`, `cookie-policy`. `/privacy` and `/cookies` redirect (301) to their sections.
+`/terms-policies` holds Privacy Policy, Terms of Service, Terms and Conditions and Cookie Policy as sections with ids `privacy-policy`, `terms-of-service`, `terms-and-conditions`, `cookie-policy`. `/privacy` and `/cookies` redirect (301) to their sections.
 
 ## Draft cleanup
 Removed as drafting notes: Privacy section 7 "Specific retention periods ... should be established and communicated where required."; Cookie Policy section 4 "A current cookie inventory should identify ..."; Cookie Policy section 3 "The actual categories used will depend on the technologies implemented by Novara." All square brackets stripped. `[Legal Entity Name]` -> "Novara"; Registered Address and Privacy Contact Email -> the Neu Suites address and dinno@novara.my.

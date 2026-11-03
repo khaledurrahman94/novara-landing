@@ -86,7 +86,7 @@ const companyProvider: PageProvider = {
       { path: '/about', label: 'About', seo: company.about.seo },
       { path: '/contact', label: 'Contact', seo: company.contact.seo },
       { path: '/pricing', label: 'Pricing', seo: company.pricing.seo },
-      { path: '/terms', label: 'Terms and policies', seo: legal.seo },
+      { path: '/terms-policies', label: 'Terms and policies', seo: legal.seo },
     ].map((p) => ({
       type: 'company',
       path: p.path,
