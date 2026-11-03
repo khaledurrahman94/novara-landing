@@ -42,11 +42,11 @@ Every field is required and non-empty. Strapi checks min and required rules on p
 | `audience.groups[i].description` | `audience.groups[i].description` | text | 130 | exactly 4 |
 | `audience.groups[i].built[j]` | `audience.groups[i].built[j].text` | string | 95 | 3 to 6 per group |
 | `audience.groups[i].points[j]` | `audience.groups[i].points[j].text` | string | 95 | 3 to 5 per group |
-| `faq.title` | `faq.title` | string | 34 | 1 |
-| `faq.items[i].q` | `faq.items[i].question` | string | 62 | 3 to 10 (8 now) |
-| `faq.items[i].a` | `faq.items[i].answer` | text | 420 | 3 to 10 (8 now) |
-| `close.title` | `close.title` | string | 46 | 1 |
-| `close.line` | `close.line` | text | 77 | 1 |
+| `faq.title` | `faq.title` | string | 45 | 1 |
+| `faq.items[i].q` | `faq.items[i].question` | string | 80 | 3 to 10 (9 now) |
+| `faq.items[i].a` | `faq.items[i].answer` | text | 420 | 3 to 10 (9 now) |
+| `close.title` | `close.title` | string | 60 | 1 |
+| `close.line` | `close.line` | text | 100 | 1 |
 | `form.submit` | `close.cta` | string | 19 | 1 |
 | `footer.line` | `footer.line` | text | 95 | 1 |
 | `footer.maker` | `footer.maker` | string | 28 | 1 |

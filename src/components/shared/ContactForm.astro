@@ -12,6 +12,7 @@ interface Props {
   name?: string;
   email?: string;
   companyLabel?: string;
+  requestDemo?: string;
   message?: string;
   submit?: string;
   sending?: string;
@@ -29,6 +30,7 @@ const {
   name = f.name,
   email = f.email,
   companyLabel = f.company,
+  requestDemo = f.requestDemo,
   message = f.message,
   submit = f.submit,
   sending = f.sending,
@@ -72,6 +74,10 @@ const labelCls = 'text-sm font-medium text-text-primary';
       <label for={`${id}-company`} class={labelCls}>{companyLabel}</label>
       <input id={`${id}-company`} name="company" type="text" autocomplete="organization" class={input} />
     </div>
+    <label for={`${id}-demo`} class="flex w-fit cursor-pointer items-center gap-2.5 text-[0.9375rem] text-text-primary">
+      <input id={`${id}-demo`} name="demo" type="checkbox" value="yes" class="size-4 shrink-0 cursor-pointer rounded-sm accent-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-200" />
+      {requestDemo}
+    </label>
     <div class="flex flex-col gap-1.5">
       <label for={`${id}-message`} class={labelCls}>{message}</label>
       <textarea id={`${id}-message`} name="message" required rows="5" aria-describedby={`${id}-message-err`} class:list={[input, 'h-auto min-h-32 resize-y py-2.5']}></textarea>

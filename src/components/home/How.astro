@@ -20,7 +20,7 @@ const row = 'flex items-center gap-2 rounded-md border border-border-secondary b
 <Section id="how" labelledby="how-title" tone="plate">
   <div data-how class="home-how">
     <div data-how-pin class="home-how-pin">
-      <div data-reveal class="grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,24rem)] md:items-end md:gap-12">
+      <div data-reveal class="grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,24rem)] md:items-center md:gap-12">
         <h2 id="how-title" class="m-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leading-[1.08] tracking-[-0.03em]">{how.title}</h2>
         <p class="m-0 text-[0.9375rem] leading-snug text-text-secondary">{how.intro}</p>
       </div>
@@ -34,10 +34,10 @@ const row = 'flex items-center gap-2 rounded-md border border-border-secondary b
             <li data-step class="grid items-center gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)] md:gap-12">
               <div>
                 <span data-num class="grid size-7 place-items-center rounded-full border border-border-primary bg-white text-xs font-medium tabular-nums text-text-secondary transition-[background-color,color,border-color] duration-[var(--duration-base)]">{i + 1}</span>
-                <h3 class="m-0 mt-5 text-[clamp(1.5rem,1.2rem+1vw,2rem)] font-semibold leading-tight tracking-[-0.02em]"><button type="button" data-step-btn class="cursor-pointer rounded-sm p-0 text-left font-[inherit] text-inherit">{s.title}</button></h3>
+                <h3 data-step-btn class="m-0 mt-5 cursor-pointer text-[clamp(1.5rem,1.2rem+1vw,2rem)] font-semibold leading-tight tracking-[-0.02em]">{s.title}</h3>
                 <p class="m-0 mt-2 max-w-[22rem] text-[0.9375rem] leading-snug text-text-secondary">{s.text}</p>
               </div>
-              <div data-vignette={i} data-fit class="home-fit" aria-hidden="true">
+              <figure data-vignette={i} data-fit class="home-fit m-0" aria-hidden="true">
                 <div data-fit-inner class="home-fit-inner">
                 {i === 0 && <JobDraft />}
                 {i === 1 && <CareerPage />}
@@ -104,7 +104,7 @@ const row = 'flex items-center gap-2 rounded-md border border-border-secondary b
                   </div>
                 )}
                 </div>
-              </div>
+              </figure>
             </li>
           ))}
         </ol>

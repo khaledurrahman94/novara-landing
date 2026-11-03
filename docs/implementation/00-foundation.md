@@ -10,7 +10,7 @@ Scripts: `pnpm dev | build | preview | check | validate:fixtures`. Production bu
 - `src/layouts/Base.astro` props: `seo` (a `seo.meta` object, for CMS pages) or `title, description, noindex` (code pages), plus `pageTitle, schemas, breadcrumbs, forceNoindex, noCanonical, fluid`. It loads `site-settings` itself.
 - `src/components/seo/Seo.astro` renders head tags from `seo.meta` + site settings; `src/lib/seo.ts` resolves them (also used by validation). `components/{shared,home}/`
 - `src/scripts/motion.ts`
-- `src/pages/`: `index.astro` (the variants showcase), `v4/index.astro` (the home page, via `components/home/HomePage.astro`), `v1` to `v3` (the earlier designs, `src/legacy`; see 08-variants.md), `lab*` (component and lab test pages, noindex), `404.astro`, `robots.txt.ts`, `preview/[...path].astro` (the only on-demand route).
+- `src/pages/`: `index.astro` (the home page, via `components/home/HomePage.astro`), `lab*` (component and lab test pages, noindex), `404.astro`, `robots.txt.ts`, `preview/[...path].astro` (the only on-demand route).
 - `src/content.config.ts` + `src/lib/{collections,schemas,strapi-loader}.ts`: Content Layer loaders for `site-settings` and `redirect`; schemas mirror the contracts in 05-cms.md.
 - `src/lib/strapi.ts` (REST client, populate helper) and `strapi-build.ts` (env files, fixtures; Node only).
 - `src/lib/validate.ts` (build checks), `pages.ts` (page providers: add one per new collection), `site-build.ts`, `routes-scan.ts`. `src/integrations/novara-site.ts` runs them at `astro:config:done` and writes `_redirects`/`_headers`.

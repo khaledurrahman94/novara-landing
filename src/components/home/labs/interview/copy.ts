@@ -25,8 +25,8 @@ export const kinds: readonly KindMeta[] = [
 
 export const lab = {
   id: 'interview-lab',
-  title: 'Try to cheat. Novara will notice.',
-  sub: "A live demo of what Novara's integrity monitor sees during a real interview. Switch tabs, click away, copy the question or move your cursor out of the window. Nothing you do here is recorded or sent anywhere.",
+  title: 'Anti-Cheat Monitoring for AI Interviews',
+  sub: "The strong AI interview monitoring system of Novara flags activities like candidates switch tabs, exit full-screen mode, or paste text for review. Recruiters can investigate potential interview fraud, verify candidate authenticity, and protect interview integrity before shortlisting.",
   frameLabel: 'Interactive AI interview demo',
   intro: "Hi, I'm Novara's AI interviewer. Let's begin.",
   cue: 'Scroll to start the interview',

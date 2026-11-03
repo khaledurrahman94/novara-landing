@@ -3,7 +3,7 @@
  * See docs/implementation/07-company-pages.md for what is still unconfirmed.
  */
 import { HOME_DEMO_HREF } from '../lib/home-path';
-import { SIGN_IN_HREF } from './home';
+import { ONBOARDING_HREF } from './home';
 
 /**
  * PENDING DM TEAM CONFIRMATION: these details were taken from novara.my (and the DM team's legal draft).
@@ -63,7 +63,7 @@ export const company = {
     cta: {
       title: 'Get Started with Novara',
       line: 'Discover a more structured way to manage recruitment and evaluate candidates.',
-      primary: { label: 'Get Started', href: SIGN_IN_HREF },
+      primary: { label: 'Get Started', href: ONBOARDING_HREF },
       secondary: { label: 'Contact Us', href: '/contact' },
     },
   },
@@ -82,6 +82,7 @@ export const company = {
       name: 'Name',
       email: 'Work email',
       company: 'Company (optional)',
+      requestDemo: 'Request a demo',
       message: 'Message',
       submit: 'Send message',
       sending: 'Sending',
@@ -101,8 +102,7 @@ export const company = {
     },
     title: 'Pricing',
     heading: 'Talk to us about pricing',
-    line: 'Request a demo or contact us and we will share pricing details for your team.',
-    primary: { label: 'Request a demo', href: HOME_DEMO_HREF },
+    line: 'Contact us and we will share pricing details for your team.',
     secondary: { label: 'Contact us', href: '/contact' },
   },
 } as const;

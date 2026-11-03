@@ -2,7 +2,6 @@
 import Page from '../layouts/Page.astro';
 import PageHead from '../components/company/PageHead.astro';
 import ContactForm from '../components/shared/ContactForm.astro';
-import Button from '../components/home/Button.astro';
 import { company, contact } from '../content/company';
 const c = company.contact;
 // PENDING DM TEAM CONFIRMATION: these details come from novara.my (see src/content/company.ts).
@@ -10,7 +9,6 @@ const rows: { label: string; text: string; href?: string }[] = [
   { label: c.labels.email, text: contact.email, href: `mailto:${contact.email}` },
   { label: c.labels.phone, text: contact.phone, href: contact.phoneHref },
   { label: c.labels.address, text: contact.address },
-  { label: c.labels.website, text: contact.website, href: contact.website },
 ];
 ---
 <Page title={c.seo.title} description={c.seo.description}>
@@ -28,7 +26,6 @@ const rows: { label: string; text: string; href?: string }[] = [
             </div>
           ))}
         </dl>
-        <div class="mt-8"><Button href={c.demo.href}>{c.demo.label}</Button></div>
       </div>
       <div class="relative rounded-lg border border-border-secondary bg-white p-6 shadow-xs sm:p-8">
         <h2 class="m-0 mb-6 text-xl font-semibold text-text-primary">{c.form.title}</h2>
