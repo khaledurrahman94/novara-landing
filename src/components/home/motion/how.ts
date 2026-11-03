@@ -177,7 +177,37 @@ export function initHowPinned(root: HTMLElement): (() => void) | void {
     };
   });
 
+  // One mouse-wheel notch, or one trackpad swipe, moves exactly one step. Lenis keeps easing after the wheel stops,
+  // and the snap alone could take that momentum past the next step. While the pin is active this owns the wheel;
+  // at either end of the pin it steps aside so the page can scroll out.
+  let busyUntil = 0;
+  let lastWheel = 0;
+  const onWheel = (e: WheelEvent): void => {
+    const st = master.scrollTrigger;
+    if (!st || e.ctrlKey || e.deltaY === 0 || !st.isActive) return;
+    const dir = e.deltaY > 0 ? 1 : -1;
+    const p = st.progress;
+    if ((dir > 0 && p >= 0.999) || (dir < 0 && p <= 0.001)) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const now = performance.now();
+    // A swipe's inertia tail keeps sending events: the next step needs a short pause with no wheel input.
+    const quiet = now - lastWheel > 90;
+    lastWheel = now;
+    if (now < busyUntil || !quiet) return;
+    // A point within 0.03 of the current progress counts as "here", so a step that rests a hair short is not skipped.
+    const next = dir > 0 ? points.find((q) => q > p + 0.03) : [...points].reverse().find((q) => q < p - 0.03);
+    if (next === undefined) return;
+    busyUntil = now + 1250;
+    const y = st.start + next * (st.end - st.start);
+    const lenis = getLenis();
+    if (lenis) lenis.scrollTo(y, { duration: 1.1, easing: (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2) });
+    else window.scrollTo({ top: y, behavior: 'smooth' });
+  };
+  window.addEventListener('wheel', onWheel, { passive: false, capture: true });
+
   return () => {
+    window.removeEventListener('wheel', onWheel, { capture: true });
     btnCleanups.forEach((c) => c());
     root.classList.remove('is-h');
     progress.hidden = true;

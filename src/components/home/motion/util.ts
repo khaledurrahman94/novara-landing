@@ -3,6 +3,22 @@ import { getLenis, prefersReducedMotion } from '../../../scripts/motion';
 
 export const EASE = 'expo.out';
 
+/**
+ * Which motion system a device gets. It depends on the kind of device, never on how tall the window is:
+ * a short laptop window or a second monitor keeps the full pinned experience, and the page scales to fit
+ * (the fluid root size in styles/fluid.css follows the viewport height). Phones, narrow or in landscape
+ * (a touch screen that is also short), get the reduced, in-flow motion.
+ */
+const PHONE_LANDSCAPE = '(hover: none) and (pointer: coarse) and (max-height: 500px)';
+/** Desktop, laptop and tablet: pinned scenes. */
+export const FULL_MQ = `(min-width: 768px) and (not (${PHONE_LANDSCAPE}))`;
+/** Pinned scenes that also need two columns side by side (the interview lab). */
+export const FULL_WIDE_MQ = `(min-width: 1024px) and (not (${PHONE_LANDSCAPE}))`;
+/** Phones: reduced motion, no pins. The exact complement of FULL_MQ. */
+export const PHONE_MQ = `(max-width: 767.98px), ${PHONE_LANDSCAPE}`;
+/** The exact complement of FULL_WIDE_MQ. */
+export const NOT_WIDE_MQ = `(max-width: 1023.98px), ${PHONE_LANDSCAPE}`;
+
 export const $ = (root: ParentNode, sel: string): HTMLElement[] => Array.from(root.querySelectorAll<HTMLElement>(sel));
 export const one = (root: ParentNode, sel: string): HTMLElement | null => root.querySelector<HTMLElement>(sel);
 export const num = (v: string | undefined, fallback = 0): number => {
