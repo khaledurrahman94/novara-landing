@@ -16,6 +16,7 @@
  */
 import { gsap, ScrollTrigger, onReady, prefersReducedMotion, getLenis } from '../../../../scripts/motion';
 import { kinds, lab, clock, span, type Kind } from './copy';
+import { FULL_WIDE_MQ, NOT_WIDE_MQ } from '../../motion/util';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -887,9 +888,9 @@ function mount(root: HTMLElement): () => void {
         gsap.set([zoom, ...fades, cue], { clearProps: 'all' });
       };
     };
-    // Pin only where both surfaces sit side by side and the scene fits under the nav (the frame height is capped in CSS).
-    mm.add('(min-width: 1024px) and (min-height: 680px)', () => build(true));
-    mm.add('not all and (min-width: 1024px) and (min-height: 680px)', () => build(false));
+    // Pin where both surfaces sit side by side (the frame height follows the viewport in CSS), on any window height.
+    mm.add(FULL_WIDE_MQ, () => build(true));
+    mm.add(NOT_WIDE_MQ, () => build(false));
   }
   // A keyboard user tabbing into the zoomed-out UI jumps straight to the finished state.
   const onFocusIn = (): void => {
