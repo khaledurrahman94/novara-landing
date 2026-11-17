@@ -1,12 +1,7 @@
 import type { FeaturePageContent } from './types';
-import { DEMO_HREF } from './shared';
+import { DEMO_HREF, featureShot } from './shared';
 
-const img = (name: string, alt: string, height: number) => ({
-  src: `/features/job-creation-and-management/${name}.webp`,
-  alt,
-  width: 1600,
-  height,
-});
+const img = (name: string, alt: string, height: number) => featureShot('job-creation-and-management', name, alt, 1600, height);
 
 export const jobCreationAndManagement: FeaturePageContent = {
   seo: {
