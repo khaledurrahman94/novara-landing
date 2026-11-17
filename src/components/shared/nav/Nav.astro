@@ -1,0 +1,65 @@
+---
+import { home } from '../../../content/home';
+import { featurePath, menuFeatures } from '../../../content/features';
+import { HOME_PATH } from '../../../lib/home-path';
+import Button from '../../home/Button.astro';
+import BurgerButton from './BurgerButton.astro';
+import FeaturesMenu from './FeaturesMenu.astro';
+import FeaturesTrigger from './FeaturesTrigger.astro';
+import MobileMenu from './MobileMenu.astro';
+import type { MenuItem, NavLink } from './types';
+
+interface Props {
+  /** Opaque bar from the start. The home page's scroll script does this on scroll; other pages have no script. */
+  solid?: boolean;
+  currentFeature?: string;
+}
+const { solid = false, currentFeature } = Astro.props;
+const { nav } = home;
+
+/** Only links whose page exists (`live` in home.ts). */
+const links: NavLink[] = nav.links.filter((l) => l.live);
+const items: MenuItem[] = menuFeatures().map((f) => ({ ...f, href: featurePath(f.slug), current: f.slug === currentFeature }));
+const hasMenu = items.length > 0;
+const split = links.findIndex((l) => l.href === HOME_PATH) + 1;
+const before = links.slice(0, split);
+const after = links.slice(split);
+const linkClass = 'text-sm font-medium text-text-tertiary no-underline transition-colors duration-[var(--duration-fast)] hover:text-text-primary';
+---
+<header
+  data-nav
+  data-scrolled={solid ? 'true' : 'false'}
+  data-menu="closed"
+  class="sticky top-0 z-50 border-b border-transparent bg-transparent transition-[background-color,border-color] duration-[var(--duration-slow)] ease-[var(--ease-out-quart)] data-[menu=open]:border-border-secondary data-[menu=open]:bg-white data-[scrolled=true]:border-border-secondary data-[scrolled=true]:bg-white"
+>
+  <div class="relative mx-auto grid h-16 w-full max-w-[75rem] grid-cols-[1fr_auto] items-center gap-6 border-x border-border-secondary px-5 sm:px-8 lg:grid-cols-[1fr_auto_1fr] lg:px-12">
+    <a href={HOME_PATH} class="justify-self-start rounded-sm" aria-label={nav.home}>
+      <img src="/brand/novara-full.svg" width="143" height="41" alt="Novara" class="block h-7 w-auto" />
+    </a>
+
+    {(links.length > 0 || hasMenu) && (
+      <nav aria-label={nav.label} class="hidden lg:block">
+        <ul class="m-0 flex list-none items-center gap-8 p-0">
+          {before.map((a) => <li><a href={a.href} class={linkClass}>{a.label}</a></li>)}
+          {hasMenu && <li><FeaturesTrigger /></li>}
+          {after.map((a) => <li><a href={a.href} class={linkClass}>{a.label}</a></li>)}
+        </ul>
+      </nav>
+    )}
+
+    <div class="flex items-center gap-2 justify-self-end sm:gap-3 lg:col-start-3">
+      <Button href={nav.signIn.href} variant="secondary" class="max-lg:hidden">{nav.signIn.label}</Button>
+      <Button href={nav.getStarted.href}>{nav.getStarted.label}</Button>
+      <BurgerButton />
+    </div>
+
+    {hasMenu && <FeaturesMenu {items} getStarted={nav.getStarted} />}
+  </div>
+
+  <MobileMenu {before} {after} {items} signIn={nav.signIn} getStarted={nav.getStarted} />
+</header>
+
+<script>
+  import { initNav } from './nav-menu';
+  initNav();
+</script>

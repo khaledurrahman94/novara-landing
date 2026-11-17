@@ -1,0 +1,14 @@
+---
+import { featureMenu } from '../../../content/features';
+import Icon from '../ui/Icon.astro';
+---
+<button
+  type="button"
+  data-mega-trigger
+  aria-expanded="false"
+  aria-controls="nav-features"
+  class="group inline-flex cursor-pointer items-center gap-1 border-0 bg-transparent p-0 font-[inherit] text-sm font-medium text-text-tertiary transition-colors duration-[var(--duration-fast)] hover:text-text-primary aria-expanded:text-primary-700"
+>
+  {featureMenu.label}
+  <Icon name="chevron-down" size={16} class="transition-transform duration-[var(--duration-base)] ease-[var(--ease-out-quart)] group-aria-expanded:rotate-180" />
+</button>

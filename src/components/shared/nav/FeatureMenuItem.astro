@@ -1,0 +1,22 @@
+---
+import Icon from '../ui/Icon.astro';
+import type { MenuItem } from './types';
+
+interface Props {
+  item: MenuItem;
+}
+const { item } = Astro.props;
+---
+<a
+  href={item.href}
+  aria-current={item.current ? 'page' : undefined}
+  class="group flex items-start gap-3.5 rounded-md p-3 no-underline transition-colors duration-[var(--duration-fast)] hover:bg-bg aria-[current=page]:bg-primary-50"
+>
+  <span class="grid size-9 shrink-0 place-items-center rounded-md border border-primary-100 bg-primary-50 text-primary-700 transition-colors duration-[var(--duration-fast)] group-hover:bg-white group-aria-[current=page]:bg-white">
+    <Icon name={item.icon} size={18} />
+  </span>
+  <span class="min-w-0">
+    <span class="block text-[0.9375rem] font-medium leading-snug text-text-primary">{item.name}</span>
+    <span class="mt-0.5 block text-sm leading-normal text-text-tertiary">{item.summary}</span>
+  </span>
+</a>

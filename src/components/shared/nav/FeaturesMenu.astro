@@ -1,0 +1,38 @@
+---
+import { featureMenu } from '../../../content/features';
+import Button from '../../home/Button.astro';
+import FeatureMenuItem from './FeatureMenuItem.astro';
+import type { MenuItem, NavLink } from './types';
+
+interface Props {
+  items: MenuItem[];
+  getStarted: NavLink;
+}
+const { items, getStarted } = Astro.props;
+---
+<div
+  id="nav-features"
+  data-mega
+  hidden
+  class="nav-pop absolute inset-x-5 top-[calc(100%+0.5rem)] overflow-hidden rounded-lg border border-border-secondary bg-white shadow-lg max-lg:hidden! sm:inset-x-8 lg:inset-x-12"
+>
+  <div class="p-6">
+    <p class="m-0 mb-3 px-3 text-xs font-semibold uppercase tracking-[0.06em] text-text-tertiary">{featureMenu.heading}</p>
+    <ul class="m-0 grid list-none grid-cols-2 gap-x-4 gap-y-1 p-0 xl:grid-cols-3">
+      {items.map((item) => <li><FeatureMenuItem {item} /></li>)}
+    </ul>
+  </div>
+  <div class="flex flex-wrap items-center justify-between gap-4 border-t border-border-secondary bg-bg px-9 py-4">
+    <p class="m-0 text-sm text-text-tertiary">{featureMenu.line}</p>
+    <div class="flex gap-3">
+      <Button href={featureMenu.demo.href} variant="secondary">{featureMenu.demo.label}</Button>
+      <Button href={getStarted.href}>{getStarted.label}</Button>
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes nav-pop { from { opacity: 0; transform: translateY(-0.375rem); } }
+  .nav-pop:not([hidden]) { animation: nav-pop var(--duration-base) var(--ease-out-quart); }
+  @media (prefers-reduced-motion: reduce) { .nav-pop { animation: none !important; } }
+</style>

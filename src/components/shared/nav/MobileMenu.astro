@@ -1,0 +1,72 @@
+---
+import { featureMenu } from '../../../content/features';
+import Button from '../../home/Button.astro';
+import Icon from '../ui/Icon.astro';
+import type { MenuItem, NavLink } from './types';
+
+interface Props {
+  before: NavLink[];
+  after: NavLink[];
+  items: MenuItem[];
+  signIn: NavLink;
+  getStarted: NavLink;
+}
+const { before, after, items, signIn, getStarted } = Astro.props;
+const hasMenu = items.length > 0;
+const row = 'group -mx-5 flex w-[calc(100%+2.5rem)] items-center justify-between gap-3 border-b border-border-secondary px-5 py-4 text-base font-medium text-text-primary no-underline transition-colors duration-[var(--duration-fast)] hover:bg-bg hover:text-primary-700 active:bg-bg-tertiary sm:-mx-8 sm:w-[calc(100%+4rem)] sm:px-8';
+---
+<div id="nav-drawer" data-drawer hidden class="nav-fade fixed inset-x-0 bottom-0 top-16 z-40 flex flex-col bg-white lg:hidden!">
+  <div data-lenis-prevent class="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-6 pt-2 sm:px-8">
+    <nav aria-label={featureMenu.mobileLabel} data-panel="main">
+      <ul class="m-0 list-none p-0">
+        {before.map((a) => <li><a href={a.href} class={row}>{a.label}</a></li>)}
+        {hasMenu && (
+          <li>
+            <button type="button" data-panel-open="features" class={`${row} cursor-pointer border-x-0 border-t-0 bg-transparent text-left font-[inherit]`}>
+              {featureMenu.label}
+              <span class="text-primary transition-transform duration-[var(--duration-fast)] ease-[var(--ease-out-quart)] group-hover:translate-x-0.5"><Icon name="chevron-right" size={20} /></span>
+            </button>
+          </li>
+        )}
+        {after.map((a) => <li><a href={a.href} class={row}>{a.label}</a></li>)}
+        <li><a href={signIn.href} class={`${row} border-b-0`}>{signIn.label}</a></li>
+      </ul>
+    </nav>
+
+    {hasMenu && (
+      <div data-panel="features" hidden class="nav-slide">
+        <button type="button" data-panel-back class="flex cursor-pointer items-center gap-2 border-0 bg-transparent px-0 py-4 font-[inherit] text-base font-medium text-text-primary transition-colors duration-[var(--duration-fast)] hover:text-primary-700">
+          <Icon name="chevron-left" size={20} />{featureMenu.back}
+        </button>
+        <p class="m-0 mb-3 text-xs font-semibold uppercase tracking-[0.06em] text-text-tertiary">{featureMenu.heading}</p>
+        <ul class="m-0 grid list-none gap-2.5 p-0 sm:grid-cols-2">
+          {items.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                aria-current={item.current ? 'page' : undefined}
+                class="flex items-center gap-3.5 rounded-md border border-border-secondary bg-white p-3.5 text-[0.9375rem] font-medium text-text-primary no-underline transition-colors duration-[var(--duration-fast)] hover:border-primary-200 hover:bg-bg active:bg-bg-tertiary aria-[current=page]:border-primary-300 aria-[current=page]:bg-primary-50"
+              >
+                <span class="grid size-8 shrink-0 place-items-center rounded-sm border border-primary-100 bg-primary-50 text-primary-700"><Icon name={item.icon} size={16} /></span>
+                {item.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </div>
+
+  <div class="flex shrink-0 gap-3 border-t border-border-secondary bg-white px-5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-8">
+    <Button href={featureMenu.demo.href} variant="secondary" class="flex-1">{featureMenu.demo.label}</Button>
+    <Button href={getStarted.href} class="flex-1">{getStarted.label}</Button>
+  </div>
+</div>
+
+<style>
+  @keyframes nav-fade { from { opacity: 0; } }
+  @keyframes nav-slide { from { opacity: 0; transform: translateX(0.75rem); } }
+  .nav-fade:not([hidden]) { animation: nav-fade var(--duration-fast) var(--ease-out-quart); }
+  .nav-slide:not([hidden]) { animation: nav-slide var(--duration-base) var(--ease-out-quart); }
+  @media (prefers-reduced-motion: reduce) { .nav-fade, .nav-slide { animation: none !important; } }
+</style>

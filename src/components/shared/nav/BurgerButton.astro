@@ -1,0 +1,20 @@
+---
+import { featureMenu } from '../../../content/features';
+const bar = 'absolute left-0 h-0.5 w-5 rounded-full bg-current transition-[translate,rotate,opacity] duration-[var(--duration-base)] ease-[var(--ease-out-quart)] motion-reduce:transition-none';
+---
+<button
+  type="button"
+  data-burger
+  aria-expanded="false"
+  aria-controls="nav-drawer"
+  aria-label={featureMenu.open}
+  data-label-open={featureMenu.open}
+  data-label-close={featureMenu.close}
+  class="group -mr-2 grid size-10 cursor-pointer place-items-center rounded-md border-0 bg-transparent p-0 text-text-primary transition-colors duration-[var(--duration-fast)] hover:bg-bg lg:hidden"
+>
+  <span aria-hidden="true" class="relative block h-3.5 w-5">
+    <span class={`${bar} top-0 group-aria-expanded:translate-y-1.5 group-aria-expanded:rotate-45`}></span>
+    <span class={`${bar} top-1.5 group-aria-expanded:opacity-0`}></span>
+    <span class={`${bar} top-3 group-aria-expanded:-translate-y-1.5 group-aria-expanded:-rotate-45`}></span>
+  </span>
+</button>
