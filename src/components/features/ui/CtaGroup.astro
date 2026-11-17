@@ -1,0 +1,18 @@
+---
+import type { Cta } from '../../../content/feature-pages/types';
+import FeatureButton from './FeatureButton.astro';
+
+interface Props {
+  ctas: Cta[];
+  stackOnPhone?: boolean;
+  class?: string | undefined;
+}
+const { ctas, stackOnPhone = false, class: cls } = Astro.props;
+---
+{ctas.length > 0 && (
+  <div class:list={['flex flex-wrap gap-3', stackOnPhone && 'max-sm:w-full max-sm:flex-col', cls]}>
+    {ctas.map((cta) => (
+      <FeatureButton href={cta.href} variant={cta.variant ?? 'primary'} class={stackOnPhone ? 'max-sm:w-full' : undefined}>{cta.label}</FeatureButton>
+    ))}
+  </div>
+)}

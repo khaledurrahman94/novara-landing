@@ -1,0 +1,27 @@
+---
+import type { FeaturePageContent } from '../../../content/feature-pages/types';
+import { featureCopy } from '../../../content/feature-pages/shared';
+import FeatureBand from '../ui/FeatureBand.astro';
+import FeatureButton from '../ui/FeatureButton.astro';
+
+interface Props {
+  close: FeaturePageContent['close'];
+}
+const { close } = Astro.props;
+const id = featureCopy.sectionIds.close;
+const rings = [270, 200, 130, 60];
+---
+<FeatureBand {id} size="compact" labelledby={`${id}-title`}>
+  <div class="relative flex flex-wrap items-center justify-between gap-x-12 gap-y-8 overflow-hidden rounded-2xl bg-[linear-gradient(135deg,var(--color-primary-600),var(--color-primary-800))] px-7 py-12 sm:px-12 md:py-20 lg:px-16">
+    <div class="relative z-10 flex max-w-[42rem] min-w-0 flex-[1_1_26rem] flex-col gap-4">
+      <h2 id={`${id}-title`} class="m-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leading-[1.08] tracking-[-0.03em] text-white">{close.title}</h2>
+      <p class="m-0 max-w-[34rem] text-[1.0625rem] leading-relaxed text-primary-100">{close.text}</p>
+    </div>
+    <div class="relative shrink-0">
+      <svg aria-hidden="true" width="560" height="560" viewBox="0 0 560 560" fill="none" class="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+        {rings.map((r) => <circle cx="280" cy="280" r={r} stroke="var(--color-primary-400)" stroke-opacity="0.35" />)}
+      </svg>
+      <FeatureButton href={close.cta.href} variant="white" class="relative">{close.cta.label}</FeatureButton>
+    </div>
+  </div>
+</FeatureBand>

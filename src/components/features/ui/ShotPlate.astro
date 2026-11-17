@@ -1,0 +1,24 @@
+---
+import type { Shot } from '../../../content/feature-pages/types';
+
+interface Props {
+  shot: Shot;
+  tone?: 'plate' | 'white';
+  priority?: boolean;
+  lifted?: boolean;
+  class?: string | undefined;
+}
+const { shot, tone = 'plate', priority = false, lifted = false, class: cls } = Astro.props;
+---
+<figure class:list={['m-0 min-w-0 rounded-xl border border-border-secondary p-2 sm:p-3', tone === 'plate' ? 'bg-bg' : 'bg-white', cls]}>
+  <img
+    src={shot.src}
+    alt={shot.alt}
+    width={shot.width}
+    height={shot.height}
+    loading={priority ? 'eager' : 'lazy'}
+    fetchpriority={priority ? 'high' : undefined}
+    decoding="async"
+    class:list={['block h-auto w-full rounded-lg border border-border-secondary bg-white', lifted && 'shadow-md']}
+  />
+</figure>

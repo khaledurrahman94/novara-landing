@@ -1,0 +1,31 @@
+---
+import type { FeaturePageContent } from '../../../content/feature-pages/types';
+import { featureCopy } from '../../../content/feature-pages/shared';
+import Icon from '../../shared/ui/Icon.astro';
+import FeatureBand from '../ui/FeatureBand.astro';
+import FeatureButton from '../ui/FeatureButton.astro';
+import { type } from '../ui/typography';
+
+interface Props {
+  why: FeaturePageContent['why'];
+  tone: 'white' | 'plate';
+}
+const { why, tone } = Astro.props;
+const id = featureCopy.sectionIds.why;
+---
+<FeatureBand {id} {tone} labelledby={`${id}-title`} class="grid items-start gap-12 lg:grid-cols-12 lg:gap-20">
+  <div class="flex flex-col gap-5 lg:sticky lg:top-24 lg:col-span-5">
+    <h2 id={`${id}-title`} class={type.h2}>{why.title}</h2>
+    <p class:list={[type.lead, 'max-w-[30rem]']}>{why.text}</p>
+    <div class="pt-2"><FeatureButton href={why.cta.href}>{why.cta.label}</FeatureButton></div>
+  </div>
+  <ul class="m-0 grid list-none gap-x-10 gap-y-9 p-0 sm:grid-cols-2 lg:col-span-7">
+    {why.reasons.map((reason) => (
+      <li class="flex flex-col gap-3 border-t border-border-secondary pt-5">
+        <span class="grid size-10 place-items-center rounded-md bg-primary-50 text-primary-700"><Icon name={reason.icon} size={20} /></span>
+        <p class="m-0 text-base font-medium leading-snug text-text-primary">{reason.title}</p>
+        <p class="m-0 text-[0.9375rem] leading-relaxed text-text-tertiary">{reason.text}</p>
+      </li>
+    ))}
+  </ul>
+</FeatureBand>

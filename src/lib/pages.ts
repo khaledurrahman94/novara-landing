@@ -7,6 +7,7 @@ import { z } from 'astro/zod';
 import { company } from '../content/company';
 import { home } from '../content/home';
 import { featurePath, features } from '../content/features';
+import { featurePages } from '../content/feature-pages';
 import { legal } from '../content/legal';
 import { HOME_PATH } from './home-path';
 import { error, fromZod, type Issue } from './issues';
@@ -99,13 +100,35 @@ const companyProvider: PageProvider = {
     })),
 };
 
+const featuresProvider: PageProvider = {
+  type: 'feature',
+  pages: () =>
+    features.flatMap((f) => {
+      const page = featurePages[f.slug];
+      if (!f.live || !page) return [];
+      return [
+        {
+          type: 'feature',
+          path: featurePath(f.slug),
+          slug: f.slug,
+          route: 'code' as const,
+          where: `feature "${f.slug}"`,
+          title: f.name,
+          seo: seoMetaSchema.parse({ metaTitle: page.seo.title, metaDescription: page.seo.description, breadcrumbLabel: f.name }),
+          images: [],
+          links: [],
+        },
+      ];
+    }),
+};
+
 /** Stand-in pages from `synthetic-pages.json` in a fixtures dir. Exercises the checks; never reaches the site. */
 const fixturePagesProvider: PageProvider = {
   type: 'fixture',
   pages: (data) => data.fixturePages,
 };
 
-export const pageProviders: PageProvider[] = [homeProvider, companyProvider, fixturePagesProvider];
+export const pageProviders: PageProvider[] = [homeProvider, companyProvider, featuresProvider, fixturePagesProvider];
 
 // ---- fixture page parsing -------------------------------------------------------------------
 

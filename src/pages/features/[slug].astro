@@ -1,0 +1,19 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Page from '../../layouts/Page.astro';
+import FeaturePage from '../../components/features/FeaturePage.astro';
+import { features } from '../../content/features';
+import { featurePages } from '../../content/feature-pages';
+
+export const getStaticPaths = (() =>
+  features.flatMap((feature) => {
+    const page = featurePages[feature.slug];
+    if (!page || !(feature.live || import.meta.env.DEV)) return [];
+    return [{ params: { slug: feature.slug }, props: { slug: feature.slug, page } }];
+  })) satisfies GetStaticPaths;
+
+const { slug, page } = Astro.props;
+---
+<Page title={page.seo.title} description={page.seo.description} currentFeature={slug}>
+  <FeaturePage {page} />
+</Page>

@@ -1,0 +1,41 @@
+---
+import type { FeaturePageContent } from '../../../content/feature-pages/types';
+import { featureCopy } from '../../../content/feature-pages/shared';
+import FeatureBand from '../ui/FeatureBand.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+
+interface Props {
+  faq: FeaturePageContent['faq'];
+  tone: 'white' | 'plate';
+}
+const { faq, tone } = Astro.props;
+const id = featureCopy.sectionIds.faq;
+const half = Math.ceil(faq.items.length / 2);
+const columns = [faq.items.slice(0, half), faq.items.slice(half)].filter((c) => c.length > 0);
+---
+<FeatureBand {id} {tone} labelledby={`${id}-title`} class="flex flex-col gap-10 md:gap-14">
+  <SectionHeading id={`${id}-title`} title={faq.title} intro={faq.intro} align="start" />
+  <div class="grid items-start gap-x-12 md:grid-cols-2 lg:gap-x-16">
+    {columns.map((items) => (
+      <div class="border-t border-border-secondary max-md:[&:not(:first-child)]:border-t-0">
+        {items.map((item) => (
+          <details data-accordion class="group border-b border-border-secondary">
+            <summary class="flex cursor-pointer list-none items-start gap-4 py-5 text-[1.0625rem] font-medium tracking-[-0.01em] text-text-primary [&::-webkit-details-marker]:hidden">
+              <span aria-hidden="true" class="relative mt-1.5 size-3.5 shrink-0">
+                <span class="absolute inset-x-0 top-1.5 h-0.5 rounded-full bg-primary"></span>
+                <span class="absolute inset-y-0 left-1.5 w-0.5 rounded-full bg-primary transition-transform duration-[var(--duration-base)] ease-[var(--ease-out-quart)] group-[[open]:not([data-state=closing])]:rotate-90"></span>
+              </span>
+              <span class="min-w-0 flex-1">{item.q}</span>
+            </summary>
+            <p class="m-0 max-w-[40rem] pb-6 pl-[1.875rem] text-[0.9375rem] leading-relaxed text-text-secondary">{item.a}</p>
+          </details>
+        ))}
+      </div>
+    ))}
+  </div>
+</FeatureBand>
+
+<script>
+  import { initAccordions } from '../scripts/accordion';
+  initAccordions();
+</script>

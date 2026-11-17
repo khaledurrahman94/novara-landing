@@ -12,7 +12,7 @@ import type { MenuItem, NavLink } from './types';
 interface Props {
   /** Opaque bar from the start. The home page's scroll script does this on scroll; other pages have no script. */
   solid?: boolean;
-  currentFeature?: string;
+  currentFeature?: string | undefined;
 }
 const { solid = false, currentFeature } = Astro.props;
 const { nav } = home;

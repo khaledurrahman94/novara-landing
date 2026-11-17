@@ -1,0 +1,22 @@
+---
+import type { FeaturePageContent } from '../../content/feature-pages/types';
+import FeatureClose from './sections/FeatureClose.astro';
+import FeatureFaq from './sections/FeatureFaq.astro';
+import FeatureGroup from './sections/FeatureGroup.astro';
+import FeatureHero from './sections/FeatureHero.astro';
+import FeatureSteps from './sections/FeatureSteps.astro';
+import FeatureWhy from './sections/FeatureWhy.astro';
+
+interface Props {
+  page: FeaturePageContent;
+}
+const { page } = Astro.props;
+const toneAt = (index: number) => (index % 2 === 0 ? 'plate' : 'white');
+const after = page.groups.length;
+---
+<FeatureHero hero={page.hero} />
+{page.groups.map((group, i) => <FeatureGroup {group} tone={toneAt(i)} />)}
+<FeatureSteps how={page.how} tone={toneAt(after)} />
+<FeatureWhy why={page.why} tone={toneAt(after + 1)} />
+<FeatureFaq faq={page.faq} tone={toneAt(after + 2)} />
+<FeatureClose close={page.close} />

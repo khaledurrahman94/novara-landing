@@ -1,0 +1,35 @@
+---
+import type { FeaturePageContent } from '../../../content/feature-pages/types';
+import { featureCopy } from '../../../content/feature-pages/shared';
+import Icon from '../../shared/ui/Icon.astro';
+import FeatureBand from '../ui/FeatureBand.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+
+interface Props {
+  how: FeaturePageContent['how'];
+  tone: 'white' | 'plate';
+}
+const { how, tone } = Astro.props;
+const id = featureCopy.sectionIds.how;
+const count = how.steps.length;
+const columns = count === 4 ? 'lg:grid-cols-4' : count === 2 ? 'lg:grid-cols-2' : 'lg:grid-cols-3';
+const showArrows = count <= 4;
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+<FeatureBand {id} {tone} labelledby={`${id}-title`} class="flex flex-col gap-12 md:gap-14">
+  <SectionHeading id={`${id}-title`} title={how.title} intro={how.intro} />
+  <ol class:list={['m-0 grid list-none gap-4 rounded-2xl border border-primary-100 bg-primary-50 p-4 sm:grid-cols-2 sm:p-8 lg:p-10', columns]}>
+    {how.steps.map((step, i) => (
+      <li class="relative flex flex-col gap-3 rounded-lg bg-white p-6 shadow-xs">
+        <span class="self-start rounded-full bg-primary-50 px-3 py-1 text-[0.8125rem] font-semibold tabular-nums text-primary-700">{featureCopy.step} {pad(i + 1)}</span>
+        <h3 class="m-0 mt-3 text-lg font-semibold leading-snug tracking-[-0.01em] text-text-primary">{step.title}</h3>
+        <p class="m-0 text-[0.9375rem] leading-relaxed text-text-secondary">{step.text}</p>
+        {showArrows && i < count - 1 && (
+          <span aria-hidden="true" class="absolute top-1/2 -right-5 z-10 hidden size-6 -translate-y-1/2 place-items-center rounded-full bg-primary text-white lg:grid">
+            <Icon name="chevron-right" size={14} />
+          </span>
+        )}
+      </li>
+    ))}
+  </ol>
+</FeatureBand>

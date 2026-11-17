@@ -1,0 +1,21 @@
+---
+interface Props {
+  id?: string | undefined;
+  tone?: 'white' | 'plate';
+  size?: 'default' | 'compact';
+  labelledby?: string | undefined;
+  class?: string | undefined;
+}
+const { id, tone = 'white', size = 'default', labelledby, class: cls } = Astro.props;
+---
+<section id={id} aria-labelledby={labelledby} class:list={['border-t border-border-secondary', tone === 'plate' ? 'bg-bg' : 'bg-white']}>
+  <div
+    class:list={[
+      'mx-auto w-full max-w-[75rem] border-x border-border-secondary px-5 sm:px-8 md:px-12',
+      size === 'compact' ? 'py-10 md:py-16' : 'py-20 md:py-32',
+      cls,
+    ]}
+  >
+    <slot />
+  </div>
+</section>

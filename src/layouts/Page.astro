@@ -8,12 +8,12 @@ import Nav from '../components/shared/nav/Nav.astro';
 import Footer from '../components/home/Footer.astro';
 import '../components/home/home.css';
 
-interface Props { title: string; description: string }
-const { title, description } = Astro.props;
+interface Props { title: string; description: string; currentFeature?: string }
+const { title, description, currentFeature } = Astro.props;
 ---
 <Base {title} {description} fluid>
   <div class="home bg-white text-text-primary">
-    <Nav solid />
+    <Nav solid {currentFeature} />
     <main id="main">
       <slot />
     </main>

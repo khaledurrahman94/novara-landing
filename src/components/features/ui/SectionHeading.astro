@@ -1,0 +1,15 @@
+---
+import { type } from './typography';
+
+interface Props {
+  id: string;
+  title: string;
+  intro?: string | undefined;
+  align?: 'center' | 'start';
+}
+const { id, title, intro, align = 'center' } = Astro.props;
+---
+<div class:list={['flex max-w-[44rem] flex-col gap-4', align === 'center' ? 'mx-auto items-center text-center' : 'items-start']}>
+  <h2 id={id} class={type.h2}>{title}</h2>
+  {intro && <p class:list={[type.lead, 'max-w-[36rem]']}>{intro}</p>}
+</div>
