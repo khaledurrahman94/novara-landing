@@ -29,10 +29,10 @@ const slotH = 'h-[8rem]';
           </div>
           <div class="grid grid-cols-2 gap-3">
             <div data-col="from" class="rounded-md bg-bg-tertiary p-2">
-              <h3 class="m-0 mb-2 flex items-center gap-1.5 px-1 text-xs font-semibold text-text-secondary">
+              <p class="m-0 mb-2 flex items-center gap-1.5 px-1 text-xs font-semibold text-text-secondary">
                 <span class:list={['size-1.5 rounded-full', toneDot[stageTone.Completed]]} aria-hidden="true"></span>{decide.from}
                 <span data-count="from" class="ml-auto font-medium tabular-nums text-text-tertiary">2</span>
-              </h3>
+              </p>
               <ul class="m-0 flex list-none flex-col gap-2 p-0">
                 <li data-slot="home" class:list={['relative', slotH]}>
                   <span data-ghost aria-hidden="true" class="absolute inset-0 rounded-md border border-dashed border-border-primary opacity-0"></span>
@@ -61,10 +61,10 @@ const slotH = 'h-[8rem]';
               </ul>
             </div>
             <div data-col="to" class="rounded-md bg-bg-tertiary p-2">
-              <h3 class="m-0 mb-2 flex items-center gap-1.5 px-1 text-xs font-semibold text-text-secondary">
+              <p class="m-0 mb-2 flex items-center gap-1.5 px-1 text-xs font-semibold text-text-secondary">
                 <span class:list={['size-1.5 rounded-full', toneDot[stageTone['HR Round']]]} aria-hidden="true"></span>{decide.to}
                 <span data-count="to" class="ml-auto font-medium tabular-nums text-text-tertiary">1</span>
-              </h3>
+              </p>
               <ul class="m-0 flex list-none flex-col gap-2 p-0">
                 <li data-slot="away" class:list={['relative', slotH]}>
                   <span data-drop class="absolute inset-0 grid place-items-center rounded-md border border-dashed border-border-primary text-[0.6875rem] text-text-tertiary transition-[background-color] duration-[var(--duration-fast)] data-[hot=true]:bg-primary-50" aria-hidden="true">{decide.drop}</span>

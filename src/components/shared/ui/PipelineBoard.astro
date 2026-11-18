@@ -11,11 +11,11 @@ const { class: cls = '' } = Astro.props;
   <div class="grid grid-cols-2 gap-3 @lg:grid-cols-4">
     {boardColumns.map((col) => (
       <section aria-label={col.stage} class="rounded-md bg-bg-tertiary p-2">
-        <h4 class="m-0 mb-2 flex items-center gap-1.5 px-1 text-xs font-semibold text-text-secondary">
+        <p class="m-0 mb-2 flex items-center gap-1.5 px-1 text-xs font-semibold text-text-secondary">
           <span class:list={['size-1.5 rounded-full', toneDot[stageTone[col.stage]]]} aria-hidden="true"></span>
           {col.stage}
-          <span class="ml-auto font-medium tabular-nums text-text-tertiary">{col.ids.length}</span>
-        </h4>
+          <span data-count class="ml-auto font-medium tabular-nums text-text-tertiary">{col.ids.length}</span>
+        </p>
         <ul class="m-0 flex list-none flex-col gap-2 p-0">
           {col.ids.map((id) => {
             const c = byId(id);
