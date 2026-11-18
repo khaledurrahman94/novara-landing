@@ -58,9 +58,10 @@ const jsonLdText = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
 ---
 <title>{seo.title}</title>
 <meta name="description" content={seo.description} />
+{meta.keywords && <meta name="keywords" content={meta.keywords} />}
 {!noCanonical && <link rel="canonical" href={seo.canonical} />}
 <meta name="theme-color" content="#F9FAFB" />
-{seo.robots && <meta name="robots" content={seo.robots} />}
+<meta name="robots" content={seo.robots ?? 'index, follow'} />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content={settings.siteName} />
 <meta property="og:title" content={seo.og.title} />

@@ -60,7 +60,7 @@ export const mediaToImage = (m: Media | undefined, field: string): ImageRef[] =>
  * `seo` (its `updatedAt` becomes the sitemap lastmod) once the home content type is read.
  */
 export function homeSeoMeta(): SeoMeta {
-  return seoMetaSchema.parse({ metaTitle: home.seo.title, metaDescription: home.seo.description, breadcrumbLabel: 'Home' });
+  return seoMetaSchema.parse({ metaTitle: home.seo.title, metaDescription: home.seo.description, keywords: home.seo.keywords, breadcrumbLabel: 'Home' });
 }
 
 /** Every nav, hero and footer link marked `live` in home.ts. Listing them as page links makes the build check that each one resolves. */

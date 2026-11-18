@@ -118,7 +118,7 @@ function pipeline(root: HTMLElement): Tile {
   const columns = $(board, 'section');
   const lists = columns.map((c) => one(c, 'ul'));
   const mover = cards.find((c) => c.dataset['anim'] === 'board-card');
-  const counts = columns.map((c) => one(c, 'h4 > span.ml-auto'));
+  const counts = columns.map((c) => one(c, '[data-count]'));
   if (!mover || lists.some((l) => !l)) return NOOP;
   const recount = (): void => lists.forEach((l, i) => void (counts[i] && l && (counts[i].textContent = String(l.children.length))));
   return {
