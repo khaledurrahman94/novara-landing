@@ -13,10 +13,12 @@ export const setSite = (site: SiteBuild): void => {
 };
 export const getSite = (): SiteBuild | undefined => current;
 
-/** Sitemap policy: only registered, indexable pages, and none at all outside production. */
+/** Sitemap policy: only registered, indexable pages, on staging and production alike. */
 export function sitemapEntry(url: string): { indexable: boolean; lastmod?: string } {
   const site = current;
-  if (!site || site.siteEnv !== 'production') return { indexable: false };
+  // TODO(remove): letting staging be indexed is a bad practice, kept only on request. Restore the
+  // production-only gate. See docs/deploy-site.md "Staging indexing (temporary)".
+  if (!site) return { indexable: false };
   const path = normalizePath(new URL(url).pathname);
   const page = site.pages.find((p) => p.path === path);
   if (!page || !page.seo.index) return { indexable: false };

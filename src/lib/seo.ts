@@ -22,8 +22,8 @@ export interface ResolvedSeo {
   title: string;
   description: string;
   canonical: string;
-  /** `null` when the defaults apply (index, follow). */
-  robots: string | null;
+  /** Always set, e.g. `index, follow`, so every page states its robots policy explicitly. */
+  robots: string;
   indexable: boolean;
   og: { title: string; description: string; image: string; imageAlt: string | undefined; usedFallbackImage: boolean };
 }
@@ -41,15 +41,17 @@ export interface ResolveInput {
 }
 
 export function resolveSeo(input: ResolveInput): ResolvedSeo {
-  const { meta, settings, siteEnv, pathname } = input;
+  const { meta, settings, pathname } = input;
   const site = input.site ?? SITE_ORIGIN;
   const title = resolveTitle(meta, input.pageTitle, settings);
   const description = meta.metaDescription;
   const canonical = new URL(meta.canonicalUrl ?? pathname, site).href;
-  // Anything but production is noindex,nofollow everywhere (spec "Environments").
-  const noindex = siteEnv !== 'production' || input.forceNoindex === true || !meta.index;
-  const nofollow = siteEnv !== 'production' || input.forceNoindex === true || !meta.follow;
-  const robots = noindex || nofollow ? `${noindex ? 'noindex' : 'index'}, ${nofollow ? 'nofollow' : 'follow'}` : null;
+  // Staging and production both follow `seo.meta` (index, follow by default). Only preview and R&D force noindex.
+  // TODO(remove): letting staging be indexed is a bad practice, kept only on request. Restore the
+  // production-only gate. See docs/deploy-site.md "Staging indexing (temporary)".
+  const noindex = input.forceNoindex === true || !meta.index;
+  const nofollow = input.forceNoindex === true || !meta.follow;
+  const robots = `${noindex ? 'noindex' : 'index'}, ${nofollow ? 'nofollow' : 'follow'}`;
   const image = meta.ogImage ?? settings.defaultOgImage;
   return {
     title,

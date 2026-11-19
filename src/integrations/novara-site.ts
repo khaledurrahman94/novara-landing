@@ -20,14 +20,17 @@ import { setSite, getSite } from '../lib/site-state';
 /** A build failure the reader can act on: a title, the list, and a hint. */
 const fail = (title: string, message: string, hint?: string) => new AstroError(`${title}\n\n${message}`, hint);
 
-export function headersFile(siteEnv: 'production' | 'staging'): string {
+export function headersFile(): string {
   const rules = [
     '# Written by src/integrations/novara-site.ts. Do not edit; change the generator.',
     '/preview/*',
     '  X-Robots-Tag: noindex, nofollow',
     '  Cache-Control: no-store',
   ];
-  if (siteEnv !== 'production') rules.push('', '/*', '  X-Robots-Tag: noindex, nofollow');
+  // Every other page: index, follow on staging and production alike.
+  // TODO(remove): letting staging be indexed is a bad practice, kept only on request. Restore the
+  // production-only gate. See docs/deploy-site.md "Staging indexing (temporary)".
+  rules.push('', '/*', '  X-Robots-Tag: index, follow');
   return `${rules.join('\n')}\n`;
 }
 
@@ -49,7 +52,7 @@ export default function novaraSite(): AstroIntegration {
         });
         setSite(site);
         if (site.fixturesFallback) {
-          logger.warn('BUILDING FROM LOCAL FIXTURES: no STRAPI_URL/STRAPI_TOKEN set. Staging only, every page is noindex. Not for production.');
+          logger.warn('BUILDING FROM LOCAL FIXTURES: no STRAPI_URL/STRAPI_TOKEN set. Staging only. Not for production.');
         }
         logger.info(`Content from ${site.describe} (${site.siteEnv})`);
         const errors = site.issues.filter((i) => i.level === 'error');
@@ -71,7 +74,7 @@ export default function novaraSite(): AstroIntegration {
         // The adapter may already have written its _headers rule (immutable cache for /_astro/*): keep it below ours.
         const headersPath = path.join(clientDir, '_headers');
         const adapterHeaders = (await readFile(headersPath, 'utf8').catch(() => '')).trim();
-        await writeFile(headersPath, `${headersFile(site.siteEnv)}${adapterHeaders ? `\n${adapterHeaders}\n` : ''}`);
+        await writeFile(headersPath, `${headersFile()}${adapterHeaders ? `\n${adapterHeaders}\n` : ''}`);
         logger.info(`Wrote _redirects (${strapi.length} from Strapi) and _headers`);
       },
     },
