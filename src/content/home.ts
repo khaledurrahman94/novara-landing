@@ -14,9 +14,10 @@ export const ONBOARDING_HREF = 'https://app.novara.com.my/onboarding';
 
 export const home = {
   seo: {
-    title: 'Novara: try AI resume screening and AI interviews',
+    title: 'AI Recruiting Software to Automate Your Hiring',
     description:
-      'Re-rank resumes, try to cheat an AI interview and make the shortlist call yourself. Novara shows your hiring team the evidence. Request a demo.',
+      'AI recruiting software built for HR teams. Automate candidate sourcing, resume screening, and interview scheduling in one platform. Get started today.',
+    keywords: 'ai recruiting software, ai recruitment platform',
   },
   nav: {
     label: 'Primary',
