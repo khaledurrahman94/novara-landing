@@ -8,13 +8,11 @@ import { IMAGE_SPECS, type PostImageKind } from '../../../../lib/blog';
 interface Props { kind: PostImageKind; src?: string | undefined; alt: string; caption?: string | undefined; width?: number | undefined; height?: number | undefined }
 const { kind, src, alt, caption, width, height } = Astro.props;
 const spec = IMAGE_SPECS[kind];
-const specText = kind === 'info'
-  ? `Information image · min ${spec.min[0]} px wide · up to ${spec.max[0]} × ${spec.max[1]} · text ≥ ${IMAGE_SPECS.info.minTextPx} px`
-  : `Body image · ${spec.ratio} · min ${spec.min[0]} × ${spec.min[1]} · max ${spec.max[0]} × ${spec.max[1]}`;
+const specText = `${kind === 'info' ? 'Information' : 'Body'} image · ${spec.width} × ${spec.height} (${spec.ratio})${kind === 'info' ? ` · text ≥ ${IMAGE_SPECS.info.minTextPx} px` : ''}`;
 ---
 <figure class="post-block m-0">
   {src ? (
-    <img src={src} alt={alt} width={width} height={height} loading="lazy" decoding="async" class:list={['block w-full rounded-lg border border-border-secondary', kind === 'body' && 'aspect-video object-cover']} />
+    <img src={src} alt={alt} width={width} height={height} loading="lazy" decoding="async" class:list={['block w-full rounded-lg border border-border-secondary', kind === 'info' ? 'aspect-video bg-white object-contain' : 'aspect-video object-cover']} />
   ) : (
     <div role="img" aria-label={alt} class="relative grid aspect-video place-items-center overflow-hidden rounded-lg border border-border-secondary bg-bg">
       <div class="blog-grid absolute inset-0" aria-hidden="true"></div>

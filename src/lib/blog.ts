@@ -56,13 +56,14 @@ export type PostBlock =
   | { type: 'quote'; text: string; cite?: string };
 
 /**
- * Image sizes for the marketing team (see docs/implementation/blog-images.md). The page renders them at the
- * column width; these are the source files to upload.
+ * Image sizes for the marketing team (docs/implementation/blog-images.md). One standard, matching Vivasoft:
+ * every blog image is 1920 x 1080 (16:9). Keep key content inside the centre 80% (cards and phones crop edges).
  */
+const STANDARD = { ratio: '16:9', width: 1920, height: 1080, safeArea: 0.8 } as const;
 export const IMAGE_SPECS = {
-  feature: { ratio: '16:9', min: [1600, 900], max: [2400, 1350], maxKb: 300, formats: 'WebP or JPG' },
-  body: { ratio: '16:9', min: [1600, 900], max: [2400, 1350], maxKb: 250, formats: 'WebP or JPG' },
-  info: { ratio: 'free height', min: [1600, 0], max: [1600, 2400], maxKb: 400, formats: 'PNG or WebP', minTextPx: 32 },
+  feature: { ...STANDARD, maxKb: 300, formats: 'WebP (JPG fallback)' },
+  body: { ...STANDARD, maxKb: 300, formats: 'WebP (JPG fallback)' },
+  info: { ...STANDARD, maxKb: 400, formats: 'WebP or PNG', minTextPx: 32 },
 } as const;
 
 export const slugify = (text: string): string =>

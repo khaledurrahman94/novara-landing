@@ -1,16 +1,17 @@
-# Blog images: sizes for the marketing team
+# Blog images: sizes for the designer and marketing team
 
-Source of truth in code: `IMAGE_SPECS` in `src/lib/blog.ts`. Every image needs alt text.
+Source of truth in code: `IMAGE_SPECS` in `src/lib/blog.ts`. One standard for every blog image, matching the
+Vivasoft blog (their feature and infographic originals are 1920 × 1080).
 
-| Image | Where it shows | Shape | Minimum | Maximum | Format and weight |
-|---|---|---|---|---|---|
-| Feature (hero) image | Post header, right of the title (below it on tablet/phone); also the card thumbnail on /blog | 16:9 | 1600 × 900 px | 2400 × 1350 px | WebP or JPG, under 300 KB |
-| Body image | Inside the article, full text-column width | 16:9 | 1600 × 900 px | 2400 × 1350 px | WebP or JPG, under 250 KB |
-| Information image | Infographics, charts, diagrams inside the article | Full width, free height | 1600 px wide | 1600 × 2400 px | PNG or WebP, under 400 KB |
+| Image | Size | Ratio | Where it shows | Format | Max file size | Notes |
+|---|---|---|---|---|---|---|
+| Feature (hero) image, one per post | 1920 × 1080 px | 16:9 | Beside the post title; also the /blog card thumbnail and the social share image | WebP (JPG fallback) | 300 KB | Title, logo and key content inside the centre 80% (about 1536 × 864 px) |
+| Body image (photo, screenshot, illustration) | 1920 × 1080 px | 16:9 | Inside the article, full text-column width | WebP (JPG fallback) | 300 KB | Key content inside the centre 80% |
+| Information image (infographic, chart, diagram) | 1920 × 1080 px | 16:9 | Inside the article, full text-column width | WebP or PNG | 400 KB | Text inside the image at least 32 px so it reads on phones |
 
-Notes
+For every image
 
-- The feature image is shown about 600–840 px wide on desktop, so 1600 px stays sharp on 2× screens.
-- Keep text and logos inside the centre 80% of the feature image: cards crop it to 16:9 at smaller sizes.
-- Text inside an information image must be at least 32 px at full size so it reads at about 16 px on screen.
-- Until a post has real images, the site shows a neutral placeholder; in `pnpm dev` the placeholder prints the size above.
+- Novara palette: violet #7237FB, light violet #F5F1FF, the gray scale and white. Product UI over stock photos.
+- File names in lowercase with hyphens, named after the post, e.g. `what-is-recruitment-software-hero.webp`.
+- Send a one-line description with each image; it becomes the alt text.
+- Until a post has real images, the site shows a neutral placeholder; in `pnpm dev` the placeholder prints the size.
