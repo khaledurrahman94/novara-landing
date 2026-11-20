@@ -5,6 +5,7 @@
  */
 import { z } from 'astro/zod';
 import { company } from '../content/company';
+import { blog } from '../content/blog';
 import { home } from '../content/home';
 import { legal } from '../content/legal';
 import { HOME_PATH } from './home-path';
@@ -78,7 +79,7 @@ const homeProvider: PageProvider = {
   pages: () => [{ type: 'home', path: HOME_PATH, route: 'code', where: 'home', seo: homeSeoMeta(), images: [], links: homeLiveLinks() }],
 };
 
-/** Code-owned content pages (About, Contact, Pricing, Terms and policies): copy in src/content/company.ts and legal.ts. */
+/** Code-owned content pages (About, Contact, Pricing, Terms and policies, Blog): copy in src/content/company.ts and legal.ts. */
 const companyProvider: PageProvider = {
   type: 'company',
   pages: () =>
@@ -87,6 +88,7 @@ const companyProvider: PageProvider = {
       { path: '/contact', label: 'Contact', seo: company.contact.seo },
       { path: '/pricing', label: 'Pricing', seo: company.pricing.seo },
       { path: '/terms-policies', label: 'Terms and policies', seo: legal.seo },
+      { path: '/blog', label: 'Blog', seo: blog.seo },
     ].map((p) => ({
       type: 'company',
       path: p.path,

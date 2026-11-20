@@ -1,0 +1,55 @@
+---
+import Avatar from '../shared/ui/Avatar.astro';
+import Icon from '../shared/ui/Icon.astro';
+import PostCover from './PostCover.astro';
+import { blog } from '../../content/blog';
+import { formatDate, postHref, searchText, type BlogPost } from '../../lib/blog';
+/**
+ * One article. `featured` is the wide split card. The whole card is one link. The `data-*` attributes feed the
+ * blog explorer script (filter, sort, paginate); `hidden` is the server's first page.
+ */
+interface Props { post: BlogPost; featured?: boolean; hidden?: boolean }
+const { post, featured = false, hidden = false } = Astro.props;
+---
+<li
+  data-post={post.slug}
+  data-category={post.category}
+  data-date={post.date}
+  data-popularity={post.popularity ?? 0}
+  data-search={searchText(post)}
+  data-featured={featured ? '' : undefined}
+  hidden={hidden}
+  class:list={['blog-item list-none', featured && 'md:col-span-2']}
+>
+  <a
+    href={postHref(post.slug)}
+    class:list={[
+      'blog-card group flex h-full flex-col gap-5 rounded-xl border border-border-secondary bg-white p-3 text-text-primary no-underline sm:p-4',
+      featured && 'lg:grid lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:items-center lg:gap-8',
+    ]}
+  >
+    <PostCover post={post} size={featured ? 'lg' : 'md'} />
+    <div class:list={['flex flex-1 flex-col px-1 pb-1', featured && 'lg:py-4 lg:pr-4']}>
+      <p class="m-0 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-medium">
+        {featured && <span class="rounded-full bg-primary-50 px-2.5 py-0.5 text-primary-700">{blog.index.featured}</span>}
+        <span class="text-primary-700">{post.category}</span>
+        <span class="text-text-tertiary">{post.readMinutes} min read</span>
+      </p>
+      <h3 class:list={['m-0 mt-3 text-balance font-semibold tracking-[-0.02em]', featured ? 'text-[clamp(1.375rem,1.1rem+1vw,2rem)] leading-tight' : 'text-[1.1875rem] leading-snug']}>
+        <span class="blog-title">{post.title}</span>
+      </h3>
+      <p class:list={['m-0 mt-2 text-pretty leading-relaxed text-text-secondary', featured ? 'text-base' : 'line-clamp-2 text-[0.9375rem]']}>{post.excerpt}</p>
+      <div class="mt-auto flex items-center gap-3 pt-5">
+        <Avatar initials={post.author.initials} lead={featured} />
+        <p class="m-0 min-w-0 flex-1 text-sm leading-tight">
+          <span class="block truncate font-medium text-text-primary">{post.author.name}</span>
+          <time datetime={post.date} class="text-text-tertiary">{formatDate(post.date)}</time>
+        </p>
+        <span class="blog-arrow grid size-9 shrink-0 place-items-center rounded-full border border-border-primary text-text-secondary" aria-hidden="true">
+          <Icon name="arrow-up-right" size={16} />
+        </span>
+        <span class="sr-only">{blog.index.readMore}</span>
+      </div>
+    </div>
+  </a>
+</li>

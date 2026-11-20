@@ -1,0 +1,62 @@
+---
+import Icon from '../shared/ui/Icon.astro';
+import { blog } from '../../content/blog';
+import { countBy, type BlogPost } from '../../lib/blog';
+/**
+ * Filters for the blog explorer. Desktop (lg+): a sticky white panel with search, sort, categories, popular tags and
+ * a subscribe card. Tablet and phone: the Vivasoft pattern, search then wrapping category pills; sort, tags and the
+ * subscribe card hide. One DOM for every size, so state never forks.
+ */
+interface Props { posts: BlogPost[] }
+const { posts } = Astro.props;
+const { index, categories } = blog;
+const cats = [{ key: '', label: index.all }, ...categories.map((c) => ({ key: c, label: c }))];
+---
+<aside class="min-w-0 lg:sticky lg:top-[calc(var(--nav-h,4rem)+1.5rem)] lg:self-start">
+  <div class="flex flex-col gap-7 lg:gap-4 lg:rounded-lg lg:border lg:border-border-secondary lg:bg-white lg:p-4">
+    <label class="relative block">
+      <span class="sr-only">{index.search}</span>
+      <span class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-text-placeholder"><Icon name="search" size={16} /></span>
+      <input
+        data-blog-search
+        type="search"
+        autocomplete="off"
+        placeholder={index.search}
+        class="h-11 w-full rounded-md border border-border-primary bg-white pl-10 pr-3.5 font-[inherit] text-[0.9375rem] text-text-primary shadow-xs transition-[border-color] duration-[var(--duration-fast)] focus:border-primary focus:outline-2 focus:outline-offset-0 focus:outline-primary-200 lg:h-10 lg:text-sm"
+      />
+    </label>
+
+    <div role="group" aria-label={index.sortLabel} class="hidden grid-cols-2 gap-1 rounded-md bg-bg-tertiary p-1 text-[0.8125rem] font-medium lg:grid">
+      <button type="button" data-blog-sort="latest" aria-pressed="true" class="blog-seg">{index.sort.latest}</button>
+      <button type="button" data-blog-sort="popular" aria-pressed="false" class="blog-seg">{index.sort.popular}</button>
+    </div>
+
+    <div role="group" aria-labelledby="blog-cats-label">
+      <p id="blog-cats-label" class="blog-cats-label m-0">{index.categoriesLabel}</p>
+      <div class="blog-cats">
+        {cats.map((c) => (
+          <button type="button" class="blog-cat" data-blog-cat={c.key} aria-pressed={c.key === '' ? 'true' : 'false'}>
+            <span class="blog-cat-dot" aria-hidden="true"></span>
+            <span class="blog-cat-label">{c.label}</span>
+            <span class="blog-cat-count font-ui">{countBy(posts, c.key)}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <div class="hidden border-t border-border-secondary pt-4 lg:block">
+      <p class="m-0 mb-2.5 text-[0.8125rem] font-semibold">{index.tagsLabel}</p>
+      <div class="flex flex-wrap gap-1.5">
+        {index.tags.map((t) => (
+          <button type="button" data-blog-tag={t} class="blog-tag">#{t}</button>
+        ))}
+      </div>
+    </div>
+
+    <div class="hidden rounded-lg bg-primary-50 p-4 lg:block">
+      <p class="m-0 text-[0.9375rem] font-semibold">{index.subscribe.title}</p>
+      <p class="m-0 mb-3 mt-1 text-[0.8125rem] leading-normal text-text-secondary">{index.subscribe.line}</p>
+      <a href={index.subscribe.href} class="inline-flex h-9 items-center rounded-md bg-primary px-3.5 text-[0.8125rem] font-medium text-white no-underline transition-colors duration-[var(--duration-fast)] hover:bg-primary-600">{index.subscribe.cta}</a>
+    </div>
+  </div>
+</aside>

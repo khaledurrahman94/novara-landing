@@ -1,0 +1,54 @@
+---
+import Icon from '../shared/ui/Icon.astro';
+import BlogSidebar from './BlogSidebar.astro';
+import BlogPagination from './BlogPagination.astro';
+import PostCard from './PostCard.astro';
+import { blog } from '../../content/blog';
+import { paginate, sortPosts, type BlogPost } from '../../lib/blog';
+/**
+ * "Resources and insights": filters + featured post + grid + pagination. The server renders the default view
+ * (newest first, page one); `explorer.ts` takes over in the browser. Without JS every post is shown.
+ */
+interface Props { posts: BlogPost[] }
+const { posts } = Astro.props;
+const { index } = blog;
+const size = index.pageSize;
+const featured = posts.find((p) => p.featured);
+const rest = sortPosts(posts.filter((p) => p !== featured), 'latest');
+const first = paginate(rest, 1, size);
+---
+<section id="articles" aria-labelledby="articles-title" class="relative scroll-mt-16 border-t border-border-secondary bg-bg">
+  <div class="mx-auto w-full max-w-[75rem] border-x border-border-secondary px-5 py-14 sm:px-8 md:px-12 md:py-20 lg:py-24">
+    <div class="flex flex-wrap items-end justify-between gap-x-12 gap-y-3">
+      <h2 id="articles-title" class="m-0 text-balance text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leading-[1.08] tracking-[-0.03em]">{index.title}</h2>
+      <p class="m-0 max-w-[30rem] text-base leading-relaxed text-text-secondary sm:text-lg">{index.line}</p>
+    </div>
+
+    <div data-blog data-page-size={size} class="mt-8 grid grid-cols-1 gap-8 lg:mt-14 lg:grid-cols-[18rem_minmax(0,1fr)] lg:gap-10">
+      <BlogSidebar posts={posts} />
+
+      <div class="min-w-0">
+        <p data-blog-status aria-live="polite" class="m-0 mb-4 text-sm text-text-tertiary">{index.latest}</p>
+        <ul data-blog-list class="m-0 grid list-none grid-cols-1 gap-5 p-0 md:grid-cols-2">
+          {featured && <PostCard post={featured} featured />}
+          {rest.map((p, i) => <PostCard post={p} hidden={i >= size} />)}
+        </ul>
+
+        <div data-blog-empty hidden class="rounded-xl border border-dashed border-border-primary bg-white px-6 py-14 text-center">
+          <span class="mx-auto grid size-11 place-items-center rounded-full bg-bg-tertiary text-text-tertiary"><Icon name="search" size={20} /></span>
+          <p class="m-0 mt-4 text-[1.0625rem] font-semibold">{index.empty.title}</p>
+          <p class="m-0 mt-1 text-[0.9375rem] text-text-secondary">{index.empty.line}</p>
+          <button type="button" data-blog-reset class="mt-5 inline-flex h-10 items-center rounded-md border border-border-primary bg-white px-4 font-[inherit] text-sm font-medium text-text-secondary shadow-xs hover:bg-bg">{index.empty.reset}</button>
+        </div>
+
+        <BlogPagination page={first.page} pages={first.pages} />
+      </div>
+    </div>
+  </div>
+  <noscript><style>[data-blog] [data-post]{display:list-item !important}[data-blog-pager]{display:none !important}</style></noscript>
+</section>
+
+<script>
+  import { initBlogExplorer } from './explorer';
+  document.querySelectorAll<HTMLElement>('[data-blog]').forEach((root) => initBlogExplorer(root));
+</script>

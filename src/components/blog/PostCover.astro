@@ -1,0 +1,31 @@
+---
+import Icon from '../shared/ui/Icon.astro';
+import type { BlogPost } from '../../lib/blog';
+/**
+ * Post cover. A real `post.image` fills the frame; otherwise a Plate Gray panel on a faint hairline grid holds one
+ * small product object (Inter, white, shadow-md): product UI as the imagery, per DESIGN.md.
+ */
+interface Props { post: BlogPost; size?: 'md' | 'lg'; class?: string }
+const { post, size = 'md', class: cls = '' } = Astro.props;
+const lg = size === 'lg';
+---
+<div class:list={['blog-cover relative isolate overflow-hidden rounded-lg border border-border-secondary bg-bg', lg ? 'aspect-video lg:aspect-[16/10]' : 'aspect-video', cls]} aria-hidden="true">
+  {post.image ? (
+    <img src={post.image.src} alt="" loading="lazy" decoding="async" class="absolute inset-0 size-full object-cover" />
+  ) : (
+    <>
+      <div class="blog-grid absolute inset-0 -z-10"></div>
+      <div class="absolute inset-0 grid place-items-center p-6">
+        <div class:list={['blog-cover-object flex items-center gap-3 rounded-lg border border-border-secondary bg-white font-ui shadow-md', lg ? 'px-5 py-4' : 'px-4 py-3']}>
+          <span class:list={['grid shrink-0 place-items-center rounded-md bg-primary-50 text-primary', lg ? 'size-11' : 'size-9']}>
+            <Icon name={post.cover.icon} size={lg ? 22 : 18} />
+          </span>
+          <span class="flex flex-col">
+            <span class="text-[0.6875rem] font-medium text-text-tertiary">{post.cover.label}</span>
+            <span class:list={['font-semibold leading-tight tabular-nums text-text-primary', lg ? 'text-2xl' : 'text-lg']}>{post.cover.value}</span>
+          </span>
+        </div>
+      </div>
+    </>
+  )}
+</div>

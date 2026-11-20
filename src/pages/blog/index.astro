@@ -1,0 +1,14 @@
+---
+import Page from '../../layouts/Page.astro';
+import BlogHero from '../../components/blog/BlogHero.astro';
+import BlogExplorer from '../../components/blog/BlogExplorer.astro';
+import BlogClose from '../../components/blog/BlogClose.astro';
+import { blog } from '../../content/blog';
+import { blogPosts } from '../../data/blog-posts';
+import '../../components/blog/blog.css';
+---
+<Page title={blog.seo.title} description={blog.seo.description}>
+  <BlogHero />
+  <BlogExplorer posts={blogPosts} />
+  <BlogClose />
+</Page>

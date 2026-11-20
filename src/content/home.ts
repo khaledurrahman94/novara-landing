@@ -39,6 +39,7 @@ export const home = {
       { label: 'Contact us', href: '/contact', live: true },
       { label: 'About us', href: '/about', live: true },
       { label: 'Pricing', href: '/pricing', live: true },
+      { label: 'Blog', href: '/blog', live: true },
     ],
   },
   form: {

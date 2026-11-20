@@ -1,0 +1,28 @@
+---
+import Icon from '../shared/ui/Icon.astro';
+import { blog } from '../../content/blog';
+import { pageItems } from '../../lib/blog';
+/**
+ * Numbered pagination: Previous, 1 … 7 8 [9] 10 11 … 29, Next. Rendered on the server for the first view; the
+ * explorer script re-renders the number list from the same `pageItems` helper. Arrow-only on phones.
+ */
+interface Props { page: number; pages: number }
+const { page, pages } = Astro.props;
+const { pagination } = blog.index;
+const nav = 'blog-page-nav inline-flex h-11 items-center justify-center gap-2 rounded-md border border-border-primary bg-white px-3 text-[0.9375rem] font-medium text-text-secondary shadow-xs sm:px-4';
+---
+<nav data-blog-pager aria-label={pagination.label} hidden={pages <= 1} class="mt-10 border-t border-border-secondary pt-8">
+  <div class="flex items-center justify-center gap-1 sm:gap-2">
+    <button type="button" data-blog-prev class={`${nav} sm:mr-3`} disabled={page <= 1}>
+      <Icon name="arrow-left" size={16} class="blog-arr-l" /><span class="sr-only sm:not-sr-only">{pagination.previous}</span>
+    </button>
+    <ol data-blog-pages class="m-0 flex list-none items-center gap-0.5 p-0 sm:gap-1">
+      {pageItems(page, pages).map((n) => n === 0
+        ? <li aria-hidden="true" class="blog-gap">…</li>
+        : <li><button type="button" class="blog-page" data-page={n} aria-current={n === page ? 'page' : undefined} aria-label={`${pagination.page} ${n}`}>{n}</button></li>)}
+    </ol>
+    <button type="button" data-blog-next class={`${nav} sm:ml-3`} disabled={page >= pages}>
+      <span class="sr-only sm:not-sr-only">{pagination.next}</span><Icon name="arrow-right" size={16} class="blog-arr-r" />
+    </button>
+  </div>
+</nav>

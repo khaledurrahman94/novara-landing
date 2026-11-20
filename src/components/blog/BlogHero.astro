@@ -1,0 +1,36 @@
+---
+import DemoForm from '../shared/DemoForm.astro';
+import Plate from '../shared/ui/Plate.astro';
+import DashboardOverview from '../shared/ui/DashboardOverview.astro';
+import { blog } from '../../content/blog';
+const { hero } = blog;
+/** Desktop: text left, product screenshot right. Tablet and phone: centred text over the screenshot. */
+---
+<section aria-labelledby="blog-title" class="relative bg-white">
+  <div class="mx-auto grid w-full max-w-[75rem] items-center gap-10 border-x border-border-secondary px-5 pb-12 pt-10 sm:px-8 md:px-12 md:pb-20 md:pt-16 lg:grid-cols-2 lg:gap-12 lg:pb-24 lg:pt-20">
+    <div class="flex flex-col items-center text-center lg:items-start lg:text-left">
+      <p class="m-0 inline-flex items-center gap-2 rounded-full border border-border-secondary bg-bg px-3 py-1 text-sm font-medium text-text-secondary">
+        <span class="size-1.5 rounded-full bg-primary" aria-hidden="true"></span>{hero.eyebrow}
+      </p>
+      <h1 id="blog-title" class="m-0 mt-5 text-balance text-[clamp(2.25rem,1.4rem+3vw,3.75rem)] font-semibold leading-[1.05] tracking-[-0.03em]">{hero.title}</h1>
+      <p class="m-0 mt-5 max-w-[32rem] text-pretty text-base leading-relaxed text-text-secondary sm:text-lg">{hero.line}</p>
+      <DemoForm
+        id="blog-subscribe"
+        class="mt-8"
+        label={hero.form.label}
+        placeholder={hero.form.placeholder}
+        submit={hero.form.submit}
+        success={hero.form.success}
+        fallback={hero.form.fallback}
+      />
+      <p class="m-0 text-sm text-text-tertiary">
+        {hero.note} <a href={hero.privacy.href} class="text-primary-700 underline underline-offset-[3px] hover:text-primary-800">{hero.privacy.label}</a>.
+      </p>
+    </div>
+    <div class="min-w-0">
+      <Plate caption={hero.shotCaption}>
+        <DashboardOverview />
+      </Plate>
+    </div>
+  </div>
+</section>
