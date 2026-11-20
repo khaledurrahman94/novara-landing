@@ -1,0 +1,11 @@
+---
+import { inlineParts } from '../../../lib/blog';
+/** Renders body text with **bold** and [label](/path) links. External links open safely in a new tab. */
+interface Props { text: string }
+const { text } = Astro.props;
+const external = (href: string) => /^https?:\/\//.test(href);
+---
+{inlineParts(text).map((p) =>
+  p.kind === 'bold' ? <strong>{p.text}</strong>
+  : p.kind === 'link' ? <a href={p.href} {...(external(p.href) ? { target: '_blank', rel: 'noopener' } : {})}>{p.text}</a>
+  : p.text)}

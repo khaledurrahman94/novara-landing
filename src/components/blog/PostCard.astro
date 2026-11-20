@@ -8,8 +8,8 @@ import { formatDate, postHref, searchText, type BlogPost } from '../../lib/blog'
  * One article. `featured` is the wide split card. The whole card is one link. The `data-*` attributes feed the
  * blog explorer script (filter, sort, paginate); `hidden` is the server's first page.
  */
-interface Props { post: BlogPost; featured?: boolean; hidden?: boolean }
-const { post, featured = false, hidden = false } = Astro.props;
+interface Props { post: BlogPost; featured?: boolean; hidden?: boolean; class?: string }
+const { post, featured = false, hidden = false, class: cls = '' } = Astro.props;
 ---
 <li
   data-post={post.slug}
@@ -19,12 +19,12 @@ const { post, featured = false, hidden = false } = Astro.props;
   data-search={searchText(post)}
   data-featured={featured ? '' : undefined}
   hidden={hidden}
-  class:list={['blog-item list-none', featured && 'md:col-span-2']}
+  class:list={['blog-item list-none', featured && 'md:col-span-2', cls]}
 >
   <a
     href={postHref(post.slug)}
     class:list={[
-      'blog-card group flex h-full flex-col gap-5 rounded-xl border border-border-secondary bg-white p-3 text-text-primary no-underline sm:p-4',
+      'blog-card group relative flex h-full flex-col gap-5 rounded-xl border border-border-secondary bg-white p-3 text-text-primary no-underline sm:p-4',
       featured && 'lg:grid lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:items-center lg:gap-8',
     ]}
   >

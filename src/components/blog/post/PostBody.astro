@@ -1,0 +1,25 @@
+---
+import Inline from './Inline.astro';
+import BlockImage from './blocks/BlockImage.astro';
+import BlockList from './blocks/BlockList.astro';
+import BlockQuote from './blocks/BlockQuote.astro';
+import BlockSteps from './blocks/BlockSteps.astro';
+import BlockTable from './blocks/BlockTable.astro';
+import type { PostBlock } from '../../../lib/blog';
+/** Renders the article body block by block. Add a block type in src/lib/blog.ts, then one branch here. */
+interface Props { blocks: PostBlock[] }
+const { blocks } = Astro.props;
+---
+<div class="post-body">
+  {blocks.map((b) => {
+    switch (b.type) {
+      case 'paragraph': return <p class:list={[b.lead && 'post-lead']}><Inline text={b.text} /></p>;
+      case 'heading': return (b.level ?? 2) === 2 ? <h2 id={b.id}>{b.text}</h2> : <h3 id={b.id}>{b.text}</h3>;
+      case 'list': return <BlockList items={b.items} ordered={b.ordered ?? false} />;
+      case 'table': return <BlockTable head={b.head} rows={b.rows} {...(b.caption ? { caption: b.caption } : {})} />;
+      case 'image': return <BlockImage kind={b.kind} src={b.src} alt={b.alt} caption={b.caption} width={b.width} height={b.height} />;
+      case 'steps': return <BlockSteps title={b.title} caption={b.caption} items={b.items} />;
+      case 'quote': return <BlockQuote text={b.text} cite={b.cite} />;
+    }
+  })}
+</div>

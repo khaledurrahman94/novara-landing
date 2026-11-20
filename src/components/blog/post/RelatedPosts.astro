@@ -1,0 +1,77 @@
+---
+import Icon from '../../shared/ui/Icon.astro';
+import PostCard from '../PostCard.astro';
+import { blog } from '../../../content/blog';
+import type { BlogPost } from '../../../lib/blog';
+/**
+ * "Blogs you may love": the hub's PostCard in a native scroll-snap track (swipe works without JS). Three per view on
+ * desktop, two on tablet, one with a peek on phones. The script adds arrows and dots.
+ */
+interface Props { posts: BlogPost[] }
+const { posts } = Astro.props;
+const { related } = blog.post;
+const arrow = 'post-rel-nav grid size-11 place-items-center rounded-full border border-border-primary bg-white text-text-secondary';
+---
+{posts.length > 0 && (
+  <section data-related aria-labelledby="related-title" class="border-t border-border-secondary bg-bg">
+    <div class="mx-auto w-full max-w-[75rem] overflow-hidden border-x border-border-secondary px-5 py-14 sm:px-8 md:px-12 md:py-20 lg:py-24">
+      <div class="flex flex-wrap items-end justify-between gap-x-12 gap-y-4">
+        <h2 id="related-title" class="m-0 text-[clamp(1.875rem,1.3rem+1.8vw,2.75rem)] font-semibold leading-[1.08] tracking-[-0.03em]">{related.title}</h2>
+        <div class="flex items-center gap-6">
+          <p class="m-0 hidden max-w-[26rem] text-base leading-relaxed text-text-secondary md:block">{related.line}</p>
+          <div class="flex gap-2">
+            <button type="button" data-rel-prev class={arrow} aria-label={related.previous}><Icon name="arrow-left" size={18} /></button>
+            <button type="button" data-rel-next class={arrow} aria-label={related.next}><Icon name="arrow-right" size={18} /></button>
+          </div>
+        </div>
+      </div>
+      <ul data-rel-track class="post-rel-track m-0 mt-10 flex list-none gap-6 overflow-x-auto p-0 pb-2 md:mt-12">
+        {posts.map((p) => <PostCard post={p} class="post-rel-item" />)}
+      </ul>
+      <div data-rel-dots class="mt-8 flex justify-center gap-2" role="group" aria-label={related.slide}></div>
+    </div>
+  </section>
+)}
+
+<script>
+  import { blog } from '../../../content/blog';
+  document.querySelectorAll<HTMLElement>('[data-related]').forEach((root) => {
+    const track = root.querySelector<HTMLElement>('[data-rel-track]');
+    const prev = root.querySelector<HTMLButtonElement>('[data-rel-prev]');
+    const next = root.querySelector<HTMLButtonElement>('[data-rel-next]');
+    const dots = root.querySelector<HTMLElement>('[data-rel-dots]');
+    if (!track || !prev || !next || !dots) return;
+    const items = [...track.children] as HTMLElement[];
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const step = (): number => (items[1] ? items[1].offsetLeft - items[0]!.offsetLeft : track.clientWidth);
+    const perView = (): number => Math.max(1, Math.round(track.clientWidth / step()));
+    const stops = (): number => Math.max(1, items.length - perView() + 1);
+    const current = (): number => Math.round(track.scrollLeft / step());
+    const go = (i: number): void => track.scrollTo({ left: Math.max(0, Math.min(stops() - 1, i)) * step(), behavior: reduced ? 'auto' : 'smooth' });
+
+    const paint = (): void => {
+      const n = stops();
+      const at = Math.min(current(), n - 1);
+      if (dots.children.length !== n) {
+        dots.replaceChildren(...Array.from({ length: n }, (_, i) => {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'post-rel-dot';
+          b.setAttribute('aria-label', `${blog.post.related.slide} ${i + 1}`);
+          b.addEventListener('click', () => go(i));
+          return b;
+        }));
+      }
+      [...dots.children].forEach((d, i) => d.toggleAttribute('aria-current', i === at));
+      prev.disabled = at <= 0;
+      next.disabled = at >= n - 1;
+      root.toggleAttribute('data-rel-static', n <= 1);
+    };
+    prev.addEventListener('click', () => go(current() - 1));
+    next.addEventListener('click', () => go(current() + 1));
+    let raf = 0;
+    track.addEventListener('scroll', () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(paint); }, { passive: true });
+    new ResizeObserver(paint).observe(track);
+    paint();
+  });
+</script>

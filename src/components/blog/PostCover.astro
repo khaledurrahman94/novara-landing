@@ -5,13 +5,22 @@ import type { BlogPost } from '../../lib/blog';
  * Post cover. A real `post.image` fills the frame; otherwise a Plate Gray panel on a faint hairline grid holds one
  * small product object (Inter, white, shadow-md): product UI as the imagery, per DESIGN.md.
  */
-interface Props { post: BlogPost; size?: 'md' | 'lg'; class?: string }
-const { post, size = 'md', class: cls = '' } = Astro.props;
+interface Props {
+  post: BlogPost;
+  size?: 'md' | 'lg';
+  /** Aspect classes; defaults to 16:9 (16:10 for `lg` from the lg breakpoint). */
+  aspect?: string;
+  /** Load eagerly (the post's feature image is above the fold). */
+  eager?: boolean;
+  class?: string;
+}
+const { post, size = 'md', aspect, eager = false, class: cls = '' } = Astro.props;
 const lg = size === 'lg';
+const ratio = aspect ?? (lg ? 'aspect-video lg:aspect-[16/10]' : 'aspect-video');
 ---
-<div class:list={['blog-cover relative isolate overflow-hidden rounded-lg border border-border-secondary bg-bg', lg ? 'aspect-video lg:aspect-[16/10]' : 'aspect-video', cls]} aria-hidden="true">
+<div class:list={['blog-cover relative isolate overflow-hidden rounded-lg border border-border-secondary bg-bg', ratio, cls]} aria-hidden="true">
   {post.image ? (
-    <img src={post.image.src} alt="" loading="lazy" decoding="async" class="absolute inset-0 size-full object-cover" />
+    <img src={post.image.src} alt="" loading={eager ? 'eager' : 'lazy'} decoding="async" class="absolute inset-0 size-full object-cover" />
   ) : (
     <>
       <div class="blog-grid absolute inset-0 -z-10"></div>

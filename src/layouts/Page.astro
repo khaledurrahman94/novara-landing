@@ -1,6 +1,6 @@
 ---
 /**
- * Shell for code-owned content pages (About, Contact, Terms and policies): the home Nav and Footer around a
+ * Shell for code-owned content pages (About, Contact, Terms and policies, blog): the home Nav and Footer around a
  * `<main>`. Nav links are root-relative, so they work from any page.
  */
 import Base from './Base.astro';
@@ -8,10 +8,11 @@ import Nav from '../components/home/Nav.astro';
 import Footer from '../components/home/Footer.astro';
 import '../components/home/home.css';
 
-interface Props { title: string; description: string }
-const { title, description } = Astro.props;
+interface Crumb { name: string; path: string }
+interface Props { title: string; description: string; schemas?: Record<string, unknown>[]; breadcrumbs?: Crumb[] }
+const { title, description, schemas, breadcrumbs } = Astro.props;
 ---
-<Base {title} {description} fluid>
+<Base {title} {description} fluid {...(schemas ? { schemas } : {})} {...(breadcrumbs ? { breadcrumbs } : {})}>
   <div class="home bg-white text-text-primary">
     <Nav solid />
     <main id="main">

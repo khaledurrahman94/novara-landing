@@ -40,6 +40,21 @@ export const blog = {
     pagination: { label: 'Pagination', previous: 'Previous', next: 'Next', page: 'Page' },
     pageSize: 6,
   },
+  /** Single post (/blog/[slug]). Layout per "Novara pages layout single blog post" (docx). */
+  post: {
+    crumbs: { home: 'Home', blog: 'Blog' },
+    meta: { writtenBy: 'Written by', published: 'Published on', updated: 'Updated on', readTime: 'Time to read', minutes: 'min' },
+    share: { label: 'Share', linkedin: 'Share on LinkedIn', x: 'Share on X', facebook: 'Share on Facebook', copy: 'Copy link', copied: 'Copied' },
+    toc: 'Table of contents',
+    tableHint: 'Swipe the table to see all columns →',
+    cta: {
+      title: 'Recruitment Trends Report',
+      line: 'Read the latest data, trends and insights shaping today’s hiring market.',
+      form: { label: 'Work email', placeholder: 'Enter your email', submit: 'Get started', success: 'Thanks. The report is on its way.', fallback: 'The report opens soon. Please check back.' },
+    },
+    related: { title: 'Blogs you may love', line: 'More guides on screening, interviews and hiring with AI.', previous: 'Previous posts', next: 'Next posts', slide: 'Go to slide' },
+    pending: 'The full article is on its way. Subscribe to get it when it is published.',
+  },
   categories: ['Hiring strategy', 'AI in recruiting', 'Resume screening', 'Interviews', 'Candidate experience', 'HR operations'],
   close: {
     badge: 'Hire with evidence, not guesswork',

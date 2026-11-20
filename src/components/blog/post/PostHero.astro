@@ -1,0 +1,39 @@
+---
+import PostCover from '../PostCover.astro';
+import PostMeta from './PostMeta.astro';
+import ShareLinks from './ShareLinks.astro';
+import { blog } from '../../../content/blog';
+import { type BlogPost } from '../../../lib/blog';
+/**
+ * Post header (no CTA, per the docx): breadcrumb, H1, intro, author/date/read time, share icons; the feature image
+ * on the right from lg, below the text on tablet and phone. Feature image size: IMAGE_SPECS.feature.
+ */
+interface Props { post: BlogPost; url: string }
+const { post, url } = Astro.props;
+const { crumbs } = blog.post;
+const crumb = 'text-text-tertiary no-underline transition-colors duration-[var(--duration-fast)] hover:text-primary-700';
+---
+<section aria-labelledby="post-title" class="relative overflow-hidden bg-white">
+  <div class="post-hero-grid pointer-events-none absolute inset-0" aria-hidden="true"></div>
+  <div class="relative mx-auto grid w-full max-w-[75rem] items-center gap-8 border-x border-border-secondary px-5 pb-10 pt-8 sm:px-8 md:gap-10 md:px-12 md:pb-16 md:pt-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-14 lg:pb-20 lg:pt-16">
+    <div>
+      <nav aria-label="Breadcrumb">
+        <ol class="m-0 flex list-none flex-wrap items-center gap-2 p-0 text-sm">
+          <li><a href="/" class={crumb}>{crumbs.home}</a></li>
+          <li aria-hidden="true" class="text-gray-400">/</li>
+          <li><a href="/blog" class={crumb}>{crumbs.blog}</a></li>
+          <li aria-hidden="true" class="text-gray-400">/</li>
+          <li><a href={`/blog#articles`} class="font-medium text-primary-700 no-underline">{post.category}</a></li>
+        </ol>
+      </nav>
+      <h1 id="post-title" class="m-0 mt-5 text-balance text-[clamp(2.125rem,1.4rem+3vw,3.75rem)] font-semibold leading-[1.06] tracking-[-0.03em]">{post.title}</h1>
+      <p class="m-0 mt-5 max-w-[34rem] text-pretty text-base leading-relaxed text-text-secondary sm:text-lg">{post.excerpt}</p>
+      <div class="mt-7 sm:mt-8"><PostMeta post={post} /></div>
+      <div class="mt-6 sm:mt-7"><ShareLinks url={url} title={post.title} /></div>
+    </div>
+    <figure class="m-0 overflow-hidden rounded-xl shadow-xl">
+      <PostCover post={post} size="lg" aspect="aspect-video" eager class="rounded-xl" />
+      {post.image && <figcaption class="sr-only">{post.image.alt}</figcaption>}
+    </figure>
+  </div>
+</section>

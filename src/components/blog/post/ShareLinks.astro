@@ -1,0 +1,39 @@
+---
+import { blog } from '../../../content/blog';
+/** Manatal pattern: brand-coloured LinkedIn, X and Facebook buttons plus copy link. Share URLs need no script. */
+interface Props { url: string; title: string }
+const { url, title } = Astro.props;
+const { share } = blog.post;
+const u = encodeURIComponent(url);
+const t = encodeURIComponent(title);
+const links = [
+  { label: share.linkedin, href: `https://www.linkedin.com/sharing/share-offsite/?url=${u}`, cls: 'rounded-md bg-[#0A66C2]', path: 'M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.75h4v11H3zM9.5 9.75h3.8v1.5h.06c.53-1 1.83-2.06 3.77-2.06 4.03 0 4.77 2.65 4.77 6.1v5.46h-4v-4.84c0-1.16-.02-2.64-1.61-2.64-1.61 0-1.86 1.26-1.86 2.56v4.92h-4z' },
+  { label: share.x, href: `https://x.com/intent/post?url=${u}&text=${t}`, cls: 'rounded-md bg-black', path: 'M17.75 3h3.07l-6.7 7.66L22 21h-6.17l-4.83-6.32L5.48 21H2.4l7.17-8.2L2 3h6.33l4.37 5.78zm-1.08 16.2h1.7L7.4 4.7H5.58z' },
+  { label: share.facebook, href: `https://www.facebook.com/sharer/sharer.php?u=${u}`, cls: 'rounded-full bg-[#1877F2]', path: 'M13.5 21v-7.5h2.5l.4-3h-2.9V8.6c0-.87.25-1.46 1.5-1.46h1.55V4.46A20.6 20.6 0 0 0 14.3 4.3c-2.2 0-3.7 1.34-3.7 3.8v2.4H8.1v3h2.5V21z' },
+];
+---
+<div class="flex flex-wrap items-center gap-3">
+  <span class="mr-1 text-sm font-medium text-text-tertiary">{share.label}</span>
+  {links.map((l) => (
+    <a href={l.href} target="_blank" rel="noopener" aria-label={l.label} class:list={['post-share grid size-10 place-items-center text-white', l.cls]}>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={l.path} /></svg>
+    </a>
+  ))}
+  <button type="button" data-copy-link={url} data-copied={share.copied} class="post-share inline-flex h-10 items-center gap-1.5 rounded-md border border-border-primary bg-white px-3 font-[inherit] text-[0.8125rem] font-medium text-text-primary">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></svg>
+    <span data-copy-label>{share.copy}</span>
+  </button>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-copy-link]').forEach((btn) => {
+    const label = btn.querySelector<HTMLElement>('[data-copy-label]');
+    const initial = label?.textContent ?? '';
+    btn.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(btn.dataset.copyLink ?? location.href); } catch { return; }
+      if (!label) return;
+      label.textContent = btn.dataset.copied ?? initial;
+      window.setTimeout(() => { label.textContent = initial; }, 1800);
+    });
+  });
+</script>

@@ -1,0 +1,16 @@
+---
+import { blog } from '../../../../content/blog';
+/** Comparison table: header row, zebra rows, hairline grid; scrolls sideways on phones with a hint. */
+interface Props { head: string[]; rows: string[][]; caption?: string }
+const { head, rows, caption } = Astro.props;
+---
+<div class="post-block">
+  <p class="m-0 mb-2 text-[0.8125rem] text-text-tertiary sm:hidden">{blog.post.tableHint}</p>
+  <div class="overflow-x-auto rounded-lg border border-border-secondary" tabindex="0" role="region" aria-label={caption ?? head.join(', ')}>
+    <table class="post-table">
+      {caption && <caption class="sr-only">{caption}</caption>}
+      <thead><tr>{head.map((h) => <th scope="col">{h}</th>)}</tr></thead>
+      <tbody>{rows.map((r) => <tr>{r.map((c, i) => (i === 0 ? <th scope="row">{c}</th> : <td>{c}</td>))}</tr>)}</tbody>
+    </table>
+  </div>
+</div>

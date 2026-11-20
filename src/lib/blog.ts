@@ -32,7 +32,71 @@ export interface BlogPost {
   /** Higher reads first under "Most read". */
   popularity?: number;
   tags?: string[];
+  /** Article body. PENDING CMS: posts without one render their excerpt and a short note. */
+  body?: PostBlock[];
+  /** ISO date of the last edit, when it differs from `date`. */
+  updated?: string;
 }
+
+/* ---------- Article body: a small block model a CMS rich-text field maps onto ---------- */
+
+/** Inline text with optional bold lead, e.g. "**Scope creep:** New requests...". */
+export interface RichLine { lead?: string; text: string }
+
+/** `body` images fill the text column; `info` images are infographics with readable text inside. */
+export type PostImageKind = 'body' | 'info';
+
+export type PostBlock =
+  | { type: 'paragraph'; text: string; lead?: boolean }
+  | { type: 'heading'; text: string; id?: string; level?: 2 | 3 }
+  | { type: 'list'; items: RichLine[]; ordered?: boolean }
+  | { type: 'table'; head: string[]; rows: string[][]; caption?: string }
+  | { type: 'image'; kind: PostImageKind; src?: string; alt: string; caption?: string; width?: number; height?: number }
+  | { type: 'steps'; title: string; caption?: string; items: { title: string; text: string; icon: string }[] }
+  | { type: 'quote'; text: string; cite?: string };
+
+/**
+ * Image sizes for the marketing team (see docs/implementation/blog-images.md). The page renders them at the
+ * column width; these are the source files to upload.
+ */
+export const IMAGE_SPECS = {
+  feature: { ratio: '16:9', min: [1600, 900], max: [2400, 1350], maxKb: 300, formats: 'WebP or JPG' },
+  body: { ratio: '16:9', min: [1600, 900], max: [2400, 1350], maxKb: 250, formats: 'WebP or JPG' },
+  info: { ratio: 'free height', min: [1600, 0], max: [1600, 2400], maxKb: 400, formats: 'PNG or WebP', minTextPx: 32 },
+} as const;
+
+export const slugify = (text: string): string =>
+  text.toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
+export interface TocEntry { id: string; text: string }
+
+/** Gives every level-2 heading a stable id and returns the table of contents in reading order. */
+export function withHeadingIds(blocks: readonly PostBlock[]): { blocks: PostBlock[]; toc: TocEntry[] } {
+  const seen = new Map<string, number>();
+  const toc: TocEntry[] = [];
+  const out = blocks.map((b) => {
+    if (b.type !== 'heading') return b;
+    const base = b.id ?? slugify(b.text);
+    const n = seen.get(base) ?? 0;
+    seen.set(base, n + 1);
+    const id = n ? `${base}-${n + 1}` : base;
+    if ((b.level ?? 2) === 2) toc.push({ id, text: b.text });
+    return { ...b, id };
+  });
+  return { blocks: out, toc };
+}
+
+/** Same category first, then the newest; never the post itself. */
+export function relatedPosts<T extends Pick<BlogPost, 'slug' | 'category' | 'date'>>(post: T, all: readonly T[], limit = 6): T[] {
+  return [...all]
+    .filter((p) => p.slug !== post.slug)
+    .sort((a, b) => Number(b.category === post.category) - Number(a.category === post.category) || b.date.localeCompare(a.date))
+    .slice(0, limit);
+}
+
+/** Internal links in a body, for the build's link checks. */
+export const bodyLinks = (blocks: readonly PostBlock[] = []): string[] =>
+  blocks.flatMap((b) => (b.type === 'paragraph' ? [...b.text.matchAll(/\]\((\/[^)\s]+)\)/g)].map((m) => m[1] ?? '') : [])).filter(Boolean);
 
 export type BlogSort = 'latest' | 'popular';
 
@@ -46,6 +110,7 @@ export const DEFAULT_QUERY: BlogQuery = { category: '', search: '', sort: 'lates
 
 export const postHref = (slug: string): string => `/blog/${slug}`;
 
+/** Short date for cards: 12 Nov 2026. */
 export const formatDate = (iso: string): string =>
   new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
 
@@ -93,3 +158,26 @@ export function pageItems(page: number, pages: number, around = 2): number[] {
 
 export const countBy = (posts: readonly BlogPost[], category: string): number =>
   category ? posts.filter((p) => p.category === category).length : posts.length;
+
+/** Long date for the post header: 12 November 2026. */
+export const formatLongDate = (iso: string): string =>
+  new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+
+/* ---------- Inline text: **bold** and [label](/path) only, so CMS text stays simple and safe ---------- */
+
+export type InlinePart = { kind: 'text'; text: string } | { kind: 'bold'; text: string } | { kind: 'link'; text: string; href: string };
+
+export function inlineParts(text: string): InlinePart[] {
+  const parts: InlinePart[] = [];
+  const re = /\*\*([^*]+)\*\*|\[([^\]]+)\]\(([^)\s]+)\)/g;
+  let last = 0;
+  for (const m of text.matchAll(re)) {
+    const i = m.index ?? 0;
+    if (i > last) parts.push({ kind: 'text', text: text.slice(last, i) });
+    if (m[1] !== undefined) parts.push({ kind: 'bold', text: m[1] });
+    else parts.push({ kind: 'link', text: m[2] ?? '', href: m[3] ?? '#' });
+    last = i + m[0].length;
+  }
+  if (last < text.length) parts.push({ kind: 'text', text: text.slice(last) });
+  return parts;
+}

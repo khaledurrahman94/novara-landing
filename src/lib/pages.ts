@@ -6,6 +6,8 @@
 import { z } from 'astro/zod';
 import { company } from '../content/company';
 import { blog } from '../content/blog';
+import { blogPosts } from '../data/blog-posts';
+import { bodyLinks, postHref } from './blog';
 import { home } from '../content/home';
 import { legal } from '../content/legal';
 import { HOME_PATH } from './home-path';
@@ -106,7 +108,25 @@ const fixturePagesProvider: PageProvider = {
   pages: (data) => data.fixturePages,
 };
 
-export const pageProviders: PageProvider[] = [homeProvider, companyProvider, fixturePagesProvider];
+/** Blog posts (/blog/[slug]). PENDING CMS: placeholder posts in src/data/blog-posts.ts. */
+const blogProvider: PageProvider = {
+  type: 'post',
+  pages: () =>
+    blogPosts.map((p) => ({
+      type: 'post',
+      path: postHref(p.slug),
+      slug: p.slug,
+      route: 'code' as const,
+      where: `post "${p.slug}"`,
+      title: p.title,
+      seo: seoMetaSchema.parse({ metaTitle: p.title, metaDescription: p.excerpt }),
+      updatedAt: p.updated ?? p.date,
+      images: p.image ? [{ url: p.image.src, alt: p.image.alt, field: 'image' }] : [],
+      links: bodyLinks(p.body),
+    })),
+};
+
+export const pageProviders: PageProvider[] = [homeProvider, companyProvider, blogProvider, fixturePagesProvider];
 
 // ---- fixture page parsing -------------------------------------------------------------------
 

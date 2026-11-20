@@ -1,0 +1,48 @@
+---
+import { blog } from '../../../content/blog';
+import type { TocEntry } from '../../../lib/blog';
+/**
+ * Table of contents (Vivasoft card): a native <details> so it collapses without JS. Starts closed on phones;
+ * the script highlights the section in view and closes the list after a jump on phones.
+ */
+interface Props { entries: TocEntry[] }
+const { entries } = Astro.props;
+---
+<nav data-toc aria-labelledby="toc-title" class="rounded-lg border border-border-secondary bg-bg p-2">
+  <details open class="post-toc">
+    <summary class="flex cursor-pointer list-none items-center justify-between rounded-md bg-white px-4 py-3.5 shadow-xs">
+      <span id="toc-title" class="text-base font-semibold text-primary-700">{blog.post.toc}</span>
+      <svg class="post-toc-chev text-primary" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 15-6-6-6 6" /></svg>
+    </summary>
+    <ol class="m-0 ml-3 mt-2 flex list-none flex-col gap-0.5 border-l-2 border-border-secondary p-0 pl-3">
+      {entries.map((e, i) => (
+        <li><a href={`#${e.id}`} data-toc-link={e.id} class="post-toc-link"><span class="post-toc-ring" aria-hidden="true"></span><span>{i + 1}. {e.text}</span></a></li>
+      ))}
+    </ol>
+  </details>
+</nav>
+
+<script>
+  const MOBILE = '(max-width: 1023.98px)';
+  document.querySelectorAll<HTMLElement>('[data-toc]').forEach((nav) => {
+    const details = nav.querySelector('details');
+    const links = [...nav.querySelectorAll<HTMLAnchorElement>('[data-toc-link]')];
+    if (details && window.matchMedia(MOBILE).matches) details.open = false;
+
+    const setActive = (id: string): void => links.forEach((a) => a.toggleAttribute('aria-current', a.dataset.tocLink === id));
+    links.forEach((a) => a.addEventListener('click', () => {
+      setActive(a.dataset.tocLink ?? '');
+      if (details && window.matchMedia(MOBILE).matches) details.open = false;
+    }));
+
+    const headings = links.map((a) => document.getElementById(a.dataset.tocLink ?? '')).filter((h): h is HTMLElement => h !== null);
+    if (!('IntersectionObserver' in window) || headings.length === 0) return;
+    const visible = new Set<string>();
+    const io = new IntersectionObserver((rows) => {
+      rows.forEach((r) => (r.isIntersecting ? visible.add(r.target.id) : visible.delete(r.target.id)));
+      const first = headings.find((h) => visible.has(h.id));
+      if (first) setActive(first.id);
+    }, { rootMargin: '-80px 0px -60% 0px' });
+    headings.forEach((h) => io.observe(h));
+  });
+</script>

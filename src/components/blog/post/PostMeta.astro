@@ -1,0 +1,28 @@
+---
+import Avatar from '../../shared/ui/Avatar.astro';
+import { blog } from '../../../content/blog';
+import { formatLongDate, type BlogPost } from '../../../lib/blog';
+/** Vivasoft pattern: avatar + name | Published on | Time to read, split by hairlines. Phones: author on its own row. */
+interface Props { post: BlogPost }
+const { post } = Astro.props;
+const { meta } = blog.post;
+const label = 'm-0 text-xs font-medium text-primary-700';
+const value = 'm-0 mt-0.5 text-[0.9375rem] font-medium text-text-primary';
+---
+<div class="grid grid-cols-2 gap-y-4 sm:flex sm:flex-wrap sm:items-center">
+  <div class="col-span-2 flex items-center gap-3 border-b border-border-secondary pb-4 sm:border-b-0 sm:pb-0 sm:pr-6">
+    <Avatar initials={post.author.initials} size="md" lead />
+    <p class="m-0 leading-tight">
+      <span class={`block ${label}`}>{meta.writtenBy}</span>
+      <span class="mt-0.5 block text-[0.9375rem] font-semibold">{post.author.name}</span>
+    </p>
+  </div>
+  <div class="sm:border-l sm:border-border-secondary sm:px-6">
+    <p class={label}>{post.updated ? meta.updated : meta.published}</p>
+    <p class={value}><time datetime={post.updated ?? post.date}>{formatLongDate(post.updated ?? post.date)}</time></p>
+  </div>
+  <div class="border-l border-border-secondary pl-4 sm:px-6">
+    <p class={label}>{meta.readTime}</p>
+    <p class={value}>{post.readMinutes} {meta.minutes}</p>
+  </div>
+</div>

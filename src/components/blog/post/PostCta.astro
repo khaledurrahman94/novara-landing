@@ -1,0 +1,23 @@
+---
+import DemoForm from '../../shared/DemoForm.astro';
+import { blog } from '../../../content/blog';
+/** CTA after the table of contents (docx): heading, text, email + "Get started". */
+const { cta } = blog.post;
+---
+<div class="relative overflow-hidden rounded-lg bg-primary p-6 text-white">
+  <div class="pointer-events-none absolute -right-12 -top-12 size-36 rounded-full border border-white/20" aria-hidden="true"></div>
+  <div class="pointer-events-none absolute -right-6 -top-6 size-24 rounded-full border border-white/20" aria-hidden="true"></div>
+  <p class="relative m-0 text-[1.375rem] font-semibold leading-tight tracking-[-0.02em]">{cta.title}</p>
+  <p class="relative m-0 mt-2.5 text-sm leading-normal text-white/90">{cta.line}</p>
+  <DemoForm
+    id="post-report"
+    class="relative mt-5"
+    tone="onPrimary"
+    stacked
+    label={cta.form.label}
+    placeholder={cta.form.placeholder}
+    submit={cta.form.submit}
+    success={cta.form.success}
+    fallback={cta.form.fallback}
+  />
+</div>

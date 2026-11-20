@@ -1,4 +1,5 @@
 import type { BlogPost } from '../lib/blog';
+import { blogArticles } from './blog-articles';
 
 /**
  * PENDING CMS: placeholder posts until the Strapi blog collection exists. The shape matches `BlogPost`
@@ -10,7 +11,14 @@ const team = {
   sara: { name: 'Sara Chowdhury', initials: 'SC', role: 'HR Consultant' },
 };
 
-export const blogPosts: BlogPost[] = [
+const posts: BlogPost[] = [
+  {
+    slug: 'what-is-recruitment-software',
+    title: 'What is Recruitment Software?',
+    excerpt: 'A plain-English guide to the tools that post jobs, screen applicants and move candidates to an offer, and how to pick the right one for your team.',
+    category: 'HR operations', author: team.nadia, date: '2026-11-19', readMinutes: 8,
+    cover: { icon: 'briefcase', label: 'Hiring pipeline', value: 'One place' }, popularity: 65, tags: ['ATS'],
+  },
   {
     slug: 'ai-recruiting-trends-2026',
     title: 'Seven AI recruiting trends talent teams should plan for in 2026',
@@ -83,3 +91,9 @@ export const blogPosts: BlogPost[] = [
     cover: { icon: 'globe', label: 'Apply flow', value: '1 min' }, popularity: 10,
   },
 ];
+
+/** Posts with their article body attached (when one exists). */
+export const blogPosts: BlogPost[] = posts.map((p) => {
+  const body = blogArticles[p.slug];
+  return body ? { ...p, body } : p;
+});

@@ -1,0 +1,60 @@
+---
+import Page from '../../layouts/Page.astro';
+import PostHero from '../../components/blog/post/PostHero.astro';
+import PostToc from '../../components/blog/post/PostToc.astro';
+import PostCta from '../../components/blog/post/PostCta.astro';
+import PostBody from '../../components/blog/post/PostBody.astro';
+import RelatedPosts from '../../components/blog/post/RelatedPosts.astro';
+import { blog } from '../../content/blog';
+import { blogPosts } from '../../data/blog-posts';
+import { postHref, relatedPosts, withHeadingIds, type BlogPost, type PostBlock } from '../../lib/blog';
+import '../../components/blog/blog.css';
+import '../../components/blog/post/post.css';
+
+export function getStaticPaths() {
+  return blogPosts.map((post) => ({ params: { slug: post.slug }, props: { post } }));
+}
+
+interface Props { post: BlogPost }
+const { post } = Astro.props;
+/** PENDING CMS: posts without a body show their excerpt and a short note. */
+const source: PostBlock[] = post.body ?? [
+  { type: 'paragraph', lead: true, text: post.excerpt },
+  { type: 'paragraph', text: blog.post.pending },
+];
+const { blocks, toc } = withHeadingIds(source);
+const url = new URL(postHref(post.slug), Astro.site ?? Astro.url).href;
+const related = relatedPosts(post, blogPosts);
+const schemas = [{
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.title,
+  description: post.excerpt,
+  datePublished: post.date,
+  dateModified: post.updated ?? post.date,
+  author: { '@type': 'Person', name: post.author.name },
+  mainEntityOfPage: url,
+  ...(post.image ? { image: new URL(post.image.src, url).href } : {}),
+}];
+const breadcrumbs = [
+  { name: blog.post.crumbs.blog, path: '/blog' },
+  { name: post.title, path: postHref(post.slug) },
+];
+---
+<Page title={post.title} description={post.excerpt} {schemas} {breadcrumbs}>
+  <PostHero post={post} url={url} />
+
+  <section class="border-t border-border-secondary bg-white">
+    <div class="mx-auto grid w-full max-w-[75rem] grid-cols-1 gap-8 border-x border-border-secondary px-5 pb-14 pt-8 sm:px-8 md:px-12 md:pb-20 md:pt-12 lg:grid-cols-[18rem_minmax(0,1fr)] lg:gap-14 lg:pb-24 lg:pt-16">
+      <aside class="flex min-w-0 flex-col gap-5 lg:sticky lg:top-[calc(var(--nav-h,4rem)+1.5rem)] lg:self-start">
+        {toc.length > 0 && <PostToc entries={toc} />}
+        <PostCta />
+      </aside>
+      <article class="min-w-0 max-w-[48rem] border-t border-border-secondary pt-7 md:pt-10" aria-labelledby="post-title">
+        <PostBody blocks={blocks} />
+      </article>
+    </div>
+  </section>
+
+  <RelatedPosts posts={related} />
+</Page>
