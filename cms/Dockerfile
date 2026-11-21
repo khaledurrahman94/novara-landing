@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.7
 # Novara CMS (Strapi 5). Build from the REPO ROOT, because the seed reads the site's copy files:
 #   docker build -f cms/Dockerfile -t novara-cms .
-ARG NODE_VERSION=24
+ARG NODE_VERSION=24.22.3
 
 FROM node:${NODE_VERSION}-bookworm-slim AS base
 ENV PNPM_HOME=/pnpm \
