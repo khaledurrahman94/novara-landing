@@ -441,7 +441,7 @@ export interface HomeTestimonials extends Struct.ComponentSchema {
   };
 }
 
-export interface HomeTileextends Struct.ComponentSchema {
+export interface HomeTile extends Struct.ComponentSchema {
   collectionName: 'components_home_tiles';
   info: {
     description: 'Title and line of one platform tile.';
