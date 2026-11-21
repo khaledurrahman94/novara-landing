@@ -7,3 +7,7 @@ allowBuilds:
   core-js-pure: true
   esbuild: true
   sharp: true
+
+overrides:
+  # Security: zod <4.6.6 can exhaust memory on oversized collections (CVE-2023-54404). Same major as Strapi's admin.
+  'zod@^4': ^4.6.6
